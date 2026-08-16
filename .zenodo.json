@@ -1,6 +1,6 @@
 {
   "title": "spectrl: URL-safe interchange for mass spectra",
-  "description": "spectrl encodes a mass spectrum — peak arrays, modeled metadata, and precursor information — into a single compact, URL-safe token, enabling spectra to be shared directly in URLs, QR codes, notebooks, and publications without a backend repository. Metadata uses established mzML controlled-vocabulary semantics and may include a ProForma interpretation.",
+  "description": "spectrl encodes mass-spectrum peak arrays, modeled metadata, and precursor information in a URL-safe token. The token can be shared in URLs, QR codes, notebooks, and publications without a backend repository. Metadata uses mzML controlled-vocabulary semantics and may include a ProForma interpretation.",
   "creators": [
     {
       "name": "Garrett, Patrick T.",

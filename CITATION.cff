@@ -2,11 +2,10 @@ cff-version: 1.2.0
 message: "If you use spectrl, please cite this software using these metadata."
 title: "spectrl: URL-safe interchange for mass spectra"
 abstract: >-
-  spectrl encodes a mass spectrum — peak arrays, modeled metadata, and precursor
-  information — into a single compact, URL-safe token, enabling spectra to be
-  shared directly in URLs, QR codes, notebooks, and publications without a
-  backend repository. Metadata uses established mzML controlled-vocabulary
-  semantics and may include a ProForma interpretation.
+  spectrl encodes mass-spectrum peak arrays, modeled metadata, and precursor
+  information in a URL-safe token. The token can be shared in URLs, QR codes,
+  notebooks, and publications without a backend repository. Metadata uses mzML
+  controlled-vocabulary semantics and may include a ProForma interpretation.
 type: software
 authors:
   - given-names: Patrick T.
