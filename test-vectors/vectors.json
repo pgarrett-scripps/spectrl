@@ -1,0 +1,1419 @@
+{
+  "spectrl_format_version": 2,
+  "generated_by": "spectrl-python 0.3.0",
+  "note": "Conformance vectors. A consumer MUST recover `decoded` from `token`. Numpress decode is deterministic; arrays should match the stored decoded values within `tolerance`. Lossless vectors MUST match exactly. The stored `hash` MUST verify.",
+  "vectors": [
+    {
+      "name": "minimal",
+      "description": "m/z and intensity arrays only, no metadata",
+      "mode": "lossy",
+      "token": "spectrl2.ogADBoKkABoAD0RLARoAD0RCAhoAD0z6BVgaeJxz-JHFAAI3Kh4w3DHlZlS4vtABAEQZBsikABoAD0RLARoAD0RDAhoAD0z8BVR4nHNYo8AAAs8XHp73cCIAHZIFaA.wbsO2Q8yuOet2gmY",
+      "tolerance": {
+        "abs": 1e-06,
+        "rel": 1e-06
+      },
+      "decoded": {
+        "default_array_length": 3,
+        "id": null,
+        "mz": [
+          147.11,
+          175.119,
+          246.156
+        ],
+        "intensity": [
+          100012.00990474736,
+          79994.22482781614,
+          32002.837968673844
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "wbsO2Q8yuOet2gmY",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "minimal__lossless",
+      "description": "m/z and intensity arrays only, no metadata (lossless)",
+      "mode": "lossless",
+      "token": "spectrl2.ogADBoKkABoAD0RLARoAD0RCAhoAD0R-BVgheJx7E7hDrjU5yUG7XezmucepDotct33-eyTPAQCUZQyUpAAaAA9ESwEaAA9EQwIaAA9EfgVYGHicY2AAgqwfDiCKoeMzhHa47wAAMfoEvQ.h9VjggEd-Yb7oCSX",
+      "tolerance": {
+        "abs": 0.0,
+        "rel": 0.0
+      },
+      "decoded": {
+        "default_array_length": 3,
+        "id": null,
+        "mz": [
+          147.11,
+          175.119,
+          246.156
+        ],
+        "intensity": [
+          100000.0,
+          80000.0,
+          32000.0
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "h9VjggEd-Yb7oCSX",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "centroid_ms2_params",
+      "description": "MS2 centroid spectrum with ms-level (int), positive-scan flag, centroid flag, TIC",
+      "mode": "lossy",
+      "token": "spectrl2.pAAEAXgtY29udHJvbGxlclR5cGU9MCBjb250cm9sbGVyTnVtYmVyPTEgc2Nhbj0xMDQyAqQaAA9Cv_YaAA9CwvYaAA9DXfpINzQAGgAPRD8CBoKkABoAD0RLARoAD0RCAhoAD0z6BVgdeJxz-JHFAAI1X5Yz3DHlZlSQ8XTuZkgAAFLjBoqkABoAD0RLARoAD0RDAhoAD0z8BVZ4nHNYo8AAAl-6Dy20mSnWAgAmbQVe.N0IfhakHEOi12176",
+      "tolerance": {
+        "abs": 1e-06,
+        "rel": 1e-06
+      },
+      "decoded": {
+        "default_array_length": 4,
+        "id": "controllerType=0 controllerNumber=1 scan=1042",
+        "mz": [
+          110.071,
+          175.119,
+          288.203,
+          405.221
+        ],
+        "intensity": [
+          20997.834648185497,
+          98989.36268655436,
+          53995.07656303177,
+          12000.39026862074
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [
+          {
+            "accession": "MS:1000127",
+            "value": null,
+            "unit_accession": null
+          },
+          {
+            "accession": "MS:1000130",
+            "value": null,
+            "unit_accession": null
+          },
+          {
+            "accession": "MS:1000285",
+            "value": 187600.0,
+            "unit_accession": null
+          },
+          {
+            "accession": "MS:1000511",
+            "value": 2,
+            "unit_accession": null
+          }
+        ],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "N0IfhakHEOi12176",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "centroid_ms2_params__lossless",
+      "description": "MS2 centroid spectrum with ms-level (int), positive-scan flag, centroid flag, TIC (lossless)",
+      "mode": "lossless",
+      "token": "spectrl2.pAAEAXgtY29udHJvbGxlclR5cGU9MCBjb250cm9sbGVyTnVtYmVyPTEgc2Nhbj0xMDQyAqQaAA9Cv_YaAA9CwvYaAA9DXfpINzQAGgAPRD8CBoKkABoAD0RLARoAD0RCAhoAD0R-BVgpeJxja5zq3N0S7aDdLnbz3ONUh4yJb2vsmYscVhzzNu8MrnQAAOQnDdykABoAD0RLARoAD0RDAhoAD0R-BVgdeJxjYACCpisOIKpB-weYZoh7BaELjjsAAF8LBnk.PNVZuEiwnRSLcuU2",
+      "tolerance": {
+        "abs": 0.0,
+        "rel": 0.0
+      },
+      "decoded": {
+        "default_array_length": 4,
+        "id": "controllerType=0 controllerNumber=1 scan=1042",
+        "mz": [
+          110.071,
+          175.119,
+          288.203,
+          405.221
+        ],
+        "intensity": [
+          21000.0,
+          99000.0,
+          54000.0,
+          12000.0
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [
+          {
+            "accession": "MS:1000127",
+            "value": null,
+            "unit_accession": null
+          },
+          {
+            "accession": "MS:1000130",
+            "value": null,
+            "unit_accession": null
+          },
+          {
+            "accession": "MS:1000285",
+            "value": 187600.0,
+            "unit_accession": null
+          },
+          {
+            "accession": "MS:1000511",
+            "value": 2,
+            "unit_accession": null
+          }
+        ],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "PNVZuEiwnRSLcuU2",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "with_charge_array",
+      "description": "deconvoluted spectrum carrying a per-peak charge array",
+      "mode": "lossy",
+      "token": "spectrl2.ogADBoOkABoAD0RLARoAD0RCAhoAD0z6BVgYeJxz-JHFAAIaQb-ZGFgrWSyECwEu5gRYpAAaAA9ESwEaAA9EQwIaAA9M_AVTeJxzWKPAAAIsU1272xoBFQ0DfaQAGgAPREsBGgAPREQCGgAPTPsFS3icKyosBAACrAFV.m-bXNUS5HW6rBnSU",
+      "tolerance": {
+        "abs": 1e-06,
+        "rel": 1e-06
+      },
+      "decoded": {
+        "default_array_length": 3,
+        "id": null,
+        "mz": [
+          500.25,
+          750.4,
+          1001.5
+        ],
+        "intensity": [
+          40000.27736321897,
+          20001.471324173166,
+          10001.152067330191
+        ],
+        "charge": [
+          2.0,
+          1.0,
+          1.0
+        ],
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "m-bXNUS5HW6rBnSU",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "with_charge_array__lossless",
+      "description": "deconvoluted spectrum carrying a per-peak charge array (lossless)",
+      "mode": "lossless",
+      "token": "spectrl2.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJxjYAACl3oHYxAobncAcRl8-h0ALv0EWKQAGgAPREsBGgAPREMCGgAPRH4FVnicY2AAgo7HDgxg-jKUPuwAADIaBNKkABoAD0RLARoAD0REAhoAD0R-BVJ4nGNgAAMHCPXBHkYDABIOAp8.tejjd3Up5EMT-DQL",
+      "tolerance": {
+        "abs": 0.0,
+        "rel": 0.0
+      },
+      "decoded": {
+        "default_array_length": 3,
+        "id": null,
+        "mz": [
+          500.25,
+          750.4,
+          1001.5
+        ],
+        "intensity": [
+          40000.0,
+          20000.0,
+          10000.0
+        ],
+        "charge": [
+          2.0,
+          1.0,
+          1.0
+        ],
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "tejjd3Up5EMT-DQL",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "negative_charge_sentinel",
+      "description": "charge array with a negative (unassigned/singleton) sentinel; lossy encode falls back to lossless zlib for the charge array and round-trips exactly",
+      "mode": "lossy",
+      "token": "spectrl2.ogADBoOkABoAD0RLARoAD0RCAhoAD0z6BVgYeJxz-JHFAAIaQb-ZGFgrWSyECwEu5gRYpAAaAA9ESwEaAA9EQwIaAA9M_AVTeJxzWKPAAAIsU1272xoBFQ0DfaQAGgAPREsBGgAPREQCGgAPRH4FU3icY2AAAwcI9WE_lLYHABaOAx8.JSyy6Tv7bqc4F8jh",
+      "tolerance": {
+        "abs": 1e-06,
+        "rel": 1e-06
+      },
+      "decoded": {
+        "default_array_length": 3,
+        "id": null,
+        "mz": [
+          500.25,
+          750.4,
+          1001.5
+        ],
+        "intensity": [
+          40000.27736321897,
+          20001.471324173166,
+          10001.152067330191
+        ],
+        "charge": [
+          2.0,
+          -1.0,
+          1.0
+        ],
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "JSyy6Tv7bqc4F8jh",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "negative_charge_sentinel__lossless",
+      "description": "charge array with a negative (unassigned/singleton) sentinel; lossy encode falls back to lossless zlib for the charge array and round-trips exactly (lossless)",
+      "mode": "lossless",
+      "token": "spectrl2.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJxjYAACl3oHYxAobncAcRl8-h0ALv0EWKQAGgAPREsBGgAPREMCGgAPRH4FVnicY2AAgo7HDgxg-jKUPuwAADIaBNKkABoAD0RLARoAD0REAhoAD0R-BVN4nGNgAAMHCPVhP5S2BwAWjgMf.zcLVrIUTBi_3OnQg",
+      "tolerance": {
+        "abs": 0.0,
+        "rel": 0.0
+      },
+      "decoded": {
+        "default_array_length": 3,
+        "id": null,
+        "mz": [
+          500.25,
+          750.4,
+          1001.5
+        ],
+        "intensity": [
+          40000.0,
+          20000.0,
+          10000.0
+        ],
+        "charge": [
+          2.0,
+          -1.0,
+          1.0
+        ],
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "zcLVrIUTBi_3OnQg",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "negative_intensity_fallback",
+      "description": "baseline-subtracted intensities with negative values; lossy encode falls back to lossless zlib for the intensity array and round-trips exactly",
+      "mode": "lossy",
+      "token": "spectrl2.ogADBoKkABoAD0RLARoAD0RCAhoAD0z6BVd4nHP4kcUAAg3TZjAw6BoyNgAAKSgEMKQAGgAPREsBGgAPREMCGgAPRH4FV3icY2AAgQf7wVTHYQcwzcBxAAAtDQPz.YUfDznE8ywrsjQL5",
+      "tolerance": {
+        "abs": 1e-06,
+        "rel": 1e-06
+      },
+      "decoded": {
+        "default_array_length": 3,
+        "id": null,
+        "mz": [
+          100.0,
+          200.0,
+          300.0
+        ],
+        "intensity": [
+          -0.5,
+          10000.0,
+          -3.0
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "YUfDznE8ywrsjQL5",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "negative_intensity_fallback__lossless",
+      "description": "baseline-subtracted intensities with negative values; lossy encode falls back to lossless zlib for the intensity array and round-trips exactly (lossless)",
+      "mode": "lossless",
+      "token": "spectrl2.ogADBoKkABoAD0RLARoAD0RCAhoAD0R-BVZ4nGNgAIFIBzDFkAmhDxQ5AAAUWAK1pAAaAA9ESwEaAA9EQwIaAA9EfgVXeJxjYACBB_vBVMdhBzDNwHEAAC0NA_M.AU0iilHsT2Nc9BAT",
+      "tolerance": {
+        "abs": 0.0,
+        "rel": 0.0
+      },
+      "decoded": {
+        "default_array_length": 3,
+        "id": null,
+        "mz": [
+          100.0,
+          200.0,
+          300.0
+        ],
+        "intensity": [
+          -0.5,
+          10000.0,
+          -3.0
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "AU0iilHsT2Nc9BAT",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "scan_list_with_window",
+      "description": "scan list with scan-start-time (minute unit) and a scan window m/z range",
+      "mode": "lossy",
+      "token": "spectrl2.pAACAqEaAA9EPwEDoWFzgaIAoRoAD0JQgvtALq4UeuFHrhgfAYGiGgAPRDSC-WfQgmJNUxoAD0JoGgAPRDWC-VZAgmJNUxoAD0JoBoKkABoAD0RLARoAD0RCAhoAD0z6BVV4nHP4kcUAAgIhhowKK5KYAB-ZA2WkABoAD0RLARoAD0RDAhoAD0z8BVJ4nHNYo8AAAuozdswCABAeAx4._mfpc-5h_Zkz7EEf",
+      "tolerance": {
+        "abs": 1e-06,
+        "rel": 1e-06
+      },
+      "decoded": {
+        "default_array_length": 2,
+        "id": null,
+        "mz": [
+          200.1,
+          400.2
+        ],
+        "intensity": [
+          49996.19696916968,
+          60006.343310410826
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [
+          {
+            "accession": "MS:1000511",
+            "value": 1,
+            "unit_accession": null
+          }
+        ],
+        "scans": [
+          {
+            "params": [
+              {
+                "accession": "MS:1000016",
+                "value": 15.34,
+                "unit_accession": "UO:0000031"
+              }
+            ],
+            "windows": [
+              {
+                "params": [
+                  {
+                    "accession": "MS:1000500",
+                    "value": 2000.0,
+                    "unit_accession": "MS:1000040"
+                  },
+                  {
+                    "accession": "MS:1000501",
+                    "value": 100.0,
+                    "unit_accession": "MS:1000040"
+                  }
+                ]
+              }
+            ],
+            "user_params": []
+          }
+        ],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "_mfpc-5h_Zkz7EEf",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "scan_list_with_window__lossless",
+      "description": "scan list with scan-start-time (minute unit) and a scan window m/z range (lossless)",
+      "mode": "lossless",
+      "token": "spectrl2.pAACAqEaAA9EPwEDoWFzgaIAoRoAD0JQgvtALq4UeuFHrhgfAYGiGgAPRDSC-WfQgmJNUxoAD0JoGgAPRDWC-VZAgmJNUxoAD0JoBoKkABoAD0RLARoAD0RCAhoAD0R-BVN4nDM2BgLmTAdjMF3pAAAbsgNnpAAaAA9ESwEaAA9EQwIaAA9EfgVUeJxjYACCrBcOIIrB560DABLsAww.7iXFvk0UaTa_yRYN",
+      "tolerance": {
+        "abs": 0.0,
+        "rel": 0.0
+      },
+      "decoded": {
+        "default_array_length": 2,
+        "id": null,
+        "mz": [
+          200.1,
+          400.2
+        ],
+        "intensity": [
+          50000.0,
+          60000.0
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [
+          {
+            "accession": "MS:1000511",
+            "value": 1,
+            "unit_accession": null
+          }
+        ],
+        "scans": [
+          {
+            "params": [
+              {
+                "accession": "MS:1000016",
+                "value": 15.34,
+                "unit_accession": "UO:0000031"
+              }
+            ],
+            "windows": [
+              {
+                "params": [
+                  {
+                    "accession": "MS:1000500",
+                    "value": 2000.0,
+                    "unit_accession": "MS:1000040"
+                  },
+                  {
+                    "accession": "MS:1000501",
+                    "value": 100.0,
+                    "unit_accession": "MS:1000040"
+                  }
+                ]
+              }
+            ],
+            "user_params": []
+          }
+        ],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "7iXFvk0UaTa_yRYN",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "precursor_full",
+      "description": "precursor with isolation window, selected ion (m/z, charge), and HCD activation",
+      "mode": "lossy",
+      "token": "spectrl2.pQADAqEaAA9EPwIEgaMAoxoAD0V7-0B70euFHrhSGgAPRXz5OgAaAA9Fffk6AAGBohoAD0JpAhoAD0Uo-0B70euFHrhSAqIaAA9CbYL5TsAZAQoaAA9D5vYFgaEAoRoAD0V7-0B70euFHrhSBoKkABoAD0RLARoAD0RCAhoAD0z6BVgZeJxz-JHFAAIV_44wGLzqZNyxNg8AQLIHVKQAGgAPREsBGgAPREMCGgAPTPwFVHicc1ijwAACPyY8nuPaDQAc3wTk.Qt6hfZuGBb98SeA7",
+      "tolerance": {
+        "abs": 1e-06,
+        "rel": 1e-06
+      },
+      "decoded": {
+        "default_array_length": 3,
+        "id": null,
+        "mz": [
+          129.102,
+          258.156,
+          386.18
+        ],
+        "intensity": [
+          29997.08690833916,
+          70008.68642014668,
+          20001.471324173166
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [
+          {
+            "accession": "MS:1000511",
+            "value": 2,
+            "unit_accession": null
+          }
+        ],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [
+          {
+            "isolation_window": {
+              "params": [
+                {
+                  "accession": "MS:1000827",
+                  "value": 445.12,
+                  "unit_accession": null
+                },
+                {
+                  "accession": "MS:1000828",
+                  "value": 0.75,
+                  "unit_accession": null
+                },
+                {
+                  "accession": "MS:1000829",
+                  "value": 0.75,
+                  "unit_accession": null
+                }
+              ]
+            },
+            "selected_ions": [
+              {
+                "params": [
+                  {
+                    "accession": "MS:1000041",
+                    "value": 2,
+                    "unit_accession": null
+                  },
+                  {
+                    "accession": "MS:1000744",
+                    "value": 445.12,
+                    "unit_accession": null
+                  }
+                ]
+              }
+            ],
+            "activation": {
+              "params": [
+                {
+                  "accession": "MS:1000045",
+                  "value": 27.0,
+                  "unit_accession": "UO:0000266"
+                },
+                {
+                  "accession": "MS:1000422",
+                  "value": null,
+                  "unit_accession": null
+                }
+              ]
+            }
+          }
+        ],
+        "products": [
+          {
+            "isolation_window": {
+              "params": [
+                {
+                  "accession": "MS:1000827",
+                  "value": 445.12,
+                  "unit_accession": null
+                }
+              ]
+            }
+          }
+        ],
+        "interp": null,
+        "user_params": [],
+        "hash": "Qt6hfZuGBb98SeA7",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "precursor_full__lossless",
+      "description": "precursor with isolation window, selected ion (m/z, charge), and HCD activation (lossless)",
+      "mode": "lossless",
+      "token": "spectrl2.pQADAqEaAA9EPwIEgaMAoxoAD0V7-0B70euFHrhSGgAPRXz5OgAaAA9Fffk6AAGBohoAD0JpAhoAD0Uo-0B70euFHrhSAqIaAA9CbYL5TsAZAQoaAA9D5vYFgaEAoRoAD0V7-0B70euFHrhSBoKkABoAD0RLARoAD0RCAhoAD0R-BVggeJxTZWuc6qyc4HBR6fbPOqUCh2qRde4PlSocAHLeCZ6kABoAD0RLARoAD0RDAhoAD0R-BVgYeJxjYAACn7sOIIpB_COE7rjsAAApqwRN.2LaaHRhc5wpl-zBo",
+      "tolerance": {
+        "abs": 0.0,
+        "rel": 0.0
+      },
+      "decoded": {
+        "default_array_length": 3,
+        "id": null,
+        "mz": [
+          129.102,
+          258.156,
+          386.18
+        ],
+        "intensity": [
+          30000.0,
+          70000.0,
+          20000.0
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [
+          {
+            "accession": "MS:1000511",
+            "value": 2,
+            "unit_accession": null
+          }
+        ],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [
+          {
+            "isolation_window": {
+              "params": [
+                {
+                  "accession": "MS:1000827",
+                  "value": 445.12,
+                  "unit_accession": null
+                },
+                {
+                  "accession": "MS:1000828",
+                  "value": 0.75,
+                  "unit_accession": null
+                },
+                {
+                  "accession": "MS:1000829",
+                  "value": 0.75,
+                  "unit_accession": null
+                }
+              ]
+            },
+            "selected_ions": [
+              {
+                "params": [
+                  {
+                    "accession": "MS:1000041",
+                    "value": 2,
+                    "unit_accession": null
+                  },
+                  {
+                    "accession": "MS:1000744",
+                    "value": 445.12,
+                    "unit_accession": null
+                  }
+                ]
+              }
+            ],
+            "activation": {
+              "params": [
+                {
+                  "accession": "MS:1000045",
+                  "value": 27.0,
+                  "unit_accession": "UO:0000266"
+                },
+                {
+                  "accession": "MS:1000422",
+                  "value": null,
+                  "unit_accession": null
+                }
+              ]
+            }
+          }
+        ],
+        "products": [
+          {
+            "isolation_window": {
+              "params": [
+                {
+                  "accession": "MS:1000827",
+                  "value": 445.12,
+                  "unit_accession": null
+                }
+              ]
+            }
+          }
+        ],
+        "interp": null,
+        "user_params": [],
+        "hash": "2LaaHRhc5wpl-zBo",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "with_proforma",
+      "description": "spectrum carrying a ProForma 2.0 peptidoform interpretation string",
+      "mode": "lossy",
+      "token": "spectrl2.owADBoKkABoAD0RLARoAD0RCAhoAD0z6BVgaeJxz-JHFAAIsVQ8YeBKXMq5IW_4AADoIBqmkABoAD0RLARoAD0RDAhoAD0z8BVR4nHNYo8AAAs8Xqs9w7QYAGdIEJAdxRUxWSVNbUGhvc3Bob11LLzI.5Vqx_gFZWICNSd7b",
+      "tolerance": {
+        "abs": 1e-06,
+        "rel": 1e-06
+      },
+      "decoded": {
+        "default_array_length": 3,
+        "id": null,
+        "mz": [
+          147.113,
+          276.155,
+          389.239
+        ],
+        "intensity": [
+          100012.00990474736,
+          49996.19696916968,
+          20001.471324173166
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": "ELVIS[Phospho]K/2",
+        "user_params": [],
+        "hash": "5Vqx_gFZWICNSd7b",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "with_proforma__lossless",
+      "description": "spectrum carrying a ProForma 2.0 peptidoform interpretation string (lossless)",
+      "mode": "lossless",
+      "token": "spectrl2.owADBoKkABoAD0RLARoAD0RCAhoAD0R-BVgheJwL49PdNDc5yUFknfvDKqdCh-e_V368FFzhAACAzQuWpAAaAA9ESwEaAA9EQwIaAA9EfgVXeJxjYACCrB8ODGD6BYTuuOwAADECBNAHcUVMVklTW1Bob3NwaG9dSy8y.O8aHe-7SYQ9TQO6j",
+      "tolerance": {
+        "abs": 0.0,
+        "rel": 0.0
+      },
+      "decoded": {
+        "default_array_length": 3,
+        "id": null,
+        "mz": [
+          147.113,
+          276.155,
+          389.239
+        ],
+        "intensity": [
+          100000.0,
+          50000.0,
+          20000.0
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": "ELVIS[Phospho]K/2",
+        "user_params": [],
+        "hash": "O8aHe-7SYQ9TQO6j",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "ion_mobility",
+      "description": "spectrum with a per-peak ion-mobility array",
+      "mode": "lossy",
+      "token": "spectrl2.ogADBoOkABoAD0RLARoAD0RCAhoAD0z6BVd4nHP4kcUAAhNenWRUuDqZuQEAMh8F8qQAGgAPREsBGgAPREMCGgAPTPwFVHicc1ijwAACLFN_THDtBgAXcAP-pAAaAA9ESwEaAA9OAAIaAA9M-gVYGHicc_iRxQACAQ6MDBXJjAwezQIAKtMD6w.hcVrC8GyHs8t2ePH",
+      "tolerance": {
+        "abs": 1e-06,
+        "rel": 1e-06
+      },
+      "decoded": {
+        "default_array_length": 3,
+        "id": null,
+        "mz": [
+          300.1,
+          600.2,
+          900.3
+        ],
+        "intensity": [
+          40000.27736321897,
+          29997.08690833916,
+          20001.471324173166
+        ],
+        "charge": null,
+        "ion_mobility": [
+          0.82,
+          0.91,
+          1.05
+        ],
+        "ion_mobility_type": "MS:1003008",
+        "extra_arrays": {},
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "hcVrC8GyHs8t2ePH",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "ion_mobility__lossless",
+      "description": "spectrum with a per-peak ion-mobility array (lossless)",
+      "mode": "lossless",
+      "token": "spectrl2.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJybNRMIDhY5zALTTQ5pIKDU4wAAo7wL36QAGgAPREsBGgAPREMCGgAPRH4FWBh4nGNgAIKOxw4gisHnLoTuuOwAADAKBLCkABoAD0RLARoAD04AAhoAD0R-BVgeeJyz5bq-uMD2lb186-vAHXJv7c-eAYEP9gCVAQ1y.mFcOT3UeZs-L3HJk",
+      "tolerance": {
+        "abs": 0.0,
+        "rel": 0.0
+      },
+      "decoded": {
+        "default_array_length": 3,
+        "id": null,
+        "mz": [
+          300.1,
+          600.2,
+          900.3
+        ],
+        "intensity": [
+          40000.0,
+          30000.0,
+          20000.0
+        ],
+        "charge": null,
+        "ion_mobility": [
+          0.82,
+          0.91,
+          1.05
+        ],
+        "ion_mobility_type": "MS:1003008",
+        "extra_arrays": {},
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "mFcOT3UeZs-L3HJk",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "string_value_and_non_uo_unit",
+      "description": "a string-valued spectrum param plus a value carrying an MS-ontology (non-UO) unit",
+      "mode": "lossy",
+      "token": "spectrl2.owACAqMaAA9EOYL6R-pgAIJiTVMaAA9CwxoAD0Q_ARoAD0RAdEZUTVMgKyBwIEVTSSBGdWxsIG1zBoKkABoAD0RLARoAD0RCAhoAD0z6BVZ4nHP4kcUAAg37djNEvNjOBAArgAWVpAAaAA9ESwEaAA9EQwIaAA9M_AVReJxzWKPAAALZC9oaARDJAx8.jbXbNPM6-4kiQi8Z",
+      "tolerance": {
+        "abs": 1e-06,
+        "rel": 1e-06
+      },
+      "decoded": {
+        "default_array_length": 2,
+        "id": null,
+        "mz": [
+          123.04,
+          456.07
+        ],
+        "intensity": [
+          89993.15475170835,
+          10001.152067330191
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [
+          {
+            "accession": "MS:1000505",
+            "value": 120000.0,
+            "unit_accession": "MS:1000131"
+          },
+          {
+            "accession": "MS:1000511",
+            "value": 1,
+            "unit_accession": null
+          },
+          {
+            "accession": "MS:1000512",
+            "value": "FTMS + p ESI Full ms",
+            "unit_accession": null
+          }
+        ],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "jbXbNPM6-4kiQi8Z",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "string_value_and_non_uo_unit__lossless",
+      "description": "a string-valued spectrum param plus a value carrying an MS-ontology (non-UO) unit (lossless)",
+      "mode": "lossless",
+      "token": "spectrl2.owACAqMaAA9EOYL6R-pgAIJiTVMaAA9CwxoAD0Q_ARoAD0RAdEZUTVMgKyBwIEVTSSBGdWxsIG1zBoKkABoAD0RLARoAD0RCAhoAD0R-BVgYeJw7_FUjpv9QnEPr68Adco01DgBJswgApAAaAA9ESwEaAA9EQwIaAA9EfgVUeJxjYACCn18dQBRDx2EHABnzA7o.VrgXNFZhu0npQeSA",
+      "tolerance": {
+        "abs": 0.0,
+        "rel": 0.0
+      },
+      "decoded": {
+        "default_array_length": 2,
+        "id": null,
+        "mz": [
+          123.04,
+          456.07
+        ],
+        "intensity": [
+          90000.0,
+          10000.0
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [
+          {
+            "accession": "MS:1000505",
+            "value": 120000.0,
+            "unit_accession": "MS:1000131"
+          },
+          {
+            "accession": "MS:1000511",
+            "value": 1,
+            "unit_accession": null
+          },
+          {
+            "accession": "MS:1000512",
+            "value": "FTMS + p ESI Full ms",
+            "unit_accession": null
+          }
+        ],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "VrgXNFZhu0npQeSA",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "extra_arrays",
+      "description": "auxiliary per-peak arrays: signal-to-noise (named CV, float64), a non-standard float32 array, and a non-standard int32 array",
+      "mode": "lossy",
+      "token": "spectrl2.ogAEBoWkABoAD0RLARoAD0RCAhoAD0z6BVgZeJxz-JHFAAIeX58wTHh1ktGjWQIAQU4G66QAGgAPREsBGgAPREMCGgAPTPwFVnicc1ijwAACh-epz_gxoa0RACVNBbykABoAD0RLARoAD0RFAhoAD0R-BVgYeJxjYACBOAcwxRACoRvcoHwNBwAlIAKhpQAaAA9ESQEaAA9FUgIaAA9EfgRpaXNvX3Njb3JlBVgYeJzzeFhlf_hrhv2SAlv7s2d47AFGWAe2pQAaAA9ERwEaAA9FUgIaAA9EfgRqcGVha19mbGFncwVSeJxjZmBgYGSAACYgBgAAVAAH.cCp1fIITWUdDMfnE",
+      "tolerance": {
+        "abs": 1e-06,
+        "rel": 1e-06
+      },
+      "decoded": {
+        "default_array_length": 4,
+        "id": null,
+        "mz": [
+          150.05,
+          300.1,
+          450.2,
+          600.3
+        ],
+        "intensity": [
+          79994.22482781614,
+          49996.19696916968,
+          29997.08690833916,
+          10001.152067330191
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {
+          "MS:1000517": {
+            "dtype": "float64",
+            "values": [
+              120.0,
+              80.0,
+              45.0,
+              12.0
+            ]
+          },
+          "iso_score": {
+            "dtype": "float32",
+            "values": [
+              0.9800000190734863,
+              0.9100000262260437,
+              0.7400000095367432,
+              0.550000011920929
+            ]
+          },
+          "peak_flags": {
+            "dtype": "int32",
+            "values": [
+              3,
+              1,
+              0,
+              2
+            ]
+          }
+        },
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "cCp1fIITWUdDMfnE",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "extra_arrays__lossless",
+      "description": "auxiliary per-peak arrays: signal-to-noise (named CV, float64), a non-standard float32 array, and a non-standard int32 array (lossless)",
+      "mode": "lossless",
+      "token": "spectrl2.ogAEBoWkABoAD0RLARoAD0RCAhoAD0R-BVgeeJybNRMIDiY5zALTRQ7GIKBc45AGAoeaHAAA-g4zpAAaAA9ESwEaAA9EQwIaAA9EfgVYHHicY2AAgo7PDiCKIesFhPa5C6E7DjsAAFtYBkKkABoAD0RLARoAD0RFAhoAD0R-BVgYeJxjYACBOAcwxRACoRvcoHwNBwAlIAKhpQAaAA9ESQEaAA9FUgIaAA9EfgRpaXNvX3Njb3JlBVgYeJzzeFhlf_hrhv2SAlv7s2d47AFGWAe2pQAaAA9ERwEaAA9FUgIaAA9EfgRqcGVha19mbGFncwVSeJxjZmBgYGSAACYgBgAAVAAH.5VTLlGPyUNQBTE6G",
+      "tolerance": {
+        "abs": 0.0,
+        "rel": 0.0
+      },
+      "decoded": {
+        "default_array_length": 4,
+        "id": null,
+        "mz": [
+          150.05,
+          300.1,
+          450.2,
+          600.3
+        ],
+        "intensity": [
+          80000.0,
+          50000.0,
+          30000.0,
+          10000.0
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {
+          "MS:1000517": {
+            "dtype": "float64",
+            "values": [
+              120.0,
+              80.0,
+              45.0,
+              12.0
+            ]
+          },
+          "iso_score": {
+            "dtype": "float32",
+            "values": [
+              0.9800000190734863,
+              0.9100000262260437,
+              0.7400000095367432,
+              0.550000011920929
+            ]
+          },
+          "peak_flags": {
+            "dtype": "int32",
+            "values": [
+              3,
+              1,
+              0,
+              2
+            ]
+          }
+        },
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "5VTLlGPyUNQBTE6G",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "user_params",
+      "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level Thermo trailer extra",
+      "mode": "lossy",
+      "token": "spectrl2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvlNIBgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpAAaAA9ESwEaAA9EQgIaAA9M-gVVeJxz-JHFAAICIYaMCiuSmAAfmQNlpAAaAA9ESwEaAA9EQwIaAA9M_AVSeJxzWKPAAALqM3bMAgAQHgMeCIKjYW5sTWFzY290IHNjb3JlYXRpeHNkOmZsb2F0YXb7QEVZmZmZmZqiYW5vcmVhbmFseXNpcyBub3RlYXZ2cmVydW4gd2l0aCBzZW1pdHJ5cHRpYw.VweqVvaE0WZzJiY2",
+      "tolerance": {
+        "abs": 1e-06,
+        "rel": 1e-06
+      },
+      "decoded": {
+        "default_array_length": 2,
+        "id": null,
+        "mz": [
+          200.1,
+          400.2
+        ],
+        "intensity": [
+          49996.19696916968,
+          60006.343310410826
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [
+          {
+            "accession": "MS:1000511",
+            "value": 2,
+            "unit_accession": null
+          }
+        ],
+        "scans": [
+          {
+            "params": [
+              {
+                "accession": "MS:1000016",
+                "value": 20.5,
+                "unit_accession": "UO:0000031"
+              }
+            ],
+            "windows": [],
+            "user_params": [
+              {
+                "name": "[Thermo Trailer Extra]Monoisotopic M/Z:",
+                "value": "445.1203",
+                "type": "xsd:string",
+                "unit_accession": null
+              }
+            ]
+          }
+        ],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [
+          {
+            "name": "Mascot score",
+            "value": 42.7,
+            "type": "xsd:float",
+            "unit_accession": null
+          },
+          {
+            "name": "reanalysis note",
+            "value": "rerun with semitryptic",
+            "type": null,
+            "unit_accession": null
+          }
+        ],
+        "hash": "VweqVvaE0WZzJiY2",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "user_params__lossless",
+      "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level Thermo trailer extra (lossless)",
+      "mode": "lossless",
+      "token": "spectrl2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvlNIBgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpAAaAA9ESwEaAA9EQgIaAA9EfgVTeJwzNgYC5kwHYzBd6QAAG7IDZ6QAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgqwXDiCKweetAwAS7AMMCIKjYW5sTWFzY290IHNjb3JlYXRpeHNkOmZsb2F0YXb7QEVZmZmZmZqiYW5vcmVhbmFseXNpcyBub3RlYXZ2cmVydW4gd2l0aCBzZW1pdHJ5cHRpYw.JVkFfP_znydKwmJn",
+      "tolerance": {
+        "abs": 0.0,
+        "rel": 0.0
+      },
+      "decoded": {
+        "default_array_length": 2,
+        "id": null,
+        "mz": [
+          200.1,
+          400.2
+        ],
+        "intensity": [
+          50000.0,
+          60000.0
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [
+          {
+            "accession": "MS:1000511",
+            "value": 2,
+            "unit_accession": null
+          }
+        ],
+        "scans": [
+          {
+            "params": [
+              {
+                "accession": "MS:1000016",
+                "value": 20.5,
+                "unit_accession": "UO:0000031"
+              }
+            ],
+            "windows": [],
+            "user_params": [
+              {
+                "name": "[Thermo Trailer Extra]Monoisotopic M/Z:",
+                "value": "445.1203",
+                "type": "xsd:string",
+                "unit_accession": null
+              }
+            ]
+          }
+        ],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [
+          {
+            "name": "Mascot score",
+            "value": 42.7,
+            "type": "xsd:float",
+            "unit_accession": null
+          },
+          {
+            "name": "reanalysis note",
+            "value": "rerun with semitryptic",
+            "type": null,
+            "unit_accession": null
+          }
+        ],
+        "hash": "JVkFfP_znydKwmJn",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "non_ms_ontology_param_key",
+      "description": "a UO-ontology spectrum parameter, whose map key is the full accession string",
+      "mode": "lossy",
+      "token": "spectrl2.owACAqIaAA9EPwFqVU86MDAwMDAxMPlDAAaCpAAaAA9ESwEaAA9EQgIaAA9M-gVWeJxz-JHFAAIN-3YzRLzYzgQAK4AFlaQAGgAPREsBGgAPREMCGgAPTPwFUXicc1ijwAAC2QvaGgEQyQMf._9Q4l5QUKIZ1BnTH",
+      "tolerance": {
+        "abs": 1e-06,
+        "rel": 1e-06
+      },
+      "decoded": {
+        "default_array_length": 2,
+        "id": null,
+        "mz": [
+          123.04,
+          456.07
+        ],
+        "intensity": [
+          89993.15475170835,
+          10001.152067330191
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [
+          {
+            "accession": "MS:1000511",
+            "value": 1,
+            "unit_accession": null
+          },
+          {
+            "accession": "UO:0000010",
+            "value": 3.5,
+            "unit_accession": null
+          }
+        ],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "_9Q4l5QUKIZ1BnTH",
+        "format_version": 2
+      }
+    },
+    {
+      "name": "non_ms_ontology_param_key__lossless",
+      "description": "a UO-ontology spectrum parameter, whose map key is the full accession string (lossless)",
+      "mode": "lossless",
+      "token": "spectrl2.owACAqIaAA9EPwFqVU86MDAwMDAxMPlDAAaCpAAaAA9ESwEaAA9EQgIaAA9EfgVYGHicO_xVI6b_UJxD6-vAHXKNNQ4ASbMIAKQAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgp9fHUAUQ8dhBwAZ8wO6.9gmE1ND6XT0CjT71",
+      "tolerance": {
+        "abs": 0.0,
+        "rel": 0.0
+      },
+      "decoded": {
+        "default_array_length": 2,
+        "id": null,
+        "mz": [
+          123.04,
+          456.07
+        ],
+        "intensity": [
+          90000.0,
+          10000.0
+        ],
+        "charge": null,
+        "ion_mobility": null,
+        "ion_mobility_type": null,
+        "extra_arrays": {},
+        "params": [
+          {
+            "accession": "MS:1000511",
+            "value": 1,
+            "unit_accession": null
+          },
+          {
+            "accession": "UO:0000010",
+            "value": 3.5,
+            "unit_accession": null
+          }
+        ],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "hash": "9gmE1ND6XT0CjT71",
+        "format_version": 2
+      }
+    }
+  ]
+}

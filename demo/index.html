@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>spectrl — inline spectrum demo</title>
+    <style>
+      :root {
+        --bg: #0f1419;
+        --panel: #171c24;
+        --panel-2: #1e242e;
+        --border: #2a323d;
+        --fg: #e6edf3;
+        --muted: #8b97a6;
+        --accent: #4cc2ff;
+        --accent-2: #7ee787;
+        --peak: #4cc2ff;
+        --peak-top: #7ee787;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--fg);
+      }
+      header {
+        padding: 24px 24px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      h1 { margin: 0; font-size: 22px; letter-spacing: -0.01em; }
+      h1 .v { color: var(--muted); font-weight: 400; font-size: 14px; }
+      .tag { color: var(--muted); margin-top: 4px; max-width: 70ch; }
+      .badge {
+        display: inline-block; margin-top: 8px; padding: 2px 8px; border-radius: 999px;
+        background: rgba(126, 231, 135, 0.12); color: var(--accent-2);
+        font-size: 12px; border: 1px solid rgba(126, 231, 135, 0.3);
+      }
+      main { padding: 20px 24px 60px; display: grid; gap: 20px; max-width: 1100px; }
+      .row { display: grid; gap: 20px; grid-template-columns: 1fr; }
+      @media (min-width: 880px) { .row.two { grid-template-columns: 1fr 320px; } }
+      .panel {
+        background: var(--panel); border: 1px solid var(--border);
+        border-radius: 10px; padding: 16px;
+      }
+      .panel h2 { margin: 0 0 12px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+      .examples { display: flex; flex-wrap: wrap; gap: 8px; }
+      button {
+        font: inherit; cursor: pointer; color: var(--fg);
+        background: var(--panel-2); border: 1px solid var(--border);
+        border-radius: 8px; padding: 8px 12px; transition: border-color .15s, background .15s;
+      }
+      button:hover { border-color: var(--accent); }
+      button.primary { background: rgba(76, 194, 255, 0.12); border-color: rgba(76, 194, 255, 0.4); color: var(--accent); }
+      label.opt { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); cursor: pointer; }
+      textarea {
+        width: 100%; min-height: 92px; resize: vertical;
+        font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+        color: var(--fg); background: var(--panel-2); border: 1px solid var(--border);
+        border-radius: 8px; padding: 10px; word-break: break-all;
+      }
+      .meta { color: var(--muted); margin-top: 6px; font-size: 12px; }
+      .meta b { color: var(--fg); font-weight: 600; }
+      .sharebar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+      .sharebar .grow { flex: 1; }
+      .sharebar button { padding: 6px 10px; }
+      #token { margin-top: 12px; }
+      #qr { margin-top: 12px; justify-items: start; }
+      #qr { display: grid; place-items: center; gap: 8px; }
+      #qr img { image-rendering: pixelated; border-radius: 6px; background: #fff; padding: 8px; max-width: 100%; }
+      .stats { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+      .stat { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+      .stat .label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+      .stat .value { font-size: 20px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
+      .stat .value.accent { color: var(--accent); }
+      .stat .value.good { color: var(--accent-2); }
+      .stat .sub { color: var(--muted); font-size: 11px; margin-top: 2px; }
+      .stat.wide { grid-column: 1 / -1; }
+      .bars { display: grid; gap: 4px; margin-top: 6px; }
+      .bar { display: grid; grid-template-columns: 88px 1fr 64px; align-items: center; gap: 8px; font-size: 12px; }
+      .bar .track { height: 12px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+      .bar .fill { height: 100%; border-radius: 4px; }
+      .bar .n { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+      table.kv { width: 100%; border-collapse: collapse; }
+      table.kv td { padding: 4px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+      table.kv td.k { color: var(--muted); white-space: nowrap; width: 1%; }
+      table.kv td.acc { color: var(--muted); font: 11px ui-monospace, monospace; }
+      .err { color: #ff7b72; white-space: pre-wrap; font: 12px ui-monospace, monospace; }
+      svg text { fill: var(--muted); font: 11px system-ui, sans-serif; }
+      .tooltip {
+        position: fixed; pointer-events: none; z-index: 10; display: none;
+        background: #000; border: 1px solid var(--accent); border-radius: 6px;
+        padding: 6px 8px; font: 12px ui-monospace, monospace; color: var(--fg);
+      }
+      footer { color: var(--muted); font-size: 12px; padding: 0 24px 32px; max-width: 1100px; }
+      a { color: var(--accent); }
+      code { font: 12px ui-monospace, monospace; background: var(--panel-2); padding: 1px 5px; border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>spectrl <span class="v">— inline spectrum demo</span></h1>
+      <div class="tag">
+        A complete mass spectrum — peaks, metadata, precursor — embedded in a single URL-safe token.
+        The spectrum <em>is</em> the link.
+      </div>
+      <div class="badge">● Decoded entirely in your browser — no server is contacted</div>
+    </header>
+
+    <main>
+      <div class="panel">
+        <div class="examples">
+          <button class="primary" data-example="ms2">Peptide MS² (b/y ions)</button>
+          <button data-example="ms1">Small-molecule MS¹ (isotopes)</button>
+          <button data-example="bigms2">Dense MS² (40 peaks)</button>
+          <button data-example="r100">Synthetic (100 peaks)</button>
+          <button data-example="r500">Synthetic (500 peaks)</button>
+          <label class="opt"><input type="checkbox" id="lossless" /> lossless (bit-exact)</label>
+        </div>
+
+        <div id="decodeErr" class="err"></div>
+        <div id="plot"></div>
+
+        <div class="sharebar">
+          <span class="meta" id="tokenMeta"></span>
+          <span class="grow"></span>
+          <button class="primary" id="copyLink" title="Copy the shareable URL (token in the # fragment)">Copy link</button>
+          <button id="copyToken" title="Copy the raw spectrl2 token">Copy token</button>
+          <button id="qrToggle" aria-expanded="false">Show QR</button>
+          <button id="pasteToggle" aria-expanded="false">Paste a token…</button>
+        </div>
+
+        <div id="qr" hidden></div>
+        <textarea id="token" hidden spellcheck="false" placeholder="Paste any spectrl2 token to decode it…"></textarea>
+      </div>
+
+      <div class="panel">
+        <h2>Encoding stats</h2>
+        <div class="stats" id="stats"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Decoded metadata</h2>
+        <table class="kv" id="metaTable"></table>
+      </div>
+    </main>
+
+    <footer>
+      Built on the spectrl JavaScript implementation — the same <code>spectrl2</code> format as the
+      Python package on PyPI. Tokens use PSI-MS CV accessions, MS-Numpress + zlib (as in mzML), and
+      ProForma 2.0. Open this page's URL on another device and the spectrum travels with it. See the
+      <a href="https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md">specification</a>.
+    </footer>
+
+    <div class="tooltip" id="tip"></div>
+    <script type="module" src="./dist/app.js"></script>
+  </body>
+</html>

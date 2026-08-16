@@ -1,0 +1,85 @@
+[project]
+name = "spectrl"
+version = "0.4.0"
+description = "Inline spectrum URL encoder: embeds a complete mass spectrum in a compact, URL-safe token."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+keywords = ["mass-spectrometry", "proteomics", "mzml", "proforma", "spectrum-sharing"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Chemistry",
+]
+dependencies = [
+    "numpy>=1.26.0",
+    "cbor2>=5.6.0",
+    "mzmlpy>=0.4.0",
+]
+authors = [
+    { name = "Patrick Garrett", email = "pgarrett@scripps.edu" }
+]
+
+[project.urls]
+Homepage = "https://github.com/pgarrett-scripps/spectrl"
+Repository = "https://github.com/pgarrett-scripps/spectrl"
+Issues = "https://github.com/pgarrett-scripps/spectrl/issues"
+Specification = "https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md"
+Changelog = "https://github.com/pgarrett-scripps/spectrl/blob/main/CHANGELOG.md"
+
+[project.optional-dependencies]
+proforma = ["pyteomics>=4.7"]
+# The C-extension numpress backend. Optional: the bundled pure-Python backend is
+# byte-identical and used automatically when pynumpress is not installed.
+speed = ["pynumpress>=0.0.4"]
+
+[project.scripts]
+spectrl = "spectrl.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/spectrl"]
+
+[tool.hatch.build.targets.sdist]
+# Keep the sdist to the Python package + metadata; the JS impl, demo, CI config,
+# and multi-MB mzML test data live in the repo, not the distribution.
+exclude = [
+    "tests/data",
+    "demo",
+    "js",
+    "paper",
+    ".github",
+    "uv.lock",
+]
+
+[tool.uv]
+package = true
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.3.0",
+    # C backend for the byte-identity tests (they importorskip when absent).
+    # pynumpress builds from sdist and only builds reliably on Linux.
+    "pynumpress>=0.0.4; platform_system == 'Linux'",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP"]

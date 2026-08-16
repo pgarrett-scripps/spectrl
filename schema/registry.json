@@ -1,0 +1,753 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/pgarrett-scripps/spectrl/schema/registry.json",
+  "title": "spectrl registry",
+  "description": "Machine-readable registry of all integer keys, CV accession tails, and codec identifiers used in the spectrl2 token format.",
+  "spectrl_version": 2,
+  "wire_constants": {
+    "hash_bytes": 12,
+    "max_blob_bytes": 67108864,
+    "max_token_bytes": 16777216,
+    "max_array_length": 4000000,
+    "max_cbor_depth": 32,
+    "max_cbor_items": 100000,
+    "default_numlin_fp": 100000,
+    "default_numslof_fp": 3600
+  },
+  "token_format": {
+    "magic": "spectrl2",
+    "description": "magic '.' base64url(CBOR document) ['.' integrity_hash]. The CBOR document is the header map (see header_keys) with each array's compressed blob embedded inline as a CBOR byte string in its descriptor (descriptor key 5). Encoded deterministically (RFC 8949 \u00a74.2). The format version is carried only in the magic; the token string is the interchange unit.",
+    "base64url": "RFC 4648 \u00a75: URL-safe alphabet, no padding ('=' stripped).",
+    "integrity_hash": "OPTIONAL third part: base64url(first 12 bytes of SHA-256 over the ASCII text of the first two parts, 'magic.payload'), 16 chars. Verified over the received text; consumers MUST reject a three-part token on mismatch.",
+    "parts": [
+      {
+        "index": 0,
+        "content": "magic string",
+        "example": "spectrl2"
+      },
+      {
+        "index": 1,
+        "content": "base64url(CBOR document); header map + inline array blobs"
+      },
+      {
+        "index": 2,
+        "content": "integrity hash over parts 0-1 (optional, 16 base64url chars)"
+      }
+    ]
+  },
+  "ontology_defaults": {
+    "param_accession": "MS",
+    "unit_accession": "UO",
+    "description": "CV param tails are integers from the MS: namespace by default; tail encoding requires an exactly-7-digit tail. Param keys from any other ontology (or with a non-7-digit tail) are the full accession string. Unit tails (values) are integers from the UO: namespace by default; other ontologies use [ontology_string, tail_int], or the full accession string when the tail is not 7 digits."
+  },
+  "cvparam_encoding": {
+    "description": "How a single cvParam is stored as a CBOR map entry.",
+    "forms": [
+      {
+        "form": "flag",
+        "key": "tail_int (MS: default)",
+        "value": "null",
+        "example": {
+          "1000130": null
+        },
+        "meaning": "Presence is the meaning (e.g. positive scan)."
+      },
+      {
+        "form": "valued",
+        "key": "tail_int",
+        "value": "number or string",
+        "example": {
+          "1000511": 2
+        },
+        "meaning": "Param with a scalar value (e.g. ms level = 2)."
+      },
+      {
+        "form": "valued_with_unit",
+        "key": "tail_int",
+        "value": "[value, unit_tail_int]  OR  [value, [ontology, unit_tail_int]]",
+        "example": {
+          "1000016": [
+            23.41,
+            31
+          ]
+        },
+        "meaning": "Param with value and unit (e.g. scan time 23.41 min, UO:0000031=31)."
+      },
+      {
+        "form": "non_ms_ontology",
+        "key": "full accession string",
+        "value": "same value rules as above",
+        "example": {
+          "UO:0000010": 3.5
+        },
+        "meaning": "Param from a non-MS ontology (or with a non-7-digit tail); the map key is the full accession string."
+      }
+    ]
+  },
+  "header_keys": {
+    "0": {
+      "name": "default_array_length",
+      "type": "int",
+      "required": true,
+      "description": "Number of peaks. Mirrors mzML @defaultArrayLength."
+    },
+    "1": {
+      "name": "id",
+      "type": "string",
+      "required": false,
+      "description": "Spectrum identifier string. Mirrors mzML @id (e.g. 'scan=42')."
+    },
+    "2": {
+      "name": "spectrum_params",
+      "type": "cvparam_map",
+      "required": false,
+      "description": "Spectrum-level CV parameters as a tail-keyed map. Includes ms level, polarity flag, centroid/profile flag, TIC, base peak m/z and intensity, lowest/highest observed m/z, etc."
+    },
+    "3": {
+      "name": "scan_list",
+      "type": "object",
+      "required": false,
+      "description": "Mirrors mzML scanList.",
+      "fields": {
+        "c": {
+          "name": "combination",
+          "type": "int (accession tail)",
+          "description": "Spectrum combination method tail (e.g. no combination, sum, mean)."
+        },
+        "s": {
+          "name": "scans",
+          "type": "array of scan objects",
+          "description": "Each scan: {0: cvparam_map, 1: [scan_window_cvparam_maps], 2: [user_params]}.",
+          "scan_fields": {
+            "0": "cvparam_map: scan params (start time, ion injection time, filter string, \u2026)",
+            "1": "array of cvparam_maps: one per scan window (lower/upper m/z limits)",
+            "2": "array of user_param maps: scan-level free-text params (optional)"
+          }
+        }
+      }
+    },
+    "4": {
+      "name": "precursor_list",
+      "type": "array of precursor objects",
+      "required": false,
+      "description": "Mirrors mzML precursorList.",
+      "precursor_fields": {
+        "0": "isolation_window: cvparam_map (target m/z, lower/upper offsets)",
+        "1": "selected_ions: array of cvparam_maps (m/z, charge, intensity, IM)",
+        "2": "activation: cvparam_map (method as flag + collision energy as value)"
+      }
+    },
+    "5": {
+      "name": "product_list",
+      "type": "array of product objects",
+      "required": false,
+      "description": "Mirrors mzML productList. Each product: {0: isolation_window cvparam_map}."
+    },
+    "6": {
+      "name": "binary_data_array_list",
+      "type": "array of array_descriptor objects",
+      "required": false,
+      "description": "One descriptor per binary array; each carries its blob inline (key 5). Optional like all keys except 0; absent means the spectrum carries no arrays.",
+      "descriptor_keys": {
+        "0": {
+          "name": "type",
+          "description": "int: data type accession tail (see data_types); float64/float32/int32 supported"
+        },
+        "1": {
+          "name": "array",
+          "description": "int: array type accession tail (see array_types); MS:1000786 = non-standard, see key 4"
+        },
+        "2": {
+          "name": "comp",
+          "description": "int: compression accession tail (see compression_codecs)"
+        },
+        "3": {
+          "name": "fp",
+          "description": "int: numpress fixed-point scale factor actually used by the blob, a whole number; linear/slof codecs only. Omitted when it is the codec default, so absent means that default."
+        },
+        "4": {
+          "name": "name",
+          "description": "str: free-text descriptor name; REQUIRED iff key 1 is MS:1000786 (non-standard array)"
+        },
+        "5": {
+          "name": "d",
+          "description": "bytes: the array's compressed blob, embedded inline as a CBOR byte string"
+        }
+      }
+    },
+    "7": {
+      "name": "interp",
+      "type": "string",
+      "required": false,
+      "description": "ProForma 2.0 peptide interpretation string. PSI-MOD terms as [MOD:00046], Unimod as [UNIMOD:21], bare mass deltas as [+79.966]."
+    },
+    "8": {
+      "name": "user_param_list",
+      "type": "array of user_param objects",
+      "required": false,
+      "description": "Spectrum-level free-text userParams (no CV accession). Each: {n: name, v?: value, t?: xsd-type, u?: unit-tail}. Scan-level userParams live under scan_fields key 2. Omitted entirely when empty."
+    }
+  },
+  "compression_codecs": {
+    "description": "Keyed by MS: accession tail integer. The 'pipeline' field describes encode order (decode is reversed).",
+    "codecs": {
+      "1002746": {
+        "accession": "MS:1002746",
+        "name": "MS-Numpress linear prediction + zlib",
+        "use_for": "m/z arrays (lossy default)",
+        "pipeline": [
+          "numpress_encode_linear(data, fp)",
+          "zlib_compress"
+        ],
+        "decode_pipeline": [
+          "zlib_decompress",
+          "numpress_decode_linear"
+        ],
+        "lossy": true,
+        "library_hint": "pynumpress.encode_linear / decode_linear"
+      },
+      "1002748": {
+        "accession": "MS:1002748",
+        "name": "MS-Numpress short logged float + zlib",
+        "use_for": "intensity arrays (lossy default)",
+        "pipeline": [
+          "numpress_encode_slof(data, fp)",
+          "zlib_compress"
+        ],
+        "decode_pipeline": [
+          "zlib_decompress",
+          "numpress_decode_slof"
+        ],
+        "lossy": true,
+        "library_hint": "pynumpress.encode_slof / decode_slof"
+      },
+      "1002747": {
+        "accession": "MS:1002747",
+        "name": "MS-Numpress positive integer + zlib",
+        "use_for": "charge arrays (lossy, rounds to nearest integer)",
+        "pipeline": [
+          "numpress_encode_pic(data)",
+          "zlib_compress"
+        ],
+        "decode_pipeline": [
+          "zlib_decompress",
+          "numpress_decode_pic"
+        ],
+        "lossy": true,
+        "library_hint": "pynumpress.encode_pic / decode_pic"
+      },
+      "1000574": {
+        "accession": "MS:1000574",
+        "name": "zlib",
+        "use_for": "all arrays when lossless=True, and always for auxiliary arrays; raw little-endian bytes of the declared type (float64/float32/int32) + zlib",
+        "pipeline": [
+          "to_little_endian_bytes(data, type)",
+          "zlib_compress"
+        ],
+        "decode_pipeline": [
+          "zlib_decompress",
+          "from_little_endian_bytes(type)"
+        ],
+        "lossy": false,
+        "library_hint": "zlib.compress / decompress"
+      }
+    }
+  },
+  "data_types": {
+    "description": "Binary data type accession tails. Used in array descriptor 'type' field. Only float64, float32, and int32 are permitted in spectrl2 tokens; other mzML data types (int64, ASCII string) are listed for completeness but MUST NOT appear.",
+    "types": {
+      "1000521": {
+        "accession": "MS:1000521",
+        "tail": 1000521,
+        "name": "FLOAT_32",
+        "description": "32-bit IEEE-754 little-endian float."
+      },
+      "1000523": {
+        "accession": "MS:1000523",
+        "tail": 1000523,
+        "name": "FLOAT_64",
+        "description": "64-bit IEEE-754 little-endian double. Default."
+      },
+      "1000519": {
+        "accession": "MS:1000519",
+        "tail": 1000519,
+        "name": "INT_32",
+        "description": "32-bit signed integer little-endian."
+      },
+      "1000522": {
+        "accession": "MS:1000522",
+        "tail": 1000522,
+        "name": "INT_64",
+        "description": "64-bit signed integer little-endian. NOT permitted in spectrl2."
+      },
+      "1001479": {
+        "accession": "MS:1001479",
+        "tail": 1001479,
+        "name": "ASCII_STRING"
+      }
+    }
+  },
+  "array_types": {
+    "description": "Array semantic type accession tails. Used in array descriptor 'array' field.",
+    "core": {
+      "1003007": {
+        "accession": "MS:1003007",
+        "tail": 1003007,
+        "name": "RAW_ION_MOBILITY"
+      },
+      "1002477": {
+        "accession": "MS:1002477",
+        "tail": 1002477,
+        "name": "MEAN_ION_MOBILITY_DRIFT_TIME"
+      },
+      "1003156": {
+        "accession": "MS:1003156",
+        "tail": 1003156,
+        "name": "DECONVOLUTED_ION_MOBILITY_DRIFT_TIME"
+      },
+      "1003006": {
+        "accession": "MS:1003006",
+        "tail": 1003006,
+        "name": "MEAN_INVERSE_REDUCED_ION_MOBILITY"
+      },
+      "1002816": {
+        "accession": "MS:1002816",
+        "tail": 1002816,
+        "name": "MEAN_ION_MOBILITY"
+      },
+      "1003155": {
+        "accession": "MS:1003155",
+        "tail": 1003155,
+        "name": "DECONVOLUTED_INVERSE_REDUCED_ION_MOBILITY"
+      },
+      "1003153": {
+        "accession": "MS:1003153",
+        "tail": 1003153,
+        "name": "RAW_ION_MOBILITY_DRIFT_TIME"
+      },
+      "4000210": {
+        "accession": "MS:4000210",
+        "tail": 4000210,
+        "name": "VACUUM_PUMP_PRESSURE"
+      },
+      "1003008": {
+        "accession": "MS:1003008",
+        "tail": 1003008,
+        "name": "RAW_INVERSE_REDUCED_ION_MOBILITY"
+      },
+      "1003154": {
+        "accession": "MS:1003154",
+        "tail": 1003154,
+        "name": "DECONVOLUTED_ION_MOBILITY"
+      },
+      "1000595": {
+        "accession": "MS:1000595",
+        "tail": 1000595,
+        "name": "TIME"
+      },
+      "1002478": {
+        "accession": "MS:1002478",
+        "tail": 1002478,
+        "name": "MEAN_CHARGE"
+      },
+      "1000514": {
+        "accession": "MS:1000514",
+        "tail": 1000514,
+        "name": "MZ"
+      },
+      "1002744": {
+        "accession": "MS:1002744",
+        "tail": 1002744,
+        "name": "SAMPLED_NOISE_INTENSITY"
+      },
+      "1000820": {
+        "accession": "MS:1000820",
+        "tail": 1000820,
+        "name": "FLOW_RATE"
+      },
+      "1000516": {
+        "accession": "MS:1000516",
+        "tail": 1000516,
+        "name": "CHARGE"
+      },
+      "1002745": {
+        "accession": "MS:1002745",
+        "tail": 1002745,
+        "name": "SAMPLED_NOISE_BASELINE"
+      },
+      "1002893": {
+        "accession": "MS:1002893",
+        "tail": 1002893,
+        "name": "ION_MOBILITY"
+      },
+      "1002530": {
+        "accession": "MS:1002530",
+        "tail": 1002530,
+        "name": "BASELINE"
+      },
+      "1002529": {
+        "accession": "MS:1002529",
+        "tail": 1002529,
+        "name": "RESOLUTION"
+      },
+      "1000821": {
+        "accession": "MS:1000821",
+        "tail": 1000821,
+        "name": "PRESSURE"
+      },
+      "1000515": {
+        "accession": "MS:1000515",
+        "tail": 1000515,
+        "name": "INTENSITY"
+      },
+      "1002716": {
+        "accession": "MS:1002716",
+        "tail": 1002716,
+        "name": "MEASURED_ELEMENT"
+      },
+      "1003158": {
+        "accession": "MS:1003158",
+        "tail": 1003158,
+        "name": "SCANNING_QUADRUPOLE_POSITION_UPPER_BOUND_MZ"
+      },
+      "1000786": {
+        "accession": "MS:1000786",
+        "tail": 1000786,
+        "name": "NON_STANDARD_DATA"
+      },
+      "1003157": {
+        "accession": "MS:1003157",
+        "tail": 1003157,
+        "name": "SCANNING_QUADRUPOLE_POSITION_LOWER_BOUND_MZ"
+      },
+      "1002742": {
+        "accession": "MS:1002742",
+        "tail": 1002742,
+        "name": "NOISE"
+      },
+      "1000617": {
+        "accession": "MS:1000617",
+        "tail": 1000617,
+        "name": "WAVELENGTH"
+      },
+      "1000517": {
+        "accession": "MS:1000517",
+        "tail": 1000517,
+        "name": "SIGNAL_TO_NOISE"
+      },
+      "1003143": {
+        "accession": "MS:1003143",
+        "tail": 1003143,
+        "name": "MASS"
+      },
+      "1000822": {
+        "accession": "MS:1000822",
+        "tail": 1000822,
+        "name": "TEMPERATURE"
+      },
+      "1002743": {
+        "accession": "MS:1002743",
+        "tail": 1002743,
+        "name": "SAMPLED_NOISE_MZ"
+      }
+    }
+  },
+  "well_known_cv_params": {
+    "description": "Commonly used CV params in spectrl tokens. All are MS: ontology. This list is not exhaustive; any valid PSI-MS cvParam may appear.",
+    "spectrum_level": {
+      "1000127": {
+        "accession": "MS:1000127",
+        "name": "centroid spectrum",
+        "form": "flag"
+      },
+      "1000128": {
+        "accession": "MS:1000128",
+        "name": "profile spectrum",
+        "form": "flag"
+      },
+      "1000130": {
+        "accession": "MS:1000130",
+        "name": "positive scan",
+        "form": "flag"
+      },
+      "1000129": {
+        "accession": "MS:1000129",
+        "name": "negative scan",
+        "form": "flag"
+      },
+      "1000511": {
+        "accession": "MS:1000511",
+        "name": "ms level",
+        "form": "valued",
+        "type": "int"
+      },
+      "1000285": {
+        "accession": "MS:1000285",
+        "name": "total ion current",
+        "form": "valued",
+        "type": "float"
+      },
+      "1000504": {
+        "accession": "MS:1000504",
+        "name": "base peak m/z",
+        "form": "valued",
+        "type": "float"
+      },
+      "1000505": {
+        "accession": "MS:1000505",
+        "name": "base peak intensity",
+        "form": "valued",
+        "type": "float"
+      },
+      "1000528": {
+        "accession": "MS:1000528",
+        "name": "lowest observed m/z",
+        "form": "valued",
+        "type": "float"
+      },
+      "1000527": {
+        "accession": "MS:1000527",
+        "name": "highest observed m/z",
+        "form": "valued",
+        "type": "float"
+      }
+    },
+    "scan": {
+      "1000016": {
+        "accession": "MS:1000016",
+        "name": "scan start time",
+        "form": "valued_with_unit",
+        "type": "float",
+        "typical_unit": "UO:0000031 (minute) or UO:0000010 (second)"
+      },
+      "1000927": {
+        "accession": "MS:1000927",
+        "name": "ion injection time",
+        "form": "valued",
+        "type": "float",
+        "unit": "ms"
+      }
+    },
+    "scan_window": {
+      "1000501": {
+        "accession": "MS:1000501",
+        "name": "scan window lower limit",
+        "form": "valued",
+        "type": "float"
+      },
+      "1000500": {
+        "accession": "MS:1000500",
+        "name": "scan window upper limit",
+        "form": "valued",
+        "type": "float"
+      }
+    },
+    "isolation_window": {
+      "1000827": {
+        "accession": "MS:1000827",
+        "name": "isolation window target m/z",
+        "form": "valued",
+        "type": "float"
+      },
+      "1000828": {
+        "accession": "MS:1000828",
+        "name": "isolation window lower offset",
+        "form": "valued",
+        "type": "float"
+      },
+      "1000829": {
+        "accession": "MS:1000829",
+        "name": "isolation window upper offset",
+        "form": "valued",
+        "type": "float"
+      }
+    },
+    "selected_ion": {
+      "1000744": {
+        "accession": "MS:1000744",
+        "name": "selected ion m/z",
+        "form": "valued",
+        "type": "float"
+      },
+      "1000041": {
+        "accession": "MS:1000041",
+        "name": "charge state",
+        "form": "valued",
+        "type": "int"
+      },
+      "1000042": {
+        "accession": "MS:1000042",
+        "name": "peak intensity",
+        "form": "valued",
+        "type": "float"
+      }
+    },
+    "activation": {
+      "1000045": {
+        "accession": "MS:1000045",
+        "name": "collision energy",
+        "form": "valued",
+        "type": "float"
+      },
+      "1002678": {
+        "accession": "MS:1002678",
+        "name": "supplemental beam type collision induced dissociation",
+        "form": "flag"
+      },
+      "1002481": {
+        "accession": "MS:1002481",
+        "name": "higher energy beam type collision induced dissociation",
+        "form": "flag"
+      },
+      "1000422": {
+        "accession": "MS:1000422",
+        "name": "beam type collision induced dissociation",
+        "form": "flag"
+      },
+      "1003246": {
+        "accession": "MS:1003246",
+        "name": "ultraviolet photodissociation",
+        "form": "flag"
+      },
+      "1002472": {
+        "accession": "MS:1002472",
+        "name": "trap type collision induced dissociation",
+        "form": "flag"
+      },
+      "1000262": {
+        "accession": "MS:1000262",
+        "name": "infrared multiphoton dissociation",
+        "form": "flag"
+      },
+      "1003294": {
+        "accession": "MS:1003294",
+        "name": "electron activated dissociation",
+        "form": "flag"
+      },
+      "1002679": {
+        "accession": "MS:1002679",
+        "name": "supplemental collision induced dissociation",
+        "form": "flag"
+      },
+      "1001880": {
+        "accession": "MS:1001880",
+        "name": "in source collision induced dissociation",
+        "form": "flag"
+      },
+      "1000433": {
+        "accession": "MS:1000433",
+        "name": "low energy collision induced dissociation",
+        "form": "flag"
+      },
+      "1000599": {
+        "accession": "MS:1000599",
+        "name": "pulsed q dissociation",
+        "form": "flag"
+      },
+      "1000133": {
+        "accession": "MS:1000133",
+        "name": "collision induced dissociation",
+        "form": "flag"
+      },
+      "1000282": {
+        "accession": "MS:1000282",
+        "name": "sustained off resonance irradiation",
+        "form": "flag"
+      },
+      "1000242": {
+        "accession": "MS:1000242",
+        "name": "blackbody infrared radiative dissociation",
+        "form": "flag"
+      },
+      "1000435": {
+        "accession": "MS:1000435",
+        "name": "photodissociation",
+        "form": "flag"
+      },
+      "1000136": {
+        "accession": "MS:1000136",
+        "name": "surface induced dissociation",
+        "form": "flag"
+      },
+      "1000135": {
+        "accession": "MS:1000135",
+        "name": "post source decay",
+        "form": "flag"
+      },
+      "1000250": {
+        "accession": "MS:1000250",
+        "name": "electron capture dissociation",
+        "form": "flag"
+      },
+      "1000134": {
+        "accession": "MS:1000134",
+        "name": "plasma desorption",
+        "form": "flag"
+      },
+      "1002000": {
+        "accession": "MS:1002000",
+        "name": "lift",
+        "form": "flag"
+      },
+      "1000598": {
+        "accession": "MS:1000598",
+        "name": "electron transfer dissociation",
+        "form": "flag"
+      },
+      "1003247": {
+        "accession": "MS:1003247",
+        "name": "negative electron transfer dissociation",
+        "form": "flag"
+      }
+    },
+    "scan_combination": {
+      "1000795": {
+        "accession": "MS:1000795",
+        "tail": 1000795,
+        "name": "NO_COMBINATION"
+      },
+      "1000573": {
+        "accession": "MS:1000573",
+        "tail": 1000573,
+        "name": "MEDIAN"
+      },
+      "1000571": {
+        "accession": "MS:1000571",
+        "tail": 1000571,
+        "name": "SUM"
+      },
+      "1000575": {
+        "accession": "MS:1000575",
+        "tail": 1000575,
+        "name": "MEAN"
+      }
+    }
+  },
+  "ion_mobility_array_types": {
+    "description": "Subset of array_types that represent ion mobility. Any of these tails in a descriptor indicates an IM array.",
+    "tails": {
+      "1003007": "MS:1003007",
+      "1002477": "MS:1002477",
+      "1003156": "MS:1003156",
+      "1003006": "MS:1003006",
+      "1002816": "MS:1002816",
+      "1003155": "MS:1003155",
+      "1003153": "MS:1003153",
+      "1003008": "MS:1003008",
+      "1003154": "MS:1003154",
+      "1002893": "MS:1002893"
+    }
+  },
+  "canonical_form": {
+    "description": "Rules for producing a deterministic token from the same input.",
+    "rules": [
+      "Peaks sorted m/z-ascending before encoding; all parallel arrays (incl. auxiliary) permuted identically.",
+      "NaN and Inf values are not allowed in any float array.",
+      "Array descriptors emitted in fixed order: m/z, intensity, charge, ion mobility, then auxiliary arrays sorted ascending by key (CV accession string, or name for non-standard arrays).",
+      "Integrity hash (optional third token part) is computed over the ASCII text of the first two token parts, 'magic.payload' (blobs are inline in the payload and therefore covered).",
+      "Hash algorithm: SHA-256, first 12 bytes, base64url-encoded (16 chars).",
+      "Numpress fp is a whole number. Defaults: linear 100000; slof floor(min(3600, 65535/ln(max+1))), clamped DOWN so no encoded value overflows uint16. A descriptor omits fp when it equals the default and carries the clamped value otherwise.",
+      "Arrays containing negative values fall back to the lossless zlib codec in lossy mode (numpress cannot represent them); negative m/z is rejected."
+    ]
+  }
+}

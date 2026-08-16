@@ -1,0 +1,30 @@
+/** Generated from schema/registry.json; do not edit by hand. */
+
+export const FORMAT_VERSION = 2;
+export const MAGIC = "spectrl2";
+export const HASH_BYTES = 12;
+export const DESC_TYPE = 0;
+export const DESC_ARRAY = 1;
+export const DESC_COMP = 2;
+export const DESC_FP = 3;
+export const DESC_NAME = 4;
+export const DESC_DATA = 5;
+export const MAX_BLOB_BYTES = 67108864;
+export const MAX_TOKEN_BYTES = 16777216;
+export const MAX_ARRAY_LENGTH = 4000000;
+export const MAX_CBOR_DEPTH = 32;
+export const MAX_CBOR_ITEMS = 100000;
+export const DEFAULT_NUMLIN_FP = 100000;
+export const DEFAULT_NUMSLOF_FP = 3600;
+export const COMP_NUMLIN_ZLIB = 1002746;
+export const COMP_NUMSLOF_ZLIB = 1002748;
+export const COMP_NUMPIC_ZLIB = 1002747;
+export const COMP_ZLIB = 1000574;
+export const TYPE_FLOAT64 = 1000523;
+export const TYPE_FLOAT32 = 1000521;
+export const TYPE_INT32 = 1000519;
+export const ARRAY_MZ = 1000514;
+export const ARRAY_INTENSITY = 1000515;
+export const ARRAY_CHARGE = 1000516;
+export const ARRAY_NON_STANDARD = 1000786;
+export const ION_MOBILITY_ARRAY_TAILS: ReadonlySet<number> = new Set([1003007, 1002477, 1003156, 1003006, 1002816, 1003155, 1003153, 1003008, 1003154, 1002893]);

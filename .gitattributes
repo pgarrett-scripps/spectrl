@@ -1,0 +1,4 @@
+# Indexed mzML files are seeked by byte offset; CRLF conversion on checkout
+# (Windows default) shifts every offset and breaks parsing. Pin them to LF.
+*.mzML text eol=lf
+*.gz binary

@@ -1,0 +1,156 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test (py${{ matrix.python-version }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.12", "3.13"]
+        include:
+          - os: macos-latest
+            python-version: "3.13"
+          - os: windows-latest
+            python-version: "3.13"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      # Not --all-extras: the `speed` extra builds pynumpress from sdist, which
+      # only works on Linux; there the dev group installs it anyway.
+      - name: Install dependencies
+        run: uv sync --dev --extra proforma
+
+      - name: Run tests
+        run: uv run pytest --cov=spectrl --cov-fail-under=80 tests/ -q
+
+      - name: Decoder mutation smoke test
+        run: uv run python scripts/fuzz_decode.py
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: ruff check
+        run: uv run ruff check src/ tests/
+
+      - name: ruff format --check
+        run: uv run ruff format --check src/ tests/
+
+      - name: Reject whitespace errors
+        run: git diff --check
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Build sdist and wheel
+        run: uv build
+
+      - name: Check distribution metadata
+        run: uvx twine check dist/*
+
+      - name: Clean-wheel smoke test
+        shell: bash
+        run: |
+          python -m venv /tmp/spectrl-wheel-smoke
+          /tmp/spectrl-wheel-smoke/bin/pip install dist/*.whl
+          /tmp/spectrl-wheel-smoke/bin/python -c "import spectrl; print(spectrl.__name__)"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/*
+
+  js:
+    name: js (node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: js
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ["20", "22"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: js/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test (validates against ../test-vectors)
+        run: npm test
+
+      - name: Decoder mutation smoke test
+        run: npm run fuzz
+
+      - name: Build
+        run: npm run build
+
+  demo:
+    name: demo build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: |
+            js/package-lock.json
+            demo/package-lock.json
+
+      - name: Build JS codec (demo imports it)
+        run: npm ci && npm run build
+        working-directory: js
+
+      - name: Build demo bundle
+        run: npm ci && npm run build
+        working-directory: demo

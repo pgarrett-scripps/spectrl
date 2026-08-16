@@ -1,0 +1,51 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish-pypi:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/spectrl/
+    permissions:
+      contents: read # checkout (required on private repos when permissions is set)
+      id-token: write # OIDC for PyPI Trusted Publishing
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --dev --extra proforma
+
+      - name: Run tests
+        run: uv run pytest tests/ -q
+
+      - name: Build sdist and wheel
+        run: uv build
+
+      - name: Check distribution metadata
+        run: uvx twine check dist/*
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # workflow_dispatch reruns shouldn't fail on an already-uploaded version
+          skip-existing: ${{ github.event_name == 'workflow_dispatch' }}
+
+  # npm publishing is intentionally disabled: the unscoped name `spectrl` is
+  # taken and the @spectrl scope is not yet claimed. Re-add a publish-npm job
+  # (npm publish --provenance --access public from js/) once the npm name is
+  # settled; js/package.json already carries prepublishOnly build+test.
