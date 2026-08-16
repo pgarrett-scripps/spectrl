@@ -9,7 +9,7 @@
     "dev": "esbuild src/app.ts --bundle --format=esm --outfile=dist/app.js --servedir=. --serve=127.0.0.1:8000"
   },
   "devDependencies": {
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.28.2",
     "qrcode-generator": "^1.4.4"
   }
 }

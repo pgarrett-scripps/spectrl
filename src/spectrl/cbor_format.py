@@ -261,6 +261,11 @@ def decode_cbor(token: str) -> DecodedSpectrum:
     Raises SpectrlDecodeError (a ValueError subclass) on any malformed,
     corrupted, or unsupported input.
     """
+    if not isinstance(token, str):
+        raise SpectrlDecodeError("a spectrl token must be a string")
+    if not token.isascii():
+        raise SpectrlDecodeError("a spectrl token must contain only ASCII characters")
+
     parts = token.split(".")
     if parts[0] != MAGIC:
         raise SpectrlDecodeError(f"Not a {MAGIC} token: {token[:16]!r}")

@@ -23,11 +23,17 @@ dependencies = [
     "mzmlpy>=0.4.0",
 ]
 authors = [
-    { name = "Patrick Garrett", email = "pgarrett@scripps.edu" }
+    { name = "Patrick Tyler Garrett", email = "pgarrett@scripps.edu" },
+    { name = "John R. Yates III", email = "jyates@scripps.edu" },
+]
+maintainers = [
+    { name = "Patrick Tyler Garrett", email = "pgarrett@scripps.edu" },
 ]
 
 [project.urls]
 Homepage = "https://github.com/pgarrett-scripps/spectrl"
+Documentation = "https://github.com/pgarrett-scripps/spectrl#readme"
+Demo = "https://pgarrett-scripps.github.io/spectrl/"
 Repository = "https://github.com/pgarrett-scripps/spectrl"
 Issues = "https://github.com/pgarrett-scripps/spectrl/issues"
 Specification = "https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md"

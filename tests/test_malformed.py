@@ -46,6 +46,7 @@ def _retoken(doc: dict) -> str:
         "spectrl1.AAAA",  # released legacy format has a different wire layout
         "spectrl2.",
         "spectrl2.!!!!",  # non-alphabet chars
+        "spectrl2.abc�.def",  # non-ASCII mutation must not leak UnicodeEncodeError
         "spectrl2.A",  # impossible base64 length
         "spectrl2.AAAA",  # valid base64, not CBOR-map payload
     ],
@@ -63,6 +64,11 @@ def test_truncated_token_raises_decode_error():
 
 def test_decode_error_is_a_value_error():
     assert issubclass(SpectrlDecodeError, ValueError)
+
+
+def test_non_string_token_raises_decode_error():
+    with pytest.raises(SpectrlDecodeError, match="string"):
+        decode_token(b"spectrl2.AAAA")  # type: ignore[arg-type]
 
 
 def test_missing_length_key_raises_decode_error():

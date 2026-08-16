@@ -1,0 +1,47 @@
+name: Bug report
+description: Report a reproducible problem in spectrl
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve spectrl. Please remove sensitive data from tokens before posting them.
+  - type: input
+    id: version
+    attributes:
+      label: spectrl version
+      description: Run `python -m pip show spectrl` or provide the commit hash.
+    validations:
+      required: true
+  - type: dropdown
+    id: implementation
+    attributes:
+      label: Implementation
+      options:
+        - Python
+        - JavaScript/TypeScript
+        - Specification or interoperability
+        - Demo
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Include expected behavior, actual behavior, and a minimal example.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, Python or Node version, and relevant dependency versions.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues for this problem.
+          required: true
+        - label: I removed credentials, unpublished data, and other sensitive information.
+          required: true

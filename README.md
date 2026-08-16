@@ -1,6 +1,11 @@
 # spectrl
 
-**Inline spectrum URL encoder for mass spectrometry.**
+[![CI](https://github.com/pgarrett-scripps/spectrl/actions/workflows/ci.yml/badge.svg)](https://github.com/pgarrett-scripps/spectrl/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/spectrl.svg)](https://pypi.org/project/spectrl/)
+[![Python](https://img.shields.io/pypi/pyversions/spectrl.svg)](https://pypi.org/project/spectrl/)
+[![License](https://img.shields.io/github/license/pgarrett-scripps/spectrl.svg)](https://github.com/pgarrett-scripps/spectrl/blob/main/LICENSE)
+
+**Put a mass spectrum directly in a URL.**
 
 Encodes one spectrum's peak arrays and modeled mzML metadata into a compact,
 URL-safe token. The encoded payload lives in the string; no backend is required.
@@ -9,11 +14,27 @@ URL-safe token. The encoded payload lives in the string; no backend is required.
 spectrl2.<base64url(CBOR document)>.<hash>
 ```
 
+[Try the browser demo](https://pgarrett-scripps.github.io/spectrl/) ·
+[Read the format specification](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md) ·
+[See the changelog](https://github.com/pgarrett-scripps/spectrl/blob/main/CHANGELOG.md)
+
 ## Why
 
-Use `spectrl` when you want to share a spectrum directly in a URL, QR code,
-notebook, paper, or application handoff. The token contains the spectrum itself,
-so decoding does not depend on an external service or file.
+Use `spectrl` to share a spectrum in a URL, QR code, notebook, paper, or
+application handoff. The token contains the spectrum itself, so decoding does
+not depend on an external service or file. A Universal Spectrum Identifier
+(USI) points to a spectrum in a repository; spectrl embeds the spectrum. Use a
+USI when long-term repository lookup is the goal, and spectrl when a compact,
+self-contained handoff is more useful.
+
+## What's included
+
+| Component | Purpose |
+| --- | --- |
+| `spectrl` Python package | Reference encoder/decoder, mzML bridge, URL helpers, and CLI |
+| [`js/`](https://github.com/pgarrett-scripps/spectrl/tree/main/js) | Independent TypeScript implementation for browsers and Node |
+| [`SPECIFICATION.md`](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md) | Normative `spectrl2` wire-format specification |
+| [`test-vectors/`](https://github.com/pgarrett-scripps/spectrl/tree/main/test-vectors) | Shared positive, negative, and cross-language conformance vectors |
 
 ## Install
 
@@ -28,6 +49,15 @@ browser). For the C-extension backend (byte-identical, faster on large arrays):
 ```bash
 pip install "spectrl[speed]"
 ```
+
+To install the unreleased development version:
+
+```bash
+pip install "spectrl @ git+https://github.com/pgarrett-scripps/spectrl.git"
+```
+
+The TypeScript implementation is tested and built from [`js/`](https://github.com/pgarrett-scripps/spectrl/tree/main/js), but is
+not yet published to npm because the final package scope has not been claimed.
 
 ## Quick start
 
@@ -179,11 +209,27 @@ spectrl2.<base64url(CBOR document)>[.<hash>]
 - **Header**: a CBOR map with integer keys mirroring mzML structure: ms level, polarity, scan times, precursor isolation window, activation method, collision energy, and ProForma interpretation.
 - **Array blobs**: one per array type (m/z, intensity, charge, ion mobility, plus any auxiliary arrays), each encoded as MS-Numpress (lossy) or raw IEEE-754 (lossless) + zlib, matching mzML's `binaryDataArray` pipeline, and embedded inline in the CBOR document as a byte string.
 
-## Validation and benchmarks
+## Validation
 
 The shared conformance vectors test field-level Python/TypeScript
-interoperability. Run `just check` for the Python checks and `npm test` from
-`js/` for the independent TypeScript test suite.
+interoperability in both directions. The test suites also cover malformed and
+adversarial inputs, canonicalization, URL bindings, mzML conversion, and both
+Numpress backends.
+
+```bash
+# Python: lint, formatting check, and tests
+just check
+
+# TypeScript: install, typecheck, test, and build
+cd js
+npm ci
+npm run typecheck
+npm test
+npm run build
+```
+
+Run `just release-check` from the repository root for the full Python,
+TypeScript, distribution, and demo release gate.
 
 ## CLI
 
@@ -201,13 +247,14 @@ echo "spectrl2.hQ..." | spectrl inspect
 ## Demo
 
 A browser demo encodes example spectra live, shows the shareable URL + QR, and
-decodes + plots them entirely client-side (no server). Launch it with:
+decodes + plots them entirely client-side (no server). Use the
+[hosted demo](https://pgarrett-scripps.github.io/spectrl/) or launch it locally:
 
 ```bash
 just demo   # → http://127.0.0.1:8000
 ```
 
-See [demo/](demo/) for details.
+See [`demo/`](https://github.com/pgarrett-scripps/spectrl/tree/main/demo) for details.
 
 ## Design
 
@@ -216,15 +263,27 @@ See [demo/](demo/) for details.
   round-trip: run-level references, processing provenance, source-file links,
   and unmodeled XML structure are outside its scope.
 - **CV binding**: all accession constants come from [mzmlpy](https://github.com/tacular-omics/mzmlpy)'s StrEnum enums; no hardcoded integers.
-- **Deterministic (within an implementation)**: canonical form (m/z-ascending, fixed numpress scale factors, RFC 8949 §4.2 CBOR) yields a stable token from a given implementation, plus a truncated SHA-256 integrity hash (the trailing token part) verified on decode as a transport-integrity check. The hash covers the received text, so verification needs no CBOR parsing and is independent of the CBOR library. Token bytes are not guaranteed identical across implementations (DEFLATE output is not canonical); see [SPECIFICATION.md](SPECIFICATION.md#8-canonical-form-and-integrity-hash).
+- **Deterministic (within an implementation)**: canonical form (m/z-ascending, fixed numpress scale factors, RFC 8949 §4.2 CBOR) yields a stable token from a given implementation, plus a truncated SHA-256 integrity hash (the trailing token part) verified on decode as a transport-integrity check. The hash covers the received text, so verification needs no CBOR parsing and is independent of the CBOR library. Token bytes are not guaranteed identical across implementations (DEFLATE output is not canonical); see [SPECIFICATION.md](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md#8-canonical-form-and-integrity-hash).
 - **ProForma**: carries an optional ProForma 2.0 peptide interpretation string (key 7).
+
+## Scope and security
+
+- URL lengths vary by browser and receiving system. Encoding warns above 8 KiB;
+  use `top_n()` or a repository identifier for spectra that are too large.
+- Lossy MS-Numpress is the default. Pass `lossless=True` when bit-exact arrays
+  are required.
+- The trailing hash detects accidental corruption; it does not authenticate the
+  sender or make untrusted content safe.
+- spectrl preserves modeled spectrum-level metadata, not an entire mzML file or
+  its run-level provenance. See the [specification](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md) for the
+  exact data model and decoder limits.
 
 ## Specification
 
-The normative token format is specified in [SPECIFICATION.md](SPECIFICATION.md)
+The normative token format is specified in [SPECIFICATION.md](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md)
 (an open specification governed in this repository). This README is a tutorial; the
 specification is the contract. A machine-readable CV/codec/key registry lives in
-[schema/registry.json](schema/registry.json).
+[schema/registry.json](https://github.com/pgarrett-scripps/spectrl/blob/main/schema/registry.json).
 
 `spectrl2` is the frozen format described here. It intentionally uses a new
 magic because its wire layout is not compatible with the development
@@ -232,14 +291,25 @@ magic because its wire layout is not compatible with the development
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md).
+See [CONTRIBUTING.md](https://github.com/pgarrett-scripps/spectrl/blob/main/CONTRIBUTING.md) and the [Code of Conduct](https://github.com/pgarrett-scripps/spectrl/blob/main/CODE_OF_CONDUCT.md).
 Changes to the on-the-wire token format are governed more strictly; see the
 *Format changes* section of the contributing guide.
 
+Bug reports and focused pull requests are welcome. Please report security
+problems privately as described in [SECURITY.md](https://github.com/pgarrett-scripps/spectrl/blob/main/SECURITY.md).
+
+## Citation
+
+If spectrl supports published work, cite the archived software release rather
+than the moving `main` branch. GitHub exposes the current metadata through
+[`CITATION.cff`](https://github.com/pgarrett-scripps/spectrl/blob/main/CITATION.cff); a Zenodo DOI will be added here after the first
+archived public release.
+
 ## License
 
-Licensed under the [Apache License 2.0](LICENSE). If you use spectrl in
-research, please cite it via [CITATION.cff](CITATION.cff).
+Licensed under the [Apache License 2.0](https://github.com/pgarrett-scripps/spectrl/blob/main/LICENSE). If you use spectrl in
+research, please cite it via [CITATION.cff](https://github.com/pgarrett-scripps/spectrl/blob/main/CITATION.cff). Third-party test-data
+attribution is recorded in [NOTICE](https://github.com/pgarrett-scripps/spectrl/blob/main/NOTICE).
 
 ## Related
 

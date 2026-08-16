@@ -24,6 +24,14 @@ registry:
 
 check: lint format-check whitespace-check test
 
+build:
+    uv build
+    uvx twine check dist/*
+
+release-check: check fuzz build
+    cd js && npm ci && npm run typecheck && npm test && npm run build && npm pack --dry-run
+    cd demo && npm ci && npm run build
+
 # Build the JS library and launch the browser demo at http://127.0.0.1:8000
 demo:
     #!/usr/bin/env bash

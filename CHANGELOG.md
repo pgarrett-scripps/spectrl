@@ -87,6 +87,19 @@ independently of the library version; see [SPECIFICATION.md](SPECIFICATION.md).
   preserve existing internal import paths, and tests reject stale generated
   files.
 
+### Fixed
+- Non-ASCII token mutations now raise the documented `SpectrlDecodeError`
+  instead of leaking `UnicodeEncodeError`.
+- Updated the demo and TypeScript development lockfiles to patched `esbuild`
+  releases, clearing their npm audit findings.
+
+### Documentation
+- Expanded the public README with status badges, project layout, development
+  installation, validation commands, scope limitations, and release citation
+  guidance.
+- Added a release checklist plus structured bug, feature, and pull-request
+  templates for the public repository.
+
 ## [0.3.0] - 2026-08-12
 
 Existing `spectrl1` tokens remain fully decodable; the changes below are
