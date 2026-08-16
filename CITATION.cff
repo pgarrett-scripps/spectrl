@@ -2,10 +2,21 @@ cff-version: 1.2.0
 message: "If you use spectrl, please cite this software using these metadata."
 title: "spectrl: URL-safe interchange for mass spectra"
 abstract: >-
-  spectrl encodes mass-spectrum peak arrays, modeled metadata, and precursor
-  information in a URL-safe token. The token can be shared in URLs, QR codes,
-  notebooks, and publications without a backend repository. Metadata uses mzML
-  controlled-vocabulary semantics and may include a ProForma interpretation.
+  spectrl defines and implements a URL-safe interchange format for individual
+  mass spectra. A spectrl2 token contains peak arrays, precursor information,
+  modeled metadata based on mzML controlled-vocabulary terms, and an optional
+  ProForma interpretation. The payload is encoded as CBOR and Base64url text
+  with an integrity hash. Peak arrays can use MS-Numpress compression or
+  lossless floating-point storage. Because the spectrum is carried in the
+  token, it can be placed in URL fragments, query parameters, data URIs, QR
+  codes, notebooks, and publication supplements without requiring a repository
+  lookup or application backend. The Python package provides encoding,
+  decoding, validation, URL helpers, a command-line interface, and conversion
+  from mzmlpy spectrum objects. An independent TypeScript implementation
+  supports browsers and Node, and shared conformance vectors test agreement
+  between the two implementations. spectrl is intended for self-contained
+  spectrum exchange and application handoffs. Repository-based identifiers
+  remain more appropriate when persistent archival lookup is the primary goal.
 type: software
 authors:
   - given-names: Patrick T.
