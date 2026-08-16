@@ -24,11 +24,12 @@ repository-code: "https://github.com/pgarrett-scripps/spectrl"
 repository-artifact: "https://github.com/pgarrett-scripps/spectrl/releases"
 url: "https://pgarrett-scripps.github.io/spectrl/"
 keywords:
-  - mass spectrometry
-  - proteomics
+  - Python
+  - Proteomics
+  - Mass Spectrometry
   - mzML
-  - spectrum sharing
   - ProForma
-  - spectrum encoding
+  - Spectrum Sharing
+  - Spectrum Encoding
 version: 0.4.0
 date-released: 2026-08-15
