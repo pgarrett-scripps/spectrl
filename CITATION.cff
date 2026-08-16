@@ -9,17 +9,15 @@ abstract: >-
   semantics and may include a ProForma interpretation.
 type: software
 authors:
-  - family-names: Garrett
-    given-names: "Patrick Tyler"
-    email: pgarrett@scripps.edu
-    affiliation: "Department of Integrative Structural and Computational Biology, The Scripps Research Institute"
-    orcid: "https://orcid.org/0000-0002-8434-9693"
-  - family-names: Yates
-    given-names: "John R."
+  - given-names: Patrick T.
+    family-names: Garrett
+    orcid: https://orcid.org/0000-0002-8434-9693
+    affiliation: Scripps Research Institute
+  - given-names: John R.
+    family-names: Yates
     name-suffix: III
-    email: jyates@scripps.edu
-    affiliation: "Department of Integrative Structural and Computational Biology, The Scripps Research Institute"
-    orcid: "https://orcid.org/0000-0001-5267-1672"
+    orcid: https://orcid.org/0000-0001-5267-1672
+    affiliation: Scripps Research Institute
 license: Apache-2.0
 doi: 10.5281/zenodo.21960545
 repository-code: "https://github.com/pgarrett-scripps/spectrl"
