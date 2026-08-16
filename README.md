@@ -18,6 +18,10 @@ spectrl2.<base64url(CBOR document)>.<hash>
 [Read the format specification](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md) ·
 [See the changelog](https://github.com/pgarrett-scripps/spectrl/blob/main/CHANGELOG.md)
 
+[![A spectrl token embedded in a URL and decoded into a mass spectrum, with summary cards for token size, carriers, implementations, and client-side decoding.](https://raw.githubusercontent.com/pgarrett-scripps/spectrl/main/docs/spectrl-overview.png)](https://pgarrett-scripps.github.io/spectrl/)
+
+*A spectrum travels as ordinary URL-safe text and decodes entirely client-side.*
+
 ## Why
 
 Use `spectrl` to share a spectrum in a URL, QR code, notebook, paper, or
