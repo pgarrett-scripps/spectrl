@@ -29,7 +29,7 @@ authors:
     orcid: https://orcid.org/0000-0001-5267-1672
     affiliation: Scripps Research Institute
 license: Apache-2.0
-doi: 10.5281/zenodo.21960545
+doi: "10.5281/zenodo.21960544"
 repository-code: "https://github.com/pgarrett-scripps/spectrl"
 repository-artifact: "https://github.com/pgarrett-scripps/spectrl/releases"
 url: "https://pgarrett-scripps.github.io/spectrl/"
@@ -41,5 +41,5 @@ keywords:
   - ProForma
   - Spectrum Sharing
   - Spectrum Encoding
-version: 0.4.0
-date-released: 2026-08-15
+version: "0.4.0"
+date-released: "2026-08-15"
