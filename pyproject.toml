@@ -1,6 +1,6 @@
 [project]
 name = "spectrl"
-version = "0.4.0"
+version = "0.4.1"
 description = "Inline spectrum URL encoder: embeds a complete mass spectrum in a compact, URL-safe token."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -20,7 +20,6 @@ classifiers = [
 dependencies = [
     "numpy>=1.26.0",
     "cbor2>=5.6.0",
-    "mzmlpy>=0.4.0",
 ]
 authors = [
     { name = "Patrick Tyler Garrett", email = "pgarrett@scripps.edu" },
@@ -40,6 +39,7 @@ Specification = "https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICA
 Changelog = "https://github.com/pgarrett-scripps/spectrl/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
+mzml = ["mzmlpy>=0.4.0"]
 proforma = ["pyteomics>=4.7"]
 # The C-extension numpress backend. Optional: the bundled pure-Python backend is
 # byte-identical and used automatically when pynumpress is not installed.
@@ -72,6 +72,8 @@ package = true
 
 [dependency-groups]
 dev = [
+    # Registry generation/validation and mzML bridge tests.
+    "mzmlpy>=0.4.0",
     "pytest>=8.0.0",
     "pytest-cov>=6.0.0",
     "ruff>=0.3.0",

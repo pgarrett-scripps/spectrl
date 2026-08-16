@@ -10,6 +10,13 @@ independently of the library version; see [SPECIFICATION.md](SPECIFICATION.md).
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-08-15
+
+### Changed
+- `mzmlpy` is no longer a required runtime dependency. Core encoding and
+  decoding use spectrl's generated CV registry directly; the `from_mzmlpy`
+  bridge remains available through the optional `mzml` extra.
+
 ## [0.4.0] - 2026-08-15
 
 ### Changed (breaking)

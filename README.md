@@ -68,6 +68,10 @@ not yet published to npm because the final package scope has not been claimed.
 
 ### Encode from mzmlpy
 
+The mzML bridge is optional. Install it with `pip install "spectrl[mzml]"`;
+applications such as Spectacular that already depend on `mzmlpy` do not need
+the extra.
+
 ```python
 from mzmlpy.run import Mzml
 from spectrl import encode_spectrum, from_mzmlpy
@@ -267,7 +271,10 @@ See [`demo/`](https://github.com/pgarrett-scripps/spectrl/tree/main/demo) for de
   ontology accessions. A token is not an arbitrary mzML `<spectrum>` XML
   round-trip: run-level references, processing provenance, source-file links,
   and unmodeled XML structure are outside its scope.
-- **CV binding**: all accession constants come from [mzmlpy](https://github.com/tacular-omics/mzmlpy)'s StrEnum enums; no hardcoded integers.
+- **CV binding**: accession constants are generated into spectrl from its shared
+  registry and validated against [mzmlpy](https://github.com/tacular-omics/mzmlpy)'s
+  StrEnum enums during development; core encoding and decoding do not import an
+  mzML parser.
 - **Deterministic (within an implementation)**: canonical form (m/z-ascending, fixed numpress scale factors, RFC 8949 §4.2 CBOR) yields a stable token from a given implementation, plus a truncated SHA-256 integrity hash (the trailing token part) verified on decode as a transport-integrity check. The hash covers the received text, so verification needs no CBOR parsing and is independent of the CBOR library. Token bytes are not guaranteed identical across implementations (DEFLATE output is not canonical); see [SPECIFICATION.md](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md#8-canonical-form-and-integrity-hash).
 - **ProForma**: carries an optional ProForma 2.0 peptide interpretation string (key 7).
 

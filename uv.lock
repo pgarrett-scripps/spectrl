@@ -319,15 +319,17 @@ wheels = [
 
 [[package]]
 name = "spectrl"
-version = "0.4.0"
+version = "0.4.1"
 source = { editable = "." }
 dependencies = [
     { name = "cbor2" },
-    { name = "mzmlpy" },
     { name = "numpy" },
 ]
 
 [package.optional-dependencies]
+mzml = [
+    { name = "mzmlpy" },
+]
 proforma = [
     { name = "pyteomics" },
 ]
@@ -337,6 +339,7 @@ speed = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "mzmlpy" },
     { name = "pynumpress", marker = "sys_platform == 'linux'" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -346,15 +349,16 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "cbor2", specifier = ">=5.6.0" },
-    { name = "mzmlpy", specifier = ">=0.4.0" },
+    { name = "mzmlpy", marker = "extra == 'mzml'", specifier = ">=0.4.0" },
     { name = "numpy", specifier = ">=1.26.0" },
     { name = "pynumpress", marker = "extra == 'speed'", specifier = ">=0.0.4" },
     { name = "pyteomics", marker = "extra == 'proforma'", specifier = ">=4.7" },
 ]
-provides-extras = ["proforma", "speed"]
+provides-extras = ["mzml", "proforma", "speed"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "mzmlpy", specifier = ">=0.4.0" },
     { name = "pynumpress", marker = "sys_platform == 'linux'", specifier = ">=0.0.4" },
     { name = "pytest", specifier = ">=8.0.0" },
     { name = "pytest-cov", specifier = ">=6.0.0" },

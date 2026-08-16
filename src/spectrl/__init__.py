@@ -126,7 +126,14 @@ def from_mzmlpy(spec, ref_groups: dict | None = None, *, strict: bool = False) -
     Returns:
         InlineSpectrum ready for encoding.
     """
-    from .mzml import from_mzmlpy as _bridge
+    try:
+        from .mzml import from_mzmlpy as _bridge
+    except ModuleNotFoundError as exc:
+        if exc.name == "mzmlpy" or (exc.name and exc.name.startswith("mzmlpy.")):
+            raise ModuleNotFoundError(
+                'from_mzmlpy() requires the optional mzmlpy integration; install it with pip install "spectrl[mzml]"'
+            ) from exc
+        raise
 
     return _bridge(spec, ref_groups=ref_groups, strict=strict)
 
