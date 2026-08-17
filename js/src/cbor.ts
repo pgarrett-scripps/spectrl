@@ -1,5 +1,5 @@
 /**
- * CBOR for spectrl2: standard encode/decode via the cbor-x library, plus a raw
+ * CBOR for spectrl.v1: standard encode/decode via the cbor-x library, plus a raw
  * validation pass that rejects duplicate map keys, over-deep nesting, and
  * trailing bytes before the library ever parses the document.
  */

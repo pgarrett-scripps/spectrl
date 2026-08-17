@@ -103,15 +103,17 @@ test("URL bindings round-trip", () => {
   assert.equal(extractToken(toDataUri(token)), token);
 });
 
-test("ion mobility array round-trips", () => {
+test("multiple ion mobility arrays round-trip by accession", () => {
   const spec: InlineSpectrum = {
     defaultArrayLength: 3,
     mz: [300.1, 600.2, 900.3],
     intensity: [4e4, 3e4, 2e4],
-    ionMobility: [0.82, 0.91, 1.05],
-    ionMobilityType: "MS:1003008",
+    extraArrays: {
+      "MS:1003008": [0.82, 0.91, 1.05],
+      "MS:1003153": [12.1, 13.4, 15.2],
+    },
   };
   const d = decodeToken(encodeSpectrum(spec, { lossless: true, quiet: true }));
-  assert.equal(d.ionMobilityType, "MS:1003008");
-  assert.deepEqual(Array.from(d.ionMobility!), [0.82, 0.91, 1.05]);
+  assert.deepEqual(Array.from(d.extraArrays["MS:1003008"]!), [0.82, 0.91, 1.05]);
+  assert.deepEqual(Array.from(d.extraArrays["MS:1003153"]!), [12.1, 13.4, 15.2]);
 });

@@ -30,7 +30,8 @@ def test_named_and_nonstandard_roundtrip(lossless):
     d = decode_token(encode_spectrum(spec, lossless=lossless))
     e = d.extra_arrays
     assert set(e) == {"MS:1000517", "iso_score", "flags"}
-    assert e["MS:1000517"].dtype == np.float64 and np.allclose(e["MS:1000517"], [10, 20, 30, 40])
+    assert e["MS:1000517"].dtype == np.float64
+    assert np.allclose(e["MS:1000517"], [10, 20, 30, 40], rtol=5e-4)
     assert e["iso_score"].dtype == np.float32 and np.allclose(e["iso_score"], [0.9, 0.8, 0.7, 0.6], atol=1e-6)
     assert e["flags"].dtype == np.int32 and list(e["flags"]) == [1, 0, 1, 0]
 
@@ -45,6 +46,62 @@ def test_multiple_non_standard_arrays_disambiguated_by_name():
     d = decode_token(encode_spectrum(spec))
     assert np.allclose(d.extra_arrays["score_a"], [1, 2, 3, 4])
     assert np.allclose(d.extra_arrays["score_b"], [5, 6, 7, 8])
+
+
+@pytest.mark.parametrize(
+    "codec",
+    ["zstd", "byte-shuffled-zstd"],
+)
+def test_per_array_zstd_overrides(codec):
+    values = np.array([1.0, 2.0, 3.0, 4.0])
+    spec = _spec({"custom": values})
+    d = decode_token(encode_spectrum(spec, array_encodings={"custom": codec}))
+    assert np.array_equal(d.extra_arrays["custom"], values)
+
+
+@pytest.mark.parametrize("codec", ["numlin-zstd", "numslof-zstd", "numpic-zstd"])
+def test_unknown_array_rejects_semantically_untyped_lossy_codec(codec):
+    with pytest.raises(ValueError, match="not compatible"):
+        encode_spectrum(_spec({"custom": np.arange(4.0)}), array_encodings={"custom": codec})
+
+
+def test_expert_override_allows_lossy_custom_array_but_not_known_mismatch():
+    source = _spec({"custom": np.arange(4.0)})
+    decoded = decode_token(
+        encode_spectrum(
+            source,
+            array_encodings={"custom": "numlin-zlib"},
+            allow_unsafe_lossy_custom=True,
+        )
+    )
+    np.testing.assert_allclose(decoded.extra_arrays["custom"], source.extra_arrays["custom"], atol=1e-5)
+    with pytest.raises(ValueError, match="not compatible"):
+        encode_spectrum(
+            source,
+            array_encodings={"mz": "numpic-zlib"},
+            allow_unsafe_lossy_custom=True,
+        )
+
+
+def test_unknown_extra_array_stays_lossless_by_default():
+    values = np.array([0.123456789, 0.234567891, 0.345678912, 0.456789123])
+    d = decode_token(encode_spectrum(_spec({"custom": values})))
+    assert np.array_equal(d.extra_arrays["custom"], values)
+
+
+def test_lossless_rejects_explicit_lossy_override():
+    with pytest.raises(ValueError, match="lossy codec"):
+        encode_spectrum(_spec({"custom": np.arange(4.0)}), lossless=True, array_encodings={"custom": "numlin-zstd"})
+
+
+def test_fixed_point_requires_compatible_codec_and_whole_number():
+    spec = _spec({"MS:1000517": np.arange(4.0)})
+    with pytest.raises(ValueError, match="takes no fixed point"):
+        encode_spectrum(spec, array_encodings={"MS:1000517": {"codec": "zstd", "fixed_point": 1000}})
+    with pytest.raises(ValueError, match="positive whole number"):
+        encode_spectrum(spec, array_encodings={"MS:1000517": {"codec": "numlin-zstd", "fixed_point": 1.5}})
+    with pytest.raises(ValueError, match="positive whole number"):
+        encode_spectrum(spec, array_encodings={"MS:1000517": {"codec": "numlin-zstd", "fixed_point": True}})
 
 
 def test_extra_arrays_permuted_by_canonical_sort():

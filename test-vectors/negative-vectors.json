@@ -1,6 +1,6 @@
 {
  "format": "spectrl-negative-vectors-1",
- "description": "Raw CBOR payloads that every spectrl2 consumer must reject.",
+ "description": "Raw CBOR payloads that every spectrl.v1 consumer must reject.",
  "vectors": [
   {
    "name": "duplicate_top_level_key",
@@ -26,6 +26,16 @@
    "name": "boolean_array_length",
    "cbor_hex": "a200f50680",
    "error": "array length"
+  },
+  {
+   "name": "numpress_missing_fixed_point",
+   "cbor_hex": "a200000681a4001a000f444b011a000f4442021a000f4cfa0540",
+   "error": "require fp"
+  },
+  {
+   "name": "boolean_array_unit",
+   "cbor_hex": "a200000681a5001a000f444b011a000f4442021a000f447e054006f5",
+   "error": "unit"
   }
  ]
 }

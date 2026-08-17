@@ -7,10 +7,15 @@ from typing import Protocol
 import numpy as np
 
 from ..cv import (
+    COMP_BYTE_SHUFFLED_ZSTD,
     COMP_NUMLIN_ZLIB,
+    COMP_NUMLIN_ZSTD,
     COMP_NUMPIC_ZLIB,
+    COMP_NUMPIC_ZSTD,
     COMP_NUMSLOF_ZLIB,
+    COMP_NUMSLOF_ZSTD,
     COMP_ZLIB,
+    COMP_ZSTD,
     TYPE_FLOAT64,
 )
 from .numpress import (
@@ -22,6 +27,18 @@ from .numpress import (
     encode_numslof_zlib,
 )
 from .raw import decode_zlib_raw, encode_zlib_raw
+from .zstd import (
+    decode_byte_shuffled_zstd,
+    decode_numlin_zstd,
+    decode_numpic_zstd,
+    decode_numslof_zstd,
+    decode_zstd_raw,
+    encode_byte_shuffled_zstd,
+    encode_numlin_zstd,
+    encode_numpic_zstd,
+    encode_numslof_zstd,
+    encode_zstd_raw,
+)
 
 
 class Codec(Protocol):
@@ -64,11 +81,56 @@ class _ZlibRawCodec:
         return decode_zlib_raw(blob, type_tail, max_bytes)
 
 
+class _ZstdRawCodec:
+    def encode(self, data: np.ndarray, fp: float | None, type_tail: int = TYPE_FLOAT64) -> bytes:
+        return encode_zstd_raw(data, type_tail)
+
+    def decode(self, blob: bytes, type_tail: int = TYPE_FLOAT64, max_bytes: int | None = None) -> np.ndarray:
+        return decode_zstd_raw(blob, type_tail, max_bytes)
+
+
+class _ByteShuffledZstdCodec:
+    def encode(self, data: np.ndarray, fp: float | None, type_tail: int = TYPE_FLOAT64) -> bytes:
+        return encode_byte_shuffled_zstd(data, type_tail)
+
+    def decode(self, blob: bytes, type_tail: int = TYPE_FLOAT64, max_bytes: int | None = None) -> np.ndarray:
+        return decode_byte_shuffled_zstd(blob, type_tail, max_bytes)
+
+
+class _NumLinZstdCodec:
+    def encode(self, data: np.ndarray, fp: float | None, type_tail: int = TYPE_FLOAT64) -> bytes:
+        return encode_numlin_zstd(data, fp)
+
+    def decode(self, blob: bytes, type_tail: int = TYPE_FLOAT64, max_bytes: int | None = None) -> np.ndarray:
+        return decode_numlin_zstd(blob, max_bytes)
+
+
+class _NumSlofZstdCodec:
+    def encode(self, data: np.ndarray, fp: float | None, type_tail: int = TYPE_FLOAT64) -> bytes:
+        return encode_numslof_zstd(data, fp)
+
+    def decode(self, blob: bytes, type_tail: int = TYPE_FLOAT64, max_bytes: int | None = None) -> np.ndarray:
+        return decode_numslof_zstd(blob, max_bytes)
+
+
+class _NumPicZstdCodec:
+    def encode(self, data: np.ndarray, fp: float | None, type_tail: int = TYPE_FLOAT64) -> bytes:
+        return encode_numpic_zstd(data)
+
+    def decode(self, blob: bytes, type_tail: int = TYPE_FLOAT64, max_bytes: int | None = None) -> np.ndarray:
+        return decode_numpic_zstd(blob, max_bytes)
+
+
 _REGISTRY: dict[int, Codec] = {
     COMP_NUMLIN_ZLIB: _NumLinZlibCodec(),
     COMP_NUMSLOF_ZLIB: _NumSlofZlibCodec(),
     COMP_NUMPIC_ZLIB: _NumPicZlibCodec(),
     COMP_ZLIB: _ZlibRawCodec(),
+    COMP_ZSTD: _ZstdRawCodec(),
+    COMP_BYTE_SHUFFLED_ZSTD: _ByteShuffledZstdCodec(),
+    COMP_NUMLIN_ZSTD: _NumLinZstdCodec(),
+    COMP_NUMSLOF_ZSTD: _NumSlofZstdCodec(),
+    COMP_NUMPIC_ZSTD: _NumPicZstdCodec(),
 }
 
 

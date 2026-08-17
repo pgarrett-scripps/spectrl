@@ -2,7 +2,7 @@
 
 This is what makes the Pyodide / browser fallback safe: a token encoded where
 ``pynumpress`` is unavailable must be indistinguishable from one encoded with it
-(same bytes, same SHA-256 content hash), and either backend must decode the
+(same bytes, same token checksum), and either backend must decode the
 other's output. If these ever drift, tokens stop interoperating across
 implementations.
 """
@@ -72,8 +72,8 @@ def test_single_value_linear_roundtrips_in_pure_backend():
     np.testing.assert_allclose(py.decode_linear(blob), [723.4141], atol=1e-4)
 
 
-def test_token_and_hash_identical_across_backends(monkeypatch, ms2_spectrum):
-    """A full token (and its content hash) is the same whichever backend encodes it."""
+def test_token_and_checksum_identical_across_backends(monkeypatch, ms2_spectrum):
+    """A full token and its checksum are the same whichever backend encodes it."""
     import spectrl.codecs.numpress as npmod
 
     def _with_backend(name):
@@ -87,4 +87,4 @@ def test_token_and_hash_identical_across_backends(monkeypatch, ms2_spectrum):
     tok_c = _with_backend("pynumpress")
     tok_py = _with_backend("python")
     assert tok_c == tok_py
-    assert decode_token(tok_c).hash == decode_token(tok_py).hash
+    assert decode_token(tok_c).checksum == decode_token(tok_py).checksum

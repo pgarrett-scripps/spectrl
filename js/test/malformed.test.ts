@@ -6,7 +6,8 @@ import { deflateSync, inflateSync } from "node:zlib";
 
 import { b64urlDecode, b64urlEncode } from "../src/base64url.js";
 import { cborDecode, cborEncode } from "../src/cbor.js";
-import { DESC_ARRAY, DESC_COMP, DESC_DATA } from "../src/header.js";
+import { tokenChecksum } from "../src/checksum.js";
+import { DESC_ARRAY, DESC_COMP, DESC_DATA, DESC_FP } from "../src/header.js";
 import { SpectrlDecodeError, decodeToken, encodeSpectrum, type InlineSpectrum } from "../src/index.ts";
 
 function token(): string {
@@ -21,16 +22,16 @@ function token(): string {
 type Doc = Map<unknown, unknown>;
 
 function payload(t: string): Doc {
-  return cborDecode(b64urlDecode(t.split(".")[1]!)) as Doc;
+  return cborDecode(b64urlDecode(t.split(".")[2]!)) as Doc;
 }
 
-/** Re-wrap a (tampered) document as an unhashed two-part token so decode
- * reaches the body instead of failing hash verification. */
+/** Re-wrap a tampered document with a valid checksum so decode reaches it. */
 function retoken(doc: Doc): string {
-  return "spectrl2." + b64urlEncode(cborEncode(doc));
+  const body = "spectrl.v1." + b64urlEncode(cborEncode(doc));
+  return `${body}.${tokenChecksum(body)}`;
 }
 
-const GARBAGE = ["", "notatoken", "spectrl2", "spectrl1.AAAA", "spectrl2.", "spectrl2.!!!!", "spectrl2.A", "spectrl2.AAAA"];
+const GARBAGE = ["", "notatoken", "spectrl.v1", "spectrl1.AAAA", "spectrl.v1.", "spectrl.v1.!!!!", "spectrl.v1.A", "spectrl.v1.AAAA"];
 
 for (const bad of GARBAGE) {
   test(`garbage token ${JSON.stringify(bad)} throws SpectrlDecodeError`, () => {
@@ -60,7 +61,8 @@ for (const badLength of [-1, 1.5, true, "3"]) {
 
 test("duplicate CBOR map keys are rejected before decoding", () => {
   const raw = Uint8Array.from(Buffer.from("a40001000101000780", "hex"));
-  assert.throws(() => decodeToken("spectrl2." + b64urlEncode(raw)), /duplicate/);
+  const body = "spectrl.v1." + b64urlEncode(raw);
+  assert.throws(() => decodeToken(`${body}.${tokenChecksum(body)}`), /duplicate/);
 });
 
 test("duplicate semantic arrays are rejected", () => {
@@ -82,6 +84,13 @@ test("Numpress descriptor fixed point must match the stream", () => {
   const descs = doc.get(6) as Array<Map<number, unknown>>;
   descs[0]!.set(3, 100001);
   assert.throws(() => decodeToken(retoken(doc)), /fixed point mismatch/);
+});
+
+test("Numpress descriptor requires a fixed point", () => {
+  const doc = payload(token());
+  const descs = doc.get(6) as Array<Map<number, unknown>>;
+  descs[0]!.delete(DESC_FP);
+  assert.throws(() => decodeToken(retoken(doc)), /require fp/);
 });
 
 test("unknown codec throws SpectrlDecodeError", () => {

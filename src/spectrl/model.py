@@ -8,6 +8,19 @@ import numpy as np
 from numpy.typing import NDArray
 
 
+@dataclass(frozen=True)
+class ArrayEncoding:
+    """Per-array encoding override used by :func:`spectrl.encode_spectrum`.
+
+    ``codec`` accepts a registered compression accession tail or one of the
+    documented names such as ``"zstd"``, ``"numlin-zstd"``, or ``"zlib"``.
+    ``"auto"`` selects the array's semantic default.
+    """
+
+    codec: str | int = "auto"
+    fixed_point: int | None = None
+
+
 @dataclass
 class SpectrlCvParam:
     """A CV parameter for use within spectrl, mirroring mzML cvParam semantics.
@@ -97,8 +110,6 @@ class InlineSpectrum:
         mz: m/z array, must be sorted ascending.
         intensity: Intensity array.
         charge: Optional per-peak charge array.
-        ion_mobility: Optional per-peak ion mobility array.
-        ion_mobility_type: Accession string for the IM array type (e.g. 'MS:1003007').
         id: Spectrum identifier string (mzML @id), e.g. 'scan=12298'.
         params: Spectrum-level CV params (ms level, polarity, centroid flag, TIC, etc.).
         scans: List of scan entries.
@@ -106,18 +117,17 @@ class InlineSpectrum:
         precursors: List of precursor entries.
         products: List of product entries.
         interp: Optional ProForma 2.0 interpretation string (header key 7).
-        extra_arrays: Additional per-peak binary arrays, keyed by either a CV
-            accession string (e.g. 'MS:1000517' signal-to-noise array) or a
-            free-text name for a non-standard array (carried as MS:1000786). Each
-            value is a per-peak ndarray; float64/float32/int32 dtypes are preserved.
+        extra_arrays: Additional per-peak binary arrays, including every ion-
+            mobility variant, keyed by a PSI-MS accession (e.g. 'MS:1003008') or
+            a free-text name for a non-standard array (carried as MS:1000786).
+            Each value is a per-peak ndarray; float64/float32/int32 dtypes are
+            preserved.
     """
 
     default_array_length: int
     mz: NDArray[np.float64] | None = None
     intensity: NDArray[np.float64] | None = None
     charge: NDArray[np.float64] | None = None
-    ion_mobility: NDArray[np.float64] | None = None
-    ion_mobility_type: str | None = None
     id: str | None = None
     params: list[SpectrlCvParam] = field(default_factory=list)
     scans: list[SpectrlScan] = field(default_factory=list)
@@ -126,7 +136,19 @@ class InlineSpectrum:
     products: list[SpectrlProduct] = field(default_factory=list)
     interp: str | None = None
     extra_arrays: dict[str, NDArray] = field(default_factory=dict)
+    array_units: dict[str, str] = field(default_factory=dict)
     user_params: list[SpectrlUserParam] = field(default_factory=list)
+
+    def __post_init__(self) -> None:
+        """Normalize ordinary Python array-likes at the public API boundary."""
+        if self.mz is not None:
+            self.mz = np.asarray(self.mz, dtype=np.float64)
+        if self.intensity is not None:
+            self.intensity = np.asarray(self.intensity, dtype=np.float64)
+        if self.charge is not None:
+            self.charge = np.asarray(self.charge, dtype=np.float64)
+        self.extra_arrays = {str(key): np.asarray(values) for key, values in self.extra_arrays.items()}
+        self.array_units = {str(key): str(unit) for key, unit in self.array_units.items()}
 
 
 @dataclass
@@ -134,15 +156,13 @@ class DecodedSpectrum:
     """Output model from spectrl decoding.
 
     Mirrors InlineSpectrum but represents what was recovered from the token.
-    The hash field (if present) is verified during decode.
+    The checksum field is verified during decode.
     """
 
     default_array_length: int
     mz: NDArray[np.float64] | None = None
     intensity: NDArray[np.float64] | None = None
     charge: NDArray[np.float64] | None = None
-    ion_mobility: NDArray[np.float64] | None = None
-    ion_mobility_type: str | None = None
     id: str | None = None
     params: list[SpectrlCvParam] = field(default_factory=list)
     scans: list[SpectrlScan] = field(default_factory=list)
@@ -151,6 +171,19 @@ class DecodedSpectrum:
     products: list[SpectrlProduct] = field(default_factory=list)
     interp: str | None = None
     extra_arrays: dict[str, NDArray] = field(default_factory=dict)
+    array_units: dict[str, str] = field(default_factory=dict)
     user_params: list[SpectrlUserParam] = field(default_factory=list)
-    hash: str | None = None
-    format_version: int = 2
+    checksum: str = ""
+    format_version: int = 1
+
+    @property
+    def mobility_arrays(self) -> dict[str, NDArray]:
+        """A filtered view of accession-keyed ion-mobility arrays."""
+        from .cv import ION_MOBILITY_ARRAY_TAILS, accession_tail
+
+        tails = set(ION_MOBILITY_ARRAY_TAILS.values())
+        return {
+            accession: values
+            for accession, values in self.extra_arrays.items()
+            if accession.startswith("MS:") and accession_tail(accession) in tails
+        }

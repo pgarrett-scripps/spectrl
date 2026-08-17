@@ -12,7 +12,8 @@ import numpy as np
 import pytest
 
 from spectrl import SpectrlDecodeError, decode_token, encode_spectrum
-from spectrl.header import DESC_COMP, DESC_DATA
+from spectrl.cbor_format import token_checksum
+from spectrl.header import DESC_COMP, DESC_DATA, DESC_FP
 from spectrl.model import InlineSpectrum
 from spectrl.token import b64url_decode, b64url_encode
 
@@ -28,13 +29,13 @@ def _token() -> str:
 
 
 def _payload(token: str) -> dict:
-    return cbor2.loads(b64url_decode(token.split(".")[1]))
+    return cbor2.loads(b64url_decode(token.split(".")[2]))
 
 
 def _retoken(doc: dict) -> str:
-    """Re-wrap a (tampered) document as an unhashed two-part token so decode
-    reaches the body instead of failing hash verification."""
-    return "spectrl2." + b64url_encode(cbor2.dumps(doc, canonical=True))
+    """Re-wrap a tampered document with a valid checksum so decode reaches it."""
+    body = "spectrl.v1." + b64url_encode(cbor2.dumps(doc, canonical=True))
+    return f"{body}.{token_checksum(body)}"
 
 
 @pytest.mark.parametrize(
@@ -42,13 +43,13 @@ def _retoken(doc: dict) -> str:
     [
         "",
         "notatoken",
-        "spectrl2",
+        "spectrl.v1",
         "spectrl1.AAAA",  # released legacy format has a different wire layout
-        "spectrl2.",
-        "spectrl2.!!!!",  # non-alphabet chars
-        "spectrl2.abc�.def",  # non-ASCII mutation must not leak UnicodeEncodeError
-        "spectrl2.A",  # impossible base64 length
-        "spectrl2.AAAA",  # valid base64, not CBOR-map payload
+        "spectrl.v1.",
+        "spectrl.v1.!!!!",  # non-alphabet chars
+        "spectrl.v1.abc�.def",  # non-ASCII mutation must not leak UnicodeEncodeError
+        "spectrl.v1.A",  # impossible base64 length
+        "spectrl.v1.AAAA",  # valid base64, not CBOR-map payload
     ],
 )
 def test_garbage_tokens_raise_decode_error(bad: str):
@@ -68,7 +69,7 @@ def test_decode_error_is_a_value_error():
 
 def test_non_string_token_raises_decode_error():
     with pytest.raises(SpectrlDecodeError, match="string"):
-        decode_token(b"spectrl2.AAAA")  # type: ignore[arg-type]
+        decode_token(b"spectrl.v1.AAAA")  # type: ignore[arg-type]
 
 
 def test_missing_length_key_raises_decode_error():
@@ -88,16 +89,18 @@ def test_invalid_declared_length_rejected(bad_length):
 
 
 def test_trailing_cbor_bytes_rejected():
-    raw = b64url_decode(_retoken({0: 0, 6: []}).split(".")[1]) + b"\xff"
+    raw = b64url_decode(_retoken({0: 0, 6: []}).split(".")[2]) + b"\xff"
     with pytest.raises(SpectrlDecodeError, match="trailing"):
-        decode_token("spectrl2." + b64url_encode(raw))
+        body = "spectrl.v1." + b64url_encode(raw)
+        decode_token(f"{body}.{token_checksum(body)}")
 
 
 def test_duplicate_cbor_map_key_rejected():
     # {0: 0, 0: 0, 6: []}; ordinary CBOR decoders collapse the duplicate.
     raw = bytes.fromhex("a3000000000680")
     with pytest.raises(SpectrlDecodeError, match="duplicate"):
-        decode_token("spectrl2." + b64url_encode(raw))
+        body = "spectrl.v1." + b64url_encode(raw)
+        decode_token(f"{body}.{token_checksum(body)}")
 
 
 def test_duplicate_semantic_array_rejected():
@@ -118,6 +121,13 @@ def test_numpress_descriptor_fixed_point_must_match_stream():
     doc = _payload(_token())
     doc[6][0][3] = 100001
     with pytest.raises(SpectrlDecodeError, match="fixed point mismatch"):
+        decode_token(_retoken(doc))
+
+
+def test_numpress_descriptor_requires_fixed_point():
+    doc = _payload(_token())
+    del doc[6][0][DESC_FP]
+    with pytest.raises(SpectrlDecodeError, match="require fp"):
         decode_token(_retoken(doc))
 
 
@@ -160,17 +170,17 @@ def test_zlib_bomb_is_bounded():
         decode_token(_retoken(doc))
 
 
-def test_tampered_hash_raises_decode_error():
+def test_tampered_checksum_raises_decode_error():
     token = _token()
     parts = token.split(".")
-    doc = cbor2.loads(b64url_decode(parts[1]))
-    doc[1] = "tampered-id"  # change content, keep stored hash
-    tampered = f"spectrl2.{b64url_encode(cbor2.dumps(doc, canonical=True))}.{parts[2]}"
-    with pytest.raises(SpectrlDecodeError, match="hash"):
+    doc = cbor2.loads(b64url_decode(parts[2]))
+    doc[1] = "tampered-id"  # change content, keep stored checksum
+    tampered = f"spectrl.v1.{b64url_encode(cbor2.dumps(doc, canonical=True))}.{parts[3]}"
+    with pytest.raises(SpectrlDecodeError, match="checksum"):
         decode_token(tampered)
 
 
-def test_four_part_token_rejected():
+def test_five_part_token_rejected():
     token = _token()
     with pytest.raises(SpectrlDecodeError, match="parts"):
         decode_token(token + ".AAAAAAAAAAAAAAAA")

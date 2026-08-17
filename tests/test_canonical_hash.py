@@ -1,4 +1,6 @@
-"""Acceptance criterion 3: Determinism and hash verification."""
+"""Acceptance criterion 3: Determinism and checksum verification."""
+
+import binascii
 
 import numpy as np
 import pytest
@@ -38,56 +40,50 @@ def test_deterministic_unordered_input():
     assert t_sorted == t_shuffled
 
 
-def test_hash_stored_in_token():
+def test_checksum_stored_in_token():
     token = encode_spectrum(_make_spec())
     decoded = decode_token(token)
-    assert decoded.hash is not None
-    assert len(decoded.hash) == 16  # 12 bytes → 16 base64url chars
+    assert len(decoded.checksum) == 8
+    assert decoded.checksum == decoded.checksum.lower()
 
 
-def test_token_is_three_parts():
-    """A spectrl2 token is magic + one base64url CBOR document + trailing hash."""
+def test_token_is_four_parts():
+    """A spectrl.v1 token is identifier + version + CBOR document + checksum."""
     token = encode_spectrum(_make_spec())
     parts = token.split(".")
-    assert parts[0] == "spectrl2"
-    assert len(parts) == 3
-    assert len(parts[2]) == 16  # 12 bytes → 16 base64url chars
+    assert parts[:2] == ["spectrl", "v1"]
+    assert len(parts) == 4
+    assert len(parts[3]) == 8
 
 
-def test_hash_is_plain_sha256_of_prefix():
-    """Any tool with sha256 can verify a token: hash the text before the last dot."""
-    import base64
-    import hashlib
-
+def test_checksum_is_crc32_of_prefix():
     token = encode_spectrum(_make_spec())
     body, stored = token.rsplit(".", 1)
-    digest = hashlib.sha256(body.encode("ascii")).digest()[:12]
-    assert stored == base64.urlsafe_b64encode(digest).rstrip(b"=").decode("ascii")
+    assert stored == f"{binascii.crc32(body.encode('ascii')) & 0xFFFFFFFF:08x}"
 
 
-def test_unhashed_token_decodes():
-    """A two-part token simply carries no hash; decode succeeds with hash=None."""
+def test_missing_checksum_is_rejected():
     token = encode_spectrum(_make_spec())
     body = token.rsplit(".", 1)[0]
-    decoded = decode_token(body)
-    assert decoded.hash is None
+    with pytest.raises(ValueError, match="exactly four"):
+        decode_token(body)
 
 
-def test_hash_verified_on_decode():
+def test_checksum_verified_on_decode():
     """Tampering the payload causes ValueError on decode."""
     token = encode_spectrum(_make_spec())
     body, stored = token.rsplit(".", 1)
-    # Perturb the tail of the CBOR payload; the stored hash no longer matches.
+    # Perturb the tail of the CBOR payload; the stored checksum no longer matches.
     tampered = body[:-3] + ("AAA" if body[-3:] != "AAA" else "BBB") + "." + stored
-    with pytest.raises(ValueError, match="hash mismatch"):
+    with pytest.raises(ValueError, match="checksum mismatch"):
         decode_token(tampered)
 
 
-def test_hash_matches_re_encode():
-    """Decoded hash equals hash from a fresh encode of same data."""
+def test_checksum_matches_re_encode():
+    """Decoded checksum equals checksum from a fresh encode of same data."""
     spec = _make_spec()
     t1 = encode_spectrum(spec)
     decoded = decode_token(t1)
     t2 = encode_spectrum(spec)
     decoded2 = decode_token(t2)
-    assert decoded.hash == decoded2.hash
+    assert decoded.checksum == decoded2.checksum

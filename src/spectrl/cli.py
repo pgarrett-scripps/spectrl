@@ -15,32 +15,32 @@ def _read_input(path: str) -> str:
 
 
 def _encode_cmd(args: argparse.Namespace) -> None:
-    import numpy as np
-
     from . import encode_spectrum
-    from .model import InlineSpectrum, SpectrlCvParam
+    from .serialization import spectrum_from_dict
 
     try:
         data = json.loads(_read_input(args.input))
     except json.JSONDecodeError as e:
         raise SystemExit(f"spectrl encode: input is not valid JSON: {e}") from None
     try:
-        mz = np.array(data["mz"], dtype=np.float64)
-        intensity = np.array(data["intensity"], dtype=np.float64)
-        params = [SpectrlCvParam(**p) for p in data.get("params", [])]
+        spec = spectrum_from_dict(data)
     except (KeyError, TypeError, ValueError) as e:
         raise SystemExit(
-            f"spectrl encode: bad input ({e}); expected "
-            '{"mz": [...], "intensity": [...], "id"?: str, "params"?: [{"accession": ..., "value"?: ...}]}'
+            f"spectrl encode: bad input ({e}); expected a spectrum object produced by 'spectrl decode'"
         ) from None
-    spec = InlineSpectrum(
-        default_array_length=len(mz),
-        mz=mz,
-        intensity=intensity,
-        id=data.get("id"),
-        params=params,
+    array_encodings = {}
+    for item in args.array_encoding:
+        key, separator, codec = item.partition("=")
+        if not separator or not key or not codec:
+            raise SystemExit("spectrl encode: --array-encoding must be ARRAY=CODEC")
+        array_encodings[key] = codec
+    token = encode_spectrum(
+        spec,
+        lossless=args.lossless,
+        max_len=args.max_len,
+        array_encodings=array_encodings,
+        allow_unsafe_lossy_custom=args.allow_unsafe_lossy_custom,
     )
-    token = encode_spectrum(spec, lossless=args.lossless, max_len=args.max_len)
     print(token)
 
 
@@ -52,35 +52,38 @@ def _decode_cmd(args: argparse.Namespace) -> None:
         decoded = decode_token(token)
     except SpectrlDecodeError as e:
         raise SystemExit(f"spectrl decode: {e}") from None
-    out: dict = {
-        "id": decoded.id,
-        "default_array_length": decoded.default_array_length,
-        "mz": decoded.mz.tolist() if decoded.mz is not None else None,
-        "intensity": decoded.intensity.tolist() if decoded.intensity is not None else None,
-        "charge": decoded.charge.tolist() if decoded.charge is not None else None,
-        "hash": decoded.hash,
-        "interp": decoded.interp,
-    }
+    from .serialization import spectrum_to_dict
+
+    out = spectrum_to_dict(decoded)
     print(json.dumps(out, indent=2))
 
 
 def _inspect_cmd(args: argparse.Namespace) -> None:
     import cbor2
 
-    from .header import DESC_ARRAY, DESC_COMP, DESC_DATA
+    from .cbor_format import token_checksum
+    from .header import DESC_DATA
+    from .introspection import inspect_token
     from .token import MAGIC, b64url_decode
 
     token = _read_input(args.input).strip()
-    parts = token.split(".")
-    if parts[0] != MAGIC or len(parts) not in (2, 3):
+    prefix = f"{MAGIC}."
+    if not token.startswith(prefix):
         raise SystemExit(f"Not a {MAGIC} token.")
-    raw = b64url_decode(parts[1])
+    parts = token[len(prefix) :].split(".")
+    if len(parts) != 2 or parts[1] != token_checksum(f"{MAGIC}.{parts[0]}"):
+        raise SystemExit(f"Not a {MAGIC} token.")
+    raw = b64url_decode(parts[0])
     doc = cbor2.loads(raw)
     arrays = doc.get(6, [])
     print(f"CBOR document: {len(raw)} bytes ({len(arrays)} array(s))")
-    for i, desc in enumerate(arrays):
-        blob = desc.get(DESC_DATA, b"")
-        print(f"  array {i}: tail={desc.get(DESC_ARRAY)} comp={desc.get(DESC_COMP)} blob={len(blob)} bytes")
+    for i, info in enumerate(inspect_token(token)):
+        unit = f" unit={info['unit_accession']}" if "unit_accession" in info else ""
+        fp = f" fp={info['fixed_point']}" if info["fixed_point"] is not None else ""
+        print(
+            f"  array {i}: {info['accession']} type={info['type_accession']} "
+            f"comp={info['compression_accession']}{fp}{unit} blob={info['compressed_bytes']} bytes"
+        )
 
     # Show the header without the (large) embedded blobs.
     def _strip(o):
@@ -100,17 +103,29 @@ def main() -> None:
     parser = argparse.ArgumentParser(prog="spectrl", description="spectrl inline spectrum encoder/decoder")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
-    enc = sub.add_parser("encode", help="Encode a spectrum JSON to a spectrl2 token")
+    enc = sub.add_parser("encode", help="Encode a spectrum JSON to a spectrl.v1 token")
     enc.add_argument("input", nargs="?", default="-", help="Input JSON file or '-' for stdin")
     enc.add_argument("--lossless", action="store_true", help="Use lossless IEEE-754 + zlib encoding")
     enc.add_argument("--max-len", type=int, default=None, help="Maximum token length in bytes")
+    enc.add_argument(
+        "--array-encoding",
+        action="append",
+        default=[],
+        metavar="ARRAY=CODEC",
+        help="Override an array codec, for example mz=numlin-zstd. Repeat for multiple arrays.",
+    )
+    enc.add_argument(
+        "--allow-unsafe-lossy-custom",
+        action="store_true",
+        help="Allow explicit lossy codecs for semantically unknown custom arrays.",
+    )
     enc.set_defaults(func=_encode_cmd)
 
-    dec = sub.add_parser("decode", help="Decode a spectrl2 token to JSON")
+    dec = sub.add_parser("decode", help="Decode a spectrl.v1 token to JSON")
     dec.add_argument("input", nargs="?", default="-", help="Token file or '-' for stdin")
     dec.set_defaults(func=_decode_cmd)
 
-    ins = sub.add_parser("inspect", help="Inspect a spectrl2 token header as readable JSON")
+    ins = sub.add_parser("inspect", help="Inspect a spectrl.v1 token header as readable JSON")
     ins.add_argument("input", nargs="?", default="-", help="Token file or '-' for stdin")
     ins.set_defaults(func=_inspect_cmd)
 

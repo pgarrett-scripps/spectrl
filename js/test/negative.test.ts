@@ -32,11 +32,10 @@ test("negative ion mobility round-trips exactly in lossy mode", () => {
     defaultArrayLength: 2,
     mz: [100.0, 200.0],
     intensity: [1e3, 2e3],
-    ionMobility: [-0.001, 0.9],
-    ionMobilityType: "MS:1003007", // raw ion mobility array
+    extraArrays: { "MS:1003007": [-0.001, 0.9] }, // raw ion mobility array
   };
   const d = decodeToken(encodeSpectrum(spec, { quiet: true }));
-  assert.deepEqual(Array.from(d.ionMobility!), [-0.001, 0.9]);
+  assert.deepEqual(Array.from(d.extraArrays["MS:1003007"]!), [-0.001, 0.9]);
 });
 
 test("negative m/z is rejected", () => {

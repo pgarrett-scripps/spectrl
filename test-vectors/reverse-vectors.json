@@ -1,13 +1,13 @@
 {
-  "spectrl_format_version": 2,
-  "generated_by": "spectrl-js 0.4.0",
-  "note": "Reverse vectors: tokens encoded by the JS implementation, decoded values recorded. Other implementations MUST decode `token` and match `decoded` within `tolerance`, and the `hash` MUST verify.",
+  "spectrl_format_version": 1,
+  "generated_by": "spectrl-js 1.0.0",
+  "note": "Reverse vectors: tokens encoded by the JS implementation, decoded values recorded. Other implementations MUST decode `token` and match `decoded` within `tolerance`, and the `checksum` MUST verify.",
   "vectors": [
     {
       "name": "minimal",
       "description": "m/z and intensity only",
       "mode": "lossy",
-      "token": "spectrl2.ogADBoKkABoAD0RLARoAD0RCAhoAD0z6BVgaeJxz-JHFAAI3Kh4w3DHlZlS4vtABAEQZBsikABoAD0RLARoAD0RDAhoAD0z8BVR4nHNYo8AAAs8XHp73cCIAHZIFaA.wbsO2Q8yuOet2gmY",
+      "token": "spectrl.v1.ogADBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgaeJxz-JHFAAI3Kh4w3DHlZlS4vtABAEQZBsilABoAD0RLARoAD0RDAhoAD0z8AxkOEAVUeJxzWKPAAALPFx6e93AiAB2SBWg.4cfc7400",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -26,8 +26,6 @@
           32002.837968673844
         ],
         "charge": null,
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [],
         "scans": [],
         "scan_combination": null,
@@ -36,15 +34,16 @@
         "interp": null,
         "user_params": [],
         "extra_arrays": {},
-        "hash": "wbsO2Q8yuOet2gmY",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "4cfc7400",
+        "format_version": 1
       }
     },
     {
       "name": "minimal__lossless",
       "description": "m/z and intensity only (lossless)",
       "mode": "lossless",
-      "token": "spectrl2.ogADBoKkABoAD0RLARoAD0RCAhoAD0R-BVgheJx7E7hDrjU5yUG7XezmucepDotct33-eyTPAQCUZQyUpAAaAA9ESwEaAA9EQwIaAA9EfgVYGHicY2AAgqwfDiCKoeMzhHa47wAAMfoEvQ.h9VjggEd-Yb7oCSX",
+      "token": "spectrl.v1.ogADBoKkABoAD0RLARoAD0RCAhoAD0R-BVgheJx7E7hDrjU5yUG7XezmucepDotct33-eyTPAQCUZQyUpAAaAA9ESwEaAA9EQwIaAA9EfgVYGHicY2AAgqwfDiCKoeMzhHa47wAAMfoEvQ.5954df16",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -63,8 +62,6 @@
           32000
         ],
         "charge": null,
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [],
         "scans": [],
         "scan_combination": null,
@@ -73,15 +70,16 @@
         "interp": null,
         "user_params": [],
         "extra_arrays": {},
-        "hash": "h9VjggEd-Yb7oCSX",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "5954df16",
+        "format_version": 1
       }
     },
     {
       "name": "centroid_ms2_params",
       "description": "MS2 centroid with ms-level, polarity flag, centroid flag, TIC",
       "mode": "lossy",
-      "token": "spectrl2.pAAEAWlzY2FuPTEwNDICpBoAD0K_9hoAD0LC9hoAD0NdGgAC3NAaAA9EPwIGgqQAGgAPREsBGgAPREICGgAPTPoFWB14nHP4kcUAAjVfljPcMeVmVJDxdO5mSAAAUuMGiqQAGgAPREsBGgAPREMCGgAPTPwFVnicc1ijwAACX7oPLbSZKdYCACZtBV4.-nDTY_BwMcqM7LqJ",
+      "token": "spectrl.v1.pAAEAWlzY2FuPTEwNDICpBoAD0K_9hoAD0LC9hoAD0NdGgAC3NAaAA9EPwIGgqUAGgAPREsBGgAPREICGgAPTPoDGgABhqAFWB14nHP4kcUAAjVfljPcMeVmVJDxdO5mSAAAUuMGiqUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVZ4nHNYo8AAAl-6Dy20mSnWAgAmbQVe.eff1f7e2",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -102,8 +100,6 @@
           12000.39026862074
         ],
         "charge": null,
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [
           {
             "accession": "MS:1000127",
@@ -133,15 +129,16 @@
         "interp": null,
         "user_params": [],
         "extra_arrays": {},
-        "hash": "-nDTY_BwMcqM7LqJ",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "eff1f7e2",
+        "format_version": 1
       }
     },
     {
       "name": "centroid_ms2_params__lossless",
       "description": "MS2 centroid with ms-level, polarity flag, centroid flag, TIC (lossless)",
       "mode": "lossless",
-      "token": "spectrl2.pAAEAWlzY2FuPTEwNDICpBoAD0K_9hoAD0LC9hoAD0NdGgAC3NAaAA9EPwIGgqQAGgAPREsBGgAPREICGgAPRH4FWCl4nGNrnOrc3RLtoN0udvPc41SHjIlva-yZixxWHPM27wyudAAA5CcN3KQAGgAPREsBGgAPREMCGgAPRH4FWB14nGNgAIKmKw4gqkH7B5hmiHsFoQuOOwAAXwsGeQ.GPtjn5j5qjLPZESW",
+      "token": "spectrl.v1.pAAEAWlzY2FuPTEwNDICpBoAD0K_9hoAD0LC9hoAD0NdGgAC3NAaAA9EPwIGgqQAGgAPREsBGgAPREICGgAPRH4FWCl4nGNrnOrc3RLtoN0udvPc41SHjIlva-yZixxWHPM27wyudAAA5CcN3KQAGgAPREsBGgAPREMCGgAPRH4FWB14nGNgAIKmKw4gqkH7B5hmiHsFoQuOOwAAXwsGeQ.48c6ceca",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -162,8 +159,6 @@
           12000
         ],
         "charge": null,
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [
           {
             "accession": "MS:1000127",
@@ -193,15 +188,16 @@
         "interp": null,
         "user_params": [],
         "extra_arrays": {},
-        "hash": "GPtjn5j5qjLPZESW",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "48c6ceca",
+        "format_version": 1
       }
     },
     {
       "name": "with_charge_array",
       "description": "per-peak charge array",
       "mode": "lossy",
-      "token": "spectrl2.ogADBoOkABoAD0RLARoAD0RCAhoAD0z6BVgYeJxz-JHFAAIaQb-ZGFgrWSyECwEu5gRYpAAaAA9ESwEaAA9EQwIaAA9M_AVTeJxzWKPAAAIsU1272xoBFQ0DfaQAGgAPREsBGgAPREQCGgAPTPsFS3icKyosBAACrAFV.m-bXNUS5HW6rBnSU",
+      "token": "spectrl.v1.ogADBoOlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgYeJxz-JHFAAIaQb-ZGFgrWSyECwEu5gRYpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFU3icc1ijwAACLFNdu9saARUNA32kABoAD0RLARoAD0REAhoAD0z7BUt4nCsqLAQAAqwBVQ.9c3a1ba5",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -224,8 +220,6 @@
           1,
           1
         ],
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [],
         "scans": [],
         "scan_combination": null,
@@ -234,15 +228,16 @@
         "interp": null,
         "user_params": [],
         "extra_arrays": {},
-        "hash": "m-bXNUS5HW6rBnSU",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "9c3a1ba5",
+        "format_version": 1
       }
     },
     {
       "name": "with_charge_array__lossless",
       "description": "per-peak charge array (lossless)",
       "mode": "lossless",
-      "token": "spectrl2.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJxjYAACl3oHYxAobncAcRl8-h0ALv0EWKQAGgAPREsBGgAPREMCGgAPRH4FVnicY2AAgo7HDgxg-jKUPuwAADIaBNKkABoAD0RLARoAD0REAhoAD0R-BVJ4nGNgAAMHCPXBHkYDABIOAp8.tejjd3Up5EMT-DQL",
+      "token": "spectrl.v1.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJxjYAACl3oHYxAobncAcRl8-h0ALv0EWKQAGgAPREsBGgAPREMCGgAPRH4FVnicY2AAgo7HDgxg-jKUPuwAADIaBNKkABoAD0RLARoAD0REAhoAD0R-BVJ4nGNgAAMHCPXBHkYDABIOAp8.349f737c",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -265,8 +260,6 @@
           1,
           1
         ],
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [],
         "scans": [],
         "scan_combination": null,
@@ -275,15 +268,16 @@
         "interp": null,
         "user_params": [],
         "extra_arrays": {},
-        "hash": "tejjd3Up5EMT-DQL",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "349f737c",
+        "format_version": 1
       }
     },
     {
       "name": "negative_charge_sentinel",
       "description": "charge array with a negative sentinel; lossy encode falls back to lossless zlib for the charge array",
       "mode": "lossy",
-      "token": "spectrl2.ogADBoOkABoAD0RLARoAD0RCAhoAD0z6BVgYeJxz-JHFAAIaQb-ZGFgrWSyECwEu5gRYpAAaAA9ESwEaAA9EQwIaAA9M_AVTeJxzWKPAAAIsU1272xoBFQ0DfaQAGgAPREsBGgAPREQCGgAPRH4FU3icY2AAAwcI9WE_lLYHABaOAx8.JSyy6Tv7bqc4F8jh",
+      "token": "spectrl.v1.ogADBoOlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgYeJxz-JHFAAIaQb-ZGFgrWSyECwEu5gRYpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFU3icc1ijwAACLFNdu9saARUNA32kABoAD0RLARoAD0REAhoAD0R-BVN4nGNgAAMHCPVhP5S2BwAWjgMf.12113df5",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -306,8 +300,6 @@
           -1,
           1
         ],
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [],
         "scans": [],
         "scan_combination": null,
@@ -316,15 +308,16 @@
         "interp": null,
         "user_params": [],
         "extra_arrays": {},
-        "hash": "JSyy6Tv7bqc4F8jh",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "12113df5",
+        "format_version": 1
       }
     },
     {
       "name": "negative_charge_sentinel__lossless",
       "description": "charge array with a negative sentinel; lossy encode falls back to lossless zlib for the charge array (lossless)",
       "mode": "lossless",
-      "token": "spectrl2.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJxjYAACl3oHYxAobncAcRl8-h0ALv0EWKQAGgAPREsBGgAPREMCGgAPRH4FVnicY2AAgo7HDgxg-jKUPuwAADIaBNKkABoAD0RLARoAD0REAhoAD0R-BVN4nGNgAAMHCPVhP5S2BwAWjgMf.zcLVrIUTBi_3OnQg",
+      "token": "spectrl.v1.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJxjYAACl3oHYxAobncAcRl8-h0ALv0EWKQAGgAPREsBGgAPREMCGgAPRH4FVnicY2AAgo7HDgxg-jKUPuwAADIaBNKkABoAD0RLARoAD0REAhoAD0R-BVN4nGNgAAMHCPVhP5S2BwAWjgMf.0738e3fe",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -347,8 +340,6 @@
           -1,
           1
         ],
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [],
         "scans": [],
         "scan_combination": null,
@@ -357,15 +348,16 @@
         "interp": null,
         "user_params": [],
         "extra_arrays": {},
-        "hash": "zcLVrIUTBi_3OnQg",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "0738e3fe",
+        "format_version": 1
       }
     },
     {
       "name": "negative_intensity_fallback",
       "description": "baseline-subtracted intensities with negative values; lossy encode falls back to lossless zlib for the intensity array",
       "mode": "lossy",
-      "token": "spectrl2.ogADBoKkABoAD0RLARoAD0RCAhoAD0z6BVd4nHP4kcUAAg3TZjAw6BoyNgAAKSgEMKQAGgAPREsBGgAPREMCGgAPRH4FV3icY2AAgQf7wVTHYQcwzcBxAAAtDQPz.YUfDznE8ywrsjQL5",
+      "token": "spectrl.v1.ogADBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVd4nHP4kcUAAg3TZjAw6BoyNgAAKSgEMKQAGgAPREsBGgAPREMCGgAPRH4FV3icY2AAgQf7wVTHYQcwzcBxAAAtDQPz.af907764",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -384,8 +376,6 @@
           -3
         ],
         "charge": null,
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [],
         "scans": [],
         "scan_combination": null,
@@ -394,15 +384,16 @@
         "interp": null,
         "user_params": [],
         "extra_arrays": {},
-        "hash": "YUfDznE8ywrsjQL5",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "af907764",
+        "format_version": 1
       }
     },
     {
       "name": "negative_intensity_fallback__lossless",
       "description": "baseline-subtracted intensities with negative values; lossy encode falls back to lossless zlib for the intensity array (lossless)",
       "mode": "lossless",
-      "token": "spectrl2.ogADBoKkABoAD0RLARoAD0RCAhoAD0R-BVZ4nGNgAIFIBzDFkAmhDxQ5AAAUWAK1pAAaAA9ESwEaAA9EQwIaAA9EfgVXeJxjYACBB_vBVMdhBzDNwHEAAC0NA_M.AU0iilHsT2Nc9BAT",
+      "token": "spectrl.v1.ogADBoKkABoAD0RLARoAD0RCAhoAD0R-BVZ4nGNgAIFIBzDFkAmhDxQ5AAAUWAK1pAAaAA9ESwEaAA9EQwIaAA9EfgVXeJxjYACBB_vBVMdhBzDNwHEAAC0NA_M.064c9169",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -421,8 +412,6 @@
           -3
         ],
         "charge": null,
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [],
         "scans": [],
         "scan_combination": null,
@@ -431,15 +420,16 @@
         "interp": null,
         "user_params": [],
         "extra_arrays": {},
-        "hash": "AU0iilHsT2Nc9BAT",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "064c9169",
+        "format_version": 1
       }
     },
     {
       "name": "precursor_full",
       "description": "isolation window, selected ion, and HCD activation",
       "mode": "lossy",
-      "token": "spectrl2.pAADAqEaAA9EPwIEgaMAoxoAD0V7-0B70euFHrhSGgAPRXz7P-gAAAAAAAAaAA9Fffs_6AAAAAAAAAGBohoAD0JpAhoAD0Uo-0B70euFHrhSAqIaAA9CbYIYGxkBChoAD0Pm9gaCpAAaAA9ESwEaAA9EQgIaAA9M-gVYGXicc_iRxQACFf-OMBi86mTcsTYPAECyB1SkABoAD0RLARoAD0RDAhoAD0z8BVR4nHNYo8AAAj8mPJ7j2g0AHN8E5A.wJfBsao26nsjINXJ",
+      "token": "spectrl.v1.pAADAqEaAA9EPwIEgaMAoxoAD0V7-0B70euFHrhSGgAPRXz7P-gAAAAAAAAaAA9Fffs_6AAAAAAAAAGBohoAD0JpAhoAD0Uo-0B70euFHrhSAqIaAA9CbYIYGxkBChoAD0Pm9gaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVYGXicc_iRxQACFf-OMBi86mTcsTYPAECyB1SlABoAD0RLARoAD0RDAhoAD0z8AxkOEAVUeJxzWKPAAAI_Jjye49oNABzfBOQ.dcc502d1",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -458,8 +448,6 @@
           20001.471324173166
         ],
         "charge": null,
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [
           {
             "accession": "MS:1000511",
@@ -526,15 +514,16 @@
         "interp": null,
         "user_params": [],
         "extra_arrays": {},
-        "hash": "wJfBsao26nsjINXJ",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "dcc502d1",
+        "format_version": 1
       }
     },
     {
       "name": "precursor_full__lossless",
       "description": "isolation window, selected ion, and HCD activation (lossless)",
       "mode": "lossless",
-      "token": "spectrl2.pAADAqEaAA9EPwIEgaMAoxoAD0V7-0B70euFHrhSGgAPRXz7P-gAAAAAAAAaAA9Fffs_6AAAAAAAAAGBohoAD0JpAhoAD0Uo-0B70euFHrhSAqIaAA9CbYIYGxkBChoAD0Pm9gaCpAAaAA9ESwEaAA9EQgIaAA9EfgVYIHicU2VrnOqsnOBwUen2zzqlAodqkXXuD5UqHABy3gmepAAaAA9ESwEaAA9EQwIaAA9EfgVYGHicY2AAAp-7DiCKQfwjhO647AAAKasETQ.JTyz80daZnLTCerB",
+      "token": "spectrl.v1.pAADAqEaAA9EPwIEgaMAoxoAD0V7-0B70euFHrhSGgAPRXz7P-gAAAAAAAAaAA9Fffs_6AAAAAAAAAGBohoAD0JpAhoAD0Uo-0B70euFHrhSAqIaAA9CbYIYGxkBChoAD0Pm9gaCpAAaAA9ESwEaAA9EQgIaAA9EfgVYIHicU2VrnOqsnOBwUen2zzqlAodqkXXuD5UqHABy3gmepAAaAA9ESwEaAA9EQwIaAA9EfgVYGHicY2AAAp-7DiCKQfwjhO647AAAKasETQ.d366608e",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -553,8 +542,6 @@
           20000
         ],
         "charge": null,
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [
           {
             "accession": "MS:1000511",
@@ -621,15 +608,16 @@
         "interp": null,
         "user_params": [],
         "extra_arrays": {},
-        "hash": "JTyz80daZnLTCerB",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "d366608e",
+        "format_version": 1
       }
     },
     {
       "name": "with_proforma",
       "description": "ProForma interpretation",
       "mode": "lossy",
-      "token": "spectrl2.owADBoKkABoAD0RLARoAD0RCAhoAD0z6BVgaeJxz-JHFAAIsVQ8YeBKXMq5IW_4AADoIBqmkABoAD0RLARoAD0RDAhoAD0z8BVR4nHNYo8AAAs8Xqs9w7QYAGdIEJAdxRUxWSVNbUGhvc3Bob11LLzI.5Vqx_gFZWICNSd7b",
+      "token": "spectrl.v1.owADBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgaeJxz-JHFAAIsVQ8YeBKXMq5IW_4AADoIBqmlABoAD0RLARoAD0RDAhoAD0z8AxkOEAVUeJxzWKPAAALPF6rPcO0GABnSBCQHcUVMVklTW1Bob3NwaG9dSy8y.5f75fcfd",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -648,8 +636,6 @@
           20001.471324173166
         ],
         "charge": null,
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [],
         "scans": [],
         "scan_combination": null,
@@ -658,15 +644,16 @@
         "interp": "ELVIS[Phospho]K/2",
         "user_params": [],
         "extra_arrays": {},
-        "hash": "5Vqx_gFZWICNSd7b",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "5f75fcfd",
+        "format_version": 1
       }
     },
     {
       "name": "with_proforma__lossless",
       "description": "ProForma interpretation (lossless)",
       "mode": "lossless",
-      "token": "spectrl2.owADBoKkABoAD0RLARoAD0RCAhoAD0R-BVgheJwL49PdNDc5yUFknfvDKqdCh-e_V368FFzhAACAzQuWpAAaAA9ESwEaAA9EQwIaAA9EfgVXeJxjYACCrB8ODGD6BYTuuOwAADECBNAHcUVMVklTW1Bob3NwaG9dSy8y.O8aHe-7SYQ9TQO6j",
+      "token": "spectrl.v1.owADBoKkABoAD0RLARoAD0RCAhoAD0R-BVgheJwL49PdNDc5yUFknfvDKqdCh-e_V368FFzhAACAzQuWpAAaAA9ESwEaAA9EQwIaAA9EfgVXeJxjYACCrB8ODGD6BYTuuOwAADECBNAHcUVMVklTW1Bob3NwaG9dSy8y.4da80467",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -685,8 +672,6 @@
           20000
         ],
         "charge": null,
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [],
         "scans": [],
         "scan_combination": null,
@@ -695,15 +680,16 @@
         "interp": "ELVIS[Phospho]K/2",
         "user_params": [],
         "extra_arrays": {},
-        "hash": "O8aHe-7SYQ9TQO6j",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "4da80467",
+        "format_version": 1
       }
     },
     {
       "name": "ion_mobility",
-      "description": "per-peak ion mobility array",
+      "description": "two distinct per-peak ion mobility arrays",
       "mode": "lossy",
-      "token": "spectrl2.ogADBoOkABoAD0RLARoAD0RCAhoAD0z6BVd4nHP4kcUAAhNenWRUuDqZuQEAMh8F8qQAGgAPREsBGgAPREMCGgAPTPwFVHicc1ijwAACLFN_THDtBgAXcAP-pAAaAA9ESwEaAA9OAAIaAA9M-gVYGHicc_iRxQACAQ6MDBXJjAwezQIAKtMD6w.hcVrC8GyHs8t2ePH",
+      "token": "spectrl.v1.ogADBoSlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVd4nHP4kcUAAhNenWRUuDqZuQEAMh8F8qUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVR4nHNYo8AAAixTf0xw7QYAF3AD_qUAGgAPREsBGgAPTgACGgAPTPoDGgABhqAFWBh4nHP4kcUAAgEOjAwVyYwMHs0CACrTA-ulABoAD0RLARoAD06RAhoAD0z6AxoAAYagBVgZeJxz-JHFAAITyoQYEopEGByCDwAAMJEE9A.02414f1c",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -722,12 +708,6 @@
           20001.471324173166
         ],
         "charge": null,
-        "ion_mobility": [
-          0.82,
-          0.91,
-          1.05
-        ],
-        "ion_mobility_type": "MS:1003008",
         "params": [],
         "scans": [],
         "scan_combination": null,
@@ -735,16 +715,34 @@
         "products": [],
         "interp": null,
         "user_params": [],
-        "extra_arrays": {},
-        "hash": "hcVrC8GyHs8t2ePH",
-        "format_version": 2
+        "extra_arrays": {
+          "MS:1003008": {
+            "dtype": "float64",
+            "values": [
+              0.82,
+              0.91,
+              1.05
+            ]
+          },
+          "MS:1003153": {
+            "dtype": "float64",
+            "values": [
+              12.1,
+              13.4,
+              15.2
+            ]
+          }
+        },
+        "array_units": {},
+        "checksum": "02414f1c",
+        "format_version": 1
       }
     },
     {
       "name": "ion_mobility__lossless",
-      "description": "per-peak ion mobility array (lossless)",
+      "description": "two distinct per-peak ion mobility arrays (lossless)",
       "mode": "lossless",
-      "token": "spectrl2.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJybNRMIDhY5zALTTQ5pIKDU4wAAo7wL36QAGgAPREsBGgAPREMCGgAPRH4FWBh4nGNgAIKOxw4gisHnLoTuuOwAADAKBLCkABoAD0RLARoAD04AAhoAD0R-BVgeeJyz5bq-uMD2lb186-vAHXJv7c-eAYEP9gCVAQ1y.mFcOT3UeZs-L3HJk",
+      "token": "spectrl.v1.ogADBoSkABoAD0RLARoAD0RCAhoAD0R-BVgZeJybNRMIDhY5zALTTQ5pIKDU4wAAo7wL36QAGgAPREsBGgAPREMCGgAPRH4FWBh4nGNgAIKOxw4gisHnLoTuuOwAADAKBLCkABoAD0RLARoAD04AAhoAD0R-BVgeeJyz5bq-uMD2lb186-vAHXJv7c-eAYEP9gCVAQ1ypAAaAA9ESwEaAA9OkQIaAA9EfgVXeJwzNgYBDYezZ0BAyyENDPQcAHMdCaA.99140d10",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -763,12 +761,6 @@
           20000
         ],
         "charge": null,
-        "ion_mobility": [
-          0.82,
-          0.91,
-          1.05
-        ],
-        "ion_mobility_type": "MS:1003008",
         "params": [],
         "scans": [],
         "scan_combination": null,
@@ -776,16 +768,34 @@
         "products": [],
         "interp": null,
         "user_params": [],
-        "extra_arrays": {},
-        "hash": "mFcOT3UeZs-L3HJk",
-        "format_version": 2
+        "extra_arrays": {
+          "MS:1003008": {
+            "dtype": "float64",
+            "values": [
+              0.82,
+              0.91,
+              1.05
+            ]
+          },
+          "MS:1003153": {
+            "dtype": "float64",
+            "values": [
+              12.1,
+              13.4,
+              15.2
+            ]
+          }
+        },
+        "array_units": {},
+        "checksum": "99140d10",
+        "format_version": 1
       }
     },
     {
       "name": "non_ms_ontology_param_key",
       "description": "a UO-ontology parameter (string map key)",
       "mode": "lossy",
-      "token": "spectrl2.owACAqIaAA9EPwFqVU86MDAwMDAxMPtADAAAAAAAAAaCpAAaAA9ESwEaAA9EQgIaAA9M-gVWeJxz-JHFAAIN-3YzRLzYzgQAK4AFlaQAGgAPREsBGgAPREMCGgAPTPwFUXicc1ijwAAC2QvaGgEQyQMf.6E5L8lGFTYVtO1ca",
+      "token": "spectrl.v1.owACAqIaAA9EPwFqVU86MDAwMDAxMPtADAAAAAAAAAaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVWeJxz-JHFAAIN-3YzRLzYzgQAK4AFlaUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVF4nHNYo8AAAtkL2hoBEMkDHw.d58ac782",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -802,8 +812,6 @@
           10001.152067330191
         ],
         "charge": null,
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [
           {
             "accession": "MS:1000511",
@@ -823,15 +831,16 @@
         "interp": null,
         "user_params": [],
         "extra_arrays": {},
-        "hash": "6E5L8lGFTYVtO1ca",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "d58ac782",
+        "format_version": 1
       }
     },
     {
       "name": "non_ms_ontology_param_key__lossless",
       "description": "a UO-ontology parameter (string map key) (lossless)",
       "mode": "lossless",
-      "token": "spectrl2.owACAqIaAA9EPwFqVU86MDAwMDAxMPtADAAAAAAAAAaCpAAaAA9ESwEaAA9EQgIaAA9EfgVYGHicO_xVI6b_UJxD6-vAHXKNNQ4ASbMIAKQAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgp9fHUAUQ8dhBwAZ8wO6.J5RSy7l8CWJ6nsLL",
+      "token": "spectrl.v1.owACAqIaAA9EPwFqVU86MDAwMDAxMPtADAAAAAAAAAaCpAAaAA9ESwEaAA9EQgIaAA9EfgVYGHicO_xVI6b_UJxD6-vAHXKNNQ4ASbMIAKQAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgp9fHUAUQ8dhBwAZ8wO6.4dc13000",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -848,8 +857,6 @@
           10000
         ],
         "charge": null,
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [
           {
             "accession": "MS:1000511",
@@ -869,15 +876,16 @@
         "interp": null,
         "user_params": [],
         "extra_arrays": {},
-        "hash": "J5RSy7l8CWJ6nsLL",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "4dc13000",
+        "format_version": 1
       }
     },
     {
       "name": "user_params",
       "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level trailer extra",
       "mode": "lossy",
-      "token": "spectrl2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvtANIAAAAAAABgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpAAaAA9ESwEaAA9EQgIaAA9M-gVVeJxz-JHFAAICIYaMCiuSmAAfmQNlpAAaAA9ESwEaAA9EQwIaAA9M_AVSeJxzWKPAAALqM3bMAgAQHgMeCIKjYW5sTWFzY290IHNjb3JlYXRpeHNkOmZsb2F0YXb7QEVZmZmZmZqiYW5vcmVhbmFseXNpcyBub3RlYXZ2cmVydW4gd2l0aCBzZW1pdHJ5cHRpYw.s3eV0H4UYOHboNFc",
+      "token": "spectrl.v1.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvtANIAAAAAAABgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVVeJxz-JHFAAICIYaMCiuSmAAfmQNlpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFUnicc1ijwAAC6jN2zAIAEB4DHgiCo2FubE1hc2NvdCBzY29yZWF0aXhzZDpmbG9hdGF2-0BFWZmZmZmaomFub3JlYW5hbHlzaXMgbm90ZWF2dnJlcnVuIHdpdGggc2VtaXRyeXB0aWM.c5b6c9f7",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -894,8 +902,6 @@
           60006.343310410826
         ],
         "charge": null,
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [
           {
             "accession": "MS:1000511",
@@ -942,15 +948,16 @@
           }
         ],
         "extra_arrays": {},
-        "hash": "s3eV0H4UYOHboNFc",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "c5b6c9f7",
+        "format_version": 1
       }
     },
     {
       "name": "user_params__lossless",
       "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level trailer extra (lossless)",
       "mode": "lossless",
-      "token": "spectrl2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvtANIAAAAAAABgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpAAaAA9ESwEaAA9EQgIaAA9EfgVTeJwzNgYC5kwHYzBd6QAAG7IDZ6QAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgqwXDiCKweetAwAS7AMMCIKjYW5sTWFzY290IHNjb3JlYXRpeHNkOmZsb2F0YXb7QEVZmZmZmZqiYW5vcmVhbmFseXNpcyBub3RlYXZ2cmVydW4gd2l0aCBzZW1pdHJ5cHRpYw.StZiBNfcUWROzefJ",
+      "token": "spectrl.v1.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvtANIAAAAAAABgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpAAaAA9ESwEaAA9EQgIaAA9EfgVTeJwzNgYC5kwHYzBd6QAAG7IDZ6QAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgqwXDiCKweetAwAS7AMMCIKjYW5sTWFzY290IHNjb3JlYXRpeHNkOmZsb2F0YXb7QEVZmZmZmZqiYW5vcmVhbmFseXNpcyBub3RlYXZ2cmVydW4gd2l0aCBzZW1pdHJ5cHRpYw.1e775bc7",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -967,8 +974,6 @@
           60000
         ],
         "charge": null,
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [
           {
             "accession": "MS:1000511",
@@ -1015,15 +1020,16 @@
           }
         ],
         "extra_arrays": {},
-        "hash": "StZiBNfcUWROzefJ",
-        "format_version": 2
+        "array_units": {},
+        "checksum": "1e775bc7",
+        "format_version": 1
       }
     },
     {
       "name": "extra_arrays",
       "description": "auxiliary arrays: signal-to-noise (named CV, float64), non-standard float32 and int32",
       "mode": "lossy",
-      "token": "spectrl2.ogAEBoWkABoAD0RLARoAD0RCAhoAD0z6BVgZeJxz-JHFAAIeX58wTHh1ktGjWQIAQU4G66QAGgAPREsBGgAPREMCGgAPTPwFVnicc1ijwAACh-epz_gxoa0RACVNBbykABoAD0RLARoAD0RFAhoAD0R-BVgYeJxjYACBOAcwxRACoRvcoHwNBwAlIAKhpQAaAA9ESQEaAA9FUgIaAA9EfgRpaXNvX3Njb3JlBVgYeJzzeFhlf_hrhv2SAlv7s2d47AFGWAe2pQAaAA9ERwEaAA9FUgIaAA9EfgRqcGVha19mbGFncwVSeJxjZmBgYGSAACYgBgAAVAAH.cCp1fIITWUdDMfnE",
+      "token": "spectrl.v1.ogAEBoWlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgZeJxz-JHFAAIeX58wTHh1ktGjWQIAQU4G66UAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVZ4nHNYo8AAAofnqc_4MaGtEQAlTQW8pgAaAA9ESwEaAA9ERQIaAA9M_AMZDhAFVnicc1ijwAAChc5nbK-bCqkAAB99BAwGgmJNUxoAD0LDpQAaAA9ESQEaAA9FUgIaAA9EfgRpaXNvX3Njb3JlBVgYeJzzeFhlf_hrhv2SAlv7s2d47AFGWAe2pQAaAA9ERwEaAA9FUgIaAA9EfgRqcGVha19mbGFncwVSeJxjZmBgYGSAACYgBgAAVAAH.71a3de1f",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -1044,8 +1050,6 @@
           10001.152067330191
         ],
         "charge": null,
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [],
         "scans": [],
         "scan_combination": null,
@@ -1057,10 +1061,10 @@
           "MS:1000517": {
             "dtype": "float64",
             "values": [
-              120,
-              80,
-              45,
-              12
+              120.00517742689206,
+              79.99961847243102,
+              44.998606893708214,
+              12.000658369670637
             ]
           },
           "iso_score": {
@@ -1082,15 +1086,18 @@
             ]
           }
         },
-        "hash": "cCp1fIITWUdDMfnE",
-        "format_version": 2
+        "array_units": {
+          "MS:1000517": "MS:1000131"
+        },
+        "checksum": "71a3de1f",
+        "format_version": 1
       }
     },
     {
       "name": "extra_arrays__lossless",
       "description": "auxiliary arrays: signal-to-noise (named CV, float64), non-standard float32 and int32 (lossless)",
       "mode": "lossless",
-      "token": "spectrl2.ogAEBoWkABoAD0RLARoAD0RCAhoAD0R-BVgeeJybNRMIDiY5zALTRQ7GIKBc45AGAoeaHAAA-g4zpAAaAA9ESwEaAA9EQwIaAA9EfgVYHHicY2AAgo7PDiCKIesFhPa5C6E7DjsAAFtYBkKkABoAD0RLARoAD0RFAhoAD0R-BVgYeJxjYACBOAcwxRACoRvcoHwNBwAlIAKhpQAaAA9ESQEaAA9FUgIaAA9EfgRpaXNvX3Njb3JlBVgYeJzzeFhlf_hrhv2SAlv7s2d47AFGWAe2pQAaAA9ERwEaAA9FUgIaAA9EfgRqcGVha19mbGFncwVSeJxjZmBgYGSAACYgBgAAVAAH.5VTLlGPyUNQBTE6G",
+      "token": "spectrl.v1.ogAEBoWkABoAD0RLARoAD0RCAhoAD0R-BVgeeJybNRMIDiY5zALTRQ7GIKBc45AGAoeaHAAA-g4zpAAaAA9ESwEaAA9EQwIaAA9EfgVYHHicY2AAgo7PDiCKIesFhPa5C6E7DjsAAFtYBkKlABoAD0RLARoAD0RFAhoAD0R-BVgYeJxjYACBOAcwxRACoRvcoHwNBwAlIAKhBoJiTVMaAA9Cw6UAGgAPREkBGgAPRVICGgAPRH4EaWlzb19zY29yZQVYGHic83hYZX_4a4b9kgJb-7NneOwBRlgHtqUAGgAPREcBGgAPRVICGgAPRH4EanBlYWtfZmxhZ3MFUnicY2ZgYGBkgAAmIAYAAFQABw.acff17cb",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -1111,8 +1118,6 @@
           10000
         ],
         "charge": null,
-        "ion_mobility": null,
-        "ion_mobility_type": null,
         "params": [],
         "scans": [],
         "scan_combination": null,
@@ -1149,8 +1154,431 @@
             ]
           }
         },
-        "hash": "5VTLlGPyUNQBTE6G",
-        "format_version": 2
+        "array_units": {
+          "MS:1000517": "MS:1000131"
+        },
+        "checksum": "acff17cb",
+        "format_version": 1
+      }
+    },
+    {
+      "name": "zstd_codecs",
+      "description": "official PSI-MS Numpress + zstd and byte-shuffled zstd pipelines",
+      "mode": "lossy",
+      "token": "spectrl.v1.ogAYgAaDpQAaAA9ESwEaAA9EQgIaAA9RBwMaAAGGoAVYLii1L_0gcS0BAKhA-GoAgJaYAN7NpQD_cYiP9xiI_3EGAE45AIq5yQAoQ0c-AESlABoAD0RLARoAD0RDAhoAD1EJAxkOEAVZARIotS_9YAgAQQgAQKwgAAAAAAC4IeIiDiQ9JW0mnyfTKAgqPit2LK8t6i4lMGExnjLcMxo1WjaZN9o4GzpcO5484D0iP2VAqEHsQi9Ec0W3RvxHQEmFSspLD01UTplP3lAjUmlTrlT0VTpXf1jFWQtbUVyXXd1eI2BpYa9i9WM7ZYFmx2cNaVRqmmvgbCZubG-zcPlxP3OFdMx1EndYeJ555XorfHF9uH7-f0SBi4LRgxeFXoakh-qIMYp3i72MBI5Kj5CQ15Edk2OUqpXwljaYfZnDmgmcUJ2WntyfI6Fpoq-j9qQ8poKnyagPqlarnKzirSmvb7C1sfyyQrSItc-2FbhbuaK66LsuvXW-u78BwUjCpQAaAA9ESQEaAA9FUgIaAA9RBQRncXVhbGl0eQVZAZ0otS_9YAABnQwAhBgABAQGBIUGhwRFhcYGR4fIBCRFZYWlxuYGJkdnh6fI6AQUJDRFVWV1hZWltcbW5vYGFiY2R1dnd4eXp7fI2Oj4BAwUHCQsNDxFTVVdZW11fYWNlZ2lrbW9xs7W3ubu9v4GDhYeJi42PkdPV19nb3d_h4-Xn6evt7_I0Njg6PD4AAACAoMCQoPDAiJCYoOjw-MCEiIyQlJicoOTo7PD0-PzAgoSGiIqMjpCSlJaYmpyeoOLk5ujq7O7w8vT2-Pr8_sCBgoOEhYaHiImKi4yNjo-QkZKTlJWWl5iZmpucnZ6foOHi4-Tl5ufo6err7O3u7_Dx8vP09fb3-Pn6-_z9_sAAAGBwQEhQWGBkaGxwdHh8QEJERkhKTE5QUlRWWFpcXmBhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5_QEDBQcJCw0PERMVFxkbHR8hIyUnKSstLzEzNTc5Oz0_QUNFR0lLTU9RU1VXWVtdX2FjZWdpa21vcXN1d3l7fYAAPDw8PT0-PwMQAJSEeBluUw.1d46bc87",
+      "tolerance": {
+        "abs": 0.000001,
+        "rel": 0.000001
+      },
+      "decoded": {
+        "default_array_length": 128,
+        "id": null,
+        "mz": [
+          100,
+          108.66142,
+          117.32283,
+          125.98425,
+          134.64567,
+          143.30709,
+          151.9685,
+          160.62992,
+          169.29134,
+          177.95276,
+          186.61417,
+          195.27559,
+          203.93701,
+          212.59843,
+          221.25984,
+          229.92126,
+          238.58268,
+          247.24409,
+          255.90551,
+          264.56693,
+          273.22835,
+          281.88976,
+          290.55118,
+          299.2126,
+          307.87402,
+          316.53543,
+          325.19685,
+          333.85827,
+          342.51969,
+          351.1811,
+          359.84252,
+          368.50394,
+          377.16535,
+          385.82677,
+          394.48819,
+          403.14961,
+          411.81102,
+          420.47244,
+          429.13386,
+          437.79528,
+          446.45669,
+          455.11811,
+          463.77953,
+          472.44094,
+          481.10236,
+          489.76378,
+          498.4252,
+          507.08661,
+          515.74803,
+          524.40945,
+          533.07087,
+          541.73228,
+          550.3937,
+          559.05512,
+          567.71654,
+          576.37795,
+          585.03937,
+          593.70079,
+          602.3622,
+          611.02362,
+          619.68504,
+          628.34646,
+          637.00787,
+          645.66929,
+          654.33071,
+          662.99213,
+          671.65354,
+          680.31496,
+          688.97638,
+          697.6378,
+          706.29921,
+          714.96063,
+          723.62205,
+          732.28346,
+          740.94488,
+          749.6063,
+          758.26772,
+          766.92913,
+          775.59055,
+          784.25197,
+          792.91339,
+          801.5748,
+          810.23622,
+          818.89764,
+          827.55906,
+          836.22047,
+          844.88189,
+          853.54331,
+          862.20472,
+          870.86614,
+          879.52756,
+          888.18898,
+          896.85039,
+          905.51181,
+          914.17323,
+          922.83465,
+          931.49606,
+          940.15748,
+          948.8189,
+          957.48031,
+          966.14173,
+          974.80315,
+          983.46457,
+          992.12598,
+          1000.7874,
+          1009.44882,
+          1018.11024,
+          1026.77165,
+          1035.43307,
+          1044.09449,
+          1052.75591,
+          1061.41732,
+          1070.07874,
+          1078.74016,
+          1087.40157,
+          1096.06299,
+          1104.72441,
+          1113.38583,
+          1122.04724,
+          1130.70866,
+          1139.37008,
+          1148.0315,
+          1156.69291,
+          1165.35433,
+          1174.01575,
+          1182.67717,
+          1191.33858,
+          1200
+        ],
+        "intensity": [
+          9.998707630698446,
+          10.947900296765821,
+          11.986221215830666,
+          13.1265436434801,
+          14.371267192683261,
+          15.73496092945545,
+          17.229762407496946,
+          18.863599559363898,
+          20.649881911512058,
+          22.609913010750127,
+          24.75454486407127,
+          27.10959876613955,
+          29.680004129898148,
+          32.49475598742423,
+          35.57790773803921,
+          38.95595721145715,
+          42.64597691364222,
+          46.70327243268872,
+          51.123250244834516,
+          55.984413198278745,
+          61.298942070942175,
+          67.10911906127758,
+          73.48185625739194,
+          80.45086866496814,
+          88.07194771504463,
+          96.43316606164274,
+          105.57925522372075,
+          115.61628024224943,
+          126.56309578728374,
+          138.5762589602703,
+          151.7207531701067,
+          166.149544687828,
+          181.89073333045621,
+          199.16993217521974,
+          218.0816397167328,
+          238.78009254136208,
+          261.434099240279,
+          286.22841714716685,
+          313.3652591477128,
+          343.06594284984527,
+          375.6773136208692,
+          411.26513200752373,
+          450.34058063956064,
+          493.11969122903685,
+          539.8032614809686,
+          591.0618531574821,
+          647.1788534417115,
+          708.614753607947,
+          775.8736913651106,
+          849.5075877674003,
+          930.1206762309578,
+          1018.3744608212739,
+          1114.9931444986146,
+          1220.7695718651792,
+          1336.5717351796657,
+          1463.3498970270361,
+          1602.1443880915008,
+          1754.0941440205675,
+          1920.9798605839528,
+          2103.149584587406,
+          2302.58577897594,
+          2520.924999995054,
+          2759.958920499779,
+          3022.4887736244427,
+          3309.062075829263,
+          3622.797462528324,
+          3966.2694193013917,
+          4343.503086279183,
+          4755.28519929215,
+          5206.096979272772,
+          5699.637748885795,
+          6241.691301301917,
+          6833.3881107843035,
+          7481.1673208618795,
+          8192.62024151759,
+          8969.230636141008,
+          9819.449971288797,
+          10753.24194821321,
+          11772.554027257123,
+          12888.478877288342,
+          14114.093996507643,
+          15451.955454038913,
+          16916.62253397628,
+          18525.25963686348,
+          20281.221639419706,
+          22203.617807039984,
+          24314.976657144216,
+          26619.70151266925,
+          29142.873553539564,
+          31914.061776111746,
+          34939.04560374717,
+          38250.74443828584,
+          41887.968003831484,
+          45858.30187493093,
+          50204.95323006477,
+          54978.86037863143,
+          60189.97949404225,
+          65895.02060648955,
+          72160.84096436368,
+          79000.50818546825,
+          86488.45498301205,
+          94712.4324369801,
+          103689.59197975602,
+          113517.62759557547,
+          124311.71381261542,
+          136094.3621274026,
+          148993.79726995723,
+          163161.18743038017,
+          178626.07926486654,
+          195611.09868522242,
+          214151.66862563603,
+          234449.5569324792,
+          256742.6341019639,
+          281077.393234033,
+          307718.65746831096,
+          336978.63518073014,
+          368918.34921967256,
+          403885.3836850921,
+          442289.5164668671,
+          484210.8409128131,
+          530105.5660487418,
+          580511.5311255429,
+          635533.8597900877,
+          695771.332813014,
+          761929.8717848805,
+          834147.4529725368,
+          913209.9845693796,
+          1000043.9986036879
+        ],
+        "charge": null,
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": null,
+        "user_params": [],
+        "extra_arrays": {
+          "quality": {
+            "dtype": "float32",
+            "values": [
+              0,
+              0.007874015718698502,
+              0.015748031437397003,
+              0.023622047156095505,
+              0.031496062874794006,
+              0.03937007859349251,
+              0.04724409431219101,
+              0.05511811003088951,
+              0.06299212574958801,
+              0.07086614519357681,
+              0.07874015718698502,
+              0.08661417663097382,
+              0.09448818862438202,
+              0.10236220806837082,
+              0.11023622006177902,
+              0.11811023950576782,
+              0.12598425149917603,
+              0.13385826349258423,
+              0.14173229038715363,
+              0.14960630238056183,
+              0.15748031437397003,
+              0.16535432636737823,
+              0.17322835326194763,
+              0.18110236525535583,
+              0.18897637724876404,
+              0.19685038924217224,
+              0.20472441613674164,
+              0.21259842813014984,
+              0.22047244012355804,
+              0.22834645211696625,
+              0.23622047901153564,
+              0.24409449100494385,
+              0.25196850299835205,
+              0.25984251499176025,
+              0.26771652698516846,
+              0.27559053897857666,
+              0.28346458077430725,
+              0.29133859276771545,
+              0.29921260476112366,
+              0.30708661675453186,
+              0.31496062874794006,
+              0.32283464074134827,
+              0.33070865273475647,
+              0.3385826647281647,
+              0.34645670652389526,
+              0.35433071851730347,
+              0.36220473051071167,
+              0.3700787425041199,
+              0.3779527544975281,
+              0.3858267664909363,
+              0.3937007784843445,
+              0.4015747904777527,
+              0.4094488322734833,
+              0.4173228442668915,
+              0.4251968562602997,
+              0.4330708682537079,
+              0.4409448802471161,
+              0.4488188922405243,
+              0.4566929042339325,
+              0.4645669162273407,
+              0.4724409580230713,
+              0.4803149700164795,
+              0.4881889820098877,
+              0.4960629940032959,
+              0.5039370059967041,
+              0.5118110179901123,
+              0.5196850299835205,
+              0.5275590419769287,
+              0.5354330539703369,
+              0.5433070659637451,
+              0.5511810779571533,
+              0.5590550899505615,
+              0.5669291615486145,
+              0.5748031735420227,
+              0.5826771855354309,
+              0.5905511975288391,
+              0.5984252095222473,
+              0.6062992215156555,
+              0.6141732335090637,
+              0.6220472455024719,
+              0.6299212574958801,
+              0.6377952694892883,
+              0.6456692814826965,
+              0.6535432934761047,
+              0.6614173054695129,
+              0.6692913174629211,
+              0.6771653294563293,
+              0.6850393414497375,
+              0.6929134130477905,
+              0.7007874250411987,
+              0.7086614370346069,
+              0.7165354490280151,
+              0.7244094610214233,
+              0.7322834730148315,
+              0.7401574850082397,
+              0.748031497001648,
+              0.7559055089950562,
+              0.7637795209884644,
+              0.7716535329818726,
+              0.7795275449752808,
+              0.787401556968689,
+              0.7952755689620972,
+              0.8031495809555054,
+              0.8110235929489136,
+              0.8188976645469666,
+              0.8267716765403748,
+              0.834645688533783,
+              0.8425197005271912,
+              0.8503937125205994,
+              0.8582677245140076,
+              0.8661417365074158,
+              0.874015748500824,
+              0.8818897604942322,
+              0.8897637724876404,
+              0.8976377844810486,
+              0.9055117964744568,
+              0.913385808467865,
+              0.9212598204612732,
+              0.9291338324546814,
+              0.9370078444480896,
+              0.9448819160461426,
+              0.9527559280395508,
+              0.960629940032959,
+              0.9685039520263672,
+              0.9763779640197754,
+              0.9842519760131836,
+              0.9921259880065918,
+              1
+            ]
+          }
+        },
+        "array_units": {},
+        "checksum": "1d46bc87",
+        "format_version": 1
       }
     }
   ]

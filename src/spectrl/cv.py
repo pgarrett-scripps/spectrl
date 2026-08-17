@@ -14,10 +14,15 @@ from ._format import ARRAY_CHARGE as ARRAY_CHARGE
 from ._format import ARRAY_INTENSITY as ARRAY_INTENSITY
 from ._format import ARRAY_MZ as ARRAY_MZ
 from ._format import ARRAY_NON_STANDARD as ARRAY_NON_STANDARD
+from ._format import COMP_BYTE_SHUFFLED_ZSTD as COMP_BYTE_SHUFFLED_ZSTD
 from ._format import COMP_NUMLIN_ZLIB as COMP_NUMLIN_ZLIB
+from ._format import COMP_NUMLIN_ZSTD as COMP_NUMLIN_ZSTD
 from ._format import COMP_NUMPIC_ZLIB as COMP_NUMPIC_ZLIB
+from ._format import COMP_NUMPIC_ZSTD as COMP_NUMPIC_ZSTD
 from ._format import COMP_NUMSLOF_ZLIB as COMP_NUMSLOF_ZLIB
+from ._format import COMP_NUMSLOF_ZSTD as COMP_NUMSLOF_ZSTD
 from ._format import COMP_ZLIB as COMP_ZLIB
+from ._format import COMP_ZSTD as COMP_ZSTD
 from ._format import ION_MOBILITY_ARRAY_TAILS as _ION_MOBILITY_TAILS
 from ._format import TYPE_FLOAT32 as TYPE_FLOAT32
 from ._format import TYPE_FLOAT64 as TYPE_FLOAT64

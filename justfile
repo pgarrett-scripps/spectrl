@@ -25,10 +25,19 @@ registry:
 check: lint format-check whitespace-check test
 
 build:
-    uv build
-    uvx twine check dist/*
+    uv build --out-dir dist/python --clear
+    uvx twine check dist/python/*
 
-release-check: check fuzz build
+release-version:
+    uv run python scripts/check_release_version.py
+
+mzml-smoke:
+    uv run python scripts/release_mzml_smoke.py tests/data/example.mzML tests/data/BSA1.mzML
+
+clean-install-smoke:
+    bash scripts/clean_install_smoke.sh
+
+release-check: check fuzz build release-version mzml-smoke clean-install-smoke
     cd js && npm ci && npm run typecheck && npm test && npm run build && npm pack --dry-run
     cd demo && npm ci && npm run build
 

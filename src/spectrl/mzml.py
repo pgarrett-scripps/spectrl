@@ -4,14 +4,14 @@ Tree-walk rules:
   NAMED REGISTRY KEYS: default_array_length (key 0), id (key 1).
   CV: everything from cv_params on spectrum, scans, scan windows, precursors, products.
   USER PARAMS: free-text userParams on the spectrum and on each scan.
-  PEAK ARRAYS: mz, intensity, charge, ion_mobility as separate segments.
+  PEAK ARRAYS: mz, intensity, and charge as dedicated fields; all other
+  standard arrays, including every ion-mobility variant, keyed by accession.
   EXPAND: ref_params dereferenced via optional ref_group lookup; their cvParams emitted.
   DROP: index, source_file_ref, data_processing_ref, ns, spot_id.
 """
 
 from __future__ import annotations
 
-from mzmlpy.constants import ION_MOBILITIES
 from mzmlpy.elems.params import CvParam
 
 from .model import (
@@ -48,6 +48,48 @@ def _convert_cvparam(cv: CvParam) -> SpectrlCvParam:
         value=value,
         unit_accession=cv.unit_accession if cv.unit_accession else None,
     )
+
+
+def _binary_array_unit(binary_array) -> str | None:
+    """Return the unit attached to the array-defining cvParam, if present."""
+    defining = next(
+        (p for p in binary_array.cv_params if str(p.accession) == str(binary_array.binary_array_type)),
+        None,
+    )
+    return str(defining.unit_accession) if defining is not None and defining.unit_accession else None
+
+
+def _collect_arrays(spec) -> tuple[dict[str, object], dict[str, str]]:
+    """Preserve auxiliary arrays and units for both core and auxiliary arrays."""
+    extra_arrays = {}
+    array_units: dict[str, str] = {}
+    for binary_array in spec.binary_arrays:
+        array_accession = str(binary_array.binary_array_type)
+        unit = _binary_array_unit(binary_array)
+        if array_accession in _PRIMARY_ARRAYS:
+            if unit:
+                array_units[
+                    {"MS:1000514": "mz", "MS:1000515": "intensity", "MS:1000516": "charge"}[array_accession]
+                ] = unit
+            continue
+        key = array_accession
+        if array_accession == _NON_STANDARD_ARRAY:
+            defining_param = next(
+                (p for p in binary_array.cv_params if p.accession == _NON_STANDARD_ARRAY),
+                None,
+            )
+            key = str(defining_param.value) if defining_param is not None and defining_param.value else "non-standard"
+        if key in extra_arrays:
+            raise ValueError(f"duplicate auxiliary binary array {key!r} in mzML spectrum {spec.id!r}")
+        extra_arrays[key] = binary_array.data
+        if unit:
+            array_units[key] = unit
+    return extra_arrays, array_units
+
+
+def _collect_extra_arrays(spec) -> dict[str, object]:
+    """Compatibility wrapper returning only auxiliary array values."""
+    return _collect_arrays(spec)[0]
 
 
 def _expand_ref_params(obj, ref_groups: dict | None, *, strict: bool = False) -> list[SpectrlCvParam]:
@@ -185,45 +227,16 @@ def from_mzmlpy(spec, ref_groups: dict | None = None, *, strict: bool = False) -
     intensity = spec.intensity
     charge = spec.charge
 
-    im = None
-    im_type = None
-    if spec.has_im:
-        for im_acc in ION_MOBILITIES:
-            arr = spec.get_binary_array(str(im_acc))
-            if arr is not None:
-                data = arr.data
-                if len(data) > 0:
-                    im = data
-                    im_type = str(im_acc)
-                    break
-
     # Preserve every remaining per-peak binary array. mzML identifies standard
     # arrays by CV accession; non-standard arrays use MS:1000786 with the name
     # carried as that cvParam's value.
-    extra_arrays = {}
-    im_accessions = {str(acc) for acc in ION_MOBILITIES}
-    for binary_array in spec.binary_arrays:
-        array_accession = str(binary_array.binary_array_type)
-        if array_accession in _PRIMARY_ARRAYS or array_accession in im_accessions:
-            continue
-        key = array_accession
-        if array_accession == _NON_STANDARD_ARRAY:
-            defining_param = next(
-                (p for p in binary_array.cv_params if p.accession == _NON_STANDARD_ARRAY),
-                None,
-            )
-            key = str(defining_param.value) if defining_param is not None and defining_param.value else "non-standard"
-        if key in extra_arrays:
-            raise ValueError(f"duplicate auxiliary binary array {key!r} in mzML spectrum {spec.id!r}")
-        extra_arrays[key] = binary_array.data
+    extra_arrays, array_units = _collect_arrays(spec)
 
     return InlineSpectrum(
         default_array_length=spec.default_array_length or (len(mz) if mz is not None else 0),
         mz=mz,
         intensity=intensity,
         charge=charge,
-        ion_mobility=im,
-        ion_mobility_type=im_type,
         id=spec.id,
         params=spectrum_params,
         scans=scans_out,
@@ -231,5 +244,6 @@ def from_mzmlpy(spec, ref_groups: dict | None = None, *, strict: bool = False) -
         precursors=precursors_out,
         products=products_out,
         extra_arrays=extra_arrays,
+        array_units=array_units,
         user_params=spectrum_user_params,
     )

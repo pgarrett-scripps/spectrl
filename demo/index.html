@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Put a complete mass spectrum in a URL with spectrl." />
-    <title>spectrl — a spectrum you can send like a link</title>
+    <title>spectrl: A spectrum you can send like a link</title>
     <style>
       :root {
         color-scheme: dark;
@@ -102,11 +102,11 @@
       .story { padding: 96px 0 18px; text-align: center; }
       .story h2 { margin: 12px auto; font-size: clamp(30px, 4vw, 48px); line-height: 1.08; letter-spacing: -.045em; }
       .story > p { max-width: 600px; margin: 0 auto; color: var(--muted); }
-      .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 34px; text-align: left; }
+      .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-top: 34px; text-align: left; }
       .step { position: relative; min-height: 150px; padding: 20px; border: 1px solid var(--border); border-radius: 14px; background: var(--panel); }
       .step .number { color: var(--accent); font: 12px ui-monospace, monospace; }
       .step h3 { margin: 28px 0 5px; font-size: 17px; } .step p { margin: 0; color: var(--muted); font-size: 13px; }
-      .step:not(:last-child)::after { content: "→"; position: absolute; z-index: 2; right: -20px; top: 50%; color: var(--accent); }
+      .step:not(:last-child)::after { content: "→"; position: absolute; z-index: 2; width: 32px; right: -32px; top: 50%; transform: translateY(-50%); color: var(--accent); text-align: center; }
       footer { margin-top: 72px; padding: 30px 0 40px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
       .footer-row { display: flex; justify-content: space-between; gap: 24px; align-items: center; }
       .footer-row div:last-child { display: flex; gap: 18px; } .footer-row a:hover { color: var(--fg); }
@@ -122,8 +122,8 @@
         .sharebar { padding: 15px 18px; } .sharebar .meta { flex-basis: 100%; } .sharebar > .button.primary { flex: 1; }
         .secondary-actions { width: 100%; } .secondary-actions button { flex: 1; }
         .revealed, .detail-body { padding-left: 18px; padding-right: 18px; } details.inspector > summary { padding: 16px 18px; }
-        .steps { grid-template-columns: 1fr; } .step { min-height: 0; } .step h3 { margin-top: 16px; }
-        .step:not(:last-child)::after { content: "↓"; right: 24px; top: auto; bottom: -20px; }
+        .steps { grid-template-columns: 1fr; gap: 28px; } .step { min-height: 0; } .step h3 { margin-top: 16px; }
+        .step:not(:last-child)::after { content: "↓"; width: 28px; height: 28px; right: auto; left: 50%; top: auto; bottom: -28px; transform: translateX(-50%); line-height: 28px; }
         .footer-row { align-items: flex-start; flex-direction: column; }
       }
     </style>
@@ -138,7 +138,7 @@
     <section class="hero shell" id="top">
       <div class="eyebrow">Portable mass spectra</div>
       <h1>A spectrum you can send <span>like a link.</span></h1>
-      <p class="lede">Package peaks, precursor information, and metadata into one portable URL—without uploading anything.</p>
+      <p class="lede">Package peaks, precursor information, and metadata into one portable URL without uploading anything.</p>
       <div class="hero-actions"><a class="button primary" href="#playground">Explore a spectrum ↓</a><button class="button" id="heroPaste" type="button">Paste a token</button></div>
       <div class="trust"><span>Open format</span><span>Python + JavaScript</span><span>Entirely client-side</span></div>
     </section>
@@ -146,7 +146,7 @@
       <section class="workspace" id="playground" aria-labelledby="workspaceTitle">
         <div class="workspace-head"><div><h2 id="workspaceTitle">Spectrum playground</h2><p>Choose an example, inspect it, and copy a URL containing the spectrum itself.</p></div><div class="status">Decoded locally</div></div>
         <div class="examples" aria-label="Example spectra">
-          <button class="primary" data-example="ms2">Small peptide MS²</button><button data-example="ms1">Small-molecule MS¹</button><button data-example="r100">100 peaks</button><button data-example="r500">500 peaks</button>
+          <button class="primary" data-example="ms2">Peptide MS²</button><button data-example="ms1">Small-molecule MS¹</button><button data-example="topdown">Top-down MS²</button><button data-example="mobility">Ion mobility</button><button data-example="aux">Auxiliary arrays</button><button data-example="r100">100 peaks</button><button data-example="r500">500 peaks</button>
         </div>
         <div id="decodeErr" class="err" role="alert"></div>
         <div class="plot-wrap"><div id="plot"></div></div>
@@ -155,7 +155,7 @@
           <span class="meta" id="tokenMeta"></span><button class="button primary" id="copyLink" type="button">Copy shareable link</button>
           <div class="secondary-actions"><button id="qrToggle" type="button" aria-expanded="false">QR code</button><button id="pasteToggle" type="button" aria-expanded="false">View token</button></div>
         </div>
-        <div class="revealed"><div id="qr" hidden></div><textarea id="token" hidden spellcheck="false" aria-label="Spectrl token" placeholder="Paste any spectrl2 token to decode it…"></textarea></div>
+        <div class="revealed"><div id="qr" hidden></div><textarea id="token" hidden spellcheck="false" aria-label="Spectrl token" placeholder="Paste any spectrl.v1 token to decode it…"></textarea></div>
         <details class="inspector"><summary>Technical details</summary><div class="detail-body">
           <label class="meta"><input type="checkbox" id="lossless" /> Use lossless, bit-exact encoding</label>
           <h3>Encoding and integrity</h3><div class="stats" id="stats"></div>

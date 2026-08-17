@@ -1,6 +1,6 @@
 # spectrl conformance test vectors
 
-`vectors.json` is the **language-agnostic contract** for the `spectrl2` token
+`vectors.json` is the **language-agnostic contract** for the `spectrl.v1` token
 format. Every implementation must decode each `token` and reproduce the
 recorded `decoded` values. This is what makes spectrl interoperable across
 implementations rather than just a single library.
@@ -23,14 +23,14 @@ cd js && node --import tsx scripts/gen_reverse_vectors.ts  # reverse-vectors.jso
 
 ```jsonc
 {
-  "spectrl_format_version": 2,
+  "spectrl_format_version": 1,
   "generated_by": "spectrl-python <version>",
   "vectors": [
     {
       "name": "minimal",
       "description": "...",
       "mode": "lossy" | "lossless",
-      "token": "spectrl2....",          // the input
+      "token": "spectrl.v1....",          // the input
       "tolerance": { "abs": 1e-6, "rel": 1e-6 },
       "decoded": {                        // what a consumer MUST recover
         "default_array_length": 3,
@@ -38,8 +38,6 @@ cd js && node --import tsx scripts/gen_reverse_vectors.ts  # reverse-vectors.jso
         "mz": [..] | null,
         "intensity": [..] | null,
         "charge": [..] | null,
-        "ion_mobility": [..] | null,
-        "ion_mobility_type": "MS:..." | null,
         "params": [ { "accession": "MS:1000511", "value": 2, "unit_accession": null }, ... ],
         "scans": [ { "params": [...], "windows": [ { "params": [...] } ] } ],
         "scan_combination": { ... } | null,
@@ -48,8 +46,9 @@ cd js && node --import tsx scripts/gen_reverse_vectors.ts  # reverse-vectors.jso
         "interp": "PROFORMA"|null,
         "user_params": [ { "name": "...", "value": ..., "type": "xsd:..."|null, "unit_accession": ...|null } ],
         "extra_arrays": { "<accession or name>": { "dtype": "float64"|"float32"|"int32", "values": [..] } },
-        "hash": "<base64url>",
-        "format_version": 2
+        "array_units": { "<array key>": "<unit accession>" },
+        "checksum": "<8 lowercase hex characters>",
+        "format_version": 1
       }
     }
   ]
@@ -65,11 +64,11 @@ params), mirroring header scan map key 2.
   (`|actual - expected| <= abs + rel * |expected|`). MS-Numpress decode is
   deterministic, so a correct implementation matches to near machine precision.
 - **`lossless` vectors** must match exactly (`tolerance` is zero).
-- **The stored `hash` must verify**: recompute the truncated SHA-256 over the
-  ASCII text of the first two token parts exactly as received and compare it
-  with the optional third part.
+- **The stored `checksum` must verify**: compute CRC-32/ISO-HDLC over the ASCII
+  text before the last `.` exactly as received and compare its eight-character
+  lowercase hexadecimal form with the required fourth part.
 - **Metadata** (`params`, `scans`, `precursors`, `products`, `id`, `interp`)
-  must round-trip exactly; these live in the header and are not lossy.
+  must round-trip exactly. These live in the header and are not lossy.
 
 ## Consumers
 

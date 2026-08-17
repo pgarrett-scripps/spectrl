@@ -146,7 +146,7 @@ def test_with_charge_array():
 
 def test_token_starts_with_magic(simple_spectrum):
     token = encode_spectrum(simple_spectrum)
-    assert token.startswith("spectrl2.")
+    assert token.startswith("spectrl.v1.")
 
 
 def test_charge_array_with_negative_values_lossy_roundtrips():
@@ -188,11 +188,10 @@ def test_negative_ion_mobility_lossy_roundtrips_exactly():
         default_array_length=2,
         mz=mz,
         intensity=intensity,
-        ion_mobility=im,
-        ion_mobility_type="MS:1003007",  # raw ion mobility array
+        extra_arrays={"MS:1003007": im},  # raw ion mobility array
     )
     decoded = decode_token(encode_spectrum(spec))  # default: lossy
-    np.testing.assert_array_equal(decoded.ion_mobility, im)
+    np.testing.assert_array_equal(decoded.extra_arrays["MS:1003007"], im)
 
 
 def test_negative_mz_rejected():

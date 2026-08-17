@@ -180,37 +180,57 @@ def _reject_negatives(data: np.ndarray, codec: str) -> np.ndarray:
     return arr
 
 
-def encode_numlin_zlib(data: np.ndarray, fp: float | None = None) -> bytes:
-    """Encode array with MS-Numpress linear prediction then zlib."""
+def encode_numlin_raw(data: np.ndarray, fp: float | None = None) -> bytes:
+    """Encode an array with the raw MS-Numpress linear transform."""
     arr = _reject_negatives(data, "linear")
     fp = fp if fp is not None else DEFAULT_NUMLIN_FP
     encoded = _resolve_backend().encode_linear(arr, fp)
-    return zlib.compress(encoded.tobytes())
+    return encoded.tobytes()
+
+
+def decode_numlin_raw(blob: bytes) -> np.ndarray:
+    """Decode a raw MS-Numpress linear stream."""
+    return _resolve_backend().decode_linear(np.frombuffer(blob, dtype=np.uint8))
+
+
+def encode_numlin_zlib(data: np.ndarray, fp: float | None = None) -> bytes:
+    """Encode array with MS-Numpress linear prediction then zlib."""
+    return zlib.compress(encode_numlin_raw(data, fp))
 
 
 def decode_numlin_zlib(blob: bytes, max_bytes: int | None = None) -> np.ndarray:
     """Decode MS-Numpress linear + zlib blob back to float64 array."""
     decompressed = bounded_decompress(blob, max_bytes)
-    return _resolve_backend().decode_linear(np.frombuffer(decompressed, dtype=np.uint8))
+    return decode_numlin_raw(decompressed)
 
 
-def encode_numslof_zlib(data: np.ndarray, fp: float | None = None) -> bytes:
-    """Encode array with MS-Numpress short logged float then zlib."""
+def encode_numslof_raw(data: np.ndarray, fp: float | None = None) -> bytes:
+    """Encode an array with the raw MS-Numpress short logged float transform."""
     arr = _reject_negatives(data, "slof")
     desired = fp if fp is not None else DEFAULT_NUMSLOF_FP
     safe_fp = _safe_slof_fp(arr, desired)
     encoded = _resolve_backend().encode_slof(arr, safe_fp)
-    return zlib.compress(encoded.tobytes())
+    return encoded.tobytes()
+
+
+def decode_numslof_raw(blob: bytes) -> np.ndarray:
+    """Decode a raw MS-Numpress short logged float stream."""
+    return _resolve_backend().decode_slof(np.frombuffer(blob, dtype=np.uint8))
+
+
+def encode_numslof_zlib(data: np.ndarray, fp: float | None = None) -> bytes:
+    """Encode array with MS-Numpress short logged float then zlib."""
+    return zlib.compress(encode_numslof_raw(data, fp))
 
 
 def decode_numslof_zlib(blob: bytes, max_bytes: int | None = None) -> np.ndarray:
     """Decode MS-Numpress slof + zlib blob back to float64 array."""
     decompressed = bounded_decompress(blob, max_bytes)
-    return _resolve_backend().decode_slof(np.frombuffer(decompressed, dtype=np.uint8))
+    return decode_numslof_raw(decompressed)
 
 
-def encode_numpic_zlib(data: np.ndarray, fp: float | None = None) -> bytes:
-    """Encode array with MS-Numpress positive integer then zlib.
+def encode_numpic_raw(data: np.ndarray) -> bytes:
+    """Encode an array with the raw MS-Numpress positive integer transform.
 
     MS-Numpress PIC represents only non-negative integers. pynumpress aborts the
     whole process (an uncatchable native C++ throw) on negative input, so reject
@@ -220,10 +240,20 @@ def encode_numpic_zlib(data: np.ndarray, fp: float | None = None) -> bytes:
     """
     arr = _reject_negatives(data, "PIC")
     encoded = _resolve_backend().encode_pic(arr)
-    return zlib.compress(encoded.tobytes())
+    return encoded.tobytes()
+
+
+def decode_numpic_raw(blob: bytes) -> np.ndarray:
+    """Decode a raw MS-Numpress positive integer stream."""
+    return _resolve_backend().decode_pic(np.frombuffer(blob, dtype=np.uint8))
+
+
+def encode_numpic_zlib(data: np.ndarray, fp: float | None = None) -> bytes:
+    """Encode array with MS-Numpress positive integer then zlib."""
+    return zlib.compress(encode_numpic_raw(data))
 
 
 def decode_numpic_zlib(blob: bytes, max_bytes: int | None = None) -> np.ndarray:
     """Decode MS-Numpress pic + zlib blob back to float64 array."""
     decompressed = bounded_decompress(blob, max_bytes)
-    return _resolve_backend().decode_pic(np.frombuffer(decompressed, dtype=np.uint8))
+    return decode_numpic_raw(decompressed)

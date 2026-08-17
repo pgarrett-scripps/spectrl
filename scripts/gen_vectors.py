@@ -1,6 +1,6 @@
 """Generate language-agnostic conformance test vectors from the Python reference impl.
 
-Each vector pairs a canonical `spectrl2` token with the exact values a conformant
+Each vector pairs a canonical `spectrl.v1` token with the exact values a conformant
 consumer must recover from it. Numpress decode is deterministic, so the stored
 arrays are the *decoded* values and consumers MUST reproduce them (within a tiny
 float epsilon). Lossless arrays MUST match exactly.
@@ -32,6 +32,7 @@ from spectrl.model import (
     SpectrlSelectedIon,
     SpectrlUserParam,
 )
+from spectrl.token import FORMAT_VERSION
 
 OUT = Path(__file__).resolve().parent.parent / "test-vectors" / "vectors.json"
 
@@ -68,9 +69,8 @@ def _decoded_json(token: str) -> dict:
         "mz": arr(d.mz),
         "intensity": arr(d.intensity),
         "charge": arr(d.charge),
-        "ion_mobility": arr(d.ion_mobility),
-        "ion_mobility_type": d.ion_mobility_type,
         "extra_arrays": extra(d.extra_arrays),
+        "array_units": d.array_units,
         "params": _params_json(d.params),
         "scans": [
             {
@@ -101,13 +101,21 @@ def _decoded_json(token: str) -> dict:
         ],
         "interp": d.interp,
         "user_params": _user_params_json(d.user_params),
-        "hash": d.hash,
+        "checksum": d.checksum,
         "format_version": d.format_version,
     }
 
 
-def _vector(name: str, description: str, spec: InlineSpectrum, *, lossless: bool, tol: dict | None) -> dict:
-    token = encode_spectrum(spec, lossless=lossless)
+def _vector(
+    name: str,
+    description: str,
+    spec: InlineSpectrum,
+    *,
+    lossless: bool,
+    tol: dict | None,
+    array_encodings: dict | None = None,
+) -> dict:
+    token = encode_spectrum(spec, lossless=lossless, array_encodings=array_encodings)
     return {
         "name": name,
         "description": description,
@@ -294,17 +302,23 @@ def _specs() -> list[tuple[str, str, InlineSpectrum]]:
         )
     )
 
-    # 7. ion mobility array (mean inverse reduced ion mobility, MS:1003008)
+    # 7. Multiple ion-mobility arrays, each preserved by PSI-MS accession.
     out.append(
         (
             "ion_mobility",
-            "spectrum with a per-peak ion-mobility array",
+            "spectrum with two distinct per-peak ion-mobility arrays",
             InlineSpectrum(
                 default_array_length=3,
                 mz=np.array([300.1, 600.2, 900.3]),
                 intensity=np.array([4.0e4, 3.0e4, 2.0e4]),
-                ion_mobility=np.array([0.82, 0.91, 1.05]),
-                ion_mobility_type="MS:1003008",
+                extra_arrays={
+                    "MS:1003008": np.array([0.82, 0.91, 1.05]),
+                    "MS:1003153": np.array([12.1, 13.4, 15.2]),
+                },
+                array_units={
+                    "MS:1003008": "MS:1002814",
+                    "MS:1003153": "UO:0000028",
+                },
             ),
         )
     )
@@ -405,14 +419,35 @@ def main() -> None:
         vectors.append(_vector(name, desc, spec, lossless=False, tol=LOSSY_TOL))
         vectors.append(_vector(f"{name}__lossless", desc + " (lossless)", spec, lossless=True, tol=EXACT_TOL))
 
+    zstd_spec = InlineSpectrum(
+        default_array_length=128,
+        mz=np.linspace(100.0, 1200.0, 128),
+        intensity=np.geomspace(10.0, 1.0e6, 128),
+        extra_arrays={"quality": np.linspace(0.0, 1.0, 128, dtype=np.float32)},
+    )
+    vectors.append(
+        _vector(
+            "zstd_codecs",
+            "official PSI-MS Numpress + zstd and byte-shuffled zstd pipelines",
+            zstd_spec,
+            lossless=False,
+            tol=LOSSY_TOL,
+            array_encodings={
+                "mz": "numlin-zstd",
+                "intensity": "numslof-zstd",
+                "quality": "byte-shuffled-zstd",
+            },
+        )
+    )
+
     doc = {
-        "spectrl_format_version": 2,
+        "spectrl_format_version": FORMAT_VERSION,
         "generated_by": f"spectrl-python {pyver}",
         "note": (
             "Conformance vectors. A consumer MUST recover `decoded` from `token`. "
             "Numpress decode is deterministic; arrays should match the stored decoded "
             "values within `tolerance`. Lossless vectors MUST match exactly. The stored "
-            "`hash` MUST verify."
+            "`checksum` MUST verify."
         ),
         "vectors": vectors,
     }

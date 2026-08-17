@@ -1,6 +1,6 @@
 """spectrl: Inline Spectrum URL Encoder.
 
-Encodes a single mass spectrum into a compact, URL-safe token (spectrl2.…) so it can be
+Encodes a single mass spectrum into a compact, URL-safe token (spectrl.v1.…) so it can be
 shared with no backend. The entire spectrum lives in the token.
 
 Public API::
@@ -20,10 +20,15 @@ from __future__ import annotations
 import warnings
 from urllib.parse import parse_qs, parse_qsl, urlencode, urlparse, urlunparse
 
+from .array_accession import ArrayAccession
 from .cbor_format import decode_cbor, encode_cbor
+from .compression_accession import CompressionAccession
 from .errors import SpectrlDecodeError, SpectrlError
-from .model import DecodedSpectrum, InlineSpectrum, SpectrlCvParam, SpectrlUserParam
+from .introspection import encoding_plan, inspect_token
+from .model import ArrayEncoding, DecodedSpectrum, InlineSpectrum, SpectrlCvParam, SpectrlUserParam
 from .peaks import top_n
+from .serialization import spectrum_from_dict, spectrum_to_dict
+from .unit_accession import UnitAccession
 
 __all__ = [
     "encode_spectrum",
@@ -38,13 +43,21 @@ __all__ = [
     "DecodedSpectrum",
     "SpectrlCvParam",
     "SpectrlUserParam",
+    "ArrayEncoding",
+    "ArrayAccession",
+    "CompressionAccession",
+    "UnitAccession",
+    "encoding_plan",
+    "inspect_token",
+    "spectrum_from_dict",
+    "spectrum_to_dict",
     "SpectrlError",
     "SpectrlDecodeError",
 ]
 
 _SIZE_WARN = 8192  # bytes; warn past this
-_MAGIC_PREFIX = "spectrl2."
-_DATA_URI_PREFIX = "data:application/vnd.spectrl;v=2,"
+_MAGIC_PREFIX = "spectrl.v1."
+_DATA_URI_PREFIX = "data:application/vnd.spectrl;v=1,"
 
 
 def encode_spectrum(
@@ -53,11 +66,13 @@ def encode_spectrum(
     lossless: bool = False,
     max_len: int | None = None,
     drop_user_params: bool = False,
+    array_encodings: dict[str, ArrayEncoding | str | int | dict] | None = None,
+    allow_unsafe_lossy_custom: bool = False,
 ) -> str:
-    """Encode an InlineSpectrum to a spectrl2 token string.
+    """Encode an InlineSpectrum to a spectrl.v1 token string.
 
     The token is a single CBOR document (header + array blobs embedded as byte
-    strings), base64url-encoded after the ``spectrl2.`` magic.
+    strings), base64url-encoded after the ``spectrl.v1.`` magic.
 
     Args:
         spec: The spectrum to encode.
@@ -70,15 +85,29 @@ def encode_spectrum(
             configuration) are often a large share of a small MS2 token and
             usually restate CV params the token already carries. The result is a
             conforming token; the omitted values are not recoverable from it.
+        array_encodings: Optional per-array codec overrides. Keys are a core
+            friendly name (``"mz"``, ``"intensity"``, ``"charge"``), its
+            ArrayAccession alias, or an exact ``extra_arrays`` key. Values may
+            be an ArrayEncoding, codec name, compression accession tail, or
+            ``{"codec": ..., "fixed_point": ...}``.
+        allow_unsafe_lossy_custom: Permit an explicitly selected lossy codec
+            for an unknown or non-standard array. Its semantic suitability is
+            the caller's responsibility. Known incompatible arrays still fail.
 
     Returns:
-        A ``spectrl2.`` token string.
+        A ``spectrl.v1.`` token string.
 
     Raises:
         OverflowError: If max_len is set and the encoded length exceeds it.
         ValueError: If arrays contain NaN/Inf, or peaks are not finite.
     """
-    token = encode_cbor(spec, lossless=lossless, drop_user_params=drop_user_params)
+    token = encode_cbor(
+        spec,
+        lossless=lossless,
+        drop_user_params=drop_user_params,
+        array_encodings=array_encodings,
+        allow_unsafe_lossy_custom=allow_unsafe_lossy_custom,
+    )
 
     if len(token) > _SIZE_WARN:
         warnings.warn(
@@ -98,13 +127,13 @@ def encode_spectrum(
 
 
 def decode_token(token: str) -> DecodedSpectrum:
-    """Decode a spectrl2 token string into a DecodedSpectrum.
+    """Decode a spectrl.v1 token string into a DecodedSpectrum.
 
-    Verifies the trailing integrity hash if the token carries one.
+    Verifies the mandatory trailing CRC-32 checksum.
 
     Raises:
         SpectrlDecodeError: On any malformed, corrupted, or unsupported input:
-            bad magic, invalid base64url/CBOR, unsupported format version, hash
+            bad magic, invalid base64url/CBOR, unsupported format version, checksum
             mismatch, unknown codec, or array/length inconsistencies.
             SpectrlDecodeError subclasses ValueError.
     """
@@ -120,7 +149,7 @@ def from_mzmlpy(spec, ref_groups: dict | None = None, *, strict: bool = False) -
             expanding referenceableParamGroupRef elements. Build it as
             ``{g.id: g for g in mzml.referenceable_param_groups}``.
         strict: Raise rather than silently omit unresolved referenceable
-            parameter groups or userParams in mzML locations spectrl2 cannot
+            parameter groups or userParams in mzML locations spectrl.v1 cannot
             represent.
 
     Returns:
@@ -162,12 +191,12 @@ def to_query(token: str, base: str, param: str = "d") -> str:
 
 
 def to_data_uri(token: str) -> str:
-    """Wrap a token in a ``data:application/vnd.spectrl;v=2,`` URI."""
+    """Wrap a token in a ``data:application/vnd.spectrl;v=1,`` URI."""
     return f"{_DATA_URI_PREFIX}{token}"
 
 
 def extract_token(url_or_uri: str) -> str:
-    """Extract a spectrl2 token from a URL fragment, query string, or data: URI.
+    """Extract a spectrl.v1 token from a URL fragment, query string, or data: URI.
 
     Raises ValueError if no token is found.
     """
@@ -179,11 +208,11 @@ def extract_token(url_or_uri: str) -> str:
     if parsed.fragment.startswith(_MAGIC_PREFIX):
         return parsed.fragment
 
-    # Check query params for any value starting with spectrl2.
+    # Check query params for any value starting with spectrl.v1.
     qs = parse_qs(parsed.query)
     for vals in qs.values():
         for v in vals:
             if v.startswith(_MAGIC_PREFIX):
                 return v
 
-    raise ValueError(f"No spectrl2 token found in: {url_or_uri!r}")
+    raise ValueError(f"No spectrl.v1 token found in: {url_or_uri!r}")

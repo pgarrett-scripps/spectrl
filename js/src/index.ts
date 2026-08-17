@@ -1,15 +1,20 @@
 /**
  * spectrl: Inline Spectrum URL Encoder (JavaScript/TypeScript).
  *
- * Encodes a single mass spectrum into a compact, URL-safe `spectrl2` token and
+ * Encodes a single mass spectrum into a compact, URL-safe `spectrl.v1` token and
  * back. Byte-compatible with the Python reference implementation; validated
  * against the shared conformance vectors in `test-vectors/`.
  */
 
 import { decodeCbor, encodeCbor } from "./cbor_format.js";
-import type { DecodedSpectrum, InlineSpectrum } from "./model.js";
+import { tokenBreakdown } from "./inspect.js";
+import type { ArrayEncodingOption, DecodedSpectrum, InlineSpectrum } from "./model.js";
 
 export * from "./model.js";
+export * from "./array_accession.js";
+export * from "./compression_accession.js";
+export * from "./unit_accession.js";
+export { mobilityArrays } from "./array_helpers.js";
 export { SpectrlError, SpectrlDecodeError } from "./errors.js";
 export { tokenBreakdown, type TokenPart } from "./inspect.js";
 export { toFragment, toQuery, toDataUri, extractToken } from "./url.js";
@@ -31,13 +36,24 @@ export interface EncodeOptions {
    * not recoverable from it.
    */
   dropUserParams?: boolean;
+  /** Per-array codec overrides keyed by core name, core PSI-MS accession alias, or exact extraArrays key. */
+  arrayEncodings?: Record<string, ArrayEncodingOption>;
+  /** Permit explicit lossy codecs for semantically unknown custom arrays. */
+  allowUnsafeLossyCustom?: boolean;
 }
 
-/** Encode an {@link InlineSpectrum} into a `spectrl2` token (a single CBOR document). */
+/** Encode an {@link InlineSpectrum} into a `spectrl.v1` token (a single CBOR document). */
 export function encodeSpectrum(spec: InlineSpectrum, opts: EncodeOptions = {}): string {
-  const { lossless = false, maxLen, quiet = false, dropUserParams = false } = opts;
+  const {
+    lossless = false,
+    maxLen,
+    quiet = false,
+    dropUserParams = false,
+    arrayEncodings,
+    allowUnsafeLossyCustom = false,
+  } = opts;
 
-  const token = encodeCbor(spec, lossless, dropUserParams);
+  const token = encodeCbor(spec, lossless, dropUserParams, arrayEncodings, allowUnsafeLossyCustom);
 
   if (!quiet && token.length > SIZE_WARN) {
     console.warn(
@@ -51,7 +67,18 @@ export function encodeSpectrum(spec: InlineSpectrum, opts: EncodeOptions = {}): 
   return token;
 }
 
-/** Decode a `spectrl2` token into a {@link DecodedSpectrum}, verifying the trailing integrity hash if present. */
+/** Decode a `spectrl.v1` token into a {@link DecodedSpectrum}, verifying its trailing CRC-32 checksum. */
 export function decodeToken(token: string): DecodedSpectrum {
   return decodeCbor(token);
+}
+
+/** Resolve automatic codecs, fixed points, types, and units for a spectrum. */
+export function encodingPlan(
+  spec: InlineSpectrum,
+  opts: Pick<EncodeOptions, "lossless" | "arrayEncodings" | "allowUnsafeLossyCustom"> = {},
+) {
+  const token = encodeCbor(
+    spec, opts.lossless ?? false, false, opts.arrayEncodings, opts.allowUnsafeLossyCustom ?? false,
+  );
+  return tokenBreakdown(token).filter((part) => part.accession !== undefined);
 }

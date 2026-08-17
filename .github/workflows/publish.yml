@@ -10,9 +10,23 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  verify-release:
+    name: Verify release metadata
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Verify versions and release tag
+        run: python scripts/check_release_version.py "${{ github.event.release.tag_name }}"
+
   publish-pypi:
     name: Publish to PyPI
     runs-on: ubuntu-latest
+    needs: verify-release
     environment:
       name: pypi
       url: https://pypi.org/project/spectrl/
@@ -45,7 +59,39 @@ jobs:
           # workflow_dispatch reruns shouldn't fail on an already-uploaded version
           skip-existing: ${{ github.event_name == 'workflow_dispatch' }}
 
-  # npm publishing is intentionally disabled: the unscoped name `spectrl` is
-  # taken and the @spectrl scope is not yet claimed. Re-add a publish-npm job
-  # (npm publish --provenance --access public from js/) once the npm name is
-  # settled; js/package.json already carries prepublishOnly build+test.
+  publish-npm:
+    name: Publish to npm
+    if: github.event_name == 'release'
+    needs: verify-release
+    runs-on: ubuntu-latest
+    environment:
+      name: npm
+      url: https://www.npmjs.com/package/@spectrl-ms/spectrl
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: js
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node for npm Trusted Publishing
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Require a Trusted Publishing-capable npm CLI
+        run: npm install --global npm@^11.5.1
+
+      - name: Install, test, and build
+        run: |
+          npm ci
+          npm run typecheck
+          npm test
+          npm run build
+
+      - name: Publish public package with OIDC provenance
+        run: npm publish --access public

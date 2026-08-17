@@ -15,11 +15,16 @@ import { dirname, resolve } from "node:path";
 import {
   decodeToken,
   encodeSpectrum,
+  FORMAT_VERSION,
   type CvParam,
   type DecodedSpectrum,
   type InlineSpectrum,
+  type EncodeOptions,
   type UserParam,
 } from "../src/index.ts";
+import { installZstd } from "../src/zstd.ts";
+
+installZstd();
 
 const here = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(here, "../../test-vectors/reverse-vectors.json");
@@ -58,8 +63,6 @@ function decodedJson(d: DecodedSpectrum) {
     mz: arr(d.mz),
     intensity: arr(d.intensity),
     charge: arr(d.charge),
-    ion_mobility: arr(d.ionMobility),
-    ion_mobility_type: d.ionMobilityType,
     params: paramsJson(d.params),
     scans: d.scans.map((s) => ({
       params: paramsJson(s.params),
@@ -76,13 +79,14 @@ function decodedJson(d: DecodedSpectrum) {
     interp: d.interp,
     user_params: userParamsJson(d.userParams),
     extra_arrays: extraJson(d.extraArrays),
-    hash: d.hash,
+    array_units: d.arrayUnits,
+    checksum: d.checksum,
     format_version: d.formatVersion,
   };
 }
 
-function vector(name: string, description: string, spec: InlineSpectrum, lossless: boolean) {
-  const token = encodeSpectrum(spec, { lossless, quiet: true });
+function vector(name: string, description: string, spec: InlineSpectrum, lossless: boolean, options: EncodeOptions = {}) {
+  const token = encodeSpectrum(spec, { ...options, lossless, quiet: true });
   return {
     name: lossless ? `${name}__lossless` : name,
     description: lossless ? `${description} (lossless)` : description,
@@ -135,7 +139,19 @@ const specs: Array<[string, string, InlineSpectrum]> = [
     },
   ],
   ["with_proforma", "ProForma interpretation", { defaultArrayLength: 3, mz: [147.113, 276.155, 389.239], intensity: [1e5, 5e4, 2e4], interp: "ELVIS[Phospho]K/2" }],
-  ["ion_mobility", "per-peak ion mobility array", { defaultArrayLength: 3, mz: [300.1, 600.2, 900.3], intensity: [4e4, 3e4, 2e4], ionMobility: [0.82, 0.91, 1.05], ionMobilityType: "MS:1003008" }],
+  [
+    "ion_mobility",
+    "two distinct per-peak ion mobility arrays",
+    {
+      defaultArrayLength: 3,
+      mz: [300.1, 600.2, 900.3],
+      intensity: [4e4, 3e4, 2e4],
+      extraArrays: {
+        "MS:1003008": [0.82, 0.91, 1.05],
+        "MS:1003153": [12.1, 13.4, 15.2],
+      },
+    },
+  ],
   [
     "non_ms_ontology_param_key",
     "a UO-ontology parameter (string map key)",
@@ -173,16 +189,31 @@ const specs: Array<[string, string, InlineSpectrum]> = [
         iso_score: new Float32Array([0.98, 0.91, 0.74, 0.55]),
         peak_flags: new Int32Array([3, 1, 0, 2]),
       },
+      arrayUnits: { "MS:1000517": "MS:1000131" },
     },
   ],
 ];
 
 const vectors = specs.flatMap(([name, desc, spec]) => [vector(name, desc, spec, false), vector(name, desc, spec, true)]);
+vectors.push(
+  vector(
+    "zstd_codecs",
+    "official PSI-MS Numpress + zstd and byte-shuffled zstd pipelines",
+    {
+      defaultArrayLength: 128,
+      mz: Array.from({ length: 128 }, (_, i) => 100 + i * (1100 / 127)),
+      intensity: Array.from({ length: 128 }, (_, i) => 10 * Math.pow(1e5, i / 127)),
+      extraArrays: { quality: Float32Array.from({ length: 128 }, (_, i) => i / 127) },
+    },
+    false,
+    { arrayEncodings: { mz: "numlin-zstd", intensity: "numslof-zstd", quality: "byte-shuffled-zstd" } },
+  ),
+);
 
 const doc = {
-  spectrl_format_version: 2,
+  spectrl_format_version: FORMAT_VERSION,
   generated_by: `spectrl-js ${JSON.parse(readFileSync(resolve(here, "../package.json"), "utf8")).version}`,
-  note: "Reverse vectors: tokens encoded by the JS implementation, decoded values recorded. Other implementations MUST decode `token` and match `decoded` within `tolerance`, and the `hash` MUST verify.",
+  note: "Reverse vectors: tokens encoded by the JS implementation, decoded values recorded. Other implementations MUST decode `token` and match `decoded` within `tolerance`, and the `checksum` MUST verify.",
   vectors,
 };
 

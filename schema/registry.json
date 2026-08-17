@@ -2,43 +2,49 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/pgarrett-scripps/spectrl/schema/registry.json",
   "title": "spectrl registry",
-  "description": "Machine-readable registry of all integer keys, CV accession tails, and codec identifiers used in the spectrl2 token format.",
-  "spectrl_version": 2,
+  "description": "Machine-readable registry of all integer keys, CV accession tails, and codec identifiers used in the spectrl.v1 token format.",
+  "spectrl_version": 1,
   "wire_constants": {
-    "hash_bytes": 12,
+    "checksum_hex_chars": 8,
     "max_blob_bytes": 67108864,
     "max_token_bytes": 16777216,
     "max_array_length": 4000000,
     "max_cbor_depth": 32,
     "max_cbor_items": 100000,
     "default_numlin_fp": 100000,
-    "default_numslof_fp": 3600
+    "default_numslof_fp": 3600,
+    "max_safe_integer": 9007199254740991
   },
   "token_format": {
-    "magic": "spectrl2",
-    "description": "magic '.' base64url(CBOR document) ['.' integrity_hash]. The CBOR document is the header map (see header_keys) with each array's compressed blob embedded inline as a CBOR byte string in its descriptor (descriptor key 5). Encoded deterministically (RFC 8949 \u00a74.2). The format version is carried only in the magic; the token string is the interchange unit.",
+    "magic": "spectrl.v1",
+    "description": "identifier '.' version '.' base64url(CBOR document) '.' checksum. The CBOR document is the header map (see header_keys) with each array's compressed blob embedded inline as a CBOR byte string in its descriptor (descriptor key 5). Encoded deterministically (RFC 8949 \u00a74.2). The format version is carried only in the magic. The token string is the interchange unit.",
     "base64url": "RFC 4648 \u00a75: URL-safe alphabet, no padding ('=' stripped).",
-    "integrity_hash": "OPTIONAL third part: base64url(first 12 bytes of SHA-256 over the ASCII text of the first two parts, 'magic.payload'), 16 chars. Verified over the received text; consumers MUST reject a three-part token on mismatch.",
+    "checksum": "REQUIRED fourth part: CRC-32/ISO-HDLC over the ASCII text of the first three parts, 'spectrl.version.payload', encoded as eight lowercase hexadecimal characters. Consumers MUST reject a token on mismatch.",
     "parts": [
       {
         "index": 0,
-        "content": "magic string",
-        "example": "spectrl2"
+        "content": "format identifier",
+        "example": "spectrl"
       },
       {
         "index": 1,
-        "content": "base64url(CBOR document); header map + inline array blobs"
+        "content": "version identifier",
+        "example": "v1"
       },
       {
         "index": 2,
-        "content": "integrity hash over parts 0-1 (optional, 16 base64url chars)"
+        "content": "base64url(CBOR document), header map + inline array blobs"
+      },
+      {
+        "index": 3,
+        "content": "CRC-32 checksum over parts 0-2 (required, 8 lowercase hex chars)"
       }
     ]
   },
   "ontology_defaults": {
     "param_accession": "MS",
     "unit_accession": "UO",
-    "description": "CV param tails are integers from the MS: namespace by default; tail encoding requires an exactly-7-digit tail. Param keys from any other ontology (or with a non-7-digit tail) are the full accession string. Unit tails (values) are integers from the UO: namespace by default; other ontologies use [ontology_string, tail_int], or the full accession string when the tail is not 7 digits."
+    "description": "CV param tails are integers from the MS: namespace by default. Tail encoding requires an exactly-7-digit tail. Param keys from any other ontology (or with a non-7-digit tail) are the full accession string. Unit tails (values) are integers from the UO: namespace by default. Other ontologies use [ontology_string, tail_int], or the full accession string when the tail is not 7 digits."
   },
   "cvparam_encoding": {
     "description": "How a single cvParam is stored as a CBOR map entry.",
@@ -80,7 +86,7 @@
         "example": {
           "UO:0000010": 3.5
         },
-        "meaning": "Param from a non-MS ontology (or with a non-7-digit tail); the map key is the full accession string."
+        "meaning": "Param from a non-MS ontology (or with a non-7-digit tail). the map key is the full accession string."
       }
     ]
   },
@@ -147,15 +153,15 @@
       "name": "binary_data_array_list",
       "type": "array of array_descriptor objects",
       "required": false,
-      "description": "One descriptor per binary array; each carries its blob inline (key 5). Optional like all keys except 0; absent means the spectrum carries no arrays.",
+      "description": "One descriptor per binary array. Each carries its blob inline (key 5). Optional like all keys except 0. Absent means the spectrum carries no arrays.",
       "descriptor_keys": {
         "0": {
           "name": "type",
-          "description": "int: data type accession tail (see data_types); float64/float32/int32 supported"
+          "description": "int: data type accession tail (see data_types). float64/float32/int32 supported"
         },
         "1": {
           "name": "array",
-          "description": "int: array type accession tail (see array_types); MS:1000786 = non-standard, see key 4"
+          "description": "int: array type accession tail (see array_types). MS:1000786 = non-standard, see key 4"
         },
         "2": {
           "name": "comp",
@@ -163,15 +169,19 @@
         },
         "3": {
           "name": "fp",
-          "description": "int: numpress fixed-point scale factor actually used by the blob, a whole number; linear/slof codecs only. Omitted when it is the codec default, so absent means that default."
+          "description": "int: numpress fixed-point scale factor actually used by the blob, a whole number. REQUIRED for linear/slof codecs and forbidden for all other codecs."
         },
         "4": {
           "name": "name",
-          "description": "str: free-text descriptor name; REQUIRED iff key 1 is MS:1000786 (non-standard array)"
+          "description": "str: free-text descriptor name. REQUIRED iff key 1 is MS:1000786 (non-standard array)"
         },
         "5": {
           "name": "d",
           "description": "bytes: the array's compressed blob, embedded inline as a CBOR byte string"
+        },
+        "6": {
+          "name": "unit",
+          "description": "optional CV unit accession encoded with the same rules as cvParam units"
         }
       }
     },
@@ -239,7 +249,7 @@
       "1000574": {
         "accession": "MS:1000574",
         "name": "zlib",
-        "use_for": "all arrays when lossless=True, and always for auxiliary arrays; raw little-endian bytes of the declared type (float64/float32/int32) + zlib",
+        "use_for": "canonical lossless default and fallback for unknown auxiliary arrays. raw little-endian bytes of the declared type (float64/float32/int32) + zlib",
         "pipeline": [
           "to_little_endian_bytes(data, type)",
           "zlib_compress"
@@ -250,11 +260,117 @@
         ],
         "lossy": false,
         "library_hint": "zlib.compress / decompress"
+      },
+      "1003780": {
+        "accession": "MS:1003780",
+        "name": "zstd",
+        "use_for": "lossless raw arrays when explicitly selected",
+        "pipeline": [
+          "to_little_endian_bytes(data, type)",
+          "zstd_compress"
+        ],
+        "decode_pipeline": [
+          "zstd_decompress",
+          "from_little_endian_bytes(type)"
+        ],
+        "lossy": false,
+        "library_hint": "zstandard / @cloudpss/zstd"
+      },
+      "1003781": {
+        "accession": "MS:1003781",
+        "name": "byte-shuffled zstd",
+        "use_for": "lossless raw numeric arrays when explicitly selected",
+        "pipeline": [
+          "to_little_endian_bytes(data, type)",
+          "byte_shuffle",
+          "zstd_compress"
+        ],
+        "decode_pipeline": [
+          "zstd_decompress",
+          "byte_unshuffle",
+          "from_little_endian_bytes(type)"
+        ],
+        "lossy": false,
+        "library_hint": "zstandard / @cloudpss/zstd"
+      },
+      "1003783": {
+        "accession": "MS:1003783",
+        "name": "MS-Numpress linear prediction + zstd",
+        "use_for": "coordinate arrays when explicitly selected",
+        "pipeline": [
+          "numpress_encode_linear(data, fp)",
+          "zstd_compress"
+        ],
+        "decode_pipeline": [
+          "zstd_decompress",
+          "numpress_decode_linear"
+        ],
+        "lossy": true,
+        "library_hint": "pynumpress + zstandard / @cloudpss/zstd"
+      },
+      "1003784": {
+        "accession": "MS:1003784",
+        "name": "MS-Numpress positive integer + zstd",
+        "use_for": "non-negative integer arrays when explicitly selected",
+        "pipeline": [
+          "numpress_encode_pic(data)",
+          "zstd_compress"
+        ],
+        "decode_pipeline": [
+          "zstd_decompress",
+          "numpress_decode_pic"
+        ],
+        "lossy": true,
+        "library_hint": "pynumpress + zstandard / @cloudpss/zstd"
+      },
+      "1003785": {
+        "accession": "MS:1003785",
+        "name": "MS-Numpress short logged float + zstd",
+        "use_for": "positive magnitude arrays when explicitly selected",
+        "pipeline": [
+          "numpress_encode_slof(data, fp)",
+          "zstd_compress"
+        ],
+        "decode_pipeline": [
+          "zstd_decompress",
+          "numpress_decode_slof"
+        ],
+        "lossy": true,
+        "library_hint": "pynumpress + zstandard / @cloudpss/zstd"
+      }
+    }
+  },
+  "unit_accessions": {
+    "description": "Stable unit accessions commonly used by binary arrays.",
+    "units": {
+      "MZ": {
+        "accession": "MS:1000040"
+      },
+      "NUMBER_OF_DETECTOR_COUNTS": {
+        "accession": "MS:1000131"
+      },
+      "PERCENT_OF_BASE_PEAK": {
+        "accession": "MS:1000132"
+      },
+      "COUNTS_PER_SECOND": {
+        "accession": "MS:1000814"
+      },
+      "SECOND": {
+        "accession": "UO:0000010"
+      },
+      "MILLISECOND": {
+        "accession": "UO:0000028"
+      },
+      "MINUTE": {
+        "accession": "UO:0000031"
+      },
+      "VOLT_SECOND_PER_SQUARE_CENTIMETER": {
+        "accession": "MS:1002814"
       }
     }
   },
   "data_types": {
-    "description": "Binary data type accession tails. Used in array descriptor 'type' field. Only float64, float32, and int32 are permitted in spectrl2 tokens; other mzML data types (int64, ASCII string) are listed for completeness but MUST NOT appear.",
+    "description": "Binary data type accession tails. Used in array descriptor 'type' field. Only float64, float32, and int32 are permitted in spectrl.v1 tokens. Other mzML data types (int64, ASCII string) are listed for completeness but MUST NOT appear.",
     "types": {
       "1000521": {
         "accession": "MS:1000521",
@@ -278,7 +394,7 @@
         "accession": "MS:1000522",
         "tail": 1000522,
         "name": "INT_64",
-        "description": "64-bit signed integer little-endian. NOT permitted in spectrl2."
+        "description": "64-bit signed integer little-endian. NOT permitted in spectrl.v1."
       },
       "1001479": {
         "accession": "MS:1001479",
@@ -452,8 +568,43 @@
       }
     }
   },
+  "auxiliary_encoding_profiles": {
+    "description": "Conservative lossy defaults for known PSI-MS auxiliary arrays. Any array not listed here uses its declared raw type with zlib. Negative values always fall back to a raw codec.",
+    "numlin": [
+      "MS:1000595",
+      "MS:1000617",
+      "MS:1002743",
+      "MS:1003143",
+      "MS:1003157",
+      "MS:1003158",
+      "MS:1003007",
+      "MS:1002477",
+      "MS:1003156",
+      "MS:1003006",
+      "MS:1002816",
+      "MS:1003155",
+      "MS:1003153",
+      "MS:1003008",
+      "MS:1003154",
+      "MS:1002893"
+    ],
+    "numslof": [
+      "MS:1000517",
+      "MS:1000820",
+      "MS:1000821",
+      "MS:4000210",
+      "MS:1002529",
+      "MS:1002530",
+      "MS:1002742",
+      "MS:1002744",
+      "MS:1002745"
+    ],
+    "numpic": [
+      "MS:1003870"
+    ]
+  },
   "well_known_cv_params": {
-    "description": "Commonly used CV params in spectrl tokens. All are MS: ontology. This list is not exhaustive; any valid PSI-MS cvParam may appear.",
+    "description": "Commonly used CV params in spectrl tokens. All are MS: ontology. This list is not exhaustive. Any valid PSI-MS cvParam may appear.",
     "spectrum_level": {
       "1000127": {
         "accession": "MS:1000127",
@@ -741,13 +892,13 @@
   "canonical_form": {
     "description": "Rules for producing a deterministic token from the same input.",
     "rules": [
-      "Peaks sorted m/z-ascending before encoding; all parallel arrays (incl. auxiliary) permuted identically.",
+      "Peaks sorted m/z-ascending before encoding. All parallel arrays (incl. auxiliary) permuted identically.",
       "NaN and Inf values are not allowed in any float array.",
-      "Array descriptors emitted in fixed order: m/z, intensity, charge, ion mobility, then auxiliary arrays sorted ascending by key (CV accession string, or name for non-standard arrays).",
-      "Integrity hash (optional third token part) is computed over the ASCII text of the first two token parts, 'magic.payload' (blobs are inline in the payload and therefore covered).",
-      "Hash algorithm: SHA-256, first 12 bytes, base64url-encoded (16 chars).",
-      "Numpress fp is a whole number. Defaults: linear 100000; slof floor(min(3600, 65535/ln(max+1))), clamped DOWN so no encoded value overflows uint16. A descriptor omits fp when it equals the default and carries the clamped value otherwise.",
-      "Arrays containing negative values fall back to the lossless zlib codec in lossy mode (numpress cannot represent them); negative m/z is rejected."
+      "Array descriptors emitted in fixed order: m/z, intensity, charge, then additional arrays sorted ascending by key (CV accession string, or name for non-standard arrays).",
+      "CRC-32/ISO-HDLC checksum (required fourth token part) is computed over the ASCII text before the checksum, 'spectrl.version.payload' (blobs are inline and therefore covered).",
+      "Checksum encoding: eight lowercase hexadecimal characters, zero-padded.",
+      "Numpress fp is required in every linear/slof descriptor and is a whole number. Defaults: linear 100000, slof floor(min(3600, 65535/ln(max+1))), clamped DOWN so no encoded value overflows uint16. A descriptor omits fp for codecs that do not use a fixed point.",
+      "Arrays containing negative values fall back to the lossless zlib codec in lossy mode (numpress cannot represent them). Negative m/z is rejected."
     ]
   }
 }

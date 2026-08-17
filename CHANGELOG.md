@@ -5,16 +5,56 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-The **token format version** (the `spectrl2` magic prefix) is versioned
-independently of the library version; see [SPECIFICATION.md](SPECIFICATION.md).
+The **token format version** (the `spectrl.v1` magic prefix) is versioned
+independently of the library version. See [SPECIFICATION.md](SPECIFICATION.md).
 
 ## [Unreleased]
+
+## [1.0.0] - 2026-08-17
+
+### Added
+- Optional per-array unit accessions, preserved during mzML import and token
+  round-trips, plus generated array, compression, and common-unit enums.
+- Resolved encoding inspection and round-trippable CLI spectrum JSON.
+- Per-array encoding controls in Python and TypeScript for core and auxiliary
+  arrays, including codec selection and Numpress fixed-point overrides.
+- Official PSI-MS zstd codecs: raw zstd (`MS:1003780`), byte-shuffled zstd
+  (`MS:1003781`), and all three Numpress + zstd combinations
+  (`MS:1003783` through `MS:1003785`). JavaScript loads these through the
+  optional `@spectrl-ms/spectrl/zstd` entry point with explicit `installZstd()`
+  setup to avoid tree-shaking side effects and burdening default bundles.
+
+### Changed
+- Python normalizes list-valued arrays at the API boundary. Both languages now
+  reject invalid fixed points, reserved custom-array names, and semantically
+  incompatible lossy codecs. Full compression accessions are accepted. An
+  explicit expert option permits lossy custom arrays without weakening guards
+  for known array types.
+- Ion-mobility arrays are now preserved by their individual PSI-MS accessions
+  in `extra_arrays` / `extraArrays`; spectra may carry multiple distinct
+  mobility arrays without last-one-wins routing through a singular field.
+  Generated `ArrayAccession` enums provide readable keys, and core accessions
+  are accepted as aliases in per-array encoding configuration.
+- Numpress linear and slof array descriptors now always carry their actual
+  fixed point, including canonical defaults. Decoders reject a missing value or
+  a value that disagrees with the fixed point embedded in the Numpress stream.
+- Known PSI-MS auxiliary arrays now receive conservative semantic defaults.
+  Coordinate arrays use Numpress linear, positive magnitude arrays use Numpress
+  slof, and integer index arrays use Numpress pic. Unknown arrays remain
+  lossless raw + zlib.
+
+- **The token prefix is now `spectrl.v1`.** The stable `spectrl` identifier and
+  explicit `v1` format version are separate dot-delimited parts. Tokens are
+  `spectrl.v1.<payload>.<checksum>`. The required CRC-32/ISO-HDLC checksum is
+  eight lowercase hexadecimal characters and covers the complete text before
+  it. This supersedes the short-lived
+  `spectrl2` identifier before broader adoption.
 
 ## [0.4.1] - 2026-08-15
 
 ### Changed
 - `mzmlpy` is no longer a required runtime dependency. Core encoding and
-  decoding use spectrl's generated CV registry directly; the `from_mzmlpy`
+  decoding use spectrl's generated CV registry directly. The `from_mzmlpy`
   bridge remains available through the optional `mzml` extra.
 
 ## [0.4.0] - 2026-08-15
@@ -26,17 +66,17 @@ independently of the library version; see [SPECIFICATION.md](SPECIFICATION.md).
 - **The integrity hash moved out of the CBOR document to a third token part**:
   a token is now `spectrl2.<payload>[.<hash>]`, where the hash is truncated
   SHA-256 over the ASCII text of the first two parts. Verification is a
-  substring hash — no CBOR parsing, no byte-surgery — so any tool with
+  substring hash, no CBOR parsing, no byte-surgery, so any tool with
   `sha256` can verify a token. Header key 9 is gone, and so is the strip-key
   machinery in both implementations.
 - **The format version is carried only in the magic.** Header key 0
-  (`format_version`) is gone; the payload is pure spectrum data. Applications
+  (`format_version`) is gone. The payload is pure spectrum data. Applications
   persisting spectra should store the full token string, which is
   self-describing and verifiable, rather than bare payload bytes.
 - **Header keys renumbered 0–8** (no gaps): `defaultArrayLength`→0, `id`→1,
   `params`→2, `scanList`→3, `precursorList`→4, `productList`→5,
   `binaryDataArrayList`→6, `interp`→7, `userParamList`→8. Part of the same
-  pre-freeze reset as the entries below; earlier development tokens are not
+  pre-freeze reset as the entries below. Earlier development tokens are not
   compatibility artifacts.
 - **Array descriptors (header key 7) are now integer-keyed**, matching the header
   itself: `type`→0, `array`→1, `comp`→2, `fp`→3, `name`→4, `d`→5. The names were
@@ -44,20 +84,20 @@ independently of the library version; see [SPECIFICATION.md](SPECIFICATION.md).
   more bytes than the values they labelled: 19 of each descriptor's 44 bytes were
   key names. Median MS2 descriptors drop from 89 to 59 bytes, about 4% of a
   typical token. This is part of the new `spectrl2` layout. The specification
-  is frozen at this layout; every
+  is frozen at this layout. Every
   subsequent breaking wire change will increment the format version.
   Conformance vectors were regenerated in both implementations.
 
 - Removed the precursor reference field and all external-identifier positioning.
-  A spectrl token is solely a self-contained spectrum; the old development-only
+  A spectrl token is solely a self-contained spectrum. The old development-only
   precursor reference is no longer emitted or represented by either public model.
 - **The numpress fixed point `fp` is now a whole number carried as a CBOR
   integer, and is omitted when it equals the codec's canonical default** (linear
-  100000, slof 3600); absent therefore means that default. A clamped slof fp is
+  100000, slof 3600). Absent therefore means that default. A clamped slof fp is
   floored, which is the safe rounding direction: the clamp keeps
   `log(max + 1) * fp` under the uint16 ceiling, so a smaller fp only moves
   further inside it. `fp` cost 9 bytes as a float64 and was the same constant in
-  nearly every token; the clamp fired in 0 of 1,120 MS2 spectra of the benchmark
+  nearly every token. The clamp fired in 0 of 1,120 MS2 spectra of the benchmark
   run. The value is also carried inside the numpress stream itself, so nothing
   is lost.
 
@@ -68,7 +108,7 @@ independently of the library version; see [SPECIFICATION.md](SPECIFICATION.md).
   (instrument filter string, Thermo trailer values, preset scan configuration)
   are a median 218 bytes per MS2 token, 35% of its non-peak payload, and largely
   restate CV params the token already carries. The result is a conforming token
-  (SPECIFICATION.md §11); the omitted values are not recoverable from it, so
+  (SPECIFICATION.md §11). The omitted values are not recoverable from it, so
   producers round-tripping mzML faithfully should leave the flag off.
 - Strict raw-CBOR validation now rejects duplicate keys at any depth, trailing
   bytes, indefinite lengths, excessive nesting/items, invalid peak counts, and
@@ -80,7 +120,7 @@ independently of the library version; see [SPECIFICATION.md](SPECIFICATION.md).
   decoded values, and agreement between declared and embedded Numpress fixed
   points.
 - `from_mzmlpy(..., strict=True)` rejects unresolved referenceable parameter
-  groups; the bridge now preserves auxiliary binary arrays instead of silently
+  groups. The bridge now preserves auxiliary binary arrays instead of silently
   dropping them.
 - CI enforces Python coverage, tests an installed wheel in a clean environment,
   and rejects formatting and whitespace errors.
@@ -90,7 +130,7 @@ independently of the library version; see [SPECIFICATION.md](SPECIFICATION.md).
   silently retaining only the last value.
 - Wire constants and security limits are centralized in generated internal
   modules (`src/spectrl/_format.py` and `js/src/format.ts`). The registry
-  generator derives both from `schema/registry.json`; compatibility re-exports
+  generator derives both from `schema/registry.json`. Compatibility re-exports
   preserve existing internal import paths, and tests reject stale generated
   files.
 
@@ -109,7 +149,7 @@ independently of the library version; see [SPECIFICATION.md](SPECIFICATION.md).
 
 ## [0.3.0] - 2026-08-12
 
-Existing `spectrl1` tokens remain fully decodable; the changes below are
+Existing `spectrl1` tokens remain fully decodable. The changes below are
 producer-side behavior, decode hardening, and packaging. Both implementations
 (Python + JS) change in lockstep, with new shared conformance vectors.
 
@@ -126,14 +166,14 @@ producer-side behavior, decode hardening, and packaging. Both implementations
   `[1, 4294967295, 2]`. New `negative_charge_sentinel` /
   `negative_intensity_fallback` vectors pin the fallback in both directions.
 - **Descriptor `fp` now records the fixed point the blob actually uses.** The
-  slof fp is clamped for large intensities (> ~8e7); previously the descriptor
+  slof fp is clamped for large intensities (> ~8e7). Previously the descriptor
   recorded the unclamped default.
 - **SPECIFICATION.md §7.2 had the numpress pic/slof codec IDs swapped**
-  (`MS:1002747` ↔ `MS:1002748`); the implementations, registry, and all emitted
-  tokens were correct; only the spec table was wrong.
+  (`MS:1002747` ↔ `MS:1002748`). The implementations, registry, and all emitted
+  tokens were correct. Only the spec table was wrong.
 - Non-7-digit accession tails no longer crash (`NCIT:C25330`) or corrupt on
   round-trip (`MOD:00046` units): such accessions are carried as full strings.
-- `top_n(spec, 0)` returned all peaks; it now returns an empty spectrum, and
+- `top_n(spec, 0)` returned all peaks. It now returns an empty spectrum, and
   negative `n` raises.
 - `to_query` no longer drops existing query parameters on the base URL.
 - numpy integer scalars (e.g. `np.int64` `default_array_length`) no longer
@@ -142,13 +182,13 @@ producer-side behavior, decode hardening, and packaging. Both implementations
   to float64.
 
 ### Added
-- **`SpectrlDecodeError`** (a `ValueError` subclass; `SpectrlError` base):
+- **`SpectrlDecodeError`** (a `ValueError` subclass with `SpectrlError` as its base):
   every malformed, corrupted, or unsupported token now raises this single
   documented type. Previously raw `KeyError`/`EOFError`/`zlib.error`/numpy
   errors could leak. JS mirrors with `SpectrlDecodeError extends SpectrlError`.
 - **Decompression bounding**: array blobs are decompressed with a cap derived
   from the declared array length (plus a hard ceiling), so a small adversarial
-  token can no longer expand to hundreds of MB. Specified in §12; adversarial
+  token can no longer expand to hundreds of MB. Specified in §12. Adversarial
   decode test suites added to both implementations.
 - **Consumer-side validation**: tokens are rejected when the header version
   disagrees with the magic (spec §9), when a decoded array's length disagrees
@@ -156,7 +196,7 @@ producer-side behavior, decode hardening, and packaging. Both implementations
   characters (previously discarded silently).
 - **Encode-side validation**: all peak arrays must match
   `default_array_length` (mismatches previously crashed with raw errors or
-  silently dropped the tail); duplicate CV accessions warn on collapse.
+  silently dropped the tail). Duplicate CV accessions warn on collapse.
 - `tokenBreakdown()` (JS): per-array compressed-size introspection, now used by
   the demo's size chart (which previously showed a vestigial single bar).
 - `SECURITY.md`, `py.typed` marker, and an IANA-considerations section plus
@@ -166,14 +206,15 @@ producer-side behavior, decode hardening, and packaging. Both implementations
 ### Changed
 - **`pynumpress` is now an optional extra** (`pip install spectrl[speed]`).
   pynumpress ships no wheels for Python ≥ 3.12, so it forced a C build on every
-  install; the bundled byte-identical pure-Python backend is the default.
+  install. The bundled byte-identical pure-Python backend is the default.
 - The JS encoder emits canonically ordered CBOR maps (RFC 8949 §4.2), matching
-  the Python producer; decoded param order may differ from insertion order.
+  the Python producer. Decoded param order may differ from insertion order.
 - The sdist no longer bundles multi-MB test data, the demo, or the JS package
   (5.7 MB → ~80 KB).
 - npm publishing is disabled in CI until the package name is settled (the
-  unscoped name `spectrl` is taken; the `@spectrl` scope is unclaimed).
-- CI adds macOS and Windows test legs; vector/registry sync tests no longer
+  unscoped name `spectrl` is taken and an organization scope had not yet been
+  created).
+- CI adds macOS and Windows test legs. Vector/registry sync tests no longer
   rewrite committed files during the run.
 
 ## [0.2.2] - 2026-07-10
@@ -182,13 +223,13 @@ producer-side behavior, decode hardening, and packaging. Both implementations
 - **Pure-Python MS-Numpress fallback.** The lossy codecs (linear/slof/pic) now
   run without the `pynumpress` C extension when it is unavailable, via a
   dependency-free port (`spectrl.codecs._numpress_py`). The import of
-  `pynumpress` is now lazy, so `import spectrl` no longer requires it; the C
+  `pynumpress` is now lazy, so `import spectrl` no longer requires it. The C
   extension is used when present and the pure-Python path takes over
   transparently otherwise. This lets spectrl (and lossy `spectrl1` token
   encoding/decoding) run in **Pyodide / the browser**, where `pynumpress` has no
   wheel. The fallback is byte-for-byte identical to `pynumpress`, so tokens and
   their SHA-256 content hashes are unchanged and interoperate across backends.
-  Set `SPECTRL_NUMPRESS_BACKEND=python` (or `pynumpress`) to pin one;
+  Set `SPECTRL_NUMPRESS_BACKEND=python` (or `pynumpress`) to pin one.
   `spectrl.codecs.numpress.active_backend()` reports the resolved backend.
 
 ## [0.2.1] - 2026-06-28
@@ -211,12 +252,12 @@ producer-side behavior, decode hardening, and packaging. Both implementations
   each carrying name + optional value / XSD type / unit. Omit-when-empty, so tokens
   that use none are byte-identical to before. `from_mzmlpy` reads them from the
   spectrum and scan XML. Mirrored in Python + JS with bidirectional conformance
-  vectors; specified in `SPECIFICATION.md` §6.7.
+  vectors. Specified in `SPECIFICATION.md` §6.7.
 - **Extra (auxiliary) per-peak arrays** (`extra_arrays` / `extraArrays`): any mzML
   binary data array can now be carried, keyed by CV accession (e.g. `MS:1000517`
   signal-to-noise) or a free-text name for non-standard `MS:1000786` arrays. Data
   types float64/float32/int32 are preserved. Implemented in both the Python and
-  JavaScript reference impls with bidirectional conformance vectors; specified in
+  JavaScript reference impls with bidirectional conformance vectors. Specified in
   `SPECIFICATION.md` §7.1 (new optional descriptor `name` field) and §8 (canonical
   ordering of auxiliary arrays). A consumer that does not recognise an array term
   now preserves it rather than discarding it.
@@ -227,7 +268,7 @@ producer-side behavior, decode hardening, and packaging. Both implementations
 - `test-vectors/vectors.json`: language-agnostic conformance vectors generated
   from the Python reference impl (`scripts/gen_vectors.py`), with `tests/test_vectors.py`
   pinning them.
-- `js/`: independent JavaScript/TypeScript implementation (`@spectrl/spectrl`)
+- `js/`: independent JavaScript/TypeScript implementation (`@spectrl-ms/spectrl`)
   with a faithful MS-Numpress port, CBOR container codec, and SHA-256 content hashing.
   Decodes Python-produced tokens byte-for-byte and validates against the shared
   vectors.
@@ -252,22 +293,22 @@ producer-side behavior, decode hardening, and packaging. Both implementations
   previous msgpack header + dot-separated base64 array segments. The token is
   `spectrl1.<base64url(cbor)>`: one CBOR map holding the header *and* each array's
   compressed blob inline as a byte string. The data model is unchanged. Benefits:
-  CBOR is an IETF standard with a defined deterministic encoding; the payload can
-  be shipped as raw bytes (no base64) for backend/body transport; and the content
-  hash is verified by byte-surgery on the received bytes, independent of the CBOR
+  CBOR is an IETF standard with a defined deterministic encoding. The payload can
+  be shipped as raw bytes (no base64) for backend/body transport. The content hash
+  is verified by byte-surgery on the received bytes, independent of the CBOR
   library (Python `cbor2` and JS `cbor-x` interoperate both ways). The `msgpack`
   dependency is removed (Python) and the hand-rolled `msgpack.ts` deleted (JS).
   As nothing was released, this is done in place under `spectrl1` (no `spectrl2`).
 - **Non-`MS:` parameter-map keys** are now encoded as the full accession string
   (e.g. `"UO:0000031"`) rather than the previously-specified `[ontology, tail]`
   array, which could not be a msgpack-map key. Fixes a latent crash in the
-  Python reference impl; exercised by the `non_ms_ontology_param_key` vector.
+  Python reference impl. Exercised by the `non_ms_ontology_param_key` vector.
   (No released token used the old form.)
 - **Hash verification** now derives the "header without key 9" by byte-slicing
   the serialized header rather than re-encoding a parsed structure, so it no
   longer depends on a canonical msgpack form. The hash value is unchanged.
 - Clarified that the content hash is a per-token integrity check, not a stable
-  cross-implementation content identifier; softened "deterministic" wording in
+  cross-implementation content identifier. Softened "deterministic" wording in
   the README and `SPECIFICATION.md` accordingly.
 
 ## [0.1.0] - 2026-06-08
