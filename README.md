@@ -3,7 +3,7 @@
 [![CI](https://github.com/pgarrett-scripps/spectrl/actions/workflows/ci.yml/badge.svg)](https://github.com/pgarrett-scripps/spectrl/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/spectrl.svg)](https://pypi.org/project/spectrl/)
 [![Python](https://img.shields.io/pypi/pyversions/spectrl.svg)](https://pypi.org/project/spectrl/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21960545.svg)](https://doi.org/10.5281/zenodo.21960545)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21960544.svg)](https://doi.org/10.5281/zenodo.21960544)
 [![License](https://img.shields.io/github/license/pgarrett-scripps/spectrl.svg)](https://github.com/pgarrett-scripps/spectrl/blob/main/LICENSE)
 
 **Put a mass spectrum directly in a URL.**
@@ -351,8 +351,8 @@ problems privately as described in [SECURITY.md](https://github.com/pgarrett-scr
 If spectrl supports published work, cite the archived software release rather
 than the moving `main` branch. GitHub exposes the current metadata through
 [`CITATION.cff`](https://github.com/pgarrett-scripps/spectrl/blob/main/CITATION.cff).
-The archived v0.4.0 release is available at
-[doi:10.5281/zenodo.21960545](https://doi.org/10.5281/zenodo.21960545).
+The archived v1.0.0 release is available at
+[doi:10.5281/zenodo.21986776](https://doi.org/10.5281/zenodo.21986776).
 
 ## License
 
