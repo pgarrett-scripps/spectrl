@@ -5,7 +5,7 @@
  *   0 defaultArrayLength, 1 id, 2 spectrum params, 3 scanList,
  *   4 precursorList, 5 productList, 6 binaryDataArrayList, 7 interp,
  *   8 userParamList. The format version lives only in the token magic, and
- *   the integrity hash only in the trailing token part.
+ *   the checksum only in the trailing token part.
  */
 
 import {
@@ -31,8 +31,8 @@ import type {
   UserParam,
 } from "./model.js";
 import { FORMAT_VERSION } from "./token.js";
-import { DESC_ARRAY, DESC_COMP, DESC_DATA, DESC_FP, DESC_NAME, DESC_TYPE } from "./format.js";
-export { DESC_ARRAY, DESC_COMP, DESC_DATA, DESC_FP, DESC_NAME, DESC_TYPE } from "./format.js";
+import { DESC_ARRAY, DESC_COMP, DESC_DATA, DESC_FP, DESC_NAME, DESC_TYPE, DESC_UNIT } from "./format.js";
+export { DESC_ARRAY, DESC_COMP, DESC_DATA, DESC_FP, DESC_NAME, DESC_TYPE, DESC_UNIT } from "./format.js";
 
 /**
  * Array-descriptor keys (header key 6). Integer-keyed like the header itself:
@@ -52,6 +52,7 @@ export interface Descriptor {
   fp?: number;
   /** Free-text descriptor name; present only for non-standard (MS:1000786) arrays. */
   name?: string;
+  unit?: string;
   /** This array's compressed blob, embedded inline in the CBOR document. */
   data?: Uint8Array;
 }
@@ -214,6 +215,7 @@ export function buildHeaderMap(spec: InlineSpectrum, descriptors: Descriptor[]):
       dm.set(DESC_COMP, d.comp);
       if (d.fp !== undefined) dm.set(DESC_FP, d.fp);
       if (d.name !== undefined) dm.set(DESC_NAME, d.name);
+      if (d.unit !== undefined) dm.set(DESC_UNIT, encodeUnit(d.unit));
       dm.set(DESC_DATA, d.data);
       return dm;
     }),
@@ -247,7 +249,7 @@ export function parseHeaderMap(h: MsgMap): { decoded: DecodedSpectrum; descripto
   const interp = (h.get(7) as string | undefined) ?? null;
   const userParams = decodeUserParams(h.get(8) as MsgMap[] | undefined);
   // The trailing token part; decodeCbor fills it in after verification.
-  const hash = null;
+  const checksum = "";
 
   const rawDescriptors = (h.get(6) as MsgMap[] | undefined) ?? [];
   const descriptors: Descriptor[] = rawDescriptors.map((d) => ({
@@ -256,6 +258,7 @@ export function parseHeaderMap(h: MsgMap): { decoded: DecodedSpectrum; descripto
     comp: d.get(DESC_COMP) as number,
     fp: d.has(DESC_FP) ? (d.get(DESC_FP) as number) : undefined,
     name: d.has(DESC_NAME) ? (d.get(DESC_NAME) as string) : undefined,
+    unit: d.has(DESC_UNIT) ? decodeUnitTail(d.get(DESC_UNIT) as number | [string, number] | string) : undefined,
     data: d.has(DESC_DATA) ? (d.get(DESC_DATA) as Uint8Array) : undefined,
   }));
 
@@ -264,8 +267,6 @@ export function parseHeaderMap(h: MsgMap): { decoded: DecodedSpectrum; descripto
     mz: null,
     intensity: null,
     charge: null,
-    ionMobility: null,
-    ionMobilityType: null,
     id,
     params,
     scans,
@@ -275,7 +276,8 @@ export function parseHeaderMap(h: MsgMap): { decoded: DecodedSpectrum; descripto
     interp,
     userParams,
     extraArrays: {},
-    hash,
+    arrayUnits: {},
+    checksum,
     formatVersion,
   };
   return { decoded, descriptors };

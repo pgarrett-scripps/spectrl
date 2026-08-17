@@ -6,7 +6,7 @@ where spectrl runs inside spxtacular's WebAssembly Python. Ported faithfully
 from the reference C++ implementation (Teleman et al., ms-numpress) via the
 TypeScript port in ``js/src/numpress.ts``, so the byte output is identical to
 ``pynumpress``: tokens produced by either backend round-trip and share the same
-SHA-256 content hash.
+token checksum.
 
 Only the three raw MS-Numpress transforms live here; the ``+ zlib`` wrapping and
 the safe fixed-point clamping stay in :mod:`spectrl.codecs.numpress`, which

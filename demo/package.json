@@ -5,8 +5,8 @@
   "type": "module",
   "description": "Browser demo for spectrl: encodes example spectra to shareable URLs/QR and decodes + plots them, entirely client-side.",
   "scripts": {
-    "build": "esbuild src/app.ts --bundle --format=esm --outfile=dist/app.js --sourcemap",
-    "dev": "esbuild src/app.ts --bundle --format=esm --outfile=dist/app.js --servedir=. --serve=127.0.0.1:8000"
+    "build": "esbuild src/app.ts --bundle --format=esm --splitting --outdir=dist --entry-names=app --chunk-names=chunks/[name]-[hash] --sourcemap",
+    "dev": "esbuild src/app.ts --bundle --format=esm --splitting --outdir=dist --entry-names=app --chunk-names=chunks/[name]-[hash] --servedir=. --serve=127.0.0.1:8000"
   },
   "devDependencies": {
     "esbuild": "^0.28.2",

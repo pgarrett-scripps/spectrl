@@ -11,6 +11,9 @@ import { dirname, resolve } from "node:path";
 import { test } from "node:test";
 
 import { decodeToken } from "../src/index.ts";
+import { installZstd } from "../src/zstd.ts";
+
+installZstd();
 
 const here = dirname(fileURLToPath(import.meta.url));
 const path = resolve(here, "../../test-vectors/reverse-vectors.json");
@@ -25,13 +28,12 @@ if (!existsSync(path)) {
       const d = decodeToken(v.token);
       const exp = v.decoded;
       assert.equal(d.defaultArrayLength, exp.default_array_length);
-      assert.equal(d.hash, exp.hash);
+      assert.equal(d.checksum, exp.checksum);
       assert.equal(d.id, exp.id);
       for (const [name, actual] of [
         ["mz", d.mz],
         ["intensity", d.intensity],
         ["charge", d.charge],
-        ["ion_mobility", d.ionMobility],
       ] as const) {
         const e = exp[name];
         if (e === null) {

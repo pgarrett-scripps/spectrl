@@ -3,155 +3,176 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>spectrl — inline spectrum demo</title>
+    <meta name="description" content="Put a complete mass spectrum in a URL with spectrl." />
+    <title>spectrl: A spectrum you can send like a link</title>
     <style>
       :root {
-        --bg: #0f1419;
-        --panel: #171c24;
-        --panel-2: #1e242e;
-        --border: #2a323d;
-        --fg: #e6edf3;
-        --muted: #8b97a6;
-        --accent: #4cc2ff;
-        --accent-2: #7ee787;
-        --peak: #4cc2ff;
-        --peak-top: #7ee787;
+        color-scheme: dark;
+        --bg: #07100f; --panel: rgba(14, 28, 27, 0.78); --panel-2: #142624;
+        --border: rgba(171, 224, 215, 0.14); --border-strong: rgba(171, 224, 215, 0.24);
+        --fg: #effbf8; --muted: #96aaa6; --accent: #5ce1c4; --accent-2: #b6f36a;
+        --violet: #a88cff; --danger: #ff837a; --peak: #5ce1c4;
       }
       * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
       body {
-        margin: 0;
-        font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-        background: var(--bg);
-        color: var(--fg);
+        margin: 0; min-width: 0; font: 15px/1.55 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--fg); background: radial-gradient(circle at 16% 0%, rgba(92, 225, 196, 0.12), transparent 30rem), radial-gradient(circle at 90% 18%, rgba(168, 140, 255, 0.09), transparent 32rem), linear-gradient(180deg, #081211 0%, var(--bg) 100%);
       }
-      header {
-        padding: 24px 24px 12px;
-        border-bottom: 1px solid var(--border);
-      }
-      h1 { margin: 0; font-size: 22px; letter-spacing: -0.01em; }
-      h1 .v { color: var(--muted); font-weight: 400; font-size: 14px; }
-      .tag { color: var(--muted); margin-top: 4px; max-width: 70ch; }
-      .badge {
-        display: inline-block; margin-top: 8px; padding: 2px 8px; border-radius: 999px;
-        background: rgba(126, 231, 135, 0.12); color: var(--accent-2);
-        font-size: 12px; border: 1px solid rgba(126, 231, 135, 0.3);
-      }
-      main { padding: 20px 24px 60px; display: grid; gap: 20px; max-width: 1100px; }
-      .row { display: grid; gap: 20px; grid-template-columns: 1fr; }
-      @media (min-width: 880px) { .row.two { grid-template-columns: 1fr 320px; } }
-      .panel {
-        background: var(--panel); border: 1px solid var(--border);
-        border-radius: 10px; padding: 16px;
-      }
-      .panel h2 { margin: 0 0 12px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
-      .examples { display: flex; flex-wrap: wrap; gap: 8px; }
-      button {
-        font: inherit; cursor: pointer; color: var(--fg);
-        background: var(--panel-2); border: 1px solid var(--border);
-        border-radius: 8px; padding: 8px 12px; transition: border-color .15s, background .15s;
-      }
-      button:hover { border-color: var(--accent); }
-      button.primary { background: rgba(76, 194, 255, 0.12); border-color: rgba(76, 194, 255, 0.4); color: var(--accent); }
-      label.opt { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); cursor: pointer; }
-      textarea {
-        width: 100%; min-height: 92px; resize: vertical;
-        font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
-        color: var(--fg); background: var(--panel-2); border: 1px solid var(--border);
-        border-radius: 8px; padding: 10px; word-break: break-all;
-      }
-      .meta { color: var(--muted); margin-top: 6px; font-size: 12px; }
-      .meta b { color: var(--fg); font-weight: 600; }
-      .sharebar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
-      .sharebar .grow { flex: 1; }
-      .sharebar button { padding: 6px 10px; }
-      #token { margin-top: 12px; }
-      #qr { margin-top: 12px; justify-items: start; }
-      #qr { display: grid; place-items: center; gap: 8px; }
-      #qr img { image-rendering: pixelated; border-radius: 6px; background: #fff; padding: 8px; max-width: 100%; }
-      .stats { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-      .stat { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
-      .stat .label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
-      .stat .value { font-size: 20px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
-      .stat .value.accent { color: var(--accent); }
-      .stat .value.good { color: var(--accent-2); }
-      .stat .sub { color: var(--muted); font-size: 11px; margin-top: 2px; }
-      .stat.wide { grid-column: 1 / -1; }
-      .bars { display: grid; gap: 4px; margin-top: 6px; }
-      .bar { display: grid; grid-template-columns: 88px 1fr 64px; align-items: center; gap: 8px; font-size: 12px; }
-      .bar .track { height: 12px; background: var(--bg); border-radius: 4px; overflow: hidden; }
-      .bar .fill { height: 100%; border-radius: 4px; }
-      .bar .n { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
-      table.kv { width: 100%; border-collapse: collapse; }
-      table.kv td { padding: 4px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
-      table.kv td.k { color: var(--muted); white-space: nowrap; width: 1%; }
-      table.kv td.acc { color: var(--muted); font: 11px ui-monospace, monospace; }
-      .err { color: #ff7b72; white-space: pre-wrap; font: 12px ui-monospace, monospace; }
+      body::before { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .18; background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px); background-size: 48px 48px; mask-image: linear-gradient(to bottom, #000, transparent 70%); }
+      button, textarea { font: inherit; }
+      button, a { -webkit-tap-highlight-color: transparent; }
+      a { color: inherit; }
+      button:focus-visible, a:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+      .shell { width: min(1180px, calc(100% - 40px)); margin-inline: auto; }
+      nav { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+      .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 750; letter-spacing: -.03em; }
+      .mark { display: inline-flex; align-items: end; gap: 2px; width: 25px; height: 20px; }
+      .mark i { width: 3px; border-radius: 3px 3px 0 0; background: var(--accent); box-shadow: 0 0 12px rgba(92,225,196,.55); }
+      .mark i:nth-child(1) { height: 7px; } .mark i:nth-child(2) { height: 18px; background: var(--accent-2); }
+      .mark i:nth-child(3) { height: 11px; } .mark i:nth-child(4) { height: 15px; background: var(--violet); }
+      .navlinks { display: flex; align-items: center; gap: 22px; }
+      .navlinks a { color: var(--muted); text-decoration: none; font-size: 14px; }
+      .navlinks a:hover { color: var(--fg); }
+      .navlinks .nav-cta { color: var(--fg); border: 1px solid var(--border-strong); border-radius: 9px; padding: 7px 11px; }
+      .hero { padding: 76px 0 54px; text-align: center; }
+      .eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--accent); font: 650 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; letter-spacing: .12em; }
+      .eyebrow::before { content: ""; width: 26px; height: 1px; background: currentColor; }
+      h1 { max-width: 900px; margin: 22px auto 18px; font-size: clamp(42px, 7vw, 82px); line-height: .98; letter-spacing: -.065em; }
+      h1 span { color: var(--accent); text-shadow: 0 0 36px rgba(92,225,196,.22); }
+      .lede { max-width: 650px; margin: 0 auto; color: #b8c9c5; font-size: clamp(17px, 2vw, 20px); }
+      .hero-actions { margin-top: 30px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+      .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 1px solid var(--border-strong); border-radius: 10px; color: var(--fg); background: rgba(20,38,36,.8); text-decoration: none; cursor: pointer; transition: transform .15s, border-color .15s, background .15s; }
+      .button:hover { transform: translateY(-1px); border-color: rgba(92,225,196,.5); }
+      .button.primary { background: var(--accent); border-color: var(--accent); color: #04110e; font-weight: 750; box-shadow: 0 10px 34px rgba(92,225,196,.16); }
+      .trust { margin-top: 24px; color: var(--muted); font-size: 13px; }
+      .trust span + span::before { content: "·"; margin: 0 10px; color: #50635f; }
+      main { padding-bottom: 72px; }
+      .workspace { overflow: hidden; border: 1px solid var(--border-strong); border-radius: 18px; background: linear-gradient(180deg, rgba(17,33,31,.92), rgba(10,22,21,.94)); box-shadow: 0 30px 90px rgba(0,0,0,.28), inset 0 1px rgba(255,255,255,.03); }
+      .workspace-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding: 22px 24px 18px; border-bottom: 1px solid var(--border); }
+      .workspace-head h2 { margin: 0; font-size: 22px; letter-spacing: -.035em; }
+      .workspace-head p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+      .status { flex: none; display: inline-flex; align-items: center; gap: 7px; color: var(--accent-2); font-size: 12px; }
+      .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; }
+      .examples { display: flex; gap: 8px; padding: 16px 24px 0; overflow-x: auto; scrollbar-width: thin; }
+      .examples button { flex: none; cursor: pointer; color: var(--muted); background: transparent; border: 1px solid var(--border); border-radius: 999px; padding: 7px 12px; transition: .15s; }
+      .examples button:hover { color: var(--fg); border-color: var(--border-strong); }
+      .examples button.primary { color: #061310; background: var(--accent); border-color: var(--accent); font-weight: 700; }
+      .plot-wrap { padding: 6px 24px 0; min-width: 0; }
+      #plot { min-height: 300px; }
       svg text { fill: var(--muted); font: 11px system-ui, sans-serif; }
-      .tooltip {
-        position: fixed; pointer-events: none; z-index: 10; display: none;
-        background: #000; border: 1px solid var(--accent); border-radius: 6px;
-        padding: 6px 8px; font: 12px ui-monospace, monospace; color: var(--fg);
+      .spectrum-summary { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 24px 18px; }
+      .chip { display: inline-flex; align-items: baseline; gap: 6px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; background: rgba(20,38,36,.55); }
+      .chip b { font-size: 13px; font-weight: 650; } .chip span { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+      .sharebar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 16px 24px; border-top: 1px solid var(--border); background: rgba(4,14,13,.42); }
+      .sharebar .meta { flex: 1 1 280px; color: var(--muted); font-size: 12px; }
+      .sharebar .meta b { color: var(--fg); }
+      .sharebar button { min-height: 40px; }
+      .sharebar .secondary-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+      .sharebar .secondary-actions button { color: var(--muted); background: transparent; border: 1px solid var(--border); border-radius: 9px; padding: 0 11px; cursor: pointer; }
+      .sharebar .secondary-actions button:hover { color: var(--fg); border-color: var(--border-strong); }
+      .revealed { padding: 0 24px 20px; background: rgba(4,14,13,.42); }
+      #qr { display: grid; justify-items: start; gap: 8px; }
+      #qr[hidden], #token[hidden] { display: none; }
+      #qr img { image-rendering: pixelated; border-radius: 10px; background: #fff; padding: 8px; width: min(260px, 100%); height: auto; }
+      textarea { width: 100%; min-height: 100px; resize: vertical; margin: 0; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--fg); background: #081412; border: 1px solid var(--border-strong); border-radius: 9px; padding: 11px; word-break: break-all; }
+      details.inspector { border-top: 1px solid var(--border); }
+      details.inspector > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; padding: 17px 24px; color: #c5d5d1; font-weight: 650; }
+      details.inspector > summary::-webkit-details-marker { display: none; }
+      details.inspector > summary::after { content: "+"; color: var(--accent); font: 20px/1 ui-monospace, monospace; }
+      details.inspector[open] > summary::after { content: "−"; }
+      .detail-body { padding: 0 24px 24px; }
+      .detail-body h3 { margin: 14px 0 12px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .09em; }
+      .stats { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); }
+      .stat { min-width: 0; background: rgba(20,38,36,.58); border: 1px solid var(--border); border-radius: 10px; padding: 11px 12px; }
+      .stat .label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }
+      .stat .value { font-size: 18px; font-weight: 680; margin-top: 3px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+      .stat .value.accent { color: var(--accent); } .stat .value.good { color: var(--accent-2); }
+      .stat .sub { color: var(--muted); font-size: 11px; margin-top: 2px; } .stat.wide { grid-column: 1 / -1; }
+      .bars { display: grid; gap: 5px; margin-top: 8px; }
+      .bar { display: grid; grid-template-columns: 88px 1fr 64px; align-items: center; gap: 8px; font-size: 12px; }
+      .bar .track { height: 11px; background: #07100f; border-radius: 4px; overflow: hidden; }
+      .bar .fill { height: 100%; border-radius: 4px; } .bar .n { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+      .metadata-wrap { margin-top: 24px; overflow-x: auto; }
+      table.kv { width: 100%; border-collapse: collapse; min-width: 560px; }
+      table.kv td { padding: 7px 9px; border-bottom: 1px solid var(--border); vertical-align: top; }
+      table.kv td.k { color: var(--muted); white-space: nowrap; width: 1%; } table.kv td.acc { color: #68807a; font: 11px ui-monospace, monospace; }
+      .err { color: var(--danger); white-space: pre-wrap; font: 12px ui-monospace, monospace; padding: 0 24px; }
+      .meta { color: var(--muted); font-size: 12px; }
+      .story { padding: 96px 0 18px; text-align: center; }
+      .story h2 { margin: 12px auto; font-size: clamp(30px, 4vw, 48px); line-height: 1.08; letter-spacing: -.045em; }
+      .story > p { max-width: 600px; margin: 0 auto; color: var(--muted); }
+      .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-top: 34px; text-align: left; }
+      .step { position: relative; min-height: 150px; padding: 20px; border: 1px solid var(--border); border-radius: 14px; background: var(--panel); }
+      .step .number { color: var(--accent); font: 12px ui-monospace, monospace; }
+      .step h3 { margin: 28px 0 5px; font-size: 17px; } .step p { margin: 0; color: var(--muted); font-size: 13px; }
+      .step:not(:last-child)::after { content: "→"; position: absolute; z-index: 2; width: 32px; right: -32px; top: 50%; transform: translateY(-50%); color: var(--accent); text-align: center; }
+      footer { margin-top: 72px; padding: 30px 0 40px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+      .footer-row { display: flex; justify-content: space-between; gap: 24px; align-items: center; }
+      .footer-row div:last-child { display: flex; gap: 18px; } .footer-row a:hover { color: var(--fg); }
+      code { font: 12px ui-monospace, monospace; background: var(--panel-2); padding: 2px 5px; border-radius: 4px; }
+      .tooltip { position: fixed; pointer-events: none; z-index: 10; display: none; background: #020807; border: 1px solid var(--accent); border-radius: 7px; padding: 6px 8px; font: 12px ui-monospace, monospace; color: var(--fg); }
+      @media (max-width: 760px) {
+        .shell { width: min(100% - 24px, 1180px); } nav { min-height: 62px; }
+        .navlinks a:not(.nav-cta) { display: none; } .hero { padding: 54px 0 38px; } h1 { font-size: clamp(42px, 14vw, 62px); }
+        .trust { display: grid; gap: 4px; } .trust span + span::before { display: none; }
+        .workspace-head { padding: 18px; } .workspace-head p { display: none; } .status { font-size: 0; }
+        .examples { padding: 13px 18px 0; } .plot-wrap { padding: 8px 6px 0; overflow-x: auto; } #plot { min-height: 235px; } #svg { min-width: 620px; }
+        .spectrum-summary { padding: 4px 18px 15px; overflow-x: auto; flex-wrap: nowrap; } .chip { flex: none; }
+        .sharebar { padding: 15px 18px; } .sharebar .meta { flex-basis: 100%; } .sharebar > .button.primary { flex: 1; }
+        .secondary-actions { width: 100%; } .secondary-actions button { flex: 1; }
+        .revealed, .detail-body { padding-left: 18px; padding-right: 18px; } details.inspector > summary { padding: 16px 18px; }
+        .steps { grid-template-columns: 1fr; gap: 28px; } .step { min-height: 0; } .step h3 { margin-top: 16px; }
+        .step:not(:last-child)::after { content: "↓"; width: 28px; height: 28px; right: auto; left: 50%; top: auto; bottom: -28px; transform: translateX(-50%); line-height: 28px; }
+        .footer-row { align-items: flex-start; flex-direction: column; }
       }
-      footer { color: var(--muted); font-size: 12px; padding: 0 24px 32px; max-width: 1100px; }
-      a { color: var(--accent); }
-      code { font: 12px ui-monospace, monospace; background: var(--panel-2); padding: 1px 5px; border-radius: 4px; }
     </style>
   </head>
   <body>
-    <header>
-      <h1>spectrl <span class="v">— inline spectrum demo</span></h1>
-      <div class="tag">
-        A complete mass spectrum — peaks, metadata, precursor — embedded in a single URL-safe token.
-        The spectrum <em>is</em> the link.
-      </div>
-      <div class="badge">● Decoded entirely in your browser — no server is contacted</div>
+    <header class="shell">
+      <nav aria-label="Primary navigation">
+        <a class="brand" href="#top" aria-label="spectrl home"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>spectrl</span></a>
+        <div class="navlinks"><a href="#how">How it works</a><a href="https://pypi.org/project/spectrl/">Install</a><a href="https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md">Docs</a><a class="nav-cta" href="https://github.com/pgarrett-scripps/spectrl">GitHub ↗</a></div>
+      </nav>
     </header>
-
-    <main>
-      <div class="panel">
-        <div class="examples">
-          <button class="primary" data-example="ms2">Peptide MS² (b/y ions)</button>
-          <button data-example="ms1">Small-molecule MS¹ (isotopes)</button>
-          <button data-example="bigms2">Dense MS² (40 peaks)</button>
-          <button data-example="r100">Synthetic (100 peaks)</button>
-          <button data-example="r500">Synthetic (500 peaks)</button>
-          <label class="opt"><input type="checkbox" id="lossless" /> lossless (bit-exact)</label>
+    <section class="hero shell" id="top">
+      <div class="eyebrow">Portable mass spectra</div>
+      <h1>A spectrum you can send <span>like a link.</span></h1>
+      <p class="lede">Package peaks, precursor information, and metadata into one portable URL without uploading anything.</p>
+      <div class="hero-actions"><a class="button primary" href="#playground">Explore a spectrum ↓</a><button class="button" id="heroPaste" type="button">Paste a token</button></div>
+      <div class="trust"><span>Open format</span><span>Python + JavaScript</span><span>Entirely client-side</span></div>
+    </section>
+    <main class="shell">
+      <section class="workspace" id="playground" aria-labelledby="workspaceTitle">
+        <div class="workspace-head"><div><h2 id="workspaceTitle">Spectrum playground</h2><p>Choose an example, inspect it, and copy a URL containing the spectrum itself.</p></div><div class="status">Decoded locally</div></div>
+        <div class="examples" aria-label="Example spectra">
+          <button class="primary" data-example="ms2">Peptide MS²</button><button data-example="ms1">Small-molecule MS¹</button><button data-example="topdown">Top-down MS²</button><button data-example="mobility">Ion mobility</button><button data-example="aux">Auxiliary arrays</button><button data-example="r100">100 peaks</button><button data-example="r500">500 peaks</button>
         </div>
-
-        <div id="decodeErr" class="err"></div>
-        <div id="plot"></div>
-
+        <div id="decodeErr" class="err" role="alert"></div>
+        <div class="plot-wrap"><div id="plot"></div></div>
+        <div class="spectrum-summary" id="spectrumSummary" aria-label="Spectrum summary"></div>
         <div class="sharebar">
-          <span class="meta" id="tokenMeta"></span>
-          <span class="grow"></span>
-          <button class="primary" id="copyLink" title="Copy the shareable URL (token in the # fragment)">Copy link</button>
-          <button id="copyToken" title="Copy the raw spectrl2 token">Copy token</button>
-          <button id="qrToggle" aria-expanded="false">Show QR</button>
-          <button id="pasteToggle" aria-expanded="false">Paste a token…</button>
+          <span class="meta" id="tokenMeta"></span><button class="button primary" id="copyLink" type="button">Copy shareable link</button>
+          <div class="secondary-actions"><button id="qrToggle" type="button" aria-expanded="false">QR code</button><button id="pasteToggle" type="button" aria-expanded="false">View token</button></div>
         </div>
-
-        <div id="qr" hidden></div>
-        <textarea id="token" hidden spellcheck="false" placeholder="Paste any spectrl2 token to decode it…"></textarea>
-      </div>
-
-      <div class="panel">
-        <h2>Encoding stats</h2>
-        <div class="stats" id="stats"></div>
-      </div>
-
-      <div class="panel">
-        <h2>Decoded metadata</h2>
-        <table class="kv" id="metaTable"></table>
-      </div>
+        <div class="revealed"><div id="qr" hidden></div><textarea id="token" hidden spellcheck="false" aria-label="Spectrl token" placeholder="Paste any spectrl.v1 token to decode it…"></textarea></div>
+        <details class="inspector"><summary>Technical details</summary><div class="detail-body">
+          <label class="meta"><input type="checkbox" id="lossless" /> Use lossless, bit-exact encoding</label>
+          <h3>Encoding and integrity</h3><div class="stats" id="stats"></div>
+          <div class="metadata-wrap"><h3>Decoded metadata</h3><table class="kv" id="metaTable"></table></div>
+        </div></details>
+      </section>
+      <section class="story" id="how">
+        <div class="eyebrow">How it works</div><h2>The data travels with the link.</h2><p>No temporary upload, database lookup, or proprietary viewer is required.</p>
+        <div class="steps">
+          <article class="step"><span class="number">01</span><h3>Start with a spectrum</h3><p>Peaks and modeled mzML metadata stay together.</p></article>
+          <article class="step"><span class="number">02</span><h3>Encode locally</h3><p>Compact, integrity-checked, URL-safe text.</p></article>
+          <article class="step"><span class="number">03</span><h3>Share anywhere</h3><p>Send a link or QR code through ordinary tools.</p></article>
+          <article class="step"><span class="number">04</span><h3>Decode anywhere</h3><p>Open it in a browser, Python, or JavaScript.</p></article>
+        </div>
+      </section>
     </main>
-
-    <footer>
-      Built on the spectrl JavaScript implementation — the same <code>spectrl2</code> format as the
-      Python package on PyPI. Tokens use PSI-MS CV accessions, MS-Numpress + zlib (as in mzML), and
-      ProForma 2.0. Open this page's URL on another device and the spectrum travels with it. See the
-      <a href="https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md">specification</a>.
-    </footer>
-
+    <footer><div class="shell footer-row"><div><strong>spectrl</strong> · An open format for portable mass spectra.</div><div><a href="https://pypi.org/project/spectrl/">Install</a><a href="https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md">Docs</a><a href="https://github.com/pgarrett-scripps/spectrl">GitHub</a></div></div></footer>
     <div class="tooltip" id="tip"></div>
     <script type="module" src="./dist/app.js"></script>
   </body>

@@ -1,7 +1,7 @@
 /** URL / data-URI bindings for spectrl tokens. */
 
-const MAGIC_PREFIX = "spectrl2.";
-const DATA_URI_PREFIX = "data:application/vnd.spectrl;v=2,";
+const MAGIC_PREFIX = "spectrl.v1.";
+const DATA_URI_PREFIX = "data:application/vnd.spectrl;v=1,";
 
 /** Wrap a token as a URL fragment: `base#token` (never sent to the server). */
 export function toFragment(token: string, base: string): string {
@@ -16,12 +16,12 @@ export function toQuery(token: string, base: string, param = "d"): string {
   return url.toString();
 }
 
-/** Wrap a token in a `data:application/vnd.spectrl;v=2,` URI. */
+/** Wrap a token in a `data:application/vnd.spectrl;v=1,` URI. */
 export function toDataUri(token: string): string {
   return `${DATA_URI_PREFIX}${token}`;
 }
 
-/** Extract a spectrl2 token from a fragment, query string, or data: URI. */
+/** Extract a spectrl.v1 token from a fragment, query string, or data: URI. */
 export function extractToken(urlOrUri: string): string {
   if (urlOrUri.startsWith(DATA_URI_PREFIX)) return urlOrUri.slice(DATA_URI_PREFIX.length);
 
@@ -45,5 +45,5 @@ export function extractToken(urlOrUri: string): string {
       if (frag.startsWith(MAGIC_PREFIX)) return frag;
     }
   }
-  throw new Error(`No spectrl2 token found in: ${JSON.stringify(urlOrUri)}`);
+  throw new Error(`No spectrl.v1 token found in: ${JSON.stringify(urlOrUri)}`);
 }

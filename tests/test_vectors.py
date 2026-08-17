@@ -20,6 +20,7 @@ from pathlib import Path
 import pytest
 
 from spectrl import decode_token
+from spectrl.cbor_format import token_checksum
 from spectrl.token import b64url_encode
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -60,21 +61,19 @@ def _cmp_user_params(actual: list, expected: list, label: str) -> None:
 
 def _check(vec: dict) -> None:
     tol = vec["tolerance"]
-    d = decode_token(vec["token"])  # raises on hash mismatch
+    d = decode_token(vec["token"])  # raises on checksum mismatch
     exp = vec["decoded"]
 
     assert d.default_array_length == exp["default_array_length"]
     assert d.id == exp["id"]
-    assert d.hash == exp["hash"]
+    assert d.checksum == exp["checksum"]
     assert d.interp == exp["interp"]
-    assert d.ion_mobility_type == exp["ion_mobility_type"]
     assert d.format_version == exp["format_version"]
 
     for name, attr in [
         ("mz", d.mz),
         ("intensity", d.intensity),
         ("charge", d.charge),
-        ("ion_mobility", d.ion_mobility),
     ]:
         expected = exp[name]
         if expected is None:
@@ -121,6 +120,7 @@ def _check(vec: dict) -> None:
         assert len(ea) == len(ee["values"]), f"extra[{k}] length"
         for a, e in zip(ea, ee["values"], strict=True):
             assert _close(float(a), float(e), tol), f"extra[{k}]: {a} vs {e}"
+    assert d.array_units == exp.get("array_units", {})
 
 
 # ── forward: Python-authored tokens ───────────────────────────────────────────
@@ -162,6 +162,7 @@ def test_vectors_in_sync_with_generator(tmp_path):
 
 @pytest.mark.parametrize("vec", _load(NEGATIVE)["vectors"], ids=lambda v: f"negative-{v['name']}")
 def test_shared_negative_vector_rejected(vec: dict):
-    token = "spectrl2." + b64url_encode(bytes.fromhex(vec["cbor_hex"]))
+    body = "spectrl.v1." + b64url_encode(bytes.fromhex(vec["cbor_hex"]))
+    token = f"{body}.{token_checksum(body)}"
     with pytest.raises(ValueError, match=vec["error"]):
         decode_token(token)

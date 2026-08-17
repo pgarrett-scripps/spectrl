@@ -1,4 +1,4 @@
-spectrl — Inline Spectrum URL Encoder
+spectrl, Inline Spectrum URL Encoder
 Copyright 2026 Patrick Garrett and the spectrl contributors
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,3 +17,8 @@ The unmodified tests/data/BSA1.mzML fixture is distributed by the OpenMS
 project under its three-clause BSD license. It was obtained from OpenMS commit
 904af701ad915546ad5a0a1bdefb8b16a0370a4f and has SHA-256
 dc9ed61d595328d4ef2f1de47d21f41b83e2eae7c9145e1d9b88e910c8cec2f7.
+
+Zstandard support uses the Python zstandard package under the BSD 3-Clause
+license and the @cloudpss/zstd JavaScript package under the MIT license. The
+underlying Zstandard implementation is Copyright Meta Platforms, Inc. and
+affiliates and is available under its BSD license.

@@ -3,7 +3,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { decodeToken, encodeSpectrum, type InlineSpectrum } from "../src/index.ts";
+import { decodeToken, encodeSpectrum, tokenBreakdown, type InlineSpectrum } from "../src/index.ts";
+import { installZstd } from "../src/zstd.ts";
+
+installZstd();
 
 function spec(extraArrays: InlineSpectrum["extraArrays"]): InlineSpectrum {
   return {
@@ -29,7 +32,10 @@ for (const lossless of [false, true]) {
     const e = d.extraArrays;
     assert.deepEqual(Object.keys(e).sort(), ["MS:1000517", "flags", "iso_score"]);
     assert.ok(e["MS:1000517"] instanceof Float64Array);
-    assert.deepEqual(Array.from(e["MS:1000517"]!), [10, 20, 30, 40]);
+    for (let i = 0; i < 4; i++) {
+      const expected = [10, 20, 30, 40][i]!;
+      assert.ok(Math.abs(e["MS:1000517"]![i]! - expected) / expected < 5e-4);
+    }
     assert.ok(e["iso_score"] instanceof Float32Array);
     for (let i = 0; i < 4; i++) assert.ok(Math.abs(e["iso_score"]![i]! - [0.9, 0.8, 0.7, 0.6][i]!) < 1e-6);
     assert.ok(e["flags"] instanceof Int32Array);
@@ -43,6 +49,67 @@ test("multiple non-standard arrays disambiguated by name", () => {
   );
   assert.deepEqual(Array.from(d.extraArrays["score_a"]!), [1, 2, 3, 4]);
   assert.deepEqual(Array.from(d.extraArrays["score_b"]!), [5, 6, 7, 8]);
+});
+
+for (const codec of ["zstd", "byte-shuffled-zstd"] as const) {
+  test(`per-array ${codec} override round-trips`, () => {
+    const expected = new Float64Array([1, 2, 3, 4]);
+    const d = decodeToken(
+      encodeSpectrum(spec({ custom: expected }), { quiet: true, arrayEncodings: { custom: codec } }),
+    );
+    assert.deepEqual(d.extraArrays.custom, expected);
+  });
+}
+
+for (const codec of ["numlin-zstd", "numslof-zstd", "numpic-zstd"] as const) {
+  test(`unknown auxiliary arrays reject ${codec}`, () => {
+    assert.throws(() => encodeSpectrum(spec({ custom: [1, 2, 3, 4] }), {
+      quiet: true, arrayEncodings: { custom: codec },
+    }), /not compatible/);
+  });
+}
+
+test("expert override allows lossy custom arrays but not known mismatches", () => {
+  const source = spec({ custom: [1, 2, 3, 4] });
+  assert.doesNotThrow(() => encodeSpectrum(source, {
+    quiet: true,
+    allowUnsafeLossyCustom: true,
+    arrayEncodings: { custom: "numlin-zlib" },
+  }));
+  assert.throws(() => encodeSpectrum(source, {
+    quiet: true,
+    allowUnsafeLossyCustom: true,
+    arrayEncodings: { mz: "numpic-zlib" },
+  }), /not compatible/);
+});
+
+test("unknown auxiliary arrays stay lossless by default", () => {
+  const expected = new Float64Array([0.123456789, 0.234567891, 0.345678912, 0.456789123]);
+  const d = decodeToken(encodeSpectrum(spec({ custom: expected }), { quiet: true }));
+  assert.deepEqual(d.extraArrays.custom, expected);
+});
+
+test("lossless mode rejects explicit lossy overrides", () => {
+  assert.throws(
+    () => encodeSpectrum(spec({ custom: new Float64Array([1, 2, 3, 4]) }), {
+      quiet: true,
+      lossless: true,
+      arrayEncodings: { custom: "numlin-zstd" },
+    }),
+    /lossy codec/,
+  );
+});
+
+test("fixedPoint requires a compatible codec and a whole number", () => {
+  const source = spec({ "MS:1000517": new Float64Array([1, 2, 3, 4]) });
+  assert.throws(
+    () => encodeSpectrum(source, { quiet: true, arrayEncodings: { "MS:1000517": { codec: "zstd", fixedPoint: 1000 } } }),
+    /takes no fixed point/,
+  );
+  assert.throws(
+    () => encodeSpectrum(source, { quiet: true, arrayEncodings: { "MS:1000517": { codec: "numlin-zstd", fixedPoint: 1.5 } } }),
+    /positive whole number/,
+  );
 });
 
 test("extra arrays permuted by canonical m/z sort", () => {
@@ -69,4 +136,9 @@ test("cross-decode: a Python-style named-accession key survives", () => {
   // Encode with a CV accession key, confirm it decodes back to the same key.
   const d = decodeToken(encodeSpectrum(spec({ "MS:1000517": new Float64Array([5, 6, 7, 8]) }), { quiet: true }));
   assert.ok("MS:1000517" in d.extraArrays);
+});
+
+test("size breakdown gives the signal-to-noise array a readable label", () => {
+  const token = encodeSpectrum(spec({ "MS:1000517": new Float64Array([5, 6, 7, 8]) }), { quiet: true });
+  assert.ok(tokenBreakdown(token).some((part) => part.label === "signal-to-noise"));
 });

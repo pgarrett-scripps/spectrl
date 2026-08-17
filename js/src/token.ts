@@ -1,8 +1,8 @@
 /** spectrl magic + format version.
  *
- * A spectrl2 token is `spectrl2.<base64url(cbor_document)>[.<hash>]`: a single
+ * A spectrl.v1 token is `spectrl.v1.<base64url(cbor_document)>.<checksum>`: a single
  * CBOR document (header + array blobs embedded as byte strings) with an
- * optional trailing integrity hash; see cbor_format.
+ * required trailing CRC-32 checksum; see cbor_format.
  */
 
 export { FORMAT_VERSION, MAGIC } from "./format.js";

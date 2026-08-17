@@ -1,4 +1,4 @@
-"""CV accession ↔ integer-tail mapping using mzmlpy's StrEnum constants.
+"""CV accession ↔ integer-tail mapping for the spectrl wire format.
 
 Rules (§3.1):
 - Accession tails default to MS: ontology.
@@ -10,25 +10,19 @@ The tail for "MS:1000511" is 1000511; for "UO:0000031" is 31.
 
 from __future__ import annotations
 
-from mzmlpy.constants import (
-    BinaryDataArrayAccession,
-    BinaryDataTypeAccession,
-    CollisionDissociationTypeAccession,
-    CompressionTypeAccessions,
-    ScanPolarity,
-    SpectrumCombinationAccession,
-    SpectrumMSAccession,
-    SpectrumType,
-)
-
 from ._format import ARRAY_CHARGE as ARRAY_CHARGE
 from ._format import ARRAY_INTENSITY as ARRAY_INTENSITY
 from ._format import ARRAY_MZ as ARRAY_MZ
 from ._format import ARRAY_NON_STANDARD as ARRAY_NON_STANDARD
+from ._format import COMP_BYTE_SHUFFLED_ZSTD as COMP_BYTE_SHUFFLED_ZSTD
 from ._format import COMP_NUMLIN_ZLIB as COMP_NUMLIN_ZLIB
+from ._format import COMP_NUMLIN_ZSTD as COMP_NUMLIN_ZSTD
 from ._format import COMP_NUMPIC_ZLIB as COMP_NUMPIC_ZLIB
+from ._format import COMP_NUMPIC_ZSTD as COMP_NUMPIC_ZSTD
 from ._format import COMP_NUMSLOF_ZLIB as COMP_NUMSLOF_ZLIB
+from ._format import COMP_NUMSLOF_ZSTD as COMP_NUMSLOF_ZSTD
 from ._format import COMP_ZLIB as COMP_ZLIB
+from ._format import COMP_ZSTD as COMP_ZSTD
 from ._format import ION_MOBILITY_ARRAY_TAILS as _ION_MOBILITY_TAILS
 from ._format import TYPE_FLOAT32 as TYPE_FLOAT32
 from ._format import TYPE_FLOAT64 as TYPE_FLOAT64
@@ -85,23 +79,4 @@ def decode_unit_tail(tail: int | list | str) -> str:
 
 
 # Ion mobility array tails
-ION_MOBILITY_ARRAY_TAILS: dict[str, int] = {
-    str(acc): accession_tail(str(acc))
-    for acc in BinaryDataArrayAccession
-    if accession_tail(str(acc)) in _ION_MOBILITY_TAILS
-}
-
-# ─── Known accession registry for validation/tests ──────────────────────────
-
-ALL_MZX_ACCESSIONS: set[str] = set()
-for _enum in (
-    BinaryDataArrayAccession,
-    BinaryDataTypeAccession,
-    CompressionTypeAccessions,
-    ScanPolarity,
-    SpectrumCombinationAccession,
-    SpectrumMSAccession,
-    SpectrumType,
-    CollisionDissociationTypeAccession,
-):
-    ALL_MZX_ACCESSIONS.update(str(v) for v in _enum)
+ION_MOBILITY_ARRAY_TAILS: dict[str, int] = {decode_tail(tail): tail for tail in _ION_MOBILITY_TAILS}

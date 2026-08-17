@@ -10,7 +10,11 @@ import { dirname, resolve } from "node:path";
 import { test } from "node:test";
 
 import { b64urlEncode } from "../src/base64url.ts";
+import { tokenChecksum } from "../src/checksum.ts";
 import { decodeToken } from "../src/index.ts";
+import { installZstd } from "../src/zstd.ts";
+
+installZstd();
 
 const here = dirname(fileURLToPath(import.meta.url));
 const vectorsPath = resolve(here, "../../test-vectors/vectors.json");
@@ -71,20 +75,18 @@ function cmpUserParams(actual: any[], expected: any[], label: string): void {
 for (const v of doc.vectors) {
   test(`vector: ${v.name} (${v.mode})`, () => {
     const tol: Tol = v.tolerance;
-    const d = decodeToken(v.token); // throws on hash mismatch
+    const d = decodeToken(v.token); // throws on checksum mismatch
     const exp = v.decoded;
 
     assert.equal(d.defaultArrayLength, exp.default_array_length, "defaultArrayLength");
     assert.equal(d.id, exp.id, "id");
-    assert.equal(d.ionMobilityType, exp.ion_mobility_type, "ionMobilityType");
     assert.equal(d.interp, exp.interp, "interp");
     assert.equal(d.formatVersion, exp.format_version, "formatVersion");
-    assert.equal(d.hash, exp.hash, "hash");
+    assert.equal(d.checksum, exp.checksum, "checksum");
 
     closeArray(d.mz, exp.mz, tol, "mz");
     closeArray(d.intensity, exp.intensity, tol, "intensity");
     closeArray(d.charge, exp.charge, tol, "charge");
-    closeArray(d.ionMobility, exp.ion_mobility, tol, "ion_mobility");
 
     cmpParams(d.params, exp.params, "params");
 
@@ -128,23 +130,28 @@ for (const v of doc.vectors) {
       assert.equal(ea.constructor.name, dtypeCtor[ee.dtype], `extra[${k}] dtype`);
       closeArray(ea as unknown as Float64Array, ee.values, tol, `extra[${k}]`);
     }
+    assert.deepEqual(d.arrayUnits, exp.array_units ?? {}, "arrayUnits");
   });
 }
 
-test("tampered token fails hash verification", () => {
+test("tampered token fails checksum verification", () => {
   const t: string = doc.vectors[0].token;
-  // perturb the tail of the CBOR payload; the stored hash no longer matches
-  const bad = t.slice(0, -3) + (t.slice(-3) === "AAA" ? "BBB" : "AAA");
-  assert.throws(() => decodeToken(bad), /hash mismatch/);
+  // perturb the tail of the CBOR payload; the stored checksum no longer matches
+  const parts = t.split(".");
+  const payload = parts[2]!;
+  parts[2] = payload.slice(0, -3) + (payload.slice(-3) === "AAA" ? "BBB" : "AAA");
+  const bad = parts.join(".");
+  assert.throws(() => decodeToken(bad), /checksum mismatch/);
 });
 
 test("bad magic is rejected", () => {
-  assert.throws(() => decodeToken("spectrl9.aaaa"), /spectrl2|magic|version/i);
+  assert.throws(() => decodeToken("spectrl9.aaaa"), /spectrl.v1|magic|version/i);
 });
 
 for (const v of negativeDoc.vectors) {
   test(`negative vector: ${v.name}`, () => {
-    const token = `spectrl2.${b64urlEncode(Uint8Array.from(Buffer.from(v.cbor_hex, "hex")))}`;
+    const body = `spectrl.v1.${b64urlEncode(Uint8Array.from(Buffer.from(v.cbor_hex, "hex")))}`;
+    const token = `${body}.${tokenChecksum(body)}`;
     assert.throws(() => decodeToken(token), new RegExp(v.error));
   });
 }

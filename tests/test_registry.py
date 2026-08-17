@@ -75,6 +75,11 @@ def test_compression_codec_tails_match_cv():
         accession_tail(str(CompressionTypeAccessions.MS_NUMPRESS_SHORT_LOGGED_FLOAT_ZLIB)),
         accession_tail(str(CompressionTypeAccessions.MS_NUMPRESS_POSITIVE_INTEGER_ZLIB)),
         accession_tail(str(CompressionTypeAccessions.ZLIB_COMPRESSION)),
+        accession_tail(str(CompressionTypeAccessions.ZSTD_COMPRESSION)),
+        accession_tail(str(CompressionTypeAccessions.BYTE_SHUFFLED_ZSTD)),
+        accession_tail(str(CompressionTypeAccessions.MS_NUMPRESS_LINEAR_PREDICTION_ZSTD)),
+        accession_tail(str(CompressionTypeAccessions.MS_NUMPRESS_POSITIVE_INTEGER_ZSTD)),
+        accession_tail(str(CompressionTypeAccessions.MS_NUMPRESS_SHORT_LOGGED_FLOAT_ZSTD)),
     }
     assert codec_tails == expected
 

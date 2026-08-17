@@ -1,7 +1,7 @@
 /**
  * spectrl browser demo.
  *
- * Builds example spectra, encodes them live with the real @spectrl/spectrl
+ * Builds example spectra, encodes them live with the real @spectrl-ms/spectrl
  * codec, shows the shareable URL + QR, then decodes the token and renders a
  * stick plot, all in the browser, no network.
  */
@@ -11,12 +11,17 @@ import {
   toFragment,
   extractToken,
   tokenBreakdown,
+  mobilityArrays,
+  ArrayAccession,
   type InlineSpectrum,
   type CvParam,
   type DecodedSpectrum,
 } from "../../js/dist/index.js";
-// qrcode-generator is CommonJS; esbuild provides the default-import interop.
+import { installZstd } from "../../js/dist/zstd.js";
+// qrcode-generator is CommonJS. esbuild provides the default-import interop.
 import qrcode from "qrcode-generator";
+
+installZstd();
 
 // ---------------------------------------------------------------------------
 // Tiny mass calculator (monoisotopic) for chemically real fragment ions.
@@ -126,11 +131,6 @@ function smallMoleculeMs1(): InlineSpectrum {
   };
 }
 
-function denseMs2(): InlineSpectrum {
-  // A longer peptide gives ~40 b/y peaks for a busier, more realistic plot.
-  return peptideMs2("SAMPLERPEPTIDEK");
-}
-
 /** A synthetic profile-style MS¹ scan with `n` peaks (seeded → deterministic). */
 function randomSpectrum(n: number): InlineSpectrum {
   let seed = (0x2545f491 ^ (n * 2654435761)) & 0x7fffffff;
@@ -153,10 +153,79 @@ function randomSpectrum(n: number): InlineSpectrum {
   };
 }
 
+/** A dense centroided top-down MS² scan with an intact, highly charged precursor. */
+function topDownMs2(): InlineSpectrum {
+  const base = randomSpectrum(320);
+  const mz = Array.from(base.mz as number[]);
+  const intensity = Array.from(base.intensity as number[]);
+  const precursor = 1029.5832;
+  const charge = mz.map((m, i) => 1 + ((Math.floor(m) + i * 3) % 8));
+  return {
+    ...base,
+    mz,
+    intensity,
+    charge,
+    id: "scan=2201 (intact protein, 12+)",
+    params: [val("MS:1000511", 2), flag("MS:1000130"), flag("MS:1000127")],
+    scans: [{ params: [val("MS:1000016", 45.18, "UO:0000031")] }],
+    precursors: [
+      {
+        isolationWindow: { params: [val("MS:1000827", precursor), val("MS:1000828", 2), val("MS:1000829", 2)] },
+        selectedIons: [{ params: [val("MS:1000744", precursor), val("MS:1000041", 12)] }],
+        activation: { params: [flag("MS:1000422"), val("MS:1000045", 35, "UO:0000266")] },
+      },
+    ],
+  };
+}
+
+/** Per-peak inverse reduced ion mobility alongside a centroided MS² scan. */
+function ionMobilityMs2(): InlineSpectrum {
+  const base = randomSpectrum(180);
+  const mz = Array.from(base.mz as number[]);
+  const intensity = Array.from(base.intensity as number[]);
+  const ionMobility = mz.map((m, i) => 0.68 + ((m - 150) / 1850) * 0.55 + Math.sin(i * 0.71) * 0.012);
+  const precursor = 687.8421;
+  return {
+    ...base,
+    mz,
+    intensity,
+    extraArrays: {
+      [ArrayAccession.RAW_INVERSE_REDUCED_ION_MOBILITY]: ionMobility,
+    },
+    id: "frame=412 scan=37",
+    params: [val("MS:1000511", 2), flag("MS:1000130"), flag("MS:1000127")],
+    scans: [{ params: [val("MS:1000016", 18.73, "UO:0000031")] }],
+    precursors: [
+      {
+        isolationWindow: { params: [val("MS:1000827", precursor), val("MS:1000828", 0.7), val("MS:1000829", 0.7)] },
+        selectedIons: [{ params: [val("MS:1000744", precursor), val("MS:1000041", 2)] }],
+        activation: { params: [flag("MS:1000422"), val("MS:1000045", 30, "UO:0000266")] },
+      },
+    ],
+  };
+}
+
+/** A spectrum carrying standard and free-text auxiliary arrays for every peak. */
+function auxiliaryArraySpectrum(): InlineSpectrum {
+  const base = randomSpectrum(120);
+  const intensity = Array.from(base.intensity as number[]);
+  return {
+    ...base,
+    id: "scan=731 (auxiliary arrays)",
+    extraArrays: {
+      "MS:1000517": new Float64Array(intensity.map((v, i) => v / (900 + (i % 11) * 85))),
+      local_baseline: new Float32Array(intensity.map((_, i) => 600 + 240 * Math.sin(i * 0.19) ** 2)),
+      peak_flags: new Int32Array(intensity.map((v, i) => (v > 500000 ? 2 : i % 9 === 0 ? 1 : 0))),
+    },
+  };
+}
+
 const EXAMPLES: Record<string, () => InlineSpectrum> = {
   ms2: () => peptideMs2("PEPTIDER"),
   ms1: smallMoleculeMs1,
-  bigms2: denseMs2,
+  topdown: topDownMs2,
+  mobility: ionMobilityMs2,
+  aux: auxiliaryArraySpectrum,
   r100: () => randomSpectrum(100),
   r500: () => randomSpectrum(500),
 };
@@ -179,6 +248,8 @@ const CV_LABEL: Record<string, string> = {
   "MS:1000827": "isolation window target m/z",
   "MS:1000828": "isolation window lower offset",
   "MS:1000829": "isolation window upper offset",
+  "MS:1003008": "inverse reduced ion mobility",
+  "MS:1000517": "signal-to-noise array",
   "UO:0000031": "minute",
   "UO:0000266": "electronvolt",
 };
@@ -197,13 +268,14 @@ const decodeErr = $("#decodeErr");
 const tip = $("#tip");
 const losslessEl = $<HTMLInputElement>("#lossless");
 const statsEl = $("#stats");
+const spectrumSummaryEl = $("#spectrumSummary");
 
 let suppressHash = false;
 // The InlineSpectrum the current token was encoded from (null when pasted),
 // plus the measured encode time, used for round-trip precision + size stats.
 let lastSource: InlineSpectrum | null = null;
 let lastEncodeMs: number | null = null;
-let currentShare = ""; // shareable URL for the current token (not displayed; copied on demand)
+let currentShare = ""; // shareable URL for the current token. Copied on demand.
 
 function baseUrl(): string {
   return location.origin + location.pathname;
@@ -230,7 +302,9 @@ function encodeAndShow(spec: InlineSpectrum) {
   setToken(token);
 }
 
-function renderFromToken(token: string) {
+let zstdBackendPromise: Promise<unknown> | null = null;
+
+async function renderFromToken(token: string) {
   token = token.trim();
   currentShare = toFragment(token, baseUrl());
   renderQr(currentShare);
@@ -243,23 +317,64 @@ function renderFromToken(token: string) {
     decoded = decodeToken(token);
     decodeMs = performance.now() - t0;
   } catch (e) {
+    if ((e as Error).message.includes("zstd support is not loaded")) {
+      zstdBackendPromise ??= import("../../js/dist/zstd.js");
+      try {
+        await zstdBackendPromise;
+        await renderFromToken(token);
+        return;
+      } catch (loadError) {
+        e = loadError;
+      }
+    }
     decodeErr.textContent = `Decode failed: ${(e as Error).message}`;
     plotEl.innerHTML = "";
     metaTable.innerHTML = "";
     statsEl.innerHTML = "";
+    spectrumSummaryEl.innerHTML = "";
     tokenMeta.innerHTML = `token size: <b>${fmtBytes(token.length)}</b>`;
     return;
   }
 
   const npeaks = decoded.mz?.length ?? 0;
   tokenMeta.innerHTML =
-    `token size: <b>${fmtBytes(token.length)}</b> &nbsp;·&nbsp; peaks: <b>${npeaks}</b> ` +
-    `&nbsp;·&nbsp; mode: <b>${tokenMode(token)}</b> ` +
-    `&nbsp;·&nbsp; integrity hash: <b>${decoded.hash ? "verified ✓" : "none"}</b>`;
+    `<b>${fmtBytes(token.length)}</b> link payload &nbsp;·&nbsp; <b>${npeaks}</b> peaks ` +
+    `&nbsp;·&nbsp; <b>checksum verified ✓</b>`;
 
   renderStats(token, decoded, decodeMs);
   renderPlot(decoded);
+  renderSpectrumSummary(decoded);
   renderMeta(decoded);
+}
+
+function renderSpectrumSummary(d: DecodedSpectrum) {
+  const chips: Array<[string, string]> = [];
+  if (d.interp) chips.push([d.interp, "ProForma"]);
+  const level = msLevel(d);
+  if (level !== null) chips.push([`MS${level === 2 ? "²" : level === 3 ? "³" : level}`, "level"]);
+  const precursorMz = d.precursors
+    .flatMap((p) => p.selectedIons ?? [])
+    .flatMap((ion) => ion.params)
+    .find((p) => p.accession === "MS:1000744")?.value;
+  if (typeof precursorMz === "number") chips.push([precursorMz.toFixed(4), "precursor m/z"]);
+  const charge = d.precursors
+    .flatMap((p) => p.selectedIons ?? [])
+    .flatMap((ion) => ion.params)
+    .find((p) => p.accession === "MS:1000041")?.value;
+  if (typeof charge === "number") chips.push([`${charge}+`, "charge"]);
+  const activation = d.precursors
+    .flatMap((p) => p.activation?.params ?? [])
+    .find((p) => p.accession === "MS:1000422" || p.accession === "MS:1000133");
+  if (activation) chips.push([label(activation.accession).replace(" (beam-type CID)", ""), "activation"]);
+  const mobilityCount = Object.keys(mobilityArrays(d)).length;
+  if (mobilityCount) chips.push([`${mobilityCount}`, "ion mobility array(s)"]);
+  const extraCount = Object.keys(d.extraArrays).length - mobilityCount;
+  if (extraCount) chips.push([`${extraCount}`, "auxiliary arrays"]);
+  chips.push([`${d.mz?.length ?? 0}`, "peaks"]);
+
+  spectrumSummaryEl.innerHTML = chips
+    .map(([value, name]) => `<div class="chip"><b>${value}</b><span>${name}</span></div>`)
+    .join("");
 }
 
 function renderQr(url: string) {
@@ -331,6 +446,9 @@ const SEG_COLOR: Record<string, string> = {
   intensity: "#7ee787",
   charge: "#d2a8ff",
   "ion mobility": "#ffa657",
+  "signal-to-noise": "#f2cc60",
+  local_baseline: "#ff9bce",
+  peak_flags: "#79c0ff",
 };
 
 function statCard(label: string, value: string, sub = "", cls = ""): string {
@@ -353,10 +471,14 @@ function renderStats(token: string, d: DecodedSpectrum, decodeMs: number) {
   // raw IEEE-754 float64 payload (what the numbers cost uncompressed)
   let rawBytes = n * 16; // m/z + intensity
   if (d.charge) rawBytes += n * 8;
-  if (d.ionMobility) rawBytes += n * 8;
-  const rawRatio = rawBytes / token.length;
+  for (const array of Object.values(d.extraArrays)) rawBytes += array.byteLength;
+  const tokenOverRaw = token.length / Math.max(rawBytes, 1);
   cards.push(
-    statCard("vs raw float64", `${rawRatio.toFixed(1)}×`, `smaller than ${fmtBytes(rawBytes)} binary`, "good"),
+    statCard(
+      "complete token vs peak arrays",
+      `${tokenOverRaw.toFixed(1)}×`,
+      `${fmtBytes(rawBytes)} raw float64 arrays. Token also includes metadata + framing`,
+    ),
   );
 
   // the other mode, when we know the source spectrum
@@ -374,7 +496,7 @@ function renderStats(token: string, d: DecodedSpectrum, decodeMs: number) {
         ),
       );
     } catch {
-      /* alt-mode encode failed; skip */
+      /* alt-mode encode failed. Skip. */
     }
   }
 
@@ -401,7 +523,7 @@ function renderStats(token: string, d: DecodedSpectrum, decodeMs: number) {
   // --- performance + integrity ---
   if (lastEncodeMs !== null) cards.push(statCard("encode time", `${lastEncodeMs.toFixed(2)} ms`));
   cards.push(statCard("decode time", `${decodeMs.toFixed(2)} ms`));
-  cards.push(statCard("integrity", d.hash ? "verified ✓" : "none", d.hash ? `SHA-256 · ${d.hash}` : "no hash in token", d.hash ? "good" : ""));
+  cards.push(statCard("checksum", "verified ✓", `CRC-32 · ${d.checksum}`, "good"));
 
   // --- size breakdown bar chart (header vs each array's compressed blob) ---
   const parts = tokenBreakdown(token);
@@ -435,7 +557,7 @@ function basePeakIndex(d: DecodedSpectrum): number {
   return bi;
 }
 
-const NUMPRESS_COMPS = new Set([1002746, 1002747, 1002748]);
+const NUMPRESS_COMPS = new Set([1002746, 1002747, 1002748, 1003783, 1003784, 1003785]);
 
 /** Mode of the token actually displayed (a pasted token may differ from the checkbox). */
 function tokenMode(token: string): string {
@@ -494,10 +616,6 @@ function renderPlot(d: DecodedSpectrum) {
   const sx = (v: number) => padL + ((v - x0) / (x1 - x0)) * (W - padL - padR);
   const sy = (v: number) => H - padB - (v / iMax) * (H - padT - padB);
 
-  // top peaks to label
-  const order = [...inten.keys()].sort((a, b) => inten[b]! - inten[a]!).slice(0, 8);
-  const labelIdx = new Set(order);
-
   const parts: string[] = [];
   // axes
   parts.push(`<line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="var(--border)"/>`);
@@ -521,14 +639,11 @@ function renderPlot(d: DecodedSpectrum) {
   // peaks
   for (let i = 0; i < mz.length; i++) {
     const x = sx(mz[i]!);
-    const top = labelIdx.has(i);
     parts.push(
       `<line x1="${x}" y1="${H - padB}" x2="${x}" y2="${sy(inten[i]!)}" ` +
-        `stroke="${top ? "var(--peak-top)" : "var(--peak)"}" stroke-width="${top ? 2 : 1.4}" ` +
+        `stroke="var(--peak)" stroke-width="1.5" ` +
         `data-mz="${mz[i]}" data-int="${inten[i]}"/>`,
     );
-    if (top)
-      parts.push(`<text x="${x}" y="${sy(inten[i]!) - 5}" text-anchor="middle" fill="var(--peak-top)">${round(mz[i]!, 3)}</text>`);
   }
 
   plotEl.innerHTML = `<svg id="svg" viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" preserveAspectRatio="xMidYMid meet">${parts.join("")}</svg>`;
@@ -586,15 +701,13 @@ async function flashCopy(btn: HTMLButtonElement, text: string) {
 }
 
 const copyLinkBtn = $<HTMLButtonElement>("#copyLink");
-const copyTokenBtn = $<HTMLButtonElement>("#copyToken");
 copyLinkBtn.addEventListener("click", () => flashCopy(copyLinkBtn, currentShare));
-copyTokenBtn.addEventListener("click", () => flashCopy(copyTokenBtn, tokenEl.value.trim()));
 
 const qrToggle = $<HTMLButtonElement>("#qrToggle");
 qrToggle.addEventListener("click", () => {
   const show = qrEl.hidden;
   qrEl.hidden = !show;
-  qrToggle.textContent = show ? "Hide QR" : "Show QR";
+  qrToggle.textContent = show ? "Hide QR" : "QR code";
   qrToggle.setAttribute("aria-expanded", String(show));
 });
 
@@ -602,9 +715,18 @@ const pasteToggle = $<HTMLButtonElement>("#pasteToggle");
 pasteToggle.addEventListener("click", () => {
   const show = tokenEl.hidden;
   tokenEl.hidden = !show;
-  pasteToggle.textContent = show ? "Hide token" : "Paste a token…";
+  pasteToggle.textContent = show ? "Hide token" : "View token";
   pasteToggle.setAttribute("aria-expanded", String(show));
   if (show) tokenEl.focus();
+});
+
+$("#heroPaste").addEventListener("click", () => {
+  tokenEl.hidden = false;
+  pasteToggle.textContent = "Hide token";
+  pasteToggle.setAttribute("aria-expanded", "true");
+  document.querySelector("#playground")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  tokenEl.focus({ preventScroll: true });
+  tokenEl.select();
 });
 
 window.addEventListener("hashchange", () => {

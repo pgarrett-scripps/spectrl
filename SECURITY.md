@@ -14,12 +14,12 @@ particular interest:
 
 - decoding a malformed or adversarial token causing excessive memory/CPU use
   (decompression bombs, unbounded allocation) or a crash that is not a clean
-  `SpectrlDecodeError`;
+  `SpectrlDecodeError`.
 - silent data corruption: a token that decodes without error to values that
-  differ from what a conforming producer encoded;
-- content-hash verification bypasses.
+  differ from what a conforming producer encoded.
+- checksum verification bypasses.
 
-The content hash is an integrity check only; it is **not** an authentication
+The checksum is an integrity check only. It is **not** an authentication
 mechanism, and reports that it can be recomputed by an adversary are expected
 behavior (see SPECIFICATION.md §12).
 

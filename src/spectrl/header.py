@@ -11,7 +11,7 @@ Top-level key registry (mirrors mzML <spectrum>):
   7  interp: ProForma string (optional)
   8  userParamList: [user_param, ...] spectrum-level free-text params (optional)
 
-The format version lives only in the token magic, and the integrity hash only
+The format version lives only in the token magic, and the checksum only
 in the trailing token part; neither is a header key.
 
 A user_param is a map {"n": name, "v"?: value, "t"?: xsd-type, "u"?: unit}.
@@ -32,6 +32,7 @@ from ._format import DESC_DATA as DESC_DATA
 from ._format import DESC_FP as DESC_FP
 from ._format import DESC_NAME as DESC_NAME
 from ._format import DESC_TYPE as DESC_TYPE
+from ._format import DESC_UNIT as DESC_UNIT
 from .cv import (
     _DEFAULT_PARAM_ONTOLOGY,
     accession_ontology,
@@ -291,7 +292,7 @@ def build_header_dict(spec: InlineSpectrum, descriptors: list[dict]) -> dict:
 def parse_header_dict(h: dict) -> DecodedSpectrum:
     """Build a DecodedSpectrum from a parsed CBOR header map.
 
-    The format version lives in the token magic and the integrity hash in the
+    The format version lives in the token magic and the checksum in the
     trailing token part, so neither appears here; decode_cbor fills them in.
     """
     default_array_length = h[0]
