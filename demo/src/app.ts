@@ -126,11 +126,6 @@ function smallMoleculeMs1(): InlineSpectrum {
   };
 }
 
-function denseMs2(): InlineSpectrum {
-  // A longer peptide gives ~40 b/y peaks for a busier, more realistic plot.
-  return peptideMs2("SAMPLERPEPTIDEK");
-}
-
 /** A synthetic profile-style MS¹ scan with `n` peaks (seeded → deterministic). */
 function randomSpectrum(n: number): InlineSpectrum {
   let seed = (0x2545f491 ^ (n * 2654435761)) & 0x7fffffff;
@@ -156,7 +151,6 @@ function randomSpectrum(n: number): InlineSpectrum {
 const EXAMPLES: Record<string, () => InlineSpectrum> = {
   ms2: () => peptideMs2("PEPTIDER"),
   ms1: smallMoleculeMs1,
-  bigms2: denseMs2,
   r100: () => randomSpectrum(100),
   r500: () => randomSpectrum(500),
 };
@@ -197,6 +191,7 @@ const decodeErr = $("#decodeErr");
 const tip = $("#tip");
 const losslessEl = $<HTMLInputElement>("#lossless");
 const statsEl = $("#stats");
+const spectrumSummaryEl = $("#spectrumSummary");
 
 let suppressHash = false;
 // The InlineSpectrum the current token was encoded from (null when pasted),
@@ -247,19 +242,46 @@ function renderFromToken(token: string) {
     plotEl.innerHTML = "";
     metaTable.innerHTML = "";
     statsEl.innerHTML = "";
+    spectrumSummaryEl.innerHTML = "";
     tokenMeta.innerHTML = `token size: <b>${fmtBytes(token.length)}</b>`;
     return;
   }
 
   const npeaks = decoded.mz?.length ?? 0;
   tokenMeta.innerHTML =
-    `token size: <b>${fmtBytes(token.length)}</b> &nbsp;·&nbsp; peaks: <b>${npeaks}</b> ` +
-    `&nbsp;·&nbsp; mode: <b>${tokenMode(token)}</b> ` +
-    `&nbsp;·&nbsp; integrity hash: <b>${decoded.hash ? "verified ✓" : "none"}</b>`;
+    `<b>${fmtBytes(token.length)}</b> link payload &nbsp;·&nbsp; <b>${npeaks}</b> peaks ` +
+    `&nbsp;·&nbsp; <b>${decoded.hash ? "integrity verified ✓" : "no integrity hash"}</b>`;
 
   renderStats(token, decoded, decodeMs);
   renderPlot(decoded);
+  renderSpectrumSummary(decoded);
   renderMeta(decoded);
+}
+
+function renderSpectrumSummary(d: DecodedSpectrum) {
+  const chips: Array<[string, string]> = [];
+  if (d.interp) chips.push([d.interp, "ProForma"]);
+  const level = msLevel(d);
+  if (level !== null) chips.push([`MS${level === 2 ? "²" : level === 3 ? "³" : level}`, "level"]);
+  const precursorMz = d.precursors
+    .flatMap((p) => p.selectedIons ?? [])
+    .flatMap((ion) => ion.params)
+    .find((p) => p.accession === "MS:1000744")?.value;
+  if (typeof precursorMz === "number") chips.push([precursorMz.toFixed(4), "precursor m/z"]);
+  const charge = d.precursors
+    .flatMap((p) => p.selectedIons ?? [])
+    .flatMap((ion) => ion.params)
+    .find((p) => p.accession === "MS:1000041")?.value;
+  if (typeof charge === "number") chips.push([`${charge}+`, "charge"]);
+  const activation = d.precursors
+    .flatMap((p) => p.activation?.params ?? [])
+    .find((p) => p.accession === "MS:1000422" || p.accession === "MS:1000133");
+  if (activation) chips.push([label(activation.accession).replace(" (beam-type CID)", ""), "activation"]);
+  chips.push([`${d.mz?.length ?? 0}`, "peaks"]);
+
+  spectrumSummaryEl.innerHTML = chips
+    .map(([value, name]) => `<div class="chip"><b>${value}</b><span>${name}</span></div>`)
+    .join("");
 }
 
 function renderQr(url: string) {
@@ -354,9 +376,13 @@ function renderStats(token: string, d: DecodedSpectrum, decodeMs: number) {
   let rawBytes = n * 16; // m/z + intensity
   if (d.charge) rawBytes += n * 8;
   if (d.ionMobility) rawBytes += n * 8;
-  const rawRatio = rawBytes / token.length;
+  const tokenOverRaw = token.length / Math.max(rawBytes, 1);
   cards.push(
-    statCard("vs raw float64", `${rawRatio.toFixed(1)}×`, `smaller than ${fmtBytes(rawBytes)} binary`, "good"),
+    statCard(
+      "complete token vs peak arrays",
+      `${tokenOverRaw.toFixed(1)}×`,
+      `${fmtBytes(rawBytes)} raw float64 arrays; token also includes metadata + framing`,
+    ),
   );
 
   // the other mode, when we know the source spectrum
@@ -494,10 +520,6 @@ function renderPlot(d: DecodedSpectrum) {
   const sx = (v: number) => padL + ((v - x0) / (x1 - x0)) * (W - padL - padR);
   const sy = (v: number) => H - padB - (v / iMax) * (H - padT - padB);
 
-  // top peaks to label
-  const order = [...inten.keys()].sort((a, b) => inten[b]! - inten[a]!).slice(0, 8);
-  const labelIdx = new Set(order);
-
   const parts: string[] = [];
   // axes
   parts.push(`<line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="var(--border)"/>`);
@@ -521,14 +543,11 @@ function renderPlot(d: DecodedSpectrum) {
   // peaks
   for (let i = 0; i < mz.length; i++) {
     const x = sx(mz[i]!);
-    const top = labelIdx.has(i);
     parts.push(
       `<line x1="${x}" y1="${H - padB}" x2="${x}" y2="${sy(inten[i]!)}" ` +
-        `stroke="${top ? "var(--peak-top)" : "var(--peak)"}" stroke-width="${top ? 2 : 1.4}" ` +
+        `stroke="var(--peak)" stroke-width="1.5" ` +
         `data-mz="${mz[i]}" data-int="${inten[i]}"/>`,
     );
-    if (top)
-      parts.push(`<text x="${x}" y="${sy(inten[i]!) - 5}" text-anchor="middle" fill="var(--peak-top)">${round(mz[i]!, 3)}</text>`);
   }
 
   plotEl.innerHTML = `<svg id="svg" viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" preserveAspectRatio="xMidYMid meet">${parts.join("")}</svg>`;
@@ -586,15 +605,13 @@ async function flashCopy(btn: HTMLButtonElement, text: string) {
 }
 
 const copyLinkBtn = $<HTMLButtonElement>("#copyLink");
-const copyTokenBtn = $<HTMLButtonElement>("#copyToken");
 copyLinkBtn.addEventListener("click", () => flashCopy(copyLinkBtn, currentShare));
-copyTokenBtn.addEventListener("click", () => flashCopy(copyTokenBtn, tokenEl.value.trim()));
 
 const qrToggle = $<HTMLButtonElement>("#qrToggle");
 qrToggle.addEventListener("click", () => {
   const show = qrEl.hidden;
   qrEl.hidden = !show;
-  qrToggle.textContent = show ? "Hide QR" : "Show QR";
+  qrToggle.textContent = show ? "Hide QR" : "QR code";
   qrToggle.setAttribute("aria-expanded", String(show));
 });
 
@@ -602,9 +619,18 @@ const pasteToggle = $<HTMLButtonElement>("#pasteToggle");
 pasteToggle.addEventListener("click", () => {
   const show = tokenEl.hidden;
   tokenEl.hidden = !show;
-  pasteToggle.textContent = show ? "Hide token" : "Paste a token…";
+  pasteToggle.textContent = show ? "Hide token" : "View token";
   pasteToggle.setAttribute("aria-expanded", String(show));
   if (show) tokenEl.focus();
+});
+
+$("#heroPaste").addEventListener("click", () => {
+  tokenEl.hidden = false;
+  pasteToggle.textContent = "Hide token";
+  pasteToggle.setAttribute("aria-expanded", "true");
+  document.querySelector("#playground")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  tokenEl.focus({ preventScroll: true });
+  tokenEl.select();
 });
 
 window.addEventListener("hashchange", () => {

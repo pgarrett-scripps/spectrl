@@ -25,26 +25,28 @@ Then open **http://127.0.0.1:8000**.
 
 ## What it shows
 
-The spectrum plot sits at the top so you see the decoded
-data immediately. Everything is recomputed live on each pick / mode toggle.
+The page leads with the product idea, then puts the decoded spectrum and its
+share action at the center of an interactive playground. Everything is
+recomputed live on each example or encoding-mode change.
 
-- **Pick a spectrum**: peptide MS² (real b/y fragment-ion m/z + ProForma),
-  small-molecule MS¹ isotope envelope, dense 40-peak MS², or synthetic profile
-  scans of **100** and **500** peaks. Toggle **lossless** to compare sizes.
-- **Spectrum plot**: an SVG stick plot; hover a peak for m/z / intensity.
-- **Share bar** (under the plot): a compact status line (token size in KB, peak
-  count, mode, integrity-hash status) plus:
-  - **Copy link**: the shareable URL (token in a `#fragment`, never sent to a
+- **Pick a spectrum**: a small peptide MS² example (b/y fragment-ion m/z +
+  ProForma), a small-molecule MS¹ isotope envelope, or synthetic profile scans
+  of **100** and **500** peaks. Toggle **lossless** to compare sizes.
+- **Spectrum plot**: an uncluttered SVG stick plot; hover a peak for m/z / intensity.
+- **Spectrum summary**: readable chips surface the interpretation, MS level,
+  precursor, charge, activation, and peak count before the raw CV metadata.
+- **Share bar** (under the plot): a compact status line plus:
+  - **Copy shareable link**: the URL (token in a `#fragment`, never sent to a
     server). The raw URL isn't shown because it isn't human-readable.
-  - **Copy token**: the bare `spectrl2.…` token.
-  - **Show QR**: reveals a QR of the URL on demand. Oversized tokens (e.g. the
+  - **QR code**: reveals a QR of the URL on demand. Oversized tokens (e.g. the
     500-peak example) surface the token-too-large guidance.
-  - **Paste a token…**: reveals a box to paste any `spectrl2` token to decode.
-- **Encoding stats**: token size (KB) and B/peak, ratio vs raw float64, what
+- **View token**: reveals the bare token and accepts any `spectrl2` token to decode.
+- **Technical details**: an expandable inspector containing token size (KB)
+  and B/peak, complete-token size relative to raw peak arrays, what
   the *other* mode would cost, m/z range, base peak, round-trip precision
   (max/mean Δm/z and Δintensity, or "bit-exact" in lossless), encode/decode
   timing, and a segment-size breakdown bar chart.
-- **Decoded metadata**: a table rendered from the decoded PSI-MS CV accessions
+- **Decoded metadata**: the inspector also contains a table rendered from the decoded PSI-MS CV accessions
   (ms level, polarity, precursor m/z, charge, activation, ProForma, …).
 
 The page reads a token from its own URL fragment on load, so a link like
