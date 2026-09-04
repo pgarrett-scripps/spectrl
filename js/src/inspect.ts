@@ -1,12 +1,9 @@
 /** Size introspection for tokens (used by the demo and handy for tooling). */
 
 import { b64urlDecode } from "./base64url.js";
-import { cborDecode } from "./cbor.js";
-import { tokenChecksum } from "./checksum.js";
+import { readTokenDocument } from "./cbor_format.js"
 import { ARRAY_CHARGE, ARRAY_INTENSITY, ARRAY_MZ, ARRAY_NON_STANDARD, ION_MOBILITY_ARRAY_TAILS, decodeTail, decodeUnitTail } from "./cv.js";
-import { SpectrlDecodeError } from "./errors.js";
 import { DESC_ARRAY, DESC_COMP, DESC_DATA, DESC_FP, DESC_NAME, DESC_TYPE, DESC_UNIT } from "./header.js";
-import { MAGIC } from "./token.js";
 
 export interface TokenPart {
   label: string;
@@ -35,17 +32,8 @@ function arrayLabel(tail: number, name: string | undefined): string {
  * Sizes are CBOR-document bytes (before base64url expansion).
  */
 export function tokenBreakdown(token: string): TokenPart[] {
-  const prefix = `${MAGIC}.`;
-  if (!token.startsWith(prefix)) {
-    throw new SpectrlDecodeError(`Not a ${MAGIC} token`);
-  }
-  const pieces = token.slice(prefix.length).split(".");
-  if (pieces.length !== 2 || pieces[1] !== tokenChecksum(`${MAGIC}.${pieces[0]}`)) {
-    throw new SpectrlDecodeError(`Not a valid ${MAGIC} token`);
-  }
-  const raw = b64urlDecode(pieces[0]!);
-  const doc = cborDecode(raw);
-  if (!(doc instanceof Map)) throw new SpectrlDecodeError("spectrl payload is not a CBOR map");
+  const { doc } = readTokenDocument(token)
+  const raw = b64urlDecode(token.split(".")[2]!)
 
   const parts: TokenPart[] = [];
   let blobTotal = 0;

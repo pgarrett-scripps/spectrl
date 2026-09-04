@@ -7,6 +7,11 @@
  */
 import {
   encodeSpectrum,
+  encodingReport,
+  fitToBudget,
+  parsePeakList,
+  formatPeakList,
+  topN,
   decodeToken,
   toFragment,
   extractToken,
@@ -17,11 +22,9 @@ import {
   type CvParam,
   type DecodedSpectrum,
 } from "../../js/dist/index.js";
-import { installZstd } from "../../js/dist/zstd.js";
 // qrcode-generator is CommonJS. esbuild provides the default-import interop.
 import qrcode from "qrcode-generator";
 
-installZstd();
 
 // ---------------------------------------------------------------------------
 // Tiny mass calculator (monoisotopic) for chemically real fragment ions.
@@ -258,7 +261,7 @@ const label = (acc: string) => CV_LABEL[acc] ?? acc;
 // ---------------------------------------------------------------------------
 // DOM helpers
 // ---------------------------------------------------------------------------
-const $ = <T extends HTMLElement = HTMLElement>(sel: string) => document.querySelector(sel) as T;
+const $ = <T extends Element = HTMLElement>(sel: string) => document.querySelector(sel) as T
 const tokenEl = $<HTMLTextAreaElement>("#token");
 const tokenMeta = $("#tokenMeta");
 const qrEl = $("#qr");
@@ -275,6 +278,8 @@ let suppressHash = false;
 // plus the measured encode time, used for round-trip precision + size stats.
 let lastSource: InlineSpectrum | null = null;
 let lastEncodeMs: number | null = null;
+let lastReport: ReturnType<typeof encodingReport> | null = null
+let budgetPreview: ReturnType<typeof fitToBudget> | null = null
 let currentShare = ""; // shareable URL for the current token. Copied on demand.
 
 function baseUrl(): string {
@@ -296,7 +301,9 @@ function setToken(token: string, pushHash = true) {
 
 function encodeAndShow(spec: InlineSpectrum) {
   const t0 = performance.now();
-  const token = encodeSpectrum(spec, { lossless: losslessEl.checked, quiet: true });
+  lastReport = encodingReport(spec, { lossless: losslessEl.checked })
+  const token = lastReport.token
+  clearBudgetPreview()
   lastEncodeMs = performance.now() - t0;
   lastSource = spec;
   setToken(token);
@@ -307,7 +314,7 @@ let zstdBackendPromise: Promise<unknown> | null = null;
 async function renderFromToken(token: string) {
   token = token.trim();
   currentShare = toFragment(token, baseUrl());
-  renderQr(currentShare);
+  if (!qrEl.hidden) renderQr(currentShare)
 
   decodeErr.textContent = "";
   let decoded: DecodedSpectrum;
@@ -317,17 +324,20 @@ async function renderFromToken(token: string) {
     decoded = decodeToken(token);
     decodeMs = performance.now() - t0;
   } catch (e) {
-    if ((e as Error).message.includes("zstd support is not loaded")) {
-      zstdBackendPromise ??= import("../../js/dist/zstd.js");
+    if ((e as Error).message.includes("zstd support is not installed")) {
+      zstdBackendPromise ??= import("../../js/dist/zstd.js").then(module => module.installZstd())
       try {
-        await zstdBackendPromise;
-        await renderFromToken(token);
+        await zstdBackendPromise
+        if (tokenEl.value.trim() !== token) return
+        await renderFromToken(token)
         return;
       } catch (loadError) {
         e = loadError;
       }
     }
-    decodeErr.textContent = `Decode failed: ${(e as Error).message}`;
+    decodeErr.textContent = `Decode failed: ${(e as Error).message}`
+    $("#qualityReport").textContent = "A valid token and its original spectrum are needed to measure encoding error."
+    $<HTMLButtonElement>("#exportReport").disabled = true
     plotEl.innerHTML = "";
     metaTable.innerHTML = "";
     statsEl.innerHTML = "";
@@ -372,14 +382,22 @@ function renderSpectrumSummary(d: DecodedSpectrum) {
   if (extraCount) chips.push([`${extraCount}`, "auxiliary arrays"]);
   chips.push([`${d.mz?.length ?? 0}`, "peaks"]);
 
-  spectrumSummaryEl.innerHTML = chips
-    .map(([value, name]) => `<div class="chip"><b>${value}</b><span>${name}</span></div>`)
-    .join("");
+  spectrumSummaryEl.replaceChildren(...chips.map(([value, name]) => {
+    const chip = document.createElement("div")
+    chip.className = "chip"
+    const strong = document.createElement("b")
+    strong.textContent = value
+    const label = document.createElement("span")
+    label.textContent = name
+    chip.append(strong, label)
+    return chip
+  }))
 }
 
 function renderQr(url: string) {
   qrEl.innerHTML = "";
   try {
+    if (url.length > 2953) throw new Error("URL exceeds QR capacity")
     const qr = qrcode(0, "L");
     qr.addData(url);
     qr.make();
@@ -398,12 +416,18 @@ function renderQr(url: string) {
 }
 
 function renderMeta(d: DecodedSpectrum) {
-  const rows: string[] = [];
-  const add = (k: string, v: string, acc = "") =>
-    rows.push(`<tr><td class="k">${k}</td><td>${v}</td><td class="acc">${acc}</td></tr>`);
-
-  if (d.id) add("native id", d.id);
-  if (d.interp) add("ProForma", `<b style="color:var(--accent-2)">${d.interp}</b>`, "key 7");
+  const rows: HTMLTableRowElement[] = []
+  const add = (key: string, value: string, accession = "") => {
+    const row = document.createElement("tr")
+    for (const text of [key, value, accession]) {
+      const cell = document.createElement("td")
+      cell.textContent = text
+      row.append(cell)
+    }
+    rows.push(row)
+  }
+  if (d.id) add("native id", d.id)
+  if (d.interp) add("ProForma", d.interp, "key 7")
 
   for (const p of d.params) {
     add(label(p.accession), fmtVal(p), p.accession);
@@ -420,13 +444,19 @@ function renderMeta(d: DecodedSpectrum) {
       add(`isolation${tag}: ${label(p.accession)}`, fmtVal(p), p.accession);
   });
 
-  metaTable.innerHTML = rows.join("");
+  metaTable.replaceChildren(...rows)
 }
 
 function fmtVal(p: CvParam): string {
-  if (p.value === null || p.value === undefined) return "<span style='color:var(--muted)'>(flag)</span>";
-  const v = typeof p.value === "number" ? round(p.value, 5) : p.value;
-  return p.unitAccession ? `${v} <span style="color:var(--muted)">${label(p.unitAccession)}</span>` : `${v}`;
+  if (p.value === null || p.value === undefined) return "(flag)"
+  const value = typeof p.value === "number" ? round(p.value, 5) : p.value
+  return p.unitAccession ? `${value} ${label(p.unitAccession)}` : String(value)
+}
+
+function htmlText(value: unknown): string {
+  const span = document.createElement("span")
+  span.textContent = String(value)
+  return span.innerHTML
 }
 
 const round = (x: number, n: number) => {
@@ -509,15 +539,16 @@ function renderStats(token: string, d: DecodedSpectrum, decodeMs: number) {
     if (bi >= 0) cards.push(statCard("base peak m/z", `${round(mz[bi]!, 3)}`, `intensity ${round(d.intensity![bi]!, 0)}`));
   }
 
-  // --- precision (lossy round-trip vs the source we encoded) ---
-  if (lastSource && !losslessEl.checked) {
-    const p = precision(lastSource, d);
-    cards.push(
-      statCard("max Δ m/z", `${p.maxMzMda.toFixed(4)} mDa`, `${p.maxMzPpm.toFixed(3)} ppm · mean ${p.meanMzPpm.toFixed(3)} ppm`, "good"),
-    );
-    cards.push(statCard("max Δ intensity", `${p.maxIntPct.toFixed(3)}%`, `mean ${p.meanIntPct.toFixed(3)}%`, "good"));
-  } else if (lastSource && losslessEl.checked) {
-    cards.push(statCard("round-trip error", "0", "bit-exact (IEEE-754)", "good"));
+  $<HTMLButtonElement>("#exportReport").disabled = lastReport === null
+  if (lastReport) {
+    const mz = lastReport.arrays.find(a => a.key === "mz")
+    const intensity = lastReport.arrays.find(a => a.key === "intensity")
+    const metric = (value: number | null | undefined, scale = 1) => value == null ? "n/a" : (value * scale).toPrecision(4)
+    cards.push(statCard("max m/z error", `${metric(mz?.maxErrorPpm)} ppm`, `${metric(mz?.maxAbsoluteError)} absolute`))
+    cards.push(statCard("max intensity error", `${metric(intensity?.maxRelativeError, 100)}%`, "Zero reference values are reported separately"))
+    $("#qualityReport").textContent = JSON.stringify({ ...lastReport, token: undefined }, null, 2)
+  } else {
+    $("#qualityReport").textContent = "The original spectrum is needed to measure encoding error. Import a peak list or select an example."
   }
 
   // --- performance + integrity ---
@@ -531,9 +562,9 @@ function renderStats(token: string, d: DecodedSpectrum, decodeMs: number) {
   const bars = parts
     .map((s) => {
       const pct = (s.bytes / maxPart) * 100;
-      const color = SEG_COLOR[s.label] ?? "#8b97a6";
+      const color = Object.hasOwn(SEG_COLOR, s.label) ? SEG_COLOR[s.label] : "#8b97a6"
       return (
-        `<div class="bar"><div>${s.label}</div>` +
+        `<div class="bar"><div>${htmlText(s.label)}</div>` +
         `<div class="track"><div class="fill" style="width:${pct}%;background:${color}"></div></div>` +
         `<div class="n">${fmtBytes(s.bytes)}</div></div>`
       );
@@ -569,42 +600,16 @@ function tokenMode(token: string): string {
   }
 }
 
-/** Round-trip precision: compare decoded arrays (m/z-sorted) to the source we encoded. */
-function precision(source: InlineSpectrum, d: DecodedSpectrum) {
-  const smz = Array.from((source.mz ?? []) as ArrayLike<number>);
-  const sint = Array.from((source.intensity ?? []) as ArrayLike<number>);
-  const order = [...smz.keys()].sort((a, b) => smz[a]! - smz[b]!);
-  const n = Math.min(order.length, d.mz?.length ?? 0);
-  let maxMzAbs = 0, sumMzPpm = 0, maxMzPpm = 0, maxIntRel = 0, sumIntRel = 0;
-  for (let k = 0; k < n; k++) {
-    const om = smz[order[k]!]!, dm = d.mz![k]!;
-    const oi = sint[order[k]!]!, di = d.intensity![k]!;
-    const mzAbs = Math.abs(dm - om);
-    const mzPpm = om ? (mzAbs / om) * 1e6 : 0;
-    maxMzAbs = Math.max(maxMzAbs, mzAbs);
-    maxMzPpm = Math.max(maxMzPpm, mzPpm);
-    sumMzPpm += mzPpm;
-    const ir = oi ? Math.abs(di - oi) / oi : 0;
-    maxIntRel = Math.max(maxIntRel, ir);
-    sumIntRel += ir;
-  }
-  return {
-    maxMzMda: maxMzAbs * 1000,
-    maxMzPpm,
-    meanMzPpm: n ? sumMzPpm / n : 0,
-    maxIntPct: maxIntRel * 100,
-    meanIntPct: n ? (sumIntRel / n) * 100 : 0,
-  };
-}
-
 // ---------------------------------------------------------------------------
 // SVG stick plot
 // ---------------------------------------------------------------------------
 function renderPlot(d: DecodedSpectrum) {
-  const mz = Array.from(d.mz ?? []);
-  const inten = Array.from(d.intensity ?? []);
-  if (mz.length === 0) {
-    plotEl.innerHTML = `<div class="meta">No m/z array in this token.</div>`;
+  const plotted = d.defaultArrayLength > 5000 && d.intensity ? topN(d, 5000) : d
+  const mz = Array.from(plotted.mz ?? []).slice(0, 5000)
+  const inten = Array.from(plotted.intensity ?? []).slice(0, 5000)
+  $("#plotNote").textContent = d.defaultArrayLength > 5000 ? "Plot shows at most 5,000 peaks. The token and exported data retain all peaks." : ""
+  if (mz.length === 0 || inten.length === 0) {
+    plotEl.innerHTML = `<div class="meta">Both m/z and intensity arrays are needed to plot this token.</div>`
     return;
   }
   const W = 1000, H = 340, padL = 56, padR = 16, padT = 16, padB = 36;
@@ -685,9 +690,15 @@ document.querySelectorAll<HTMLButtonElement>("button[data-example]").forEach((bt
   });
 });
 
-losslessEl.addEventListener("change", () => encodeAndShow(EXAMPLES[currentExample]!()));
+losslessEl.addEventListener("change", () => {
+  try {
+    encodeAndShow(lastSource ?? decodeToken(tokenEl.value))
+  } catch (error) { decodeErr.textContent = (error as Error).message }
+})
 
 tokenEl.addEventListener("input", () => {
+  lastReport = null
+  clearBudgetPreview()
   lastSource = null; // pasted token: no known source for precision/alt-mode stats
   lastEncodeMs = null;
   setToken(tokenEl.value, true);
@@ -707,6 +718,7 @@ const qrToggle = $<HTMLButtonElement>("#qrToggle");
 qrToggle.addEventListener("click", () => {
   const show = qrEl.hidden;
   qrEl.hidden = !show;
+  if (show) renderQr(currentShare)
   qrToggle.textContent = show ? "Hide QR" : "QR code";
   qrToggle.setAttribute("aria-expanded", String(show));
 });
@@ -733,6 +745,8 @@ window.addEventListener("hashchange", () => {
   if (suppressHash) return;
   try {
     const t = extractToken(location.href);
+    lastReport = null
+    clearBudgetPreview()
     lastSource = null;
     lastEncodeMs = null;
     setToken(t, false);
@@ -741,8 +755,71 @@ window.addEventListener("hashchange", () => {
   }
 });
 
+function clearBudgetPreview() {
+  budgetPreview = null
+  $("#budgetStatus").textContent = ""
+  $<HTMLButtonElement>("#applyBudget").disabled = true
+}
+
+$("#importPeaks").addEventListener("click", () => {
+  try {
+    const source = parsePeakList($<HTMLTextAreaElement>("#peakInput").value)
+    encodeAndShow(source)
+    $("#importStatus").textContent = `Imported ${source.defaultArrayLength} peaks. No metadata was inferred.`
+  } catch (error) { $("#importStatus").textContent = (error as Error).message }
+})
+
+$<HTMLInputElement>("#peakFile").addEventListener("change", async event => {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  if (file.size > 16 * 1024 * 1024) {
+    $("#importStatus").textContent = "Choose a peak-list file smaller than 16 MiB."
+    return
+  }
+  $<HTMLTextAreaElement>("#peakInput").value = await file.text()
+  $("#importStatus").textContent = "File loaded. Select Import peaks to validate and display it."
+})
+
+for (const id of ["#shareBudget", "#allowTrim", "#dropMetadata"]) {
+  $(id).addEventListener("input", clearBudgetPreview)
+}
+$("#previewBudget").addEventListener("click", () => {
+  clearBudgetPreview()
+  try {
+    budgetPreview = fitToBudget(lastSource ?? decodeToken(tokenEl.value), Number($<HTMLInputElement>("#shareBudget").value), {
+      baseUrl: baseUrl(), lossless: losslessEl.checked,
+      allowPeakTrimming: $<HTMLInputElement>("#allowTrim").checked,
+      dropUserParams: $<HTMLInputElement>("#dropMetadata").checked,
+    })
+    $("#budgetStatus").textContent = `${budgetPreview.carrierBytes} bytes including the URL. Keeps ${budgetPreview.keptPeaks} peaks, removes ${budgetPreview.droppedPeaks} peaks and ${budgetPreview.omittedUserParams} user parameters. Apply to replace the displayed spectrum.`
+    $<HTMLButtonElement>("#applyBudget").disabled = false
+  } catch (error) { $("#budgetStatus").textContent = (error as Error).message }
+})
+$("#applyBudget").addEventListener("click", () => {
+  if (!budgetPreview) return
+  const result = budgetPreview
+  encodeAndShow(result.spectrum)
+  $("#budgetStatus").textContent = `Applied: removed ${result.droppedPeaks} peaks and ${result.omittedUserParams} user parameters.`
+})
+
+function download(name: string, text: string, type: string) {
+  const url = URL.createObjectURL(new Blob([text], { type }))
+  const link = document.createElement("a")
+  link.href = url
+  link.download = name
+  link.click()
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+$("#exportPeaks").addEventListener("click", () => {
+  try { download("spectrum.tsv", formatPeakList(decodeToken(tokenEl.value)), "text/tab-separated-values") }
+  catch (error) { $("#importStatus").textContent = (error as Error).message }
+})
+$("#exportReport").addEventListener("click", () => {
+  if (lastReport) download("encoding-report.json", JSON.stringify(lastReport, null, 2), "application/json")
+})
+
 // Boot: load a token from the URL fragment if present, else the default example.
-(function boot() {
+function boot() {
   try {
     const t = extractToken(location.href);
     setToken(t, false);
@@ -751,4 +828,5 @@ window.addEventListener("hashchange", () => {
     /* no token in URL */
   }
   encodeAndShow(EXAMPLES[currentExample]!());
-})();
+}
+boot()

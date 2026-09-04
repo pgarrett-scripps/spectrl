@@ -26,9 +26,11 @@ from .compression_accession import CompressionAccession
 from .errors import SpectrlDecodeError, SpectrlError
 from .introspection import encoding_plan, inspect_token
 from .model import ArrayEncoding, DecodedSpectrum, InlineSpectrum, SpectrlCvParam, SpectrlUserParam
+from .peaklist import format_peak_list, parse_peak_list
 from .peaks import top_n
 from .serialization import spectrum_from_dict, spectrum_to_dict
 from .unit_accession import UnitAccession
+from .workflows import encoding_report, fit_to_budget
 
 __all__ = [
     "encode_spectrum",
@@ -47,6 +49,11 @@ __all__ = [
     "ArrayAccession",
     "CompressionAccession",
     "UnitAccession",
+    "encoding_report",
+    "fit_to_budget",
+    "parse_peak_list",
+    "format_peak_list",
+    "conversion_report",
     "encoding_plan",
     "inspect_token",
     "spectrum_from_dict",
@@ -146,8 +153,8 @@ def from_mzmlpy(spec, ref_groups: dict | None = None, *, strict: bool = False) -
     Args:
         spec: A mzmlpy.spectra.Spectrum.
         ref_groups: Optional dict mapping group id → mzmlpy _ParamGroup, for
-            expanding referenceableParamGroupRef elements. Build it as
-            ``{g.id: g for g in mzml.referenceable_param_groups}``.
+            expanding referenceableParamGroupRef elements. Pass
+            ``mzml.referenceable_param_groups``.
         strict: Raise rather than silently omit unresolved referenceable
             parameter groups or userParams in mzML locations spectrl.v1 cannot
             represent.
@@ -175,7 +182,7 @@ def to_fragment(token: str, base: str) -> str:
 
     The fragment is never sent to the server, avoiding length limits and access logs.
     """
-    return f"{base.rstrip('#')}#{token}"
+    return urlunparse(urlparse(base)._replace(fragment=token))
 
 
 def to_query(token: str, base: str, param: str = "d") -> str:
@@ -216,3 +223,14 @@ def extract_token(url_or_uri: str) -> str:
                 return v
 
     raise ValueError(f"No spectrl.v1 token found in: {url_or_uri!r}")
+
+
+def conversion_report(spec, ref_groups: dict | None = None, *, strict: bool = False) -> dict:
+    """Convert an mzML spectrum with a structured fidelity report. Requires the mzml extra."""
+    try:
+        from .mzml import conversion_report as report
+    except ModuleNotFoundError as exc:
+        if exc.name and exc.name.startswith("mzmlpy"):
+            raise ModuleNotFoundError('conversion_report requires pip install "spectrl[mzml]"') from exc
+        raise
+    return report(spec, ref_groups, strict=strict)

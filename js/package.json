@@ -1,6 +1,6 @@
 {
   "name": "@spectrl-ms/spectrl",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Inline spectrum URL encoder, embeds peak arrays and modeled metadata in a compact, URL-safe token. JavaScript/TypeScript implementation of the spectrl.v1 format.",
   "type": "module",
   "main": "./dist/index.js",
@@ -31,7 +31,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "fuzz": "node --import tsx scripts/fuzz_decode.ts",
     "gen-vectors": "node --import tsx scripts/gen_reverse_vectors.ts",
-    "prepublishOnly": "npm run build && npm test"
+    "prepublishOnly": "npm run build && npm test",
+    "prepack": "npm run build"
   },
   "keywords": [
     "mass-spectrometry",

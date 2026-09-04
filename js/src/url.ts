@@ -5,7 +5,7 @@ const DATA_URI_PREFIX = "data:application/vnd.spectrl;v=1,";
 
 /** Wrap a token as a URL fragment: `base#token` (never sent to the server). */
 export function toFragment(token: string, base: string): string {
-  return `${base.replace(/#$/, "")}#${token}`;
+  return `${base.split("#", 1)[0]}#${token}`
 }
 
 /** Wrap a token as a query parameter, preserving existing query params.

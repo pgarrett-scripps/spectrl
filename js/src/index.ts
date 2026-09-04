@@ -82,3 +82,6 @@ export function encodingPlan(
   );
   return tokenBreakdown(token).filter((part) => part.accession !== undefined);
 }
+
+export { encodingReport, fitToBudget, topN, type BudgetOptions } from "./workflows.js"
+export { parsePeakList, formatPeakList, type PeakDelimiter } from "./peaklist.js"

@@ -37,6 +37,7 @@ def _json_value(value: Any) -> Any:
 def spectrum_to_dict(spec: InlineSpectrum | DecodedSpectrum) -> dict[str, Any]:
     """Convert a spectrum to the canonical CLI JSON representation."""
     out = _json_value(spec)
+    out["extra_array_dtypes"] = {key: str(arr.dtype) for key, arr in spec.extra_arrays.items()}
     out.pop("checksum", None)
     out.pop("format_version", None)
     return out
@@ -72,6 +73,29 @@ def _precursor(d: dict) -> SpectrlPrecursor:
 
 def spectrum_from_dict(data: dict[str, Any]) -> InlineSpectrum:
     """Build an InlineSpectrum from canonical CLI JSON."""
+    if not isinstance(data, dict):
+        raise ValueError("expected a spectrum JSON object")
+    if not isinstance(data.get("extra_arrays", {}), dict):
+        raise ValueError("extra_arrays must be an object")
+    extra = {}
+    dtypes = data.get("extra_array_dtypes", {})
+    if not isinstance(dtypes, dict):
+        raise ValueError("extra_array_dtypes must be an object")
+    if set(dtypes) - set(data.get("extra_arrays", {})):
+        raise ValueError("extra_array_dtypes contains an unknown array")
+    for key, values in data.get("extra_arrays", {}).items():
+        dtype = dtypes.get(key, "float64")
+        if dtype not in {"int32", "float32", "float64"}:
+            raise ValueError(f"unsupported extra array dtype {dtype!r}")
+        raw = np.asarray(values)
+        if raw.ndim != 1 or raw.dtype.kind not in "fiu" or not np.isfinite(raw).all():
+            raise ValueError(f"invalid numeric array {key!r}")
+        if dtype == "int32" and (np.any(raw < -(2**31)) or np.any(raw > 2**31 - 1) or np.any(raw != np.floor(raw))):
+            raise ValueError(f"array {key!r} cannot be represented as int32")
+        with np.errstate(over="ignore"):
+            extra[key] = np.asarray(values, dtype=dtype)
+        if not np.isfinite(extra[key]).all():
+            raise ValueError(f"array {key!r} exceeds {dtype}")
     mz = data.get("mz")
     n = data.get("default_array_length", len(mz) if mz is not None else 0)
     combo = data.get("scan_combination")
@@ -96,7 +120,7 @@ def spectrum_from_dict(data: dict[str, Any]) -> InlineSpectrum:
             for p in data.get("products", [])
         ],
         interp=data.get("interp"),
-        extra_arrays=data.get("extra_arrays", {}),
+        extra_arrays=extra,
         array_units=data.get("array_units", {}),
         user_params=[_user(v) for v in data.get("user_params", [])],
     )

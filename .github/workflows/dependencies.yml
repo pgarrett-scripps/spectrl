@@ -1,0 +1,26 @@
+name: Dependency audit
+on:
+  schedule:
+    - cron: '19 8 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Audit locked Python runtime dependencies
+        run: |
+          uv export --locked --no-dev --no-emit-project --no-hashes --output-file /tmp/spectrl-requirements.txt
+          uvx pip-audit --requirement /tmp/spectrl-requirements.txt
+      - name: Audit JavaScript library dependencies
+        working-directory: js
+        run: npm audit --audit-level=high
+      - name: Audit demo dependencies
+        working-directory: demo
+        run: npm audit --audit-level=high

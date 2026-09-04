@@ -5,11 +5,15 @@
   "type": "module",
   "description": "Browser demo for spectrl: encodes example spectra to shareable URLs/QR and decodes + plots them, entirely client-side.",
   "scripts": {
-    "build": "esbuild src/app.ts --bundle --format=esm --splitting --outdir=dist --entry-names=app --chunk-names=chunks/[name]-[hash] --sourcemap",
-    "dev": "esbuild src/app.ts --bundle --format=esm --splitting --outdir=dist --entry-names=app --chunk-names=chunks/[name]-[hash] --servedir=. --serve=127.0.0.1:8000"
+    "build": "npm run typecheck && esbuild src/app.ts --bundle --format=esm --splitting --outdir=dist --entry-names=app --chunk-names=chunks/[name]-[hash] --sourcemap",
+    "dev": "esbuild src/app.ts --bundle --format=esm --splitting --outdir=dist --entry-names=app --chunk-names=chunks/[name]-[hash] --servedir=. --serve=127.0.0.1:8000",
+    "build-tests": "esbuild tests/browser.ts --bundle --format=esm --outfile=dist/browser-tests.js",
+    "test": "npm run build && npm run build-tests && node tests/run-browser.mjs",
+    "typecheck": "node ../js/node_modules/typescript/bin/tsc -p tsconfig.json"
   },
   "devDependencies": {
     "esbuild": "^0.28.2",
+    "playwright": "^1.62.1",
     "qrcode-generator": "^1.4.4"
   }
 }

@@ -141,6 +141,10 @@ class InlineSpectrum:
 
     def __post_init__(self) -> None:
         """Normalize ordinary Python array-likes at the public API boundary."""
+        for name in ("mz", "intensity", "charge"):
+            values = getattr(self, name)
+            if values is not None and np.asarray(values).dtype.kind not in "fiu":
+                raise ValueError(f"Array '{name}' must contain real numbers")
         if self.mz is not None:
             self.mz = np.asarray(self.mz, dtype=np.float64)
         if self.intensity is not None:

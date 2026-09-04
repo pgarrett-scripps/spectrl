@@ -96,3 +96,13 @@ npm run typecheck
 ## License
 
 Apache-2.0. See [../LICENSE](../LICENSE).
+
+**Quality and sharing workflows**
+
+`encodingReport`, `fitToBudget`, `parsePeakList`, `formatPeakList`, and `topN`
+are exported from the main package. The [workflow guide](../docs/workflows.md)
+includes examples and documents zero-reference error metrics, explicit
+omission permissions, complete URL budgets, and peak-list limitations.
+
+CI covers Node 22 and 24. The existing Node 18 package minimum remains for
+compatibility, but those CI versions are the supported verification targets.

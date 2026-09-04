@@ -10,15 +10,20 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   test:
     name: test (py${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    env:
+      UV_PYTHON: ${{ matrix.python-version }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.12", "3.13"]
+        python-version: ["3.12", "3.13", "3.14"]
         include:
           - os: macos-latest
             python-version: "3.13"
@@ -38,13 +43,13 @@ jobs:
       # Not --all-extras: the `speed` extra builds pynumpress from sdist, which
       # only works on Linux; there the dev group installs it anyway.
       - name: Install dependencies
-        run: uv sync --dev --extra proforma
+        run: uv sync --locked --dev --extra proforma
 
       - name: Run tests
-        run: uv run pytest --cov=spectrl --cov-fail-under=80 tests/ -q
+        run: uv run --locked pytest --cov=spectrl --cov-fail-under=80 tests/ -q
 
       - name: Decoder mutation smoke test
-        run: uv run python scripts/fuzz_decode.py
+        run: uv run --locked python scripts/fuzz_decode.py
 
   lint:
     name: lint
@@ -58,13 +63,13 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: uv sync --all-extras --dev
+        run: uv sync --locked --all-extras --dev
 
       - name: ruff check
-        run: uv run ruff check src/ tests/
+        run: uv run --locked ruff check src/ tests/
 
       - name: ruff format --check
-        run: uv run ruff format --check src/ tests/
+        run: uv run --locked ruff format --check src/ tests/
 
       - name: Reject whitespace errors
         run: git diff --check
@@ -106,7 +111,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: ["20", "22"]
+        node-version: ["22", "24"]
     steps:
       - uses: actions/checkout@v4
 
@@ -154,3 +159,9 @@ jobs:
       - name: Build demo bundle
         run: npm ci && npm run build
         working-directory: demo
+
+      - name: Browser regression tests
+        working-directory: demo
+        run: |
+          npx playwright install --with-deps chromium
+          npm test

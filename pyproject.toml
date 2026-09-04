@@ -1,6 +1,6 @@
 [project]
 name = "spectrl"
-version = "1.0.0"
+version = "1.1.0"
 description = "Inline spectrum URL encoder: embeds a complete mass spectrum in a compact, URL-safe token."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -14,6 +14,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
     "Topic :: Scientific/Engineering :: Chemistry",
 ]

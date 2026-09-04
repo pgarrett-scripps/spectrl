@@ -74,3 +74,7 @@ params), mirroring header scan map key 2.
 
 - Python reference impl: `tests/test_vectors.py`
 - JavaScript/TypeScript impl: `js/test/vectors.test.ts`
+
+The negative vectors also cover incomplete zlib trailers, trailing junk, and
+concatenated streams for both empty and nonempty arrays. Consumers rebuild a
+valid outer checksum so these cases exercise compressed-stream validation.

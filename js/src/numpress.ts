@@ -136,8 +136,36 @@ function readU32LE(data: Uint8Array, off: number): number {
 
 // ── linear ────────────────────────────────────────────────────────────────────
 
+export function validateLinearDomain(data: ArrayLike<number>, fp: number): void {
+  if (!Number.isFinite(fp) || fp <= 0) throw new Error("Numpress linear fixed point must be finite and positive")
+  let previous = 0
+  let before = 0
+  for (const [i, item] of Array.from(data).entries()) {
+    const value = Math.floor(item * fp + 0.5)
+    if (!Number.isSafeInteger(value) || value < 0 || value > Math.floor(Number.MAX_SAFE_INTEGER / 4)) {
+      throw new Error("Numpress linear scaled values exceed the safe numeric range")
+    }
+    if (i < 2 && value > 0xffffffff) throw new Error("Numpress linear initial values exceed uint32, use a lossless codec or a smaller fixed point")
+    const residual = value - 2 * previous + before
+    if (i >= 2 && (residual < -2147483648 || residual > 2147483647)) {
+      throw new Error("Numpress linear prediction residual exceeds int32, use a lossless codec")
+    }
+    before = previous
+    previous = value
+  }
+}
+
+export function validatePicDomain(data: ArrayLike<number>): void {
+  for (const value of Array.from(data)) {
+    if (!Number.isInteger(value) || value < 0 || value > 0xffffffff) {
+      throw new Error("Numpress PIC requires whole numbers in the uint32 range")
+    }
+  }
+}
+
 export function encodeLinear(data: Float64Array, fixedPoint: number): Uint8Array {
-  rejectNegatives(data, "linear");
+  rejectNegatives(data, "linear")
+  validateLinearDomain(data, fixedPoint)
   const fp = new Uint8Array(8);
   encodeFixedPoint(fixedPoint, fp, 0);
   const out: number[] = Array.from(fp);
@@ -225,7 +253,7 @@ export function encodeSlof(data: Float64Array, fixedPoint: number): Uint8Array {
 }
 
 export function decodeSlof(data: Uint8Array): Float64Array {
-  if (data.length < 8) throw new Error("numpress slof: truncated (no fixed point)");
+  if (data.length < 8 || data.length % 2 !== 0) throw new Error("numpress slof: truncated (no fixed point)")
   const fixedPoint = decodeFixedPoint(data);
   const result = new Float64Array((data.length - 8) >> 1);
   let ri = 0;
@@ -239,7 +267,8 @@ export function decodeSlof(data: Uint8Array): Float64Array {
 // ── pic (positive integer) ────────────────────────────────────────────────────
 
 export function encodePic(data: Float64Array): Uint8Array {
-  rejectNegatives(data, "pic");
+  rejectNegatives(data, "pic")
+  validatePicDomain(data)
   const out: number[] = [];
   const halfBytes = new Uint8Array(16);
   let halfByteCount = 0;

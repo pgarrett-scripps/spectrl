@@ -77,7 +77,10 @@ export function encodeCbor(
   const descs: Descriptor[] = descriptors.map((d, i) => ({ ...d, data: blobs[i]! }));
 
   const doc = canonicalize(buildHeaderMap(sorted, descs));
-  const body = `${MAGIC}.${b64urlEncode(cborEncode(doc))}`;
+  const raw = cborEncode(doc)
+  if (raw.length > MAX_TOKEN_BYTES) throw new Error("CBOR payload exceeds the size limit")
+  validateCborDocument(raw)
+  const body = `${MAGIC}.${b64urlEncode(raw)}`
   return `${body}.${tokenChecksum(body)}`;
 }
 
@@ -200,8 +203,9 @@ function validateHeaderShape(h: MsgMap): void {
  * Decode a spectrl.v1 token, verifying the trailing CRC-32 checksum.
  * Throws SpectrlDecodeError on any malformed, corrupted, or unsupported input.
  */
-export function decodeCbor(token: string): DecodedSpectrum {
-  const prefix = `${MAGIC}.`;
+export function readTokenDocument(token: string): { doc: MsgMap, decoded: DecodedSpectrum } {
+  if (typeof token !== "string" || token.length > Math.ceil(MAX_TOKEN_BYTES * 4 / 3) + MAGIC.length + 10) throw new SpectrlDecodeError("invalid token type or size")
+  const prefix = `${MAGIC}.`
   if (!token.startsWith(prefix)) throw new SpectrlDecodeError(`Not a ${MAGIC} token`);
   const parts = token.slice(prefix.length).split(".");
   if (parts.length !== 2) {
@@ -244,6 +248,17 @@ export function decodeCbor(token: string): DecodedSpectrum {
   }
   decoded.checksum = stored;
 
+  const descriptors = h.get(6) ?? []
+  if (!Array.isArray(descriptors)) throw new SpectrlDecodeError("binaryDataArrayList must be an array")
+  const seen = new Set<string>()
+  for (const descriptor of descriptors) validateDescriptor(descriptor, seen)
+  return { doc: h, decoded }
+}
+
+export function decodeCbor(token: string): DecodedSpectrum {
+  const { doc: h, decoded } = readTokenDocument(token)
+  const n = decoded.defaultArrayLength
+
   // Bound decompression by the declared array length (float64 worst case plus
   // numpress framing slack) so a small token cannot expand without limit.
   const maxBytes = Math.min(64 + 16 * n, MAX_BLOB_BYTES);
@@ -283,14 +298,14 @@ export function decodeCbor(token: string): DecodedSpectrum {
     else if (tail === ARRAY_INTENSITY) decoded.intensity = arr as Float64Array;
     else if (tail === ARRAY_CHARGE) decoded.charge = arr as Float64Array;
     else if (tail === ARRAY_NON_STANDARD) {
-      decoded.extraArrays[name ?? decodeTail(tail)] = arr;
+      Object.defineProperty(decoded.extraArrays, name ?? decodeTail(tail), { value: arr, enumerable: true, writable: true, configurable: true })
     } else {
       decoded.extraArrays[decodeTail(tail)] = arr;
     }
     if (unit !== undefined) {
       const key = tail === ARRAY_MZ ? "mz" : tail === ARRAY_INTENSITY ? "intensity" : tail === ARRAY_CHARGE ? "charge"
         : tail === ARRAY_NON_STANDARD ? (name ?? decodeTail(tail)) : decodeTail(tail);
-      decoded.arrayUnits[key] = unit;
+      Object.defineProperty(decoded.arrayUnits, key, { value: unit, enumerable: true, writable: true, configurable: true })
     }
   }
 

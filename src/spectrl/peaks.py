@@ -17,7 +17,13 @@ from ._format import (
     MAX_SAFE_INTEGER,
 )
 from .codecs import get_codec
-from .codecs.numpress import DEFAULT_NUMLIN_FP, DEFAULT_NUMSLOF_FP, _safe_slof_fp
+from .codecs.numpress import (
+    DEFAULT_NUMLIN_FP,
+    DEFAULT_NUMSLOF_FP,
+    _safe_slof_fp,
+    validate_linear_domain,
+    validate_pic_domain,
+)
 from .cv import (
     ARRAY_CHARGE,
     ARRAY_INTENSITY,
@@ -120,6 +126,8 @@ def _default_extra_codec(array_tail: int, arr: np.ndarray, lossless: bool) -> tu
 def _extra_key_to_array(key: str) -> tuple[int, str | None]:
     """Map an extra-array key to (array_tail, name). Accession keys → (tail, None)."""
     key = str(key)
+    if not key:
+        raise ValueError("non-standard array name must not be empty")
     if key in _CORE_ARRAY_ALIASES:
         raise ValueError(f"core array accession {key} must use the dedicated {_CORE_ARRAY_ALIASES[key]!r} field")
     if key == "MS:1000786":
@@ -212,6 +220,10 @@ def _validate_arrays(spec: InlineSpectrum) -> None:
         if arr is None:
             continue
         arr = np.asarray(arr)
+        if arr.ndim != 1:
+            raise ValueError(f"Array '{name}' must be one-dimensional")
+        if arr.dtype.kind not in "fiu" or (arr.dtype.kind == "f" and arr.dtype.itemsize > 8):
+            raise ValueError(f"Array '{name}' must have a supported real numeric dtype")
         if len(arr) != n:
             raise ValueError(
                 f"Array '{name}' has {len(arr)} values, but default_array_length is {n}; "
@@ -270,8 +282,20 @@ def build_array_blobs(
     ) -> tuple[int, float | None, int]:
         setting = _parse_encoding(encodings.get(key))
         comp = _codec_tail(setting.codec)
-        if comp is None:
-            return default_comp, default_fp_value, default_type
+        automatic = comp is None
+        if automatic:
+            comp = default_comp
+            if setting.fixed_point is None:
+                try:
+                    if comp in {COMP_NUMLIN_ZLIB, COMP_NUMLIN_ZSTD}:
+                        validate_linear_domain(array, default_fp_value)
+                    elif comp in {COMP_NUMPIC_ZLIB, COMP_NUMPIC_ZSTD}:
+                        validate_pic_domain(array)
+                except ValueError:
+                    raw_type = (
+                        TYPE_FLOAT64 if key in {"mz", "intensity", "charge"} else _type_tail_for_dtype(array.dtype)
+                    )
+                    return COMP_ZLIB, None, raw_type
         if lossless and comp in _LOSSY_CODECS:
             raise ValueError(f"array '{key}' requests lossy codec {setting.codec!r} while lossless=True")
         fp_codecs = {COMP_NUMLIN_ZLIB, COMP_NUMLIN_ZSTD, COMP_NUMSLOF_ZLIB, COMP_NUMSLOF_ZSTD}
@@ -315,9 +339,9 @@ def build_array_blobs(
         type_tail = TYPE_FLOAT64 if comp in _LOSSY_CODECS else default_type
         fp = setting.fixed_point
         if comp in {COMP_NUMLIN_ZLIB, COMP_NUMLIN_ZSTD}:
-            fp = mz_fp if fp is None else fp
+            fp = (default_fp_value if automatic else mz_fp) if fp is None else fp
         elif comp in {COMP_NUMSLOF_ZLIB, COMP_NUMSLOF_ZSTD}:
-            desired = int_fp if fp is None else fp
+            desired = (default_fp_value if automatic else int_fp) if fp is None else fp
             safe = _safe_slof_fp(np.asarray(array, dtype=np.float64), desired)
             if setting.fixed_point is not None and safe != desired:
                 raise ValueError(f"array '{key}' fixed_point {desired} would overflow the SLOF representation")
@@ -417,7 +441,7 @@ def top_n(spec: InlineSpectrum, n: int) -> InlineSpectrum:
     spectrum. This is explicit caller-driven trimming; encoding never trims
     silently.
     """
-    if n < 0:
+    if isinstance(n, bool) or not isinstance(n, (int, np.integer)) or n < 0:
         raise ValueError(f"top_n: n must be >= 0, got {n}")
     if spec.intensity is None or n >= len(spec.intensity):
         return spec

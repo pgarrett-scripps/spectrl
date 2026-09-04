@@ -66,6 +66,20 @@ class _NumpressBackend(Protocol):
     def decode_pic(self, raw: np.ndarray) -> np.ndarray: ...
 
 
+def _validate_nibbles(raw: np.ndarray, offset: int) -> None:
+    """Check packed integer framing before passing untrusted bytes to native code."""
+    cursor = offset * 2
+    end = len(raw) * 2
+    while cursor < end:
+        value = int(raw[cursor // 2])
+        head = value & 15 if cursor % 2 else value >> 4
+        if cursor == end - 1 and head == 0:
+            return
+        cursor += 1 + (8 - head if head <= 8 else 16 - head)
+        if cursor > end:
+            raise ValueError("truncated Numpress integer")
+
+
 class _PynumpressBackend:
     name = "pynumpress"
 
@@ -81,7 +95,11 @@ class _PynumpressBackend:
         # fixed point + one 4-byte int), though encode_linear emits exactly that. The
         # MS-Numpress reference decodes it (dataSize == 12 → one value); do so directly
         # to keep single-peak spectra round-trippable and cross-impl compatible.
-        if 12 <= n < 16:
+        if n not in (8, 12) and n < 16:
+            raise ValueError("truncated Numpress linear stream")
+        if n >= 16:
+            _validate_nibbles(raw, 16)
+        if n == 12:
             buf = raw.tobytes()
             fixed_point = struct.unpack(">d", buf[:8])[0]
             first = int.from_bytes(buf[8:12], "little", signed=False)
@@ -92,12 +110,15 @@ class _PynumpressBackend:
         return np.asarray(self._m.encode_slof(data.astype(np.float64), fp), dtype=np.uint8)
 
     def decode_slof(self, raw: np.ndarray) -> np.ndarray:
+        if len(raw) < 8 or len(raw) % 2:
+            raise ValueError("truncated Numpress slof stream")
         return np.array(self._m.decode_slof(raw), dtype=np.float64)
 
     def encode_pic(self, data: np.ndarray) -> np.ndarray:
         return np.asarray(self._m.encode_pic(data.astype(np.float64)), dtype=np.uint8)
 
     def decode_pic(self, raw: np.ndarray) -> np.ndarray:
+        _validate_nibbles(raw, 0)
         return np.array(self._m.decode_pic(raw), dtype=np.float64)
 
 
@@ -180,10 +201,34 @@ def _reject_negatives(data: np.ndarray, codec: str) -> np.ndarray:
     return arr
 
 
+def validate_linear_domain(data: np.ndarray, fp: float) -> None:
+    """Reject values that cannot be represented by every Numpress backend."""
+    arr = np.asarray(data, dtype=np.float64)
+    if not math.isfinite(fp) or fp <= 0:
+        raise ValueError("Numpress linear fixed point must be finite and positive")
+    with np.errstate(over="ignore", invalid="ignore"):
+        scaled = np.floor(arr * fp + 0.5)
+    if not np.isfinite(scaled).all() or np.any(scaled < 0) or np.any(scaled > (2**53 - 1) // 4):
+        raise ValueError("Numpress linear scaled values exceed the safe numeric range")
+    if np.any(scaled[:2] > 0xFFFFFFFF):
+        raise ValueError("Numpress linear initial values exceed uint32, use a lossless codec or a smaller fixed point")
+    residual = scaled[2:] - 2 * scaled[1:-1] + scaled[:-2]
+    if np.any(residual < -(2**31)) or np.any(residual > 2**31 - 1):
+        raise ValueError("Numpress linear prediction residual exceeds int32, use a lossless codec")
+
+
+def validate_pic_domain(data: np.ndarray) -> None:
+    """PIC represents unsigned 32-bit whole numbers only."""
+    arr = np.asarray(data, dtype=np.float64)
+    if not np.isfinite(arr).all() or np.any(arr < 0) or np.any(arr > 0xFFFFFFFF) or np.any(arr != np.floor(arr)):
+        raise ValueError("Numpress PIC requires whole numbers in the uint32 range")
+
+
 def encode_numlin_raw(data: np.ndarray, fp: float | None = None) -> bytes:
     """Encode an array with the raw MS-Numpress linear transform."""
     arr = _reject_negatives(data, "linear")
     fp = fp if fp is not None else DEFAULT_NUMLIN_FP
+    validate_linear_domain(arr, fp)
     encoded = _resolve_backend().encode_linear(arr, fp)
     return encoded.tobytes()
 
@@ -239,6 +284,7 @@ def encode_numpic_raw(data: np.ndarray) -> bytes:
     lossless codec.
     """
     arr = _reject_negatives(data, "PIC")
+    validate_pic_domain(arr)
     encoded = _resolve_backend().encode_pic(arr)
     return encoded.tobytes()
 

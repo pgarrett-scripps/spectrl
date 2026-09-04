@@ -409,6 +409,13 @@ be carried even when it is absent from a consumer's local registry.
   for any array containing a negative value (e.g. negative charge sentinels or
   baseline-subtracted intensities). Negative m/z values are invalid and **MUST**
   be rejected at encode time.
+- Producers must validate the transform numeric domain before encoding. Linear
+  initial scaled values must fit uint32 and prediction residuals must fit int32.
+  PIC accepts uint32 whole numbers. The reference encoders fall back to raw
+  zlib when automatic selection encounters an unrepresentable value, and reject
+  an explicit unrepresentable codec choice. An automatic codec's explicit fixed
+  point is validated and applied. Existing representable canonical inputs keep
+  their encoding. These checks introduce no new descriptors or codec accessions.
 - A producer **MUST** reject an explicitly selected codec that is incompatible
   with the array semantics: linear is for continuous coordinates, slof for
   non-negative magnitudes, and pic for non-negative whole numbers. Unknown and
@@ -533,6 +540,7 @@ A **conformant consumer**:
 
 - rejects unsupported magic/version ([§4](#4-token-structure), [§9](#9-versioning)).
 - requires and verifies the checksum ([§8](#8-canonical-form-and-checksum)).
+- rejects incomplete zlib streams and data after a single zlib stream.
 - fails cleanly on unimplemented codecs ([§7.2](#72-codecs)).
 - reconstructs all arrays from their `array` descriptors rather than position,
   and verifies each decoded array's length against key 0 ([§7.1](#71-array-descriptors)).

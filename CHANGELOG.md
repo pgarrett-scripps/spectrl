@@ -10,6 +10,39 @@ independently of the library version. See [SPECIFICATION.md](SPECIFICATION.md).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-04
+
+### Added
+
+- Python and TypeScript encoding quality reports with array error metrics,
+  byte counts, codec information, and explicit user-param omission counts.
+- Explicit share-budget candidate selection including complete fragment URL
+  overhead, retained peak counts, and omission reports.
+- Two-column text, CSV and TSV import/export in both APIs, the CLI, and demo.
+- Python mzML conversion reports with structured omission paths and strict checks.
+- CLI report, fit, and convert-mzml commands, plus typed custom-array JSON.
+- Browser regression tests, numerical boundary regressions, shared malformed
+  stream vectors, and mutations that reach CBOR and Numpress parsing.
+- Python 3.14 and Node 24 CI coverage, dependency update configuration, and
+  scheduled dependency audits.
+
+### Fixed
+
+- Guard Numpress numeric ranges before native calls. Automatic selection falls
+  back to lossless encoding outside the supported domain. Explicit unsafe
+  codecs fail instead of overflowing or terminating Python.
+- Render token metadata and custom-array labels as literal text in the demo.
+- Preserve custom arrays named after JavaScript special object properties.
+- Reject incomplete and trailing zlib data and truncated Numpress framing.
+- Honor and validate fixed-point options on automatically selected codecs.
+- Preserve custom-array dtypes through JSON and reject invalid array names,
+  shapes, numeric dtypes, and int32 JSON values.
+- Replace existing URL fragments when wrapping tokens, share structural
+  validation with inspection, and report CLI errors without tracebacks.
+- Build npm distributions before packing and resolve locked CI dependencies.
+- Preserve imported spectra when changing demo encoding mode and load zstd
+  support on demand.
+
 ## [1.0.0] - 2026-08-17
 
 ### Added

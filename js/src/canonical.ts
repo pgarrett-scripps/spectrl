@@ -1,6 +1,7 @@
 /** Canonical form: m/z-ascending sort, array-blob assembly, validation. */
 
-import { encodeArray } from "./codecs.js";
+import { encodeArray } from "./codecs.js"
+import { validateLinearDomain, validatePicDomain } from "./numpress.js"
 import {
   ARRAY_CHARGE,
   ARRAY_INTENSITY,
@@ -81,7 +82,8 @@ function codecTail(codec: ArrayEncoding["codec"]): number | null {
 
 /** Map an extra-array key to (arrayTail, name): accession keys → standard tail; else MS:1000786. */
 function extraKeyToArray(key: string): { arrayTail: number; name?: string } {
-  const core = CORE_ARRAY_ALIASES.get(key);
+  if (!key) throw new Error("non-standard array name must not be empty")
+  const core = CORE_ARRAY_ALIASES.get(key)
   if (core !== undefined) throw new Error(`core array accession ${key} must use the dedicated '${core}' field`);
   if (key === "MS:1000786") {
     throw new Error("MS:1000786 is represented by a free-text extra-array name, not used as the key itself");
@@ -97,8 +99,8 @@ function extraKeyToArray(key: string): { arrayTail: number; name?: string } {
 }
 
 function normalizeEncodingKeys(encodings: Record<string, ArrayEncodingOption>): Record<string, ArrayEncodingOption> {
-  const normalized: Record<string, ArrayEncodingOption> = {};
-  const original: Record<string, string> = {};
+  const normalized: Record<string, ArrayEncodingOption> = Object.create(null)
+  const original: Record<string, string> = Object.create(null)
   for (const [key, value] of Object.entries(encodings)) {
     const canonical = CORE_ARRAY_ALIASES.get(key) ?? key;
     if (Object.prototype.hasOwnProperty.call(normalized, canonical)) {
@@ -239,8 +241,19 @@ export function buildArrayBlobs(
     defaultType = TYPE_FLOAT64,
   ): { comp: number; fp: number | null; type: number } => {
     const setting = parseEncoding(encodings[key]);
-    const selected = codecTail(setting.codec);
-    if (selected === null) return { comp: defaultComp, fp: defaultFixedPoint, type: defaultType };
+    let selected = codecTail(setting.codec)
+    const automatic = selected === null
+    if (selected === null) {
+      selected = defaultComp
+      if (setting.fixedPoint === undefined) {
+        try {
+          if (selected === COMP_NUMLIN_ZLIB || selected === COMP_NUMLIN_ZSTD) validateLinearDomain(array, defaultFixedPoint!)
+          if (selected === COMP_NUMPIC_ZLIB || selected === COMP_NUMPIC_ZSTD) validatePicDomain(array)
+        } catch {
+          return { comp: COMP_ZLIB, fp: null, type: typeTailOf(array as ExtraArray) }
+        }
+      }
+    }
     if (lossless && LOSSY_CODECS.has(selected)) {
       throw new Error(`array '${key}' requests a lossy codec while lossless is true`);
     }
@@ -277,9 +290,9 @@ export function buildArrayBlobs(
       }
     }
     let fp: number | null = null;
-    if (selected === COMP_NUMLIN_ZLIB || selected === COMP_NUMLIN_ZSTD) fp = setting.fixedPoint ?? mzFp;
+    if (selected === COMP_NUMLIN_ZLIB || selected === COMP_NUMLIN_ZSTD) fp = setting.fixedPoint ?? (automatic ? defaultFixedPoint : mzFp)
     if (selected === COMP_NUMSLOF_ZLIB || selected === COMP_NUMSLOF_ZSTD) {
-      const desired = setting.fixedPoint ?? intFp;
+      const desired = setting.fixedPoint ?? (automatic ? defaultFixedPoint! : intFp)
       const safe = safeSlofFp(Float64Array.from(array), desired);
       if (setting.fixedPoint !== undefined && safe !== desired) {
         throw new Error(`array '${key}' fixedPoint ${desired} would overflow the SLOF representation`);

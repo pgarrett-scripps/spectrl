@@ -234,6 +234,22 @@ trimmed = top_n(spec, 50)
 token = encode_spectrum(trimmed)
 ```
 
+### Quality, import, and sharing budgets
+
+Use `encoding_report()` to measure error in the exact token it returns,
+`fit_to_budget()` to propose explicit peak or user-param removal for a URL byte
+budget, and `parse_peak_list()` / `format_peak_list()` for two-column text,
+CSV, or TSV. The TypeScript package provides the same workflows as
+`encodingReport`, `fitToBudget`, `parsePeakList`, and `formatPeakList`.
+
+The browser demo supports importing your own peaks, downloading quality
+reports, and previewing a budget candidate before applying it. The Python
+`conversion_report()` API and `spectrl convert-mzml` command report observable
+mzML omissions alongside the converted spectrum.
+
+See [the workflow guide](docs/workflows.md) for runnable examples, JSON dtype
+preservation, CLI commands, and the limits of each report.
+
 ### Lossless encoding
 
 ```python

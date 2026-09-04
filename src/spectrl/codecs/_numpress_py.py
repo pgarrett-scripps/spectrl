@@ -227,7 +227,7 @@ def encode_slof(data: np.ndarray, fixed_point: float) -> np.ndarray:
 
 def decode_slof(data: np.ndarray) -> np.ndarray:
     buf = data.tobytes() if isinstance(data, np.ndarray) else bytes(data)
-    if len(buf) < 8:
+    if len(buf) < 8 or len(buf) % 2:
         raise ValueError("numpress slof: truncated (no fixed point)")
     fixed_point = struct.unpack(">d", buf[:8])[0]
     result = []

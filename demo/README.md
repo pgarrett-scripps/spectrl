@@ -67,3 +67,27 @@ The page reads a token from its own URL fragment on load, so a link like
 
 > Note: the example masses are illustrative (computed from monoisotopic residue
 > masses). They demonstrate the format, not a specific real acquisition.
+
+**User data and quality reports**
+
+Import your own peaks accepts pasted two-column data and CSV, TSV, or text
+files. Export writes only the displayed m/z and intensity arrays. Technical
+details includes a downloadable quality report when the original spectrum is
+available. Fit a share budget requires explicit permission to remove peaks or
+user parameters and previews the result before Apply candidate changes it.
+See the [workflow guide](../docs/workflows.md).
+
+**Browser regression checks**
+
+Build the library first, then run these commands from the demo directory:
+
+```bash
+npm ci
+npx playwright install chromium
+npm test
+```
+
+The same assertions can run in a regular browser. Run `npm run build-tests`,
+serve the demo directory, open `/tests/browser.html`, and select Run browser
+regressions. The suite checks literal metadata rendering, user-data import,
+encoding-mode changes, and the budget preview/apply boundary.

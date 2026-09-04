@@ -147,11 +147,16 @@ def from_mzmlpy(spec, ref_groups: dict | None = None, *, strict: bool = False) -
         spec: A mzmlpy.spectra.Spectrum instance.
         ref_groups: Optional dict mapping group id → mzmlpy _ParamGroup for
             dereferencing referenceableParamGroupRef elements. Pass
-            ``{g.id: g for g in mzml.referenceable_param_groups}`` if available.
+            ``mzml.referenceable_param_groups`` if available.
 
     Returns:
         InlineSpectrum ready for encoding.
     """
+
+    if strict:
+        warnings = [item for item in _conversion_issues(spec, ref_groups) if item["severity"] == "warning"]
+        if warnings:
+            raise ValueError("mzML conversion would omit data: " + warnings[0]["message"])
 
     # ─── Spectrum-level CV params (EXPAND ref_params) + userParams ──────────
     spectrum_params = _collect_cvparams(spec, ref_groups, strict=strict)
@@ -247,3 +252,105 @@ def from_mzmlpy(spec, ref_groups: dict | None = None, *, strict: bool = False) -
         array_units=array_units,
         user_params=spectrum_user_params,
     )
+
+
+def _conversion_issues(spec, ref_groups: dict | None = None) -> list[dict[str, str]]:
+    """Inventory omissions observable within this spectrum's XML subtree."""
+    issues = []
+    element = getattr(spec, "element", None)
+    if element is None:
+        return issues
+    containers = {
+        "spectrum",
+        "scanList",
+        "scan",
+        "scanWindowList",
+        "scanWindow",
+        "precursorList",
+        "precursor",
+        "selectedIonList",
+        "selectedIon",
+        "isolationWindow",
+        "activation",
+        "productList",
+        "product",
+        "binaryDataArrayList",
+        "binaryDataArray",
+        "binary",
+        "cvParam",
+        "userParam",
+        "referenceableParamGroupRef",
+    }
+
+    def add(code, path, message, severity="warning"):
+        issues.append({"code": code, "path": path, "message": message, "severity": severity})
+
+    def walk(node, path, parent=""):
+        tag = str(node.tag).split("}")[-1]
+        if tag not in containers:
+            add("unmodeled_element", path, f"Element {tag} is outside the spectrum token model")
+        if tag == "userParam" and parent not in {"spectrum", "scan"}:
+            add("omitted_user_param", path, f"User parameter {node.get('name', '')!r} is not modeled at this location")
+        if tag == "referenceableParamGroupRef":
+            reference = node.get("ref")
+            group = (ref_groups or {}).get(reference)
+            if group is None:
+                add("unresolved_reference", path, f"Reference group {reference!r} was not supplied")
+            elif _collect_user_params(group):
+                add("omitted_reference_user_params", path, "User parameters in reference groups are not expanded")
+        if tag not in {"cvParam", "userParam", "referenceableParamGroupRef", "binary"}:
+            preserved = {"id", "defaultArrayLength"} if tag == "spectrum" else set()
+            representation = {"count", "encodedLength", "arrayLength"}
+            for name in node.attrib:
+                if name not in preserved | representation:
+                    add("omitted_attribute", path + "/@" + name, f"Attribute {name} is not carried in v1", "info")
+        counts = {}
+        for child in node:
+            name = str(child.tag).split("}")[-1]
+            counts[name] = counts.get(name, 0) + 1
+            walk(child, f"{path}/{name}[{counts[name]}]", tag)
+
+    walk(element, "spectrum")
+    return issues
+
+
+def conversion_report(spec, ref_groups: dict | None = None, *, strict: bool = False) -> dict:
+    """Convert mzML and report preserved data and observable omissions.
+
+    Strict mode rejects warning-level omissions. Informational provenance
+    attributes remain outside v1. Run-level XML is not available to this report.
+    """
+    import dataclasses
+
+    issues = _conversion_issues(spec, ref_groups)
+    if strict and any(issue["severity"] == "warning" for issue in issues):
+        raise ValueError(
+            "mzML conversion would omit data: " + next(i["message"] for i in issues if i["severity"] == "warning")
+        )
+    spectrum = from_mzmlpy(spec, ref_groups, strict=strict)
+    counts = {"cv_params": 0, "user_params": 0}
+
+    def count(value):
+        if isinstance(value, SpectrlCvParam):
+            counts["cv_params"] += 1
+        elif isinstance(value, SpectrlUserParam):
+            counts["user_params"] += 1
+        elif dataclasses.is_dataclass(value):
+            for field in dataclasses.fields(value):
+                count(getattr(value, field.name))
+        elif isinstance(value, list):
+            for item in value:
+                count(item)
+
+    count(spectrum)
+    return {
+        "spectrum": spectrum,
+        "preserved": {
+            "peaks": spectrum.default_array_length,
+            "arrays": sum(getattr(spectrum, key) is not None for key in ("mz", "intensity", "charge"))
+            + len(spectrum.extra_arrays),
+            **counts,
+        },
+        "issues": issues,
+        "scope": "Spectrum subtree only. Run-level provenance and unmodeled XML are outside v1.",
+    }

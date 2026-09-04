@@ -106,7 +106,9 @@ def encode_cbor(
         desc[DESC_DATA] = blob
 
     doc = build_header_dict(spec, descriptors)
-    body = f"{MAGIC}.{b64url_encode(_canonical(doc))}"
+    raw = _canonical(doc)
+    validate_cbor_document(raw)
+    body = f"{MAGIC}.{b64url_encode(raw)}"
     return f"{body}.{token_checksum(body)}"
 
 
@@ -315,7 +317,7 @@ def _validate_numpress_fp(desc: dict, max_bytes: int) -> None:
         )
 
 
-def decode_cbor(token: str) -> DecodedSpectrum:
+def read_token_document(token: str) -> tuple[dict, DecodedSpectrum]:
     """Decode a spectrl.v1 token, verifying the trailing CRC-32 checksum.
 
     Raises SpectrlDecodeError (a ValueError subclass) on any malformed,
@@ -323,6 +325,8 @@ def decode_cbor(token: str) -> DecodedSpectrum:
     """
     if not isinstance(token, str):
         raise SpectrlDecodeError("a spectrl token must be a string")
+    if len(token) > (MAX_TOKEN_BYTES * 4 + 2) // 3 + len(MAGIC) + 10:
+        raise SpectrlDecodeError("spectrl token exceeds the payload size limit")
     if not token.isascii():
         raise SpectrlDecodeError("a spectrl token must contain only ASCII characters")
 
@@ -370,6 +374,15 @@ def decode_cbor(token: str) -> DecodedSpectrum:
     seen_arrays: set[tuple[int, str | None]] = set()
     for desc in descriptors:
         _validate_descriptor(desc, seen_arrays)
+
+    return doc, decoded
+
+
+def decode_cbor(token: str) -> DecodedSpectrum:
+    """Decode a token after shared framing and metadata validation."""
+    doc, decoded = read_token_document(token)
+    n = decoded.default_array_length
+    descriptors = doc.get(6, [])
 
     # Bound decompression by the declared array length (float64 worst case plus
     # numpress framing slack) so a small token cannot expand without limit.
