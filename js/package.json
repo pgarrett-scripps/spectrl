@@ -61,7 +61,7 @@
     "pako": "^2.1.0"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
+    "@types/node": "^26.4.1",
     "@types/pako": "^2.0.3",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0"
