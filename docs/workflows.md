@@ -1,6 +1,6 @@
 **Quality, sharing, and conversion workflows**
 
-These APIs use the existing `spectrl.v1` format. They do not add token fields or require a service. Python uses snake_case names and TypeScript uses camelCase names.
+These APIs use the `spectrl.v2` format. They do not add token fields or require a service. Python uses snake_case names and TypeScript uses camelCase names.
 
 **Measure encoding quality**
 

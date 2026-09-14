@@ -82,7 +82,6 @@ export interface InlineSpectrum {
   scanCombination?: CvParam | null;
   precursors?: Precursor[];
   products?: Product[];
-  interp?: string | null;
   /** Spectrum-level free-text user parameters (mzML userParam). */
   userParams?: UserParam[];
   /** Additional per-peak arrays, including every ion-mobility variant, keyed by
@@ -106,7 +105,6 @@ export interface DecodedSpectrum {
   scanCombination: CvParam | null;
   precursors: Precursor[];
   products: Product[];
-  interp: string | null;
   /** Decoded spectrum-level free-text user parameters. */
   userParams: UserParam[];
   /** Decoded additional per-peak arrays, keyed by CV accession or non-standard name. */

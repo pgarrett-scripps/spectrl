@@ -254,15 +254,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/cd/d8/193df2b67f19df2848ef1b703f10543f60b3bf2e9e1598a109efc80acc28/pynumpress-0.0.9.tar.gz", hash = "sha256:c0dafd7837cee64fc59eb5fc0f941a1324e631a2d5b2d6ac7e28becfd29bd86e", size = 146168, upload-time = "2024-07-02T01:05:28.16Z" }
 
 [[package]]
-name = "pyteomics"
-version = "5.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/9a/99/24a96629f246e3f1e534c10decbbaf13c60119ead5ee80787e4dd7e57a16/pyteomics-5.0.tar.gz", hash = "sha256:234a4d361d1a144247caa6b5fc35836eb3a40153bcd6f575c5b95c3bd49de21d", size = 271406, upload-time = "2026-05-28T13:05:10.684Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/0f/87/8914db559e9c5378a509c99631f87ce5612517182b3f0b426f2996522e8b/pyteomics-5.0-py3-none-any.whl", hash = "sha256:cb3372b50aa9945a32ecf84e68fc043ffec566fa8c30e09c4fe591dfc9b9bda0", size = 260750, upload-time = "2026-05-28T13:05:08.981Z" },
-]
-
-[[package]]
 name = "pytest"
 version = "9.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -319,7 +310,7 @@ wheels = [
 
 [[package]]
 name = "spectrl"
-version = "1.1.0"
+version = "2.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "cbor2" },
@@ -330,9 +321,6 @@ dependencies = [
 [package.optional-dependencies]
 mzml = [
     { name = "mzmlpy" },
-]
-proforma = [
-    { name = "pyteomics" },
 ]
 speed = [
     { name = "pynumpress" },
@@ -353,10 +341,9 @@ requires-dist = [
     { name = "mzmlpy", marker = "extra == 'mzml'", specifier = ">=0.4.0" },
     { name = "numpy", specifier = ">=1.26.0" },
     { name = "pynumpress", marker = "extra == 'speed'", specifier = ">=0.0.4" },
-    { name = "pyteomics", marker = "extra == 'proforma'", specifier = ">=4.7" },
     { name = "zstandard", specifier = ">=0.23.0" },
 ]
-provides-extras = ["mzml", "proforma", "speed"]
+provides-extras = ["mzml", "speed"]
 
 [package.metadata.requires-dev]
 dev = [

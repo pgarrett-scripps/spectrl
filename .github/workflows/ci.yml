@@ -43,7 +43,7 @@ jobs:
       # Not --all-extras: the `speed` extra builds pynumpress from sdist, which
       # only works on Linux; there the dev group installs it anyway.
       - name: Install dependencies
-        run: uv sync --locked --dev --extra proforma
+        run: uv sync --locked --dev
 
       - name: Run tests
         run: uv run --locked pytest --cov=spectrl --cov-fail-under=80 tests/ -q

@@ -67,7 +67,6 @@ def _check(vec: dict) -> None:
     assert d.default_array_length == exp["default_array_length"]
     assert d.id == exp["id"]
     assert d.checksum == exp["checksum"]
-    assert d.interp == exp["interp"]
     assert d.format_version == exp["format_version"]
 
     for name, attr in [
@@ -162,7 +161,7 @@ def test_vectors_in_sync_with_generator(tmp_path):
 
 @pytest.mark.parametrize("vec", _load(NEGATIVE)["vectors"], ids=lambda v: f"negative-{v['name']}")
 def test_shared_negative_vector_rejected(vec: dict):
-    body = "spectrl.v1." + b64url_encode(bytes.fromhex(vec["cbor_hex"]))
+    body = "spectrl.v2." + b64url_encode(bytes.fromhex(vec["cbor_hex"]))
     token = f"{body}.{token_checksum(body)}"
     with pytest.raises(ValueError, match=vec["error"]):
         decode_token(token)

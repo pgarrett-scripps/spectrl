@@ -1,11 +1,15 @@
 {
   "name": "@spectrl-ms/spectrl",
-  "version": "1.1.0",
-  "description": "Inline spectrum URL encoder, embeds peak arrays and modeled metadata in a compact, URL-safe token. JavaScript/TypeScript implementation of the spectrl.v1 format.",
+  "version": "2.0.0",
+  "description": "Inline spectrum URL encoder, embeds peak arrays and modeled metadata in a compact, URL-safe token. JavaScript/TypeScript implementation of the spectrl.v2 format.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
+    "./legacy": {
+      "types": "./dist/legacy.d.ts",
+      "import": "./dist/legacy.js"
+    },
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
@@ -38,7 +42,6 @@
     "mass-spectrometry",
     "proteomics",
     "mzml",
-    "proforma",
     "spectrum-sharing",
     "spectrum"
   ],

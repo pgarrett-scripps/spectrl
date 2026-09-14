@@ -80,7 +80,6 @@ for (const v of doc.vectors) {
 
     assert.equal(d.defaultArrayLength, exp.default_array_length, "defaultArrayLength");
     assert.equal(d.id, exp.id, "id");
-    assert.equal(d.interp, exp.interp, "interp");
     assert.equal(d.formatVersion, exp.format_version, "formatVersion");
     assert.equal(d.checksum, exp.checksum, "checksum");
 
@@ -145,12 +144,12 @@ test("tampered token fails checksum verification", () => {
 });
 
 test("bad magic is rejected", () => {
-  assert.throws(() => decodeToken("spectrl9.aaaa"), /spectrl.v1|magic|version/i);
+  assert.throws(() => decodeToken("spectrl9.aaaa"), /spectrl.v2|magic|version/i);
 });
 
 for (const v of negativeDoc.vectors) {
   test(`negative vector: ${v.name}`, () => {
-    const body = `spectrl.v1.${b64urlEncode(Uint8Array.from(Buffer.from(v.cbor_hex, "hex")))}`;
+    const body = `spectrl.v2.${b64urlEncode(Uint8Array.from(Buffer.from(v.cbor_hex, "hex")))}`;
     const token = `${body}.${tokenChecksum(body)}`;
     assert.throws(() => decodeToken(token), new RegExp(v.error));
   });

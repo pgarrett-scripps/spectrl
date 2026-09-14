@@ -303,7 +303,7 @@ def _conversion_issues(spec, ref_groups: dict | None = None) -> list[dict[str, s
             representation = {"count", "encodedLength", "arrayLength"}
             for name in node.attrib:
                 if name not in preserved | representation:
-                    add("omitted_attribute", path + "/@" + name, f"Attribute {name} is not carried in v1", "info")
+                    add("omitted_attribute", path + "/@" + name, f"Attribute {name} is not carried in v2", "info")
         counts = {}
         for child in node:
             name = str(child.tag).split("}")[-1]
@@ -318,7 +318,7 @@ def conversion_report(spec, ref_groups: dict | None = None, *, strict: bool = Fa
     """Convert mzML and report preserved data and observable omissions.
 
     Strict mode rejects warning-level omissions. Informational provenance
-    attributes remain outside v1. Run-level XML is not available to this report.
+    attributes remain outside v2. Run-level XML is not available to this report.
     """
     import dataclasses
 
@@ -352,5 +352,5 @@ def conversion_report(spec, ref_groups: dict | None = None, *, strict: bool = Fa
             **counts,
         },
         "issues": issues,
-        "scope": "Spectrum subtree only. Run-level provenance and unmodeled XML are outside v1.",
+        "scope": "Spectrum subtree only. Run-level provenance and unmodeled XML are outside v2.",
     }

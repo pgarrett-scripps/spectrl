@@ -42,7 +42,7 @@ for (const trial of Array.from({ length: 2000 }, (_, i) => i)) {
       payload = cborEncode(doc)
       counts.array++
     }
-    const body = "spectrl.v1." + b64urlEncode(payload)
+    const body = "spectrl.v2." + b64urlEncode(payload)
     token = body + "." + tokenChecksum(body)
   }
   try { decodeToken(token) }

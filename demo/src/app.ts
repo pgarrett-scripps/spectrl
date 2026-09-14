@@ -100,7 +100,6 @@ function peptideMs2(peptide: string): InlineSpectrum {
     mz,
     intensity,
     id: `scan=1042 (${peptide}, 2+)`,
-    interp: peptide,
     params: [
       val("MS:1000511", 2), // ms level
       flag("MS:1000130"), // positive scan
@@ -359,7 +358,6 @@ async function renderFromToken(token: string) {
 
 function renderSpectrumSummary(d: DecodedSpectrum) {
   const chips: Array<[string, string]> = [];
-  if (d.interp) chips.push([d.interp, "ProForma"]);
   const level = msLevel(d);
   if (level !== null) chips.push([`MS${level === 2 ? "²" : level === 3 ? "³" : level}`, "level"]);
   const precursorMz = d.precursors
@@ -427,7 +425,6 @@ function renderMeta(d: DecodedSpectrum) {
     rows.push(row)
   }
   if (d.id) add("native id", d.id)
-  if (d.interp) add("ProForma", d.interp, "key 7")
 
   for (const p of d.params) {
     add(label(p.accession), fmtVal(p), p.accession);

@@ -1,7 +1,7 @@
 /** Generated from schema/registry.json. Do not edit by hand. */
 
-export const FORMAT_VERSION = 1;
-export const MAGIC = "spectrl.v1";
+export const FORMAT_VERSION = 2;
+export const MAGIC = "spectrl.v2";
 export const CHECKSUM_HEX_CHARS = 8;
 export const DESC_TYPE = 0;
 export const DESC_ARRAY = 1;

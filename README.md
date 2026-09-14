@@ -12,7 +12,7 @@ Encodes one spectrum's peak arrays and modeled mzML metadata into a compact,
 URL-safe token. The encoded payload lives in the string. No backend is required.
 
 ```
-spectrl.v1.<base64url(CBOR document)>.<checksum>
+spectrl.v2.<base64url(CBOR document)>.<checksum>
 ```
 
 [Try the browser demo](https://pgarrett-scripps.github.io/spectrl/) ·
@@ -38,7 +38,7 @@ self-contained handoff is more useful.
 | --- | --- |
 | `spectrl` Python package | Reference encoder/decoder, mzML bridge, URL helpers, and CLI |
 | [`js/`](https://github.com/pgarrett-scripps/spectrl/tree/main/js) | Independent TypeScript implementation for browsers and Node |
-| [`SPECIFICATION.md`](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md) | Normative `spectrl.v1` wire-format specification |
+| [`SPECIFICATION.md`](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md) | Normative `spectrl.v2` wire-format specification |
 | [`test-vectors/`](https://github.com/pgarrett-scripps/spectrl/tree/main/test-vectors) | Shared positive, negative, and cross-language conformance vectors |
 
 ## Install
@@ -81,7 +81,7 @@ with Mzml("data.mzML") as mzml:
     token = encode_spectrum(from_mzmlpy(spec))
 
 print(token)
-# spectrl.v1.hQ...
+# spectrl.v2.hQ...
 ```
 
 ### Encode manually
@@ -124,15 +124,15 @@ from spectrl import to_fragment, to_query, to_data_uri, extract_token
 
 # Embed in a URL fragment. This is recommended because it is never sent to the server.
 url = to_fragment(token, "https://viewer.example.com/spectrum")
-# https://viewer.example.com/spectrum#spectrl.v1.hQ...
+# https://viewer.example.com/spectrum#spectrl.v2.hQ...
 
 # Or as a query parameter
 url = to_query(token, "https://viewer.example.com/spectrum")
-# https://viewer.example.com/spectrum?d=spectrl.v1.hQ...
+# https://viewer.example.com/spectrum?d=spectrl.v2.hQ...
 
 # Or as a data URI
 uri = to_data_uri(token)
-# data:application/vnd.spectrl;v=1,spectrl.v1.hQ...
+# data:application/vnd.spectrl;v=2,spectrl.v2.hQ...
 
 # Extract token back from any of the above
 token = extract_token(url)
@@ -261,13 +261,13 @@ token = encode_spectrum(spec, lossless=True)
 ## Token format
 
 ```
-spectrl.v1.<base64url(CBOR document)>.<checksum>
+spectrl.v2.<base64url(CBOR document)>.<checksum>
 ```
 
-- **`spectrl.v1`**: stable `spectrl` identifier + explicit `v1` format version. The prefix is the version's only carrier.
+- **`spectrl.v2`**: stable `spectrl` identifier + explicit `v2` format version. The prefix is the version's only carrier.
 - The payload is a single **CBOR** document ([RFC 8949](https://www.rfc-editor.org/rfc/rfc8949)), base64url-encoded without padding (RFC 4648 §5).
 - The required trailing **checksum** is CRC-32/ISO-HDLC over everything before the last `.`, encoded as eight lowercase hexadecimal characters. It detects accidental corruption without decoding the CBOR payload.
-- **Header**: a CBOR map with integer keys mirroring mzML structure: ms level, polarity, scan times, precursor isolation window, activation method, collision energy, and ProForma interpretation.
+- **Header**: a CBOR map with integer keys mirroring mzML structure: ms level, polarity, scan times, precursor isolation window, activation method, and collision energy.
 - **Array blobs**: one per array type (m/z, intensity, charge, and accession-keyed additional arrays, including every ion-mobility variant), each encoded through an official PSI-MS Numpress, zlib, or zstd pipeline and embedded inline in the CBOR document as a byte string.
 
 ## Validation
@@ -299,10 +299,10 @@ TypeScript, distribution, and demo release gate.
 echo '{"mz":[147.0,175.1],"intensity":[1e5,8e4]}' | spectrl encode
 
 # Decode a token
-echo "spectrl.v1.hQ..." | spectrl decode
+echo "spectrl.v2.hQ..." | spectrl decode
 
 # Inspect the header as readable JSON
-echo "spectrl.v1.hQ..." | spectrl inspect
+echo "spectrl.v2.hQ..." | spectrl inspect
 ```
 
 ## Demo
@@ -328,7 +328,7 @@ See [`demo/`](https://github.com/pgarrett-scripps/spectrl/tree/main/demo) for de
   StrEnum enums during development. Core encoding and decoding do not import an
   mzML parser.
 - **Deterministic (within an implementation)**: canonical form (m/z-ascending, fixed numpress scale factors, RFC 8949 §4.2 CBOR) yields a stable token from a given implementation. A required CRC-32 checksum covers the received token text and is verified before decoding. Token bytes are not guaranteed identical across implementations (DEFLATE output is not canonical). See [SPECIFICATION.md](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md#8-canonical-form-and-checksum).
-- **ProForma**: carries an optional ProForma 2.0 peptide interpretation string (key 7).
+- **Scope**: represents measured spectra and acquisition context across mass spectrometry. Molecular identifications and fragment assignments are outside the format.
 
 ## Scope and security
 
@@ -349,9 +349,26 @@ The normative token format is specified in [SPECIFICATION.md](https://github.com
 specification is the contract. A machine-readable CV/codec/key registry lives in
 [schema/registry.json](https://github.com/pgarrett-scripps/spectrl/blob/main/schema/registry.json).
 
-`spectrl.v1` is the frozen format described here. It intentionally uses a new
-magic because its wire layout is not compatible with the development
-`spectrl1` tokens emitted by earlier package releases.
+`spectrl.v2` removes the optional identification field from the published v1
+format. Header key 7 is reserved and forbidden. Normal encoders and decoders
+use v2, and the spectrum model has no `interp` field. Remove that argument from
+encoding calls and store identifications in the surrounding application.
+
+Archived v1 tokens require an explicit compatibility decoder. It returns the
+spectrum and the legacy interpretation separately:
+
+```python
+from spectrl.legacy import decode_v1_token
+
+legacy = decode_v1_token(old_token)
+spectrum = legacy.spectrum
+identification = legacy.interpretation
+```
+
+The TypeScript equivalent is `decodeV1Token` from
+`@spectrl-ms/spectrl/legacy`. To migrate, review or save the legacy interpretation,
+then encode `legacy.spectrum` with the v2 encoder. Do not replace a token prefix
+by hand. Both the version and checksum must match the encoded document.
 
 ## Contributing
 
@@ -379,4 +396,3 @@ attribution is recorded in [NOTICE](https://github.com/pgarrett-scripps/spectrl/
 ## Related
 
 - [mzmlpy](https://github.com/tacular-omics/mzmlpy): the mzML parser this library bridges from
-- [ProForma 2.0](https://www.psidev.info/proforma): peptidoform notation carried in the token

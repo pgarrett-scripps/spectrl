@@ -1,7 +1,7 @@
 """Generated from schema/registry.json. Do not edit by hand."""
 
-FORMAT_VERSION = 1
-MAGIC = "spectrl.v1"
+FORMAT_VERSION = 2
+MAGIC = "spectrl.v2"
 CHECKSUM_HEX_CHARS = 8
 DESC_TYPE = 0
 DESC_ARRAY = 1

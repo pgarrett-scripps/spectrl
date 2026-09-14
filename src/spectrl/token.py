@@ -1,6 +1,6 @@
 """Base64url encoding/decoding (no padding) and the spectrl magic/version.
 
-A spectrl.v1 token is ``spectrl.v1.<base64url(cbor_document)>.<checksum>``: a
+A spectrl.v2 token is ``spectrl.v2.<base64url(cbor_document)>.<checksum>``: a
 single CBOR document (header + array blobs embedded as byte strings) with a
 required trailing CRC-32 checksum; see cbor_format.
 """

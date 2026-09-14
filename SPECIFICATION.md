@@ -1,7 +1,7 @@
 # spectrl Token Format Specification
 
-- **Format identifier:** `spectrl.v1`
-- **Specification version:** 1.0
+- **Format identifier:** `spectrl.v2`
+- **Specification version:** 2.0
 - **Status:** Frozen, governed in this repository
 - **Editor:** Patrick Garrett (pgarrett@scripps.edu), The Scripps Research
   Institute
@@ -11,7 +11,7 @@
 
 ## Status of this document
 
-This document provides information to the proteomics community about the
+This document provides information to the mass spectrometry community about the
 spectrl token format for passing one complete mass spectrum as a
 self-contained, URL-safe string. Distribution is unlimited.
 
@@ -19,12 +19,12 @@ This specification is developed and governed openly in this repository. It
 follows the document structure used by HUPO Proteomics Standards Initiative
 (PSI) specification documents, but it has **not** been submitted to, and has
 **not** been ratified by, the PSI Document Process. It is normative for the
-`spectrl.v1` wire format: conforming implementations target this document and
+`spectrl.v2` wire format: conforming implementations target this document and
 the conformance vectors ([§11](#11-conformance)). This version is **FROZEN**:
 every future breaking change increments the format identifier
 ([§9](#9-versioning)).
 
-Version: 1.0
+Version: 2.0
 
 ## Abstract
 
@@ -37,7 +37,7 @@ ProForma for peptidoform notation. This document presents a specification for
 such that the spectrum can be reconstructed from the string alone, with no
 access to an external file, resolver, repository, or other service. The format
 reuses existing PSI machinery: PSI-MS controlled-vocabulary semantics, the
-MS-Numpress and zlib peak codecs, and ProForma interpretations. Further
+MS-Numpress and zlib peak codecs. Further
 information, two reference implementations, a machine-readable registry, and
 shared test vectors are available at
 <https://github.com/pgarrett-scripps/spectrl>.
@@ -89,14 +89,14 @@ The main requirements to be fulfilled by the token format are:
   ([§8](#8-canonical-form-and-checksum)).
 - It SHOULD be substantially smaller than the equivalent mzML XML for typical
   spectra.
-- It MAY carry a peptidoform interpretation. Peptide identity is never
-  required ([§6.6](#66-proforma-interpretation)).
+- Molecular identification and fragment assignment are outside this format
+  ([§6.6](#66-identification-and-annotation-scope)).
 
 ### 1.3 Scope
 
 This document specifies:
 
-- the textual structure of a `spectrl.v1` token ([§4](#4-token-structure)).
+- the textual structure of a `spectrl.v2` token ([§4](#4-token-structure)).
 - the binary encoding of the metadata header ([§6](#6-header)).
 - the binary encoding of peak arrays ([§7](#7-peak-arrays)).
 - the canonical form and checksum ([§8](#8-canonical-form-and-checksum)).
@@ -132,7 +132,6 @@ A spectrl token reuses, rather than reinvents, existing PSI machinery:
   of Measurement Ontology (`UO:`). No bespoke field names are introduced.
 - **Peak compression:** peak arrays use the same MS-Numpress and zlib pipelines
   that mzML uses for its `binaryDataArray` elements.
-- **Peptide interpretation:** carried as a [ProForma 2.0][proforma] string.
 
 ### 3.2 Normative dependencies
 
@@ -152,8 +151,8 @@ existing standards:
 - **USI** identifies a spectrum in a public repository by reference. Spectrl
   embeds the data itself for the offline, undeposited, and program-to-program
   cases. A viewer can accept both.
-- **ProForma 2.0** is the notation for the optional peptidoform
-  interpretation ([§6.6](#66-proforma-interpretation)).
+- **ProForma 2.0** defines peptidoform notation. Molecular identifications
+  belong in the surrounding application, outside the spectrl spectrum model.
 - **mzSpecLib** and **[mzPAF][mzpaf]** address spectral libraries and fragment
   ion annotation. Spectrl carries one spectrum and does not define peak
   annotations.
@@ -178,7 +177,7 @@ A token is an ASCII string of exactly four `.`-separated parts:
 ```abnf
 token      = identifier "." version "." payload "." checksum
 identifier = "spectrl"
-version    = "v" 1*DIGIT    ; format version; this document specifies "v1"
+version    = "v" 1*DIGIT    ; format version; this document specifies "v2"
 payload  = b64url           ; base64url( CBOR document ), REQUIRED
 checksum   = 8lowerhex       ; CRC-32/ISO-HDLC (§8), REQUIRED
 lowerhex   = DIGIT / %x61-66 ; lowercase a-f
@@ -186,7 +185,7 @@ b64url   = *( ALPHA / DIGIT / "-" / "_" )   ; RFC 4648 §5, no padding
 ```
 
 - The first part is the stable **format identifier**, `spectrl`.
-- The second part is the **format version**, `v1`. A consumer **MUST** reject a
+- The second part is the **format version**, `v2`. A consumer **MUST** reject a
   version it does not support. This prefix is the format version's **only**
   carrier. The CBOR document does not repeat it.
 - The third part is a single **CBOR document** ([RFC 8949][cbor]): the header
@@ -252,7 +251,7 @@ Each peak array's compressed blob is embedded inline in its descriptor as a CBOR
 | 4 | `precursorList` | array | | Precursors ([§6.3](#63-precursor)). |
 | 5 | `productList` | array | | Products ([§6.4](#64-product)). |
 | 6 | `binaryDataArrayList` | array | | Array descriptors ([§7.1](#71-array-descriptors)). |
-| 7 | `interp` | str | | ProForma 2.0 interpretation string ([§6.6](#66-proforma-interpretation)). |
+| 7 | Reserved | | | Forbidden in v2 ([§6.6](#66-identification-and-annotation-scope)). |
 | 8 | `userParamList` | array | | Spectrum-level free-text user params ([§6.5](#65-user-params)). |
 
 All keys except 0 are OPTIONAL and **MUST** be omitted entirely when empty.
@@ -323,13 +322,18 @@ term. Each user param is a map with string keys:
 User params appear spectrum-level (header key 8) and per-scan (scan map key 2).
 Both are OPTIONAL arrays, omitted entirely when empty.
 
-### 6.6 ProForma interpretation
+### 6.6 Identification and annotation scope
 
-Key 7 carries a peptidoform interpretation as a [ProForma 2.0][proforma]
-string. Producers **SHOULD** emit valid ProForma 2.0. Consumers **MUST** treat
-the string as opaque for the purposes of token decoding: an unparseable
-interpretation string is not grounds for rejecting the token (the spectrum data
-stands on its own).
+Version 2 represents a measured spectrum and its acquisition context without a
+molecular identification or fragment assignment model. Peptide sequences,
+chemical structures, identification scores, and assigned fragment ions belong
+in surrounding applications or formats designed for those purposes.
+
+Header key 7 held an optional ProForma interpretation in v1. It is reserved in
+v2. Producers **MUST NOT** emit it and consumers **MUST** reject its presence,
+including a null value. The key is not reassigned. Other header keys and array
+semantics retain their published meanings. This scope does not impose chemical
+content filtering on arbitrary user parameters.
 
 ## 7. Peak arrays
 
@@ -474,7 +478,7 @@ A token is in **canonical form** when:
 
 The **checksum** is the REQUIRED fourth token part ([§4](#4-token-structure)).
 It is the CRC-32/ISO-HDLC value of the ASCII text of the token's first three
-parts (the string `"spectrl.v1." payload`, with no trailing `.`), encoded as
+parts (the string `"spectrl.v2." payload`, with no trailing `.`), encoded as
 exactly eight lowercase hexadecimal characters, including leading zeroes. It
 covers the identifier, version, and entire CBOR document, array blobs included.
 
@@ -496,25 +500,29 @@ work and is out of scope for this version.
 
 ## 9. Versioning
 
-- The format version is carried in the magic (`spectrl.v1`) and **only** there
+- The format version is carried in the magic (`spectrl.v2`) and **only** there
   ([§4](#4-token-structure)).
 - A **backward-compatible** change (new OPTIONAL header key, new codec
-  registered in PSI-MS CV) keeps version `1`.
+  registered in PSI-MS CV) keeps version `2`.
 - A **breaking** change (altered framing, altered semantics of an existing key,
-  removed key) **MUST** increment the version, producing `spectrl.v2`, and so on.
+  removed key) **MUST** increment the version, producing `spectrl.v3`, and so on.
 - The library (semver) version is independent of the format version.
-- `spectrl.v1` is frozen as of the stable 1.0.0 library release. Existing
-  required fields and semantics will not change within this format version.
+- `spectrl.v2` is introduced by library release 2.0.0. Existing required fields
+  and semantics will not change within this format version.
+- The published `spectrl.v1` format remains unchanged. Its optional key 7 is
+  defined by the archived v1 specification. A consumer MAY expose an explicit
+  legacy decoder, but MUST NOT silently accept v1 as v2 or discard its
+  interpretation during migration.
 
 ## 10. URI bindings
 
 A token MAY be transported as:
 
-- **URL fragment**: `<base>#spectrl.v1.…`. This binding is RECOMMENDED because
+- **URL fragment**: `<base>#spectrl.v2.…`. This binding is RECOMMENDED because
   the fragment is not sent to the server, which avoids access-log leakage and
   most length limits.
-- **URL query parameter**: `<base>?d=spectrl.v1.…`.
-- **data URI**: `data:application/vnd.spectrl;v=1,spectrl.v1.…`.
+- **URL query parameter**: `<base>?d=spectrl.v2.…`.
+- **data URI**: `data:application/vnd.spectrl;v=2,spectrl.v2.…`.
 
 > **Note.** The `application/vnd.spectrl` media type is provisional pending
 > IANA vendor-tree registration. See [§13](#13-iana-considerations).
@@ -592,7 +600,7 @@ part of standardization ([RFC 6838][rfc6838]):
 - **Optional parameters:** `v`, the spectrl format version (currently `1`). If
   present it **MUST** match the token's magic version.
 - **Encoding considerations:** the payload is an ASCII token
-  (`spectrl.v1.<base64url>.<checksum>`), safe for 7-bit transports.
+  (`spectrl.v2.<base64url>.<checksum>`), safe for 7-bit transports.
 - **Security considerations:** see
   [§12](#12-security-and-privacy-considerations): embedded scientific data,
   untrusted-input decoding, decompression bounding.
@@ -649,6 +657,7 @@ the Apache License, Version 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
 
 | Version | Date | Notes |
 |---------|------|-------|
+| 2.0 | September 2026 | Removes molecular interpretation, reserves header key 7, and uses the `spectrl.v2` prefix. Acquisition metadata and array codec semantics are retained. |
 | 1.0 | August 2026 | Frozen `spectrl.v1` specification: integer-keyed array descriptors with optional units, explicit Numpress fixed points, accession-keyed auxiliary arrays, and a required CRC-32 checksum. The format version is carried only in the prefix. |
 | ≤ 0.2 | 2025–2026 | Development revisions. Tokens from these revisions are not compatibility artifacts. |
 

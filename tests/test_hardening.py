@@ -29,7 +29,7 @@ from spectrl.token import b64url_decode, b64url_encode
 
 
 def token_for(doc):
-    body = "spectrl.v1." + b64url_encode(cbor2.dumps(doc, canonical=True))
+    body = "spectrl.v2." + b64url_encode(cbor2.dumps(doc, canonical=True))
     return body + "." + token_checksum(body)
 
 

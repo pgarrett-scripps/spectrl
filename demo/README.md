@@ -1,7 +1,7 @@
 # spectrl demo
 
 A single-page browser demo of [spectrl](../README.md): it **encodes** example
-mass spectra into `spectrl.v1` tokens, shows the **shareable URL + QR code**, and
+mass spectra into `spectrl.v2` tokens, shows the **shareable URL + QR code**, and
 **decodes** the token back into a plotted spectrum, entirely client-side, with
 no server or network call. It runs on the real
 [`@spectrl-ms/spectrl`](../js) JavaScript codec.
@@ -36,7 +36,7 @@ recomputed live on each example or encoding-mode change.
   ion mobility, auxiliary arrays, or synthetic scans of **100** and **500**
   peaks. Toggle **lossless** to compare sizes.
 - **Spectrum plot**: an uncluttered SVG stick plot. Hover a peak for m/z / intensity.
-- **Spectrum summary**: readable chips surface the interpretation, MS level,
+- **Spectrum summary**: readable chips surface the MS level,
   precursor, charge, activation, ion mobility, auxiliary arrays, and peak count
   before the raw CV metadata.
 - **Share bar** (under the plot): a compact status line plus:
@@ -44,7 +44,7 @@ recomputed live on each example or encoding-mode change.
     server). The raw URL isn't shown because it isn't human-readable.
   - **QR code**: reveals a QR of the URL on demand. Oversized tokens (e.g. the
     500-peak example) surface the token-too-large guidance.
-- **View token**: reveals the bare token and accepts any `spectrl.v1` token to decode.
+- **View token**: reveals the bare token and accepts any `spectrl.v2` token to decode.
 - **Technical details**: an expandable inspector containing token size (KB)
   and B/peak, complete-token size relative to raw peak arrays, what
   the *other* mode would cost, m/z range, base peak, round-trip precision
@@ -54,13 +54,13 @@ recomputed live on each example or encoding-mode change.
   (ms level, polarity, precursor m/z, charge, activation, ProForma, …).
 
 The page reads a token from its own URL fragment on load, so a link like
-`…/index.html#spectrl.v1.…` opens straight to that spectrum, which is handy for slides.
+`…/index.html#spectrl.v2.…` opens straight to that spectrum, which is handy for slides.
 
 ## Talking points for a live demo
 
 - Open the page, encode the MS² example, then **turn off Wi-Fi** and reload the
   shareable URL: it still decodes. The data was never on a server.
-- Decode in this JS app a token your Python session produced (same `spectrl.v1`
+- Decode in this JS app a token your Python session produced (same `spectrl.v2`
   format) to show cross-implementation interop.
 - Truncate a character in the token textarea to show the checksum rejecting a
   corrupted token instead of plotting garbage.

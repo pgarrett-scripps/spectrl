@@ -31,7 +31,9 @@ from spectrl.header import (
     DESC_NAME,
     DESC_TYPE,
 )
-from spectrl.token import FORMAT_VERSION, MAGIC
+
+FORMAT_VERSION = 2
+MAGIC = "spectrl.v2"
 
 
 def _tail(acc: str) -> int:
@@ -144,9 +146,10 @@ registry = {
     "title": "spectrl registry",
     "description": (
         "Machine-readable registry of all integer keys, CV accession tails, "
-        "and codec identifiers used in the spectrl.v1 token format."
+        "and codec identifiers used in the spectrl.v2 token format."
     ),
     "spectrl_version": FORMAT_VERSION,
+    "reserved_header_keys": [7],
     "wire_constants": {
         "checksum_hex_chars": 8,
         "max_blob_bytes": 64 * 1024 * 1024,
@@ -340,15 +343,6 @@ registry = {
                 },
             },
         },
-        "7": {
-            "name": "interp",
-            "type": "string",
-            "required": False,
-            "description": (
-                "ProForma 2.0 peptide interpretation string. "
-                "PSI-MOD terms as [MOD:00046], Unimod as [UNIMOD:21], bare mass deltas as [+79.966]."
-            ),
-        },
         "8": {
             "name": "user_param_list",
             "type": "array of user_param objects",
@@ -460,7 +454,7 @@ registry = {
     "data_types": {
         "description": (
             "Binary data type accession tails. Used in array descriptor 'type' field. "
-            "Only float64, float32, and int32 are permitted in spectrl.v1 tokens. Other "
+            "Only float64, float32, and int32 are permitted in spectrl.v2 tokens. Other "
             "mzML data types (int64, ASCII string) are listed for completeness but MUST NOT appear."
         ),
         "types": _enum_to_dict(
@@ -470,7 +464,7 @@ registry = {
                 str(BinaryDataTypeAccession.FLOAT_32): "32-bit IEEE-754 little-endian float.",
                 str(BinaryDataTypeAccession.INT_32): "32-bit signed integer little-endian.",
                 str(BinaryDataTypeAccession.INT_64): (
-                    "64-bit signed integer little-endian. NOT permitted in spectrl.v1."
+                    "64-bit signed integer little-endian. NOT permitted in spectrl.v2."
                 ),
             },
         ),

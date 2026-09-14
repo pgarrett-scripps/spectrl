@@ -158,5 +158,5 @@ def test_mzml_cli_reports_real_fixture():
     result = cli("convert-mzml", "tests/data/example.mzML")
     assert result.returncode == 0, result.stderr
     report = json.loads(result.stdout)
-    assert report["encoding"]["token"].startswith("spectrl.v1.")
+    assert report["encoding"]["token"].startswith("spectrl.v2.")
     assert "preserved" in report and "issues" in report

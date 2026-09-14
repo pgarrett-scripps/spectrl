@@ -1,6 +1,6 @@
-"""spectrl.v1 token format: a single CBOR document plus a CRC-32 checksum.
+"""spectrl.v2 token format: a single CBOR document plus a CRC-32 checksum.
 
-A token is ``spectrl.v1.<base64url(cbor)>.<checksum>``: one CBOR document
+A token is ``spectrl.v2.<base64url(cbor)>.<checksum>``: one CBOR document
 (RFC 8949) holding the integer-keyed header map *and* each array's compressed
 blob inline as a CBOR byte string (descriptor key ``"d"``), encoded
 deterministically (cbor2 canonical, RFC 8949 §4.2). The required fourth part is
@@ -52,7 +52,6 @@ from .header import (
 )
 from .model import ArrayEncoding, DecodedSpectrum, InlineSpectrum
 from .peaks import _validate_arrays, build_array_blobs, canonical_sort
-from .proforma import validate_interp
 from .token import MAGIC, b64url_decode, b64url_encode
 
 
@@ -86,13 +85,11 @@ def encode_cbor(
     array_encodings: dict[str, ArrayEncoding | str | int | dict] | None = None,
     allow_unsafe_lossy_custom: bool = False,
 ) -> str:
-    """Encode an InlineSpectrum to a spectrl.v1 (CBOR) token string."""
+    """Encode an InlineSpectrum to a spectrl.v2 (CBOR) token string."""
     _validate_arrays(spec)
     if drop_user_params:
         spec = _without_user_params(spec)
     spec = canonical_sort(spec)
-    if spec.interp is not None:
-        validate_interp(spec.interp)
 
     blobs, descriptors = build_array_blobs(
         spec,
@@ -195,7 +192,9 @@ def _is_wire_int(value: object) -> bool:
     return isinstance(value, int) and not isinstance(value, bool)
 
 
-def _validate_header_shape(doc: dict) -> None:
+def _validate_header_shape(doc: dict, *, legacy: bool = False) -> None:
+    if 7 in doc and (not legacy or not isinstance(doc[7], str)):
+        raise SpectrlDecodeError("header key 7 is reserved in v2 and must be a string in v1")
     if 0 not in doc:
         raise SpectrlDecodeError("spectrl header is missing defaultArrayLength (key 0)")
     expected = {
@@ -205,7 +204,6 @@ def _validate_header_shape(doc: dict) -> None:
         4: list,
         5: list,
         6: list,
-        7: str,
         8: list,
     }
     for key, cls in expected.items():
@@ -317,8 +315,8 @@ def _validate_numpress_fp(desc: dict, max_bytes: int) -> None:
         )
 
 
-def read_token_document(token: str) -> tuple[dict, DecodedSpectrum]:
-    """Decode a spectrl.v1 token, verifying the trailing CRC-32 checksum.
+def read_token_document(token: str, *, _legacy: bool = False) -> tuple[dict, DecodedSpectrum]:
+    """Decode a spectrl.v2 token, verifying the trailing CRC-32 checksum.
 
     Raises SpectrlDecodeError (a ValueError subclass) on any malformed,
     corrupted, or unsupported input.
@@ -330,16 +328,17 @@ def read_token_document(token: str) -> tuple[dict, DecodedSpectrum]:
     if not token.isascii():
         raise SpectrlDecodeError("a spectrl token must contain only ASCII characters")
 
-    prefix = f"{MAGIC}."
+    magic = "spectrl.v1" if _legacy else MAGIC
+    prefix = f"{magic}."
     if not token.startswith(prefix):
-        raise SpectrlDecodeError(f"Not a {MAGIC} token: {token[:16]!r}")
+        raise SpectrlDecodeError(f"Not a {magic} token: {token[:16]!r}")
     parts = token[len(prefix) :].split(".")
     if len(parts) != 2:
         raise SpectrlDecodeError("a spectrl token has exactly four '.'-separated parts")
     payload, stored = parts
     if not re.fullmatch(r"[0-9a-f]{8}", stored):
         raise SpectrlDecodeError("spectrl token checksum must be eight lowercase hexadecimal characters")
-    expected = token_checksum(f"{MAGIC}.{payload}")
+    expected = token_checksum(f"{magic}.{payload}")
     if expected != stored:
         raise SpectrlDecodeError(
             f"spectrl token checksum mismatch: stored={stored!r}, computed={expected!r}. Token may be corrupted."
@@ -353,7 +352,7 @@ def read_token_document(token: str) -> tuple[dict, DecodedSpectrum]:
         raise SpectrlDecodeError(f"spectrl payload is not valid CBOR: {e}") from e
     if not isinstance(doc, dict):
         raise SpectrlDecodeError("spectrl payload is not a CBOR map.")
-    _validate_header_shape(doc)
+    _validate_header_shape(doc, legacy=_legacy)
 
     try:
         decoded = parse_header_dict(doc)
@@ -367,6 +366,7 @@ def read_token_document(token: str) -> tuple[dict, DecodedSpectrum]:
         raise SpectrlDecodeError(f"invalid declared array length (key 0): {n!r}")
 
     decoded.checksum = stored
+    decoded.format_version = 1 if _legacy else 2
 
     descriptors = doc.get(6, [])
     if not isinstance(descriptors, list):
@@ -378,9 +378,9 @@ def read_token_document(token: str) -> tuple[dict, DecodedSpectrum]:
     return doc, decoded
 
 
-def decode_cbor(token: str) -> DecodedSpectrum:
+def decode_cbor(token: str, *, _legacy: bool = False) -> DecodedSpectrum:
     """Decode a token after shared framing and metadata validation."""
-    doc, decoded = read_token_document(token)
+    doc, decoded = read_token_document(token, _legacy=_legacy)
     n = decoded.default_array_length
     descriptors = doc.get(6, [])
 

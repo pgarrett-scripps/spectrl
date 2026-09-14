@@ -1,6 +1,6 @@
 """spectrl: Inline Spectrum URL Encoder.
 
-Encodes a single mass spectrum into a compact, URL-safe token (spectrl.v1.…) so it can be
+Encodes a single mass spectrum into a compact, URL-safe token (spectrl.v2.…) so it can be
 shared with no backend. The entire spectrum lives in the token.
 
 Public API::
@@ -63,8 +63,8 @@ __all__ = [
 ]
 
 _SIZE_WARN = 8192  # bytes; warn past this
-_MAGIC_PREFIX = "spectrl.v1."
-_DATA_URI_PREFIX = "data:application/vnd.spectrl;v=1,"
+_MAGIC_PREFIX = "spectrl.v2."
+_DATA_URI_PREFIX = "data:application/vnd.spectrl;v=2,"
 
 
 def encode_spectrum(
@@ -76,10 +76,10 @@ def encode_spectrum(
     array_encodings: dict[str, ArrayEncoding | str | int | dict] | None = None,
     allow_unsafe_lossy_custom: bool = False,
 ) -> str:
-    """Encode an InlineSpectrum to a spectrl.v1 token string.
+    """Encode an InlineSpectrum to a spectrl.v2 token string.
 
     The token is a single CBOR document (header + array blobs embedded as byte
-    strings), base64url-encoded after the ``spectrl.v1.`` magic.
+    strings), base64url-encoded after the ``spectrl.v2.`` magic.
 
     Args:
         spec: The spectrum to encode.
@@ -102,7 +102,7 @@ def encode_spectrum(
             the caller's responsibility. Known incompatible arrays still fail.
 
     Returns:
-        A ``spectrl.v1.`` token string.
+        A ``spectrl.v2.`` token string.
 
     Raises:
         OverflowError: If max_len is set and the encoded length exceeds it.
@@ -134,7 +134,7 @@ def encode_spectrum(
 
 
 def decode_token(token: str) -> DecodedSpectrum:
-    """Decode a spectrl.v1 token string into a DecodedSpectrum.
+    """Decode a spectrl.v2 token string into a DecodedSpectrum.
 
     Verifies the mandatory trailing CRC-32 checksum.
 
@@ -156,7 +156,7 @@ def from_mzmlpy(spec, ref_groups: dict | None = None, *, strict: bool = False) -
             expanding referenceableParamGroupRef elements. Pass
             ``mzml.referenceable_param_groups``.
         strict: Raise rather than silently omit unresolved referenceable
-            parameter groups or userParams in mzML locations spectrl.v1 cannot
+            parameter groups or userParams in mzML locations spectrl.v2 cannot
             represent.
 
     Returns:
@@ -198,12 +198,12 @@ def to_query(token: str, base: str, param: str = "d") -> str:
 
 
 def to_data_uri(token: str) -> str:
-    """Wrap a token in a ``data:application/vnd.spectrl;v=1,`` URI."""
+    """Wrap a token in a ``data:application/vnd.spectrl;v=2,`` URI."""
     return f"{_DATA_URI_PREFIX}{token}"
 
 
 def extract_token(url_or_uri: str) -> str:
-    """Extract a spectrl.v1 token from a URL fragment, query string, or data: URI.
+    """Extract a spectrl.v2 token from a URL fragment, query string, or data: URI.
 
     Raises ValueError if no token is found.
     """
@@ -215,14 +215,14 @@ def extract_token(url_or_uri: str) -> str:
     if parsed.fragment.startswith(_MAGIC_PREFIX):
         return parsed.fragment
 
-    # Check query params for any value starting with spectrl.v1.
+    # Check query params for any value starting with spectrl.v2.
     qs = parse_qs(parsed.query)
     for vals in qs.values():
         for v in vals:
             if v.startswith(_MAGIC_PREFIX):
                 return v
 
-    raise ValueError(f"No spectrl.v1 token found in: {url_or_uri!r}")
+    raise ValueError(f"No spectrl.v2 token found in: {url_or_uri!r}")
 
 
 def conversion_report(spec, ref_groups: dict | None = None, *, strict: bool = False) -> dict:

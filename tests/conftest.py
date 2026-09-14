@@ -90,5 +90,4 @@ def ms2_spectrum() -> InlineSpectrum:
                 ),
             )
         ],
-        interp="PEPTIDES[MOD:00046]K/2",
     )

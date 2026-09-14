@@ -1,6 +1,6 @@
 """Generate language-agnostic conformance test vectors from the Python reference impl.
 
-Each vector pairs a canonical `spectrl.v1` token with the exact values a conformant
+Each vector pairs a canonical `spectrl.v2` token with the exact values a conformant
 consumer must recover from it. Numpress decode is deterministic, so the stored
 arrays are the *decoded* values and consumers MUST reproduce them (within a tiny
 float epsilon). Lossless arrays MUST match exactly.
@@ -99,7 +99,6 @@ def _decoded_json(token: str) -> dict:
             }
             for pr in d.products
         ],
-        "interp": d.interp,
         "user_params": _user_params_json(d.user_params),
         "checksum": d.checksum,
         "format_version": d.format_version,
@@ -284,20 +283,6 @@ def _specs() -> list[tuple[str, str, InlineSpectrum]]:
                         )
                     )
                 ],
-            ),
-        )
-    )
-
-    # 6. ProForma interpretation
-    out.append(
-        (
-            "with_proforma",
-            "spectrum carrying a ProForma 2.0 peptidoform interpretation string",
-            InlineSpectrum(
-                default_array_length=3,
-                mz=np.array([147.113, 276.155, 389.239]),
-                intensity=np.array([1.0e5, 5.0e4, 2.0e4]),
-                interp="ELVIS[Phospho]K/2",
             ),
         )
     )

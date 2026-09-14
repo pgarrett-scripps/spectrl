@@ -1,6 +1,6 @@
 # @spectrl-ms/spectrl
 
-JavaScript / TypeScript implementation of the **spectrl.v1** inline-spectrum token
+JavaScript / TypeScript implementation of the **spectrl.v2** inline-spectrum token
 format. Encodes peak arrays and modeled spectrum metadata into a compact,
 URL-safe string and back, with no backend required. Runs in the browser and in
 Node.
@@ -36,7 +36,7 @@ const token = encodeSpectrum({
     { accession: "MS:1000127" },           // centroid spectrum
   ],
 });
-// "spectrl.v1.hQ..."
+// "spectrl.v2.hQ..."
 
 const spec = decodeToken(token);
 spec.mz;        // Float64Array
@@ -106,3 +106,23 @@ omission permissions, complete URL budgets, and peak-list limitations.
 
 CI covers Node 22 and 24. The existing Node 18 package minimum remains for
 compatibility, but those CI versions are the supported verification targets.
+
+## Version 2 migration
+
+Version 2 removes `interp` from the spectrum model. Header key 7 is reserved and
+rejected. Normal APIs accept only v2 tokens. Identifications and fragment
+assignments belong in the surrounding application.
+
+Archived v1 tokens can be read explicitly:
+
+```ts
+import { decodeV1Token } from "@spectrl-ms/spectrl/legacy"
+import { encodeSpectrum } from "@spectrl-ms/spectrl"
+
+const legacy = decodeV1Token(oldToken)
+// Review or save legacy.interpretation before migrating the spectrum.
+const token = encodeSpectrum(legacy.spectrum)
+```
+
+The compatibility decoder preserves the legacy interpretation separately from
+the spectrum. Never migrate by changing a prefix by hand.

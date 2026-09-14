@@ -33,7 +33,6 @@ def test_roundtrip_ms2_metadata(ms2_spectrum):
 
     assert decoded.id == ms2_spectrum.id
     assert decoded.default_array_length == ms2_spectrum.default_array_length
-    assert decoded.interp == ms2_spectrum.interp
 
     # Spectrum-level params present
     accessions = {p.accession for p in decoded.params}
@@ -146,7 +145,7 @@ def test_with_charge_array():
 
 def test_token_starts_with_magic(simple_spectrum):
     token = encode_spectrum(simple_spectrum)
-    assert token.startswith("spectrl.v1.")
+    assert token.startswith("spectrl.v2.")
 
 
 def test_charge_array_with_negative_values_lossy_roundtrips():

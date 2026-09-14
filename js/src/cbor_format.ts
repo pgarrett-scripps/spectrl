@@ -1,5 +1,5 @@
 /**
- * spectrl.v1 CBOR container format (JS). Mirrors the Python `cbor_format`: a
+ * spectrl.v2 CBOR container format (JS). Mirrors the Python `cbor_format`: a
  * single CBOR document carrying the header map plus array blobs embedded inline
  * as byte strings, with a required CRC-32/ISO-HDLC checksum over the ASCII text
  * before the checksum. Verification is independent of the CBOR library.
@@ -60,7 +60,7 @@ function withoutUserParams(spec: InlineSpectrum): InlineSpectrum {
   return { ...spec, userParams: [], ...(scans ? { scans } : {}) };
 }
 
-/** Encode an InlineSpectrum to a spectrl.v1 (CBOR) token string. */
+/** Encode an InlineSpectrum to a spectrl.v2 (CBOR) token string. */
 export function encodeCbor(
   spec: InlineSpectrum,
   lossless = false,
@@ -68,6 +68,7 @@ export function encodeCbor(
   arrayEncodings?: Record<string, ArrayEncodingOption>,
   allowUnsafeLossyCustom = false,
 ): string {
+  if ("interp" in spec || "interpretation" in spec) throw new Error("v2 does not accept identification fields")
   validateArrays(spec);
   const sorted = canonicalSort(dropUserParams ? withoutUserParams(spec) : spec);
 
@@ -182,7 +183,8 @@ function validateNumpressFp(d: MsgMap, maxBytes: number): void {
   }
 }
 
-function validateHeaderShape(h: MsgMap): void {
+function validateHeaderShape(h: MsgMap, legacy = false): void {
+  if (h.has(7) && (!legacy || typeof h.get(7) !== "string")) throw new SpectrlDecodeError("header key 7 is reserved in v2 and must be a string in v1")
   if (!h.has(0)) throw new SpectrlDecodeError("spectrl header is missing defaultArrayLength (key 0)");
   const checks: Array<[number, (v: unknown) => boolean, string]> = [
     [1, (v) => typeof v === "string", "string"],
@@ -191,7 +193,6 @@ function validateHeaderShape(h: MsgMap): void {
     [4, Array.isArray, "array"],
     [5, Array.isArray, "array"],
     [6, Array.isArray, "array"],
-    [7, (v) => typeof v === "string", "string"],
     [8, Array.isArray, "array"],
   ];
   for (const [key, check, label] of checks) {
@@ -200,13 +201,14 @@ function validateHeaderShape(h: MsgMap): void {
 }
 
 /**
- * Decode a spectrl.v1 token, verifying the trailing CRC-32 checksum.
+ * Decode a spectrl.v2 token, verifying the trailing CRC-32 checksum.
  * Throws SpectrlDecodeError on any malformed, corrupted, or unsupported input.
  */
-export function readTokenDocument(token: string): { doc: MsgMap, decoded: DecodedSpectrum } {
+export function readTokenDocument(token: string, legacy = false): { doc: MsgMap, decoded: DecodedSpectrum } {
   if (typeof token !== "string" || token.length > Math.ceil(MAX_TOKEN_BYTES * 4 / 3) + MAGIC.length + 10) throw new SpectrlDecodeError("invalid token type or size")
-  const prefix = `${MAGIC}.`
-  if (!token.startsWith(prefix)) throw new SpectrlDecodeError(`Not a ${MAGIC} token`);
+  const magic = legacy ? "spectrl.v1" : MAGIC
+  const prefix = `${magic}.`
+  if (!token.startsWith(prefix)) throw new SpectrlDecodeError(`Not a ${magic} token`)
   const parts = token.slice(prefix.length).split(".");
   if (parts.length !== 2) {
     throw new SpectrlDecodeError("a spectrl token has exactly four '.'-separated parts");
@@ -216,7 +218,7 @@ export function readTokenDocument(token: string): { doc: MsgMap, decoded: Decode
   if (!/^[0-9a-f]{8}$/.test(stored)) {
     throw new SpectrlDecodeError("spectrl token checksum must be eight lowercase hexadecimal characters");
   }
-  const expected = tokenChecksum(`${MAGIC}.${payload}`);
+  const expected = tokenChecksum(`${magic}.${payload}`);
   if (expected !== stored) {
     throw new SpectrlDecodeError(
       `spectrl token checksum mismatch: stored=${stored}, computed=${expected}. Token may be corrupted.`,
@@ -234,7 +236,7 @@ export function readTokenDocument(token: string): { doc: MsgMap, decoded: Decode
   }
   if (!(doc instanceof Map)) throw new SpectrlDecodeError("spectrl payload is not a CBOR map");
   const h = doc as MsgMap;
-  validateHeaderShape(h);
+  validateHeaderShape(h, legacy);
 
   let decoded: DecodedSpectrum;
   try {
@@ -246,7 +248,8 @@ export function readTokenDocument(token: string): { doc: MsgMap, decoded: Decode
   if (typeof n !== "number" || !Number.isInteger(n) || n < 0 || n > MAX_ARRAY_LENGTH) {
     throw new SpectrlDecodeError(`invalid declared array length (key 0): ${String(n)}`);
   }
-  decoded.checksum = stored;
+  decoded.checksum = stored
+  decoded.formatVersion = legacy ? 1 : 2
 
   const descriptors = h.get(6) ?? []
   if (!Array.isArray(descriptors)) throw new SpectrlDecodeError("binaryDataArrayList must be an array")
@@ -255,8 +258,8 @@ export function readTokenDocument(token: string): { doc: MsgMap, decoded: Decode
   return { doc: h, decoded }
 }
 
-export function decodeCbor(token: string): DecodedSpectrum {
-  const { doc: h, decoded } = readTokenDocument(token)
+export function decodeCbor(token: string, legacy = false): DecodedSpectrum {
+  const { doc: h, decoded } = readTokenDocument(token, legacy)
   const n = decoded.defaultArrayLength
 
   // Bound decompression by the declared array length (float64 worst case plus

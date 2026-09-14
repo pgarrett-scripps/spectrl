@@ -48,10 +48,10 @@ def test_checksum_stored_in_token():
 
 
 def test_token_is_four_parts():
-    """A spectrl.v1 token is identifier + version + CBOR document + checksum."""
+    """A spectrl.v2 token is identifier + version + CBOR document + checksum."""
     token = encode_spectrum(_make_spec())
     parts = token.split(".")
-    assert parts[:2] == ["spectrl", "v1"]
+    assert parts[:2] == ["spectrl", "v2"]
     assert len(parts) == 4
     assert len(parts[3]) == 8
 

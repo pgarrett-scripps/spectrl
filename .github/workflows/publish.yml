@@ -42,7 +42,7 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: uv sync --locked --dev --extra proforma
+        run: uv sync --locked --dev
 
       - name: Run tests
         run: uv run --locked pytest tests/ -q

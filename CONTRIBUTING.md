@@ -45,14 +45,14 @@ uv run ruff format --check .
 
 ## Format changes (token wire format)
 
-The `spectrl.v1` token format is normative. Any change that affects how a token
+The `spectrl.v2` token format is normative. Any change that affects how a token
 is produced or parsed (new header keys, codec changes, framing changes)
 **must**:
 
 1. Be discussed in an issue tagged `format`.
 2. Update [SPECIFICATION.md](SPECIFICATION.md) and `schema/registry.json`.
 3. Preserve backward compatibility, or bump the format version
-   (`spectrl.v1` → `spectrl.v2`) per the versioning policy in the specification.
+   (`spectrl.v2` → `spectrl.v3`) per the versioning policy in the specification.
 4. Include round-trip test vectors.
 
 `schema/registry.json` also drives the generated internal constant modules for
@@ -61,7 +61,7 @@ wire limits, run `just registry`. Do not hand-edit `src/spectrl/_format.py` or
 `js/src/format.ts`. The test suite checks all three files for drift.
 
 Format changes are reviewed for backward compatibility and for interoperability
-with mzML controlled-vocabulary semantics and [ProForma](https://www.psidev.info/proforma).
+with mzML controlled-vocabulary semantics.
 
 ## Reporting bugs
 

@@ -51,14 +51,14 @@ test("incomplete and concatenated zlib streams are rejected including empty arra
       const desc = (doc.get(6) as Map<number, unknown>[])[0]!
       const blob = desc.get(DESC_DATA) as Uint8Array
       desc.set(DESC_DATA, mode === "truncate" ? blob.slice(0, -4) : Uint8Array.from([...blob, ...(mode === "junk" ? [1, 2, 3] : zlibCompress(new Uint8Array()))]))
-      const body = "spectrl.v1." + b64urlEncode(cborEncode(doc))
+      const body = "spectrl.v2." + b64urlEncode(cborEncode(doc))
       assert.throws(() => decodeToken(body + "." + tokenChecksum(body)), /zlib/)
     }
   }
 })
 
 test("inspection rejects invalid structure", () => {
-  const body = "spectrl.v1." + b64urlEncode(cborEncode(new Map([[0, -1]])))
+  const body = "spectrl.v2." + b64urlEncode(cborEncode(new Map([[0, -1]])))
   assert.throws(() => tokenBreakdown(body + "." + tokenChecksum(body)))
   assert.throws(() => encodeSpectrum({ defaultArrayLength: 0, extraArrays: { "": [] } }))
 })

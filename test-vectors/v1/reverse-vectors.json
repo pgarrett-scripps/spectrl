@@ -1,13 +1,13 @@
 {
-  "spectrl_format_version": 2,
-  "generated_by": "spectrl-js 2.0.0",
+  "spectrl_format_version": 1,
+  "generated_by": "spectrl-js 1.0.0",
   "note": "Reverse vectors: tokens encoded by the JS implementation, decoded values recorded. Other implementations MUST decode `token` and match `decoded` within `tolerance`, and the `checksum` MUST verify.",
   "vectors": [
     {
       "name": "minimal",
       "description": "m/z and intensity only",
       "mode": "lossy",
-      "token": "spectrl.v2.ogADBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgaeJxz-JHFAAI3Kh4w3DHlZlS4vtABAEQZBsilABoAD0RLARoAD0RDAhoAD0z8AxkOEAVUeJxzWKPAAALPFx6e93AiAB2SBWg.962aa4dd",
+      "token": "spectrl.v1.ogADBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgaeJxz-JHFAAI3Kh4w3DHlZlS4vtABAEQZBsilABoAD0RLARoAD0RDAhoAD0z8AxkOEAVUeJxzWKPAAALPFx6e93AiAB2SBWg.4cfc7400",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -31,18 +31,19 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "962aa4dd",
-        "format_version": 2
+        "checksum": "4cfc7400",
+        "format_version": 1
       }
     },
     {
       "name": "minimal__lossless",
       "description": "m/z and intensity only (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.ogADBoKkABoAD0RLARoAD0RCAhoAD0R-BVgheJx7E7hDrjU5yUG7XezmucepDotct33-eyTPAQCUZQyUpAAaAA9ESwEaAA9EQwIaAA9EfgVYGHicY2AAgqwfDiCKoeMzhHa47wAAMfoEvQ.328dcb51",
+      "token": "spectrl.v1.ogADBoKkABoAD0RLARoAD0RCAhoAD0R-BVgheJx7E7hDrjU5yUG7XezmucepDotct33-eyTPAQCUZQyUpAAaAA9ESwEaAA9EQwIaAA9EfgVYGHicY2AAgqwfDiCKoeMzhHa47wAAMfoEvQ.5954df16",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -66,18 +67,19 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "328dcb51",
-        "format_version": 2
+        "checksum": "5954df16",
+        "format_version": 1
       }
     },
     {
       "name": "centroid_ms2_params",
       "description": "MS2 centroid with ms-level, polarity flag, centroid flag, TIC",
       "mode": "lossy",
-      "token": "spectrl.v2.pAAEAWlzY2FuPTEwNDICpBoAD0K_9hoAD0LC9hoAD0NdGgAC3NAaAA9EPwIGgqUAGgAPREsBGgAPREICGgAPTPoDGgABhqAFWB14nHP4kcUAAjVfljPcMeVmVJDxdO5mSAAAUuMGiqUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVZ4nHNYo8AAAl-6Dy20mSnWAgAmbQVe.c4fd547a",
+      "token": "spectrl.v1.pAAEAWlzY2FuPTEwNDICpBoAD0K_9hoAD0LC9hoAD0NdGgAC3NAaAA9EPwIGgqUAGgAPREsBGgAPREICGgAPTPoDGgABhqAFWB14nHP4kcUAAjVfljPcMeVmVJDxdO5mSAAAUuMGiqUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVZ4nHNYo8AAAl-6Dy20mSnWAgAmbQVe.eff1f7e2",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -124,18 +126,19 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "c4fd547a",
-        "format_version": 2
+        "checksum": "eff1f7e2",
+        "format_version": 1
       }
     },
     {
       "name": "centroid_ms2_params__lossless",
       "description": "MS2 centroid with ms-level, polarity flag, centroid flag, TIC (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.pAAEAWlzY2FuPTEwNDICpBoAD0K_9hoAD0LC9hoAD0NdGgAC3NAaAA9EPwIGgqQAGgAPREsBGgAPREICGgAPRH4FWCl4nGNrnOrc3RLtoN0udvPc41SHjIlva-yZixxWHPM27wyudAAA5CcN3KQAGgAPREsBGgAPREMCGgAPRH4FWB14nGNgAIKmKw4gqkH7B5hmiHsFoQuOOwAAXwsGeQ.9037444c",
+      "token": "spectrl.v1.pAAEAWlzY2FuPTEwNDICpBoAD0K_9hoAD0LC9hoAD0NdGgAC3NAaAA9EPwIGgqQAGgAPREsBGgAPREICGgAPRH4FWCl4nGNrnOrc3RLtoN0udvPc41SHjIlva-yZixxWHPM27wyudAAA5CcN3KQAGgAPREsBGgAPREMCGgAPRH4FWB14nGNgAIKmKw4gqkH7B5hmiHsFoQuOOwAAXwsGeQ.48c6ceca",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -182,18 +185,19 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "9037444c",
-        "format_version": 2
+        "checksum": "48c6ceca",
+        "format_version": 1
       }
     },
     {
       "name": "with_charge_array",
       "description": "per-peak charge array",
       "mode": "lossy",
-      "token": "spectrl.v2.ogADBoOlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgYeJxz-JHFAAIaQb-ZGFgrWSyECwEu5gRYpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFU3icc1ijwAACLFNdu9saARUNA32kABoAD0RLARoAD0REAhoAD0z7BUt4nCsqLAQAAqwBVQ.2498f3c5",
+      "token": "spectrl.v1.ogADBoOlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgYeJxz-JHFAAIaQb-ZGFgrWSyECwEu5gRYpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFU3icc1ijwAACLFNdu9saARUNA32kABoAD0RLARoAD0REAhoAD0z7BUt4nCsqLAQAAqwBVQ.9c3a1ba5",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -221,18 +225,19 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "2498f3c5",
-        "format_version": 2
+        "checksum": "9c3a1ba5",
+        "format_version": 1
       }
     },
     {
       "name": "with_charge_array__lossless",
       "description": "per-peak charge array (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJxjYAACl3oHYxAobncAcRl8-h0ALv0EWKQAGgAPREsBGgAPREMCGgAPRH4FVnicY2AAgo7HDgxg-jKUPuwAADIaBNKkABoAD0RLARoAD0REAhoAD0R-BVJ4nGNgAAMHCPXBHkYDABIOAp8.7995b0cc",
+      "token": "spectrl.v1.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJxjYAACl3oHYxAobncAcRl8-h0ALv0EWKQAGgAPREsBGgAPREMCGgAPRH4FVnicY2AAgo7HDgxg-jKUPuwAADIaBNKkABoAD0RLARoAD0REAhoAD0R-BVJ4nGNgAAMHCPXBHkYDABIOAp8.349f737c",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -260,18 +265,19 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "7995b0cc",
-        "format_version": 2
+        "checksum": "349f737c",
+        "format_version": 1
       }
     },
     {
       "name": "negative_charge_sentinel",
       "description": "charge array with a negative sentinel; lossy encode falls back to lossless zlib for the charge array",
       "mode": "lossy",
-      "token": "spectrl.v2.ogADBoOlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgYeJxz-JHFAAIaQb-ZGFgrWSyECwEu5gRYpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFU3icc1ijwAACLFNdu9saARUNA32kABoAD0RLARoAD0REAhoAD0R-BVN4nGNgAAMHCPVhP5S2BwAWjgMf.b9eafb40",
+      "token": "spectrl.v1.ogADBoOlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgYeJxz-JHFAAIaQb-ZGFgrWSyECwEu5gRYpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFU3icc1ijwAACLFNdu9saARUNA32kABoAD0RLARoAD0REAhoAD0R-BVN4nGNgAAMHCPVhP5S2BwAWjgMf.12113df5",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -299,18 +305,19 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "b9eafb40",
-        "format_version": 2
+        "checksum": "12113df5",
+        "format_version": 1
       }
     },
     {
       "name": "negative_charge_sentinel__lossless",
       "description": "charge array with a negative sentinel; lossy encode falls back to lossless zlib for the charge array (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJxjYAACl3oHYxAobncAcRl8-h0ALv0EWKQAGgAPREsBGgAPREMCGgAPRH4FVnicY2AAgo7HDgxg-jKUPuwAADIaBNKkABoAD0RLARoAD0REAhoAD0R-BVN4nGNgAAMHCPVhP5S2BwAWjgMf.cc145ab1",
+      "token": "spectrl.v1.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJxjYAACl3oHYxAobncAcRl8-h0ALv0EWKQAGgAPREsBGgAPREMCGgAPRH4FVnicY2AAgo7HDgxg-jKUPuwAADIaBNKkABoAD0RLARoAD0REAhoAD0R-BVN4nGNgAAMHCPVhP5S2BwAWjgMf.0738e3fe",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -338,18 +345,19 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "cc145ab1",
-        "format_version": 2
+        "checksum": "0738e3fe",
+        "format_version": 1
       }
     },
     {
       "name": "negative_intensity_fallback",
       "description": "baseline-subtracted intensities with negative values; lossy encode falls back to lossless zlib for the intensity array",
       "mode": "lossy",
-      "token": "spectrl.v2.ogADBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVd4nHP4kcUAAg3TZjAw6BoyNgAAKSgEMKQAGgAPREsBGgAPREMCGgAPRH4FV3icY2AAgQf7wVTHYQcwzcBxAAAtDQPz.7ad6681f",
+      "token": "spectrl.v1.ogADBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVd4nHP4kcUAAg3TZjAw6BoyNgAAKSgEMKQAGgAPREsBGgAPREMCGgAPRH4FV3icY2AAgQf7wVTHYQcwzcBxAAAtDQPz.af907764",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -373,18 +381,19 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "7ad6681f",
-        "format_version": 2
+        "checksum": "af907764",
+        "format_version": 1
       }
     },
     {
       "name": "negative_intensity_fallback__lossless",
       "description": "baseline-subtracted intensities with negative values; lossy encode falls back to lossless zlib for the intensity array (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.ogADBoKkABoAD0RLARoAD0RCAhoAD0R-BVZ4nGNgAIFIBzDFkAmhDxQ5AAAUWAK1pAAaAA9ESwEaAA9EQwIaAA9EfgVXeJxjYACBB_vBVMdhBzDNwHEAAC0NA_M.5d0e347b",
+      "token": "spectrl.v1.ogADBoKkABoAD0RLARoAD0RCAhoAD0R-BVZ4nGNgAIFIBzDFkAmhDxQ5AAAUWAK1pAAaAA9ESwEaAA9EQwIaAA9EfgVXeJxjYACBB_vBVMdhBzDNwHEAAC0NA_M.064c9169",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -408,18 +417,19 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "5d0e347b",
-        "format_version": 2
+        "checksum": "064c9169",
+        "format_version": 1
       }
     },
     {
       "name": "precursor_full",
       "description": "isolation window, selected ion, and HCD activation",
       "mode": "lossy",
-      "token": "spectrl.v2.pAADAqEaAA9EPwIEgaMAoxoAD0V7-0B70euFHrhSGgAPRXz7P-gAAAAAAAAaAA9Fffs_6AAAAAAAAAGBohoAD0JpAhoAD0Uo-0B70euFHrhSAqIaAA9CbYIYGxkBChoAD0Pm9gaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVYGXicc_iRxQACFf-OMBi86mTcsTYPAECyB1SlABoAD0RLARoAD0RDAhoAD0z8AxkOEAVUeJxzWKPAAAI_Jjye49oNABzfBOQ.b1f47a0d",
+      "token": "spectrl.v1.pAADAqEaAA9EPwIEgaMAoxoAD0V7-0B70euFHrhSGgAPRXz7P-gAAAAAAAAaAA9Fffs_6AAAAAAAAAGBohoAD0JpAhoAD0Uo-0B70euFHrhSAqIaAA9CbYIYGxkBChoAD0Pm9gaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVYGXicc_iRxQACFf-OMBi86mTcsTYPAECyB1SlABoAD0RLARoAD0RDAhoAD0z8AxkOEAVUeJxzWKPAAAI_Jjye49oNABzfBOQ.dcc502d1",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -501,18 +511,19 @@
           }
         ],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "b1f47a0d",
-        "format_version": 2
+        "checksum": "dcc502d1",
+        "format_version": 1
       }
     },
     {
       "name": "precursor_full__lossless",
       "description": "isolation window, selected ion, and HCD activation (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.pAADAqEaAA9EPwIEgaMAoxoAD0V7-0B70euFHrhSGgAPRXz7P-gAAAAAAAAaAA9Fffs_6AAAAAAAAAGBohoAD0JpAhoAD0Uo-0B70euFHrhSAqIaAA9CbYIYGxkBChoAD0Pm9gaCpAAaAA9ESwEaAA9EQgIaAA9EfgVYIHicU2VrnOqsnOBwUen2zzqlAodqkXXuD5UqHABy3gmepAAaAA9ESwEaAA9EQwIaAA9EfgVYGHicY2AAAp-7DiCKQfwjhO647AAAKasETQ.e1cd5f73",
+      "token": "spectrl.v1.pAADAqEaAA9EPwIEgaMAoxoAD0V7-0B70euFHrhSGgAPRXz7P-gAAAAAAAAaAA9Fffs_6AAAAAAAAAGBohoAD0JpAhoAD0Uo-0B70euFHrhSAqIaAA9CbYIYGxkBChoAD0Pm9gaCpAAaAA9ESwEaAA9EQgIaAA9EfgVYIHicU2VrnOqsnOBwUen2zzqlAodqkXXuD5UqHABy3gmepAAaAA9ESwEaAA9EQwIaAA9EfgVYGHicY2AAAp-7DiCKQfwjhO647AAAKasETQ.d366608e",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -594,18 +605,91 @@
           }
         ],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "e1cd5f73",
-        "format_version": 2
+        "checksum": "d366608e",
+        "format_version": 1
+      }
+    },
+    {
+      "name": "with_proforma",
+      "description": "ProForma interpretation",
+      "mode": "lossy",
+      "token": "spectrl.v1.owADBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgaeJxz-JHFAAIsVQ8YeBKXMq5IW_4AADoIBqmlABoAD0RLARoAD0RDAhoAD0z8AxkOEAVUeJxzWKPAAALPF6rPcO0GABnSBCQHcUVMVklTW1Bob3NwaG9dSy8y.5f75fcfd",
+      "tolerance": {
+        "abs": 0.000001,
+        "rel": 0.000001
+      },
+      "decoded": {
+        "default_array_length": 3,
+        "id": null,
+        "mz": [
+          147.113,
+          276.155,
+          389.239
+        ],
+        "intensity": [
+          100012.00990474736,
+          49996.19696916968,
+          20001.471324173166
+        ],
+        "charge": null,
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": "ELVIS[Phospho]K/2",
+        "user_params": [],
+        "extra_arrays": {},
+        "array_units": {},
+        "checksum": "5f75fcfd",
+        "format_version": 1
+      }
+    },
+    {
+      "name": "with_proforma__lossless",
+      "description": "ProForma interpretation (lossless)",
+      "mode": "lossless",
+      "token": "spectrl.v1.owADBoKkABoAD0RLARoAD0RCAhoAD0R-BVgheJwL49PdNDc5yUFknfvDKqdCh-e_V368FFzhAACAzQuWpAAaAA9ESwEaAA9EQwIaAA9EfgVXeJxjYACCrB8ODGD6BYTuuOwAADECBNAHcUVMVklTW1Bob3NwaG9dSy8y.4da80467",
+      "tolerance": {
+        "abs": 1e-9,
+        "rel": 0
+      },
+      "decoded": {
+        "default_array_length": 3,
+        "id": null,
+        "mz": [
+          147.113,
+          276.155,
+          389.239
+        ],
+        "intensity": [
+          100000,
+          50000,
+          20000
+        ],
+        "charge": null,
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "interp": "ELVIS[Phospho]K/2",
+        "user_params": [],
+        "extra_arrays": {},
+        "array_units": {},
+        "checksum": "4da80467",
+        "format_version": 1
       }
     },
     {
       "name": "ion_mobility",
       "description": "two distinct per-peak ion mobility arrays",
       "mode": "lossy",
-      "token": "spectrl.v2.ogADBoSlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVd4nHP4kcUAAhNenWRUuDqZuQEAMh8F8qUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVR4nHNYo8AAAixTf0xw7QYAF3AD_qUAGgAPREsBGgAPTgACGgAPTPoDGgABhqAFWBh4nHP4kcUAAgEOjAwVyYwMHs0CACrTA-ulABoAD0RLARoAD06RAhoAD0z6AxoAAYagBVgZeJxz-JHFAAITyoQYEopEGByCDwAAMJEE9A.dc5e1769",
+      "token": "spectrl.v1.ogADBoSlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVd4nHP4kcUAAhNenWRUuDqZuQEAMh8F8qUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVR4nHNYo8AAAixTf0xw7QYAF3AD_qUAGgAPREsBGgAPTgACGgAPTPoDGgABhqAFWBh4nHP4kcUAAgEOjAwVyYwMHs0CACrTA-ulABoAD0RLARoAD06RAhoAD0z6AxoAAYagBVgZeJxz-JHFAAITyoQYEopEGByCDwAAMJEE9A.02414f1c",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -629,6 +713,7 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {
           "MS:1003008": {
@@ -649,15 +734,15 @@
           }
         },
         "array_units": {},
-        "checksum": "dc5e1769",
-        "format_version": 2
+        "checksum": "02414f1c",
+        "format_version": 1
       }
     },
     {
       "name": "ion_mobility__lossless",
       "description": "two distinct per-peak ion mobility arrays (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.ogADBoSkABoAD0RLARoAD0RCAhoAD0R-BVgZeJybNRMIDhY5zALTTQ5pIKDU4wAAo7wL36QAGgAPREsBGgAPREMCGgAPRH4FWBh4nGNgAIKOxw4gisHnLoTuuOwAADAKBLCkABoAD0RLARoAD04AAhoAD0R-BVgeeJyz5bq-uMD2lb186-vAHXJv7c-eAYEP9gCVAQ1ypAAaAA9ESwEaAA9OkQIaAA9EfgVXeJwzNgYBDYezZ0BAyyENDPQcAHMdCaA.db23cc5e",
+      "token": "spectrl.v1.ogADBoSkABoAD0RLARoAD0RCAhoAD0R-BVgZeJybNRMIDhY5zALTTQ5pIKDU4wAAo7wL36QAGgAPREsBGgAPREMCGgAPRH4FWBh4nGNgAIKOxw4gisHnLoTuuOwAADAKBLCkABoAD0RLARoAD04AAhoAD0R-BVgeeJyz5bq-uMD2lb186-vAHXJv7c-eAYEP9gCVAQ1ypAAaAA9ESwEaAA9OkQIaAA9EfgVXeJwzNgYBDYezZ0BAyyENDPQcAHMdCaA.99140d10",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -681,6 +766,7 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {
           "MS:1003008": {
@@ -701,15 +787,15 @@
           }
         },
         "array_units": {},
-        "checksum": "db23cc5e",
-        "format_version": 2
+        "checksum": "99140d10",
+        "format_version": 1
       }
     },
     {
       "name": "non_ms_ontology_param_key",
       "description": "a UO-ontology parameter (string map key)",
       "mode": "lossy",
-      "token": "spectrl.v2.owACAqIaAA9EPwFqVU86MDAwMDAxMPtADAAAAAAAAAaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVWeJxz-JHFAAIN-3YzRLzYzgQAK4AFlaUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVF4nHNYo8AAAtkL2hoBEMkDHw.7c9aa4aa",
+      "token": "spectrl.v1.owACAqIaAA9EPwFqVU86MDAwMDAxMPtADAAAAAAAAAaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVWeJxz-JHFAAIN-3YzRLzYzgQAK4AFlaUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVF4nHNYo8AAAtkL2hoBEMkDHw.d58ac782",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -742,18 +828,19 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "7c9aa4aa",
-        "format_version": 2
+        "checksum": "d58ac782",
+        "format_version": 1
       }
     },
     {
       "name": "non_ms_ontology_param_key__lossless",
       "description": "a UO-ontology parameter (string map key) (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.owACAqIaAA9EPwFqVU86MDAwMDAxMPtADAAAAAAAAAaCpAAaAA9ESwEaAA9EQgIaAA9EfgVYGHicO_xVI6b_UJxD6-vAHXKNNQ4ASbMIAKQAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgp9fHUAUQ8dhBwAZ8wO6.a72e3ce5",
+      "token": "spectrl.v1.owACAqIaAA9EPwFqVU86MDAwMDAxMPtADAAAAAAAAAaCpAAaAA9ESwEaAA9EQgIaAA9EfgVYGHicO_xVI6b_UJxD6-vAHXKNNQ4ASbMIAKQAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgp9fHUAUQ8dhBwAZ8wO6.4dc13000",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -786,18 +873,19 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "a72e3ce5",
-        "format_version": 2
+        "checksum": "4dc13000",
+        "format_version": 1
       }
     },
     {
       "name": "user_params",
       "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level trailer extra",
       "mode": "lossy",
-      "token": "spectrl.v2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvtANIAAAAAAABgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVVeJxz-JHFAAICIYaMCiuSmAAfmQNlpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFUnicc1ijwAAC6jN2zAIAEB4DHgiCo2FubE1hc2NvdCBzY29yZWF0aXhzZDpmbG9hdGF2-0BFWZmZmZmaomFub3JlYW5hbHlzaXMgbm90ZWF2dnJlcnVuIHdpdGggc2VtaXRyeXB0aWM.25672c1f",
+      "token": "spectrl.v1.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvtANIAAAAAAABgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVVeJxz-JHFAAICIYaMCiuSmAAfmQNlpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFUnicc1ijwAAC6jN2zAIAEB4DHgiCo2FubE1hc2NvdCBzY29yZWF0aXhzZDpmbG9hdGF2-0BFWZmZmZmaomFub3JlYW5hbHlzaXMgbm90ZWF2dnJlcnVuIHdpdGggc2VtaXRyeXB0aWM.c5b6c9f7",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -844,6 +932,7 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [
           {
             "name": "Mascot score",
@@ -860,15 +949,15 @@
         ],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "25672c1f",
-        "format_version": 2
+        "checksum": "c5b6c9f7",
+        "format_version": 1
       }
     },
     {
       "name": "user_params__lossless",
       "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level trailer extra (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvtANIAAAAAAABgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpAAaAA9ESwEaAA9EQgIaAA9EfgVTeJwzNgYC5kwHYzBd6QAAG7IDZ6QAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgqwXDiCKweetAwAS7AMMCIKjYW5sTWFzY290IHNjb3JlYXRpeHNkOmZsb2F0YXb7QEVZmZmZmZqiYW5vcmVhbmFseXNpcyBub3RlYXZ2cmVydW4gd2l0aCBzZW1pdHJ5cHRpYw.9d8428a1",
+      "token": "spectrl.v1.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvtANIAAAAAAABgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpAAaAA9ESwEaAA9EQgIaAA9EfgVTeJwzNgYC5kwHYzBd6QAAG7IDZ6QAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgqwXDiCKweetAwAS7AMMCIKjYW5sTWFzY290IHNjb3JlYXRpeHNkOmZsb2F0YXb7QEVZmZmZmZqiYW5vcmVhbmFseXNpcyBub3RlYXZ2cmVydW4gd2l0aCBzZW1pdHJ5cHRpYw.1e775bc7",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -915,6 +1004,7 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [
           {
             "name": "Mascot score",
@@ -931,15 +1021,15 @@
         ],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "9d8428a1",
-        "format_version": 2
+        "checksum": "1e775bc7",
+        "format_version": 1
       }
     },
     {
       "name": "extra_arrays",
       "description": "auxiliary arrays: signal-to-noise (named CV, float64), non-standard float32 and int32",
       "mode": "lossy",
-      "token": "spectrl.v2.ogAEBoWlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgZeJxz-JHFAAIeX58wTHh1ktGjWQIAQU4G66UAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVZ4nHNYo8AAAofnqc_4MaGtEQAlTQW8pgAaAA9ESwEaAA9ERQIaAA9M_AMZDhAFVnicc1ijwAAChc5nbK-bCqkAAB99BAwGgmJNUxoAD0LDpQAaAA9ESQEaAA9FUgIaAA9EfgRpaXNvX3Njb3JlBVgYeJzzeFhlf_hrhv2SAlv7s2d47AFGWAe2pQAaAA9ERwEaAA9FUgIaAA9EfgRqcGVha19mbGFncwVSeJxjZmBgYGSAACYgBgAAVAAH.1a992636",
+      "token": "spectrl.v1.ogAEBoWlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgZeJxz-JHFAAIeX58wTHh1ktGjWQIAQU4G66UAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVZ4nHNYo8AAAofnqc_4MaGtEQAlTQW8pgAaAA9ESwEaAA9ERQIaAA9M_AMZDhAFVnicc1ijwAAChc5nbK-bCqkAAB99BAwGgmJNUxoAD0LDpQAaAA9ESQEaAA9FUgIaAA9EfgRpaXNvX3Njb3JlBVgYeJzzeFhlf_hrhv2SAlv7s2d47AFGWAe2pQAaAA9ERwEaAA9FUgIaAA9EfgRqcGVha19mbGFncwVSeJxjZmBgYGSAACYgBgAAVAAH.71a3de1f",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -965,6 +1055,7 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {
           "MS:1000517": {
@@ -998,15 +1089,15 @@
         "array_units": {
           "MS:1000517": "MS:1000131"
         },
-        "checksum": "1a992636",
-        "format_version": 2
+        "checksum": "71a3de1f",
+        "format_version": 1
       }
     },
     {
       "name": "extra_arrays__lossless",
       "description": "auxiliary arrays: signal-to-noise (named CV, float64), non-standard float32 and int32 (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.ogAEBoWkABoAD0RLARoAD0RCAhoAD0R-BVgeeJybNRMIDiY5zALTRQ7GIKBc45AGAoeaHAAA-g4zpAAaAA9ESwEaAA9EQwIaAA9EfgVYHHicY2AAgo7PDiCKIesFhPa5C6E7DjsAAFtYBkKlABoAD0RLARoAD0RFAhoAD0R-BVgYeJxjYACBOAcwxRACoRvcoHwNBwAlIAKhBoJiTVMaAA9Cw6UAGgAPREkBGgAPRVICGgAPRH4EaWlzb19zY29yZQVYGHic83hYZX_4a4b9kgJb-7NneOwBRlgHtqUAGgAPREcBGgAPRVICGgAPRH4EanBlYWtfZmxhZ3MFUnicY2ZgYGBkgAAmIAYAAFQABw.5bdf9934",
+      "token": "spectrl.v1.ogAEBoWkABoAD0RLARoAD0RCAhoAD0R-BVgeeJybNRMIDiY5zALTRQ7GIKBc45AGAoeaHAAA-g4zpAAaAA9ESwEaAA9EQwIaAA9EfgVYHHicY2AAgo7PDiCKIesFhPa5C6E7DjsAAFtYBkKlABoAD0RLARoAD0RFAhoAD0R-BVgYeJxjYACBOAcwxRACoRvcoHwNBwAlIAKhBoJiTVMaAA9Cw6UAGgAPREkBGgAPRVICGgAPRH4EaWlzb19zY29yZQVYGHic83hYZX_4a4b9kgJb-7NneOwBRlgHtqUAGgAPREcBGgAPRVICGgAPRH4EanBlYWtfZmxhZ3MFUnicY2ZgYGBkgAAmIAYAAFQABw.acff17cb",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -1032,6 +1123,7 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {
           "MS:1000517": {
@@ -1065,15 +1157,15 @@
         "array_units": {
           "MS:1000517": "MS:1000131"
         },
-        "checksum": "5bdf9934",
-        "format_version": 2
+        "checksum": "acff17cb",
+        "format_version": 1
       }
     },
     {
       "name": "zstd_codecs",
       "description": "official PSI-MS Numpress + zstd and byte-shuffled zstd pipelines",
       "mode": "lossy",
-      "token": "spectrl.v2.ogAYgAaDpQAaAA9ESwEaAA9EQgIaAA9RBwMaAAGGoAVYLii1L_0gcS0BAKhA-GoAgJaYAN7NpQD_cYiP9xiI_3EGAE45AIq5yQAoQ0c-AESlABoAD0RLARoAD0RDAhoAD1EJAxkOEAVZARIotS_9YAgAQQgAQKwgAAAAAAC4IeIiDiQ9JW0mnyfTKAgqPit2LK8t6i4lMGExnjLcMxo1WjaZN9o4GzpcO5484D0iP2VAqEHsQi9Ec0W3RvxHQEmFSspLD01UTplP3lAjUmlTrlT0VTpXf1jFWQtbUVyXXd1eI2BpYa9i9WM7ZYFmx2cNaVRqmmvgbCZubG-zcPlxP3OFdMx1EndYeJ555XorfHF9uH7-f0SBi4LRgxeFXoakh-qIMYp3i72MBI5Kj5CQ15Edk2OUqpXwljaYfZnDmgmcUJ2WntyfI6Fpoq-j9qQ8poKnyagPqlarnKzirSmvb7C1sfyyQrSItc-2FbhbuaK66LsuvXW-u78BwUjCpQAaAA9ESQEaAA9FUgIaAA9RBQRncXVhbGl0eQVZAZ0otS_9YAABnQwAhBgABAQGBIUGhwRFhcYGR4fIBCRFZYWlxuYGJkdnh6fI6AQUJDRFVWV1hZWltcbW5vYGFiY2R1dnd4eXp7fI2Oj4BAwUHCQsNDxFTVVdZW11fYWNlZ2lrbW9xs7W3ubu9v4GDhYeJi42PkdPV19nb3d_h4-Xn6evt7_I0Njg6PD4AAACAoMCQoPDAiJCYoOjw-MCEiIyQlJicoOTo7PD0-PzAgoSGiIqMjpCSlJaYmpyeoOLk5ujq7O7w8vT2-Pr8_sCBgoOEhYaHiImKi4yNjo-QkZKTlJWWl5iZmpucnZ6foOHi4-Tl5ufo6err7O3u7_Dx8vP09fb3-Pn6-_z9_sAAAGBwQEhQWGBkaGxwdHh8QEJERkhKTE5QUlRWWFpcXmBhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5_QEDBQcJCw0PERMVFxkbHR8hIyUnKSstLzEzNTc5Oz0_QUNFR0lLTU9RU1VXWVtdX2FjZWdpa21vcXN1d3l7fYAAPDw8PT0-PwMQAJSEeBluUw.580d1c11",
+      "token": "spectrl.v1.ogAYgAaDpQAaAA9ESwEaAA9EQgIaAA9RBwMaAAGGoAVYLii1L_0gcS0BAKhA-GoAgJaYAN7NpQD_cYiP9xiI_3EGAE45AIq5yQAoQ0c-AESlABoAD0RLARoAD0RDAhoAD1EJAxkOEAVZARIotS_9YAgAQQgAQKwgAAAAAAC4IeIiDiQ9JW0mnyfTKAgqPit2LK8t6i4lMGExnjLcMxo1WjaZN9o4GzpcO5484D0iP2VAqEHsQi9Ec0W3RvxHQEmFSspLD01UTplP3lAjUmlTrlT0VTpXf1jFWQtbUVyXXd1eI2BpYa9i9WM7ZYFmx2cNaVRqmmvgbCZubG-zcPlxP3OFdMx1EndYeJ555XorfHF9uH7-f0SBi4LRgxeFXoakh-qIMYp3i72MBI5Kj5CQ15Edk2OUqpXwljaYfZnDmgmcUJ2WntyfI6Fpoq-j9qQ8poKnyagPqlarnKzirSmvb7C1sfyyQrSItc-2FbhbuaK66LsuvXW-u78BwUjCpQAaAA9ESQEaAA9FUgIaAA9RBQRncXVhbGl0eQVZAZ0otS_9YAABnQwAhBgABAQGBIUGhwRFhcYGR4fIBCRFZYWlxuYGJkdnh6fI6AQUJDRFVWV1hZWltcbW5vYGFiY2R1dnd4eXp7fI2Oj4BAwUHCQsNDxFTVVdZW11fYWNlZ2lrbW9xs7W3ubu9v4GDhYeJi42PkdPV19nb3d_h4-Xn6evt7_I0Njg6PD4AAACAoMCQoPDAiJCYoOjw-MCEiIyQlJicoOTo7PD0-PzAgoSGiIqMjpCSlJaYmpyeoOLk5ujq7O7w8vT2-Pr8_sCBgoOEhYaHiImKi4yNjo-QkZKTlJWWl5iZmpucnZ6foOHi4-Tl5ufo6err7O3u7_Dx8vP09fb3-Pn6-_z9_sAAAGBwQEhQWGBkaGxwdHh8QEJERkhKTE5QUlRWWFpcXmBhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5_QEDBQcJCw0PERMVFxkbHR8hIyUnKSstLzEzNTc5Oz0_QUNFR0lLTU9RU1VXWVtdX2FjZWdpa21vcXN1d3l7fYAAPDw8PT0-PwMQAJSEeBluUw.1d46bc87",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -1347,6 +1439,7 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
+        "interp": null,
         "user_params": [],
         "extra_arrays": {
           "quality": {
@@ -1484,8 +1577,8 @@
           }
         },
         "array_units": {},
-        "checksum": "580d1c11",
-        "format_version": 2
+        "checksum": "1d46bc87",
+        "format_version": 1
       }
     }
   ]

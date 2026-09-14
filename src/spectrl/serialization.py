@@ -77,6 +77,8 @@ def spectrum_from_dict(data: dict[str, Any]) -> InlineSpectrum:
         raise ValueError("expected a spectrum JSON object")
     if not isinstance(data.get("extra_arrays", {}), dict):
         raise ValueError("extra_arrays must be an object")
+    if "interp" in data or "interpretation" in data:
+        raise ValueError("v2 does not accept identification fields")
     extra = {}
     dtypes = data.get("extra_array_dtypes", {})
     if not isinstance(dtypes, dict):
@@ -119,7 +121,6 @@ def spectrum_from_dict(data: dict[str, Any]) -> InlineSpectrum:
             )
             for p in data.get("products", [])
         ],
-        interp=data.get("interp"),
         extra_arrays=extra,
         array_units=data.get("array_units", {}),
         user_params=[_user(v) for v in data.get("user_params", [])],

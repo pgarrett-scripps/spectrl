@@ -46,7 +46,7 @@ def main() -> None:
                 descriptor[DESC_DATA] = zlib.compress(mutate(zlib.decompress(descriptor[DESC_DATA])))
                 payload = cbor2.dumps(doc)
                 counts["array"] += 1
-            body = "spectrl.v1." + b64url_encode(payload)
+            body = "spectrl.v2." + b64url_encode(payload)
             token = body + "." + token_checksum(body)
         try:
             decode_token(token)

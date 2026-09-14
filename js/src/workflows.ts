@@ -1,4 +1,4 @@
-/** Quality measurement and explicit share-budget selection for v1 tokens. */
+/** Quality measurement and explicit share-budget selection for v2 tokens. */
 import { canonicalSort, validateArrays } from "./canonical.js"
 import { decodeCbor, encodeCbor } from "./cbor_format.js"
 import { tokenBreakdown } from "./inspect.js"

@@ -1,13 +1,13 @@
 {
-  "spectrl_format_version": 1,
-  "generated_by": "spectrl-python 1.0.0",
+  "spectrl_format_version": 2,
+  "generated_by": "spectrl-python 2.0.0",
   "note": "Conformance vectors. A consumer MUST recover `decoded` from `token`. Numpress decode is deterministic; arrays should match the stored decoded values within `tolerance`. Lossless vectors MUST match exactly. The stored `checksum` MUST verify.",
   "vectors": [
     {
       "name": "minimal",
       "description": "m/z and intensity arrays only, no metadata",
       "mode": "lossy",
-      "token": "spectrl.v1.ogADBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgaeJxz-JHFAAI3Kh4w3DHlZlS4vtABAEQZBsilABoAD0RLARoAD0RDAhoAD0z8AxkOEAVUeJxzWKPAAALPFx6e93AiAB2SBWg.4cfc7400",
+      "token": "spectrl.v2.ogADBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgaeJxz-JHFAAI3Kh4w3DHlZlS4vtABAEQZBsilABoAD0RLARoAD0RDAhoAD0z8AxkOEAVUeJxzWKPAAALPFx6e93AiAB2SBWg.962aa4dd",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -33,17 +33,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "4cfc7400",
-        "format_version": 1
+        "checksum": "962aa4dd",
+        "format_version": 2
       }
     },
     {
       "name": "minimal__lossless",
       "description": "m/z and intensity arrays only, no metadata (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v1.ogADBoKkABoAD0RLARoAD0RCAhoAD0R-BVgheJx7E7hDrjU5yUG7XezmucepDotct33-eyTPAQCUZQyUpAAaAA9ESwEaAA9EQwIaAA9EfgVYGHicY2AAgqwfDiCKoeMzhHa47wAAMfoEvQ.5954df16",
+      "token": "spectrl.v2.ogADBoKkABoAD0RLARoAD0RCAhoAD0R-BVgheJx7E7hDrjU5yUG7XezmucepDotct33-eyTPAQCUZQyUpAAaAA9ESwEaAA9EQwIaAA9EfgVYGHicY2AAgqwfDiCKoeMzhHa47wAAMfoEvQ.328dcb51",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -69,17 +68,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "5954df16",
-        "format_version": 1
+        "checksum": "328dcb51",
+        "format_version": 2
       }
     },
     {
       "name": "centroid_ms2_params",
       "description": "MS2 centroid spectrum with ms-level (int), positive-scan flag, centroid flag, TIC",
       "mode": "lossy",
-      "token": "spectrl.v1.pAAEAXgtY29udHJvbGxlclR5cGU9MCBjb250cm9sbGVyTnVtYmVyPTEgc2Nhbj0xMDQyAqQaAA9Cv_YaAA9CwvYaAA9DXfpINzQAGgAPRD8CBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgdeJxz-JHFAAI1X5Yz3DHlZlSQ8XTuZkgAAFLjBoqlABoAD0RLARoAD0RDAhoAD0z8AxkOEAVWeJxzWKPAAAJfug8ttJkp1gIAJm0FXg.733b9165",
+      "token": "spectrl.v2.pAAEAXgtY29udHJvbGxlclR5cGU9MCBjb250cm9sbGVyTnVtYmVyPTEgc2Nhbj0xMDQyAqQaAA9Cv_YaAA9CwvYaAA9DXfpINzQAGgAPRD8CBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgdeJxz-JHFAAI1X5Yz3DHlZlSQ8XTuZkgAAFLjBoqlABoAD0RLARoAD0RDAhoAD0z8AxkOEAVWeJxzWKPAAAJfug8ttJkp1gIAJm0FXg.773199c0",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -128,17 +126,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "733b9165",
-        "format_version": 1
+        "checksum": "773199c0",
+        "format_version": 2
       }
     },
     {
       "name": "centroid_ms2_params__lossless",
       "description": "MS2 centroid spectrum with ms-level (int), positive-scan flag, centroid flag, TIC (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v1.pAAEAXgtY29udHJvbGxlclR5cGU9MCBjb250cm9sbGVyTnVtYmVyPTEgc2Nhbj0xMDQyAqQaAA9Cv_YaAA9CwvYaAA9DXfpINzQAGgAPRD8CBoKkABoAD0RLARoAD0RCAhoAD0R-BVgpeJxja5zq3N0S7aDdLnbz3ONUh4yJb2vsmYscVhzzNu8MrnQAAOQnDdykABoAD0RLARoAD0RDAhoAD0R-BVgdeJxjYACCpisOIKpB-weYZoh7BaELjjsAAF8LBnk.d3dced3b",
+      "token": "spectrl.v2.pAAEAXgtY29udHJvbGxlclR5cGU9MCBjb250cm9sbGVyTnVtYmVyPTEgc2Nhbj0xMDQyAqQaAA9Cv_YaAA9CwvYaAA9DXfpINzQAGgAPRD8CBoKkABoAD0RLARoAD0RCAhoAD0R-BVgpeJxja5zq3N0S7aDdLnbz3ONUh4yJb2vsmYscVhzzNu8MrnQAAOQnDdykABoAD0RLARoAD0RDAhoAD0R-BVgdeJxjYACCpisOIKpB-weYZoh7BaELjjsAAF8LBnk.30afbeca",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -187,17 +184,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "d3dced3b",
-        "format_version": 1
+        "checksum": "30afbeca",
+        "format_version": 2
       }
     },
     {
       "name": "with_charge_array",
       "description": "deconvoluted spectrum carrying a per-peak charge array",
       "mode": "lossy",
-      "token": "spectrl.v1.ogADBoOlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgYeJxz-JHFAAIaQb-ZGFgrWSyECwEu5gRYpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFU3icc1ijwAACLFNdu9saARUNA32kABoAD0RLARoAD0REAhoAD0z7BUt4nCsqLAQAAqwBVQ.9c3a1ba5",
+      "token": "spectrl.v2.ogADBoOlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgYeJxz-JHFAAIaQb-ZGFgrWSyECwEu5gRYpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFU3icc1ijwAACLFNdu9saARUNA32kABoAD0RLARoAD0REAhoAD0z7BUt4nCsqLAQAAqwBVQ.2498f3c5",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -227,17 +223,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "9c3a1ba5",
-        "format_version": 1
+        "checksum": "2498f3c5",
+        "format_version": 2
       }
     },
     {
       "name": "with_charge_array__lossless",
       "description": "deconvoluted spectrum carrying a per-peak charge array (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v1.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJxjYAACl3oHYxAobncAcRl8-h0ALv0EWKQAGgAPREsBGgAPREMCGgAPRH4FVnicY2AAgo7HDgxg-jKUPuwAADIaBNKkABoAD0RLARoAD0REAhoAD0R-BVJ4nGNgAAMHCPXBHkYDABIOAp8.349f737c",
+      "token": "spectrl.v2.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJxjYAACl3oHYxAobncAcRl8-h0ALv0EWKQAGgAPREsBGgAPREMCGgAPRH4FVnicY2AAgo7HDgxg-jKUPuwAADIaBNKkABoAD0RLARoAD0REAhoAD0R-BVJ4nGNgAAMHCPXBHkYDABIOAp8.7995b0cc",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -267,17 +262,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "349f737c",
-        "format_version": 1
+        "checksum": "7995b0cc",
+        "format_version": 2
       }
     },
     {
       "name": "negative_charge_sentinel",
       "description": "charge array with a negative (unassigned/singleton) sentinel; lossy encode falls back to lossless zlib for the charge array and round-trips exactly",
       "mode": "lossy",
-      "token": "spectrl.v1.ogADBoOlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgYeJxz-JHFAAIaQb-ZGFgrWSyECwEu5gRYpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFU3icc1ijwAACLFNdu9saARUNA32kABoAD0RLARoAD0REAhoAD0R-BVN4nGNgAAMHCPVhP5S2BwAWjgMf.12113df5",
+      "token": "spectrl.v2.ogADBoOlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgYeJxz-JHFAAIaQb-ZGFgrWSyECwEu5gRYpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFU3icc1ijwAACLFNdu9saARUNA32kABoAD0RLARoAD0REAhoAD0R-BVN4nGNgAAMHCPVhP5S2BwAWjgMf.b9eafb40",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -307,17 +301,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "12113df5",
-        "format_version": 1
+        "checksum": "b9eafb40",
+        "format_version": 2
       }
     },
     {
       "name": "negative_charge_sentinel__lossless",
       "description": "charge array with a negative (unassigned/singleton) sentinel; lossy encode falls back to lossless zlib for the charge array and round-trips exactly (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v1.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJxjYAACl3oHYxAobncAcRl8-h0ALv0EWKQAGgAPREsBGgAPREMCGgAPRH4FVnicY2AAgo7HDgxg-jKUPuwAADIaBNKkABoAD0RLARoAD0REAhoAD0R-BVN4nGNgAAMHCPVhP5S2BwAWjgMf.0738e3fe",
+      "token": "spectrl.v2.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJxjYAACl3oHYxAobncAcRl8-h0ALv0EWKQAGgAPREsBGgAPREMCGgAPRH4FVnicY2AAgo7HDgxg-jKUPuwAADIaBNKkABoAD0RLARoAD0REAhoAD0R-BVN4nGNgAAMHCPVhP5S2BwAWjgMf.cc145ab1",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -347,17 +340,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "0738e3fe",
-        "format_version": 1
+        "checksum": "cc145ab1",
+        "format_version": 2
       }
     },
     {
       "name": "negative_intensity_fallback",
       "description": "baseline-subtracted intensities with negative values; lossy encode falls back to lossless zlib for the intensity array and round-trips exactly",
       "mode": "lossy",
-      "token": "spectrl.v1.ogADBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVd4nHP4kcUAAg3TZjAw6BoyNgAAKSgEMKQAGgAPREsBGgAPREMCGgAPRH4FV3icY2AAgQf7wVTHYQcwzcBxAAAtDQPz.af907764",
+      "token": "spectrl.v2.ogADBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVd4nHP4kcUAAg3TZjAw6BoyNgAAKSgEMKQAGgAPREsBGgAPREMCGgAPRH4FV3icY2AAgQf7wVTHYQcwzcBxAAAtDQPz.7ad6681f",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -383,17 +375,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "af907764",
-        "format_version": 1
+        "checksum": "7ad6681f",
+        "format_version": 2
       }
     },
     {
       "name": "negative_intensity_fallback__lossless",
       "description": "baseline-subtracted intensities with negative values; lossy encode falls back to lossless zlib for the intensity array and round-trips exactly (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v1.ogADBoKkABoAD0RLARoAD0RCAhoAD0R-BVZ4nGNgAIFIBzDFkAmhDxQ5AAAUWAK1pAAaAA9ESwEaAA9EQwIaAA9EfgVXeJxjYACBB_vBVMdhBzDNwHEAAC0NA_M.064c9169",
+      "token": "spectrl.v2.ogADBoKkABoAD0RLARoAD0RCAhoAD0R-BVZ4nGNgAIFIBzDFkAmhDxQ5AAAUWAK1pAAaAA9ESwEaAA9EQwIaAA9EfgVXeJxjYACBB_vBVMdhBzDNwHEAAC0NA_M.5d0e347b",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -419,17 +410,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "064c9169",
-        "format_version": 1
+        "checksum": "5d0e347b",
+        "format_version": 2
       }
     },
     {
       "name": "scan_list_with_window",
       "description": "scan list with scan-start-time (minute unit) and a scan window m/z range",
       "mode": "lossy",
-      "token": "spectrl.v1.pAACAqEaAA9EPwEDoWFzgaIAoRoAD0JQgvtALq4UeuFHrhgfAYGiGgAPRDSC-WfQgmJNUxoAD0JoGgAPRDWC-VZAgmJNUxoAD0JoBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVV4nHP4kcUAAgIhhowKK5KYAB-ZA2WlABoAD0RLARoAD0RDAhoAD0z8AxkOEAVSeJxzWKPAAALqM3bMAgAQHgMe.7621b48d",
+      "token": "spectrl.v2.pAACAqEaAA9EPwEDoWFzgaIAoRoAD0JQgvtALq4UeuFHrhgfAYGiGgAPRDSC-WfQgmJNUxoAD0JoGgAPRDWC-VZAgmJNUxoAD0JoBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVV4nHP4kcUAAgIhhowKK5KYAB-ZA2WlABoAD0RLARoAD0RDAhoAD0z8AxkOEAVSeJxzWKPAAALqM3bMAgAQHgMe.c5ac1eec",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -486,17 +476,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "7621b48d",
-        "format_version": 1
+        "checksum": "c5ac1eec",
+        "format_version": 2
       }
     },
     {
       "name": "scan_list_with_window__lossless",
       "description": "scan list with scan-start-time (minute unit) and a scan window m/z range (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v1.pAACAqEaAA9EPwEDoWFzgaIAoRoAD0JQgvtALq4UeuFHrhgfAYGiGgAPRDSC-WfQgmJNUxoAD0JoGgAPRDWC-VZAgmJNUxoAD0JoBoKkABoAD0RLARoAD0RCAhoAD0R-BVN4nDM2BgLmTAdjMF3pAAAbsgNnpAAaAA9ESwEaAA9EQwIaAA9EfgVUeJxjYACCrBcOIIrB560DABLsAww.7a6b4919",
+      "token": "spectrl.v2.pAACAqEaAA9EPwEDoWFzgaIAoRoAD0JQgvtALq4UeuFHrhgfAYGiGgAPRDSC-WfQgmJNUxoAD0JoGgAPRDWC-VZAgmJNUxoAD0JoBoKkABoAD0RLARoAD0RCAhoAD0R-BVN4nDM2BgLmTAdjMF3pAAAbsgNnpAAaAA9ESwEaAA9EQwIaAA9EfgVUeJxjYACCrBcOIIrB560DABLsAww.19f865ce",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -553,17 +542,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "7a6b4919",
-        "format_version": 1
+        "checksum": "19f865ce",
+        "format_version": 2
       }
     },
     {
       "name": "precursor_full",
       "description": "precursor with isolation window, selected ion (m/z, charge), and HCD activation",
       "mode": "lossy",
-      "token": "spectrl.v1.pQADAqEaAA9EPwIEgaMAoxoAD0V7-0B70euFHrhSGgAPRXz5OgAaAA9Fffk6AAGBohoAD0JpAhoAD0Uo-0B70euFHrhSAqIaAA9CbYL5TsAZAQoaAA9D5vYFgaEAoRoAD0V7-0B70euFHrhSBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgZeJxz-JHFAAIV_44wGLzqZNyxNg8AQLIHVKUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVR4nHNYo8AAAj8mPJ7j2g0AHN8E5A.eab0f9fd",
+      "token": "spectrl.v2.pQADAqEaAA9EPwIEgaMAoxoAD0V7-0B70euFHrhSGgAPRXz5OgAaAA9Fffk6AAGBohoAD0JpAhoAD0Uo-0B70euFHrhSAqIaAA9CbYL5TsAZAQoaAA9D5vYFgaEAoRoAD0V7-0B70euFHrhSBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgZeJxz-JHFAAIV_44wGLzqZNyxNg8AQLIHVKUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVR4nHNYo8AAAj8mPJ7j2g0AHN8E5A.78cf2716",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -659,17 +647,16 @@
             }
           }
         ],
-        "interp": null,
         "user_params": [],
-        "checksum": "eab0f9fd",
-        "format_version": 1
+        "checksum": "78cf2716",
+        "format_version": 2
       }
     },
     {
       "name": "precursor_full__lossless",
       "description": "precursor with isolation window, selected ion (m/z, charge), and HCD activation (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v1.pQADAqEaAA9EPwIEgaMAoxoAD0V7-0B70euFHrhSGgAPRXz5OgAaAA9Fffk6AAGBohoAD0JpAhoAD0Uo-0B70euFHrhSAqIaAA9CbYL5TsAZAQoaAA9D5vYFgaEAoRoAD0V7-0B70euFHrhSBoKkABoAD0RLARoAD0RCAhoAD0R-BVggeJxTZWuc6qyc4HBR6fbPOqUCh2qRde4PlSocAHLeCZ6kABoAD0RLARoAD0RDAhoAD0R-BVgYeJxjYAACn7sOIIpB_COE7rjsAAApqwRN.4abd00f5",
+      "token": "spectrl.v2.pQADAqEaAA9EPwIEgaMAoxoAD0V7-0B70euFHrhSGgAPRXz5OgAaAA9Fffk6AAGBohoAD0JpAhoAD0Uo-0B70euFHrhSAqIaAA9CbYL5TsAZAQoaAA9D5vYFgaEAoRoAD0V7-0B70euFHrhSBoKkABoAD0RLARoAD0RCAhoAD0R-BVggeJxTZWuc6qyc4HBR6fbPOqUCh2qRde4PlSocAHLeCZ6kABoAD0RLARoAD0RDAhoAD0R-BVgYeJxjYAACn7sOIIpB_COE7rjsAAApqwRN.965c477e",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -765,89 +752,16 @@
             }
           }
         ],
-        "interp": null,
         "user_params": [],
-        "checksum": "4abd00f5",
-        "format_version": 1
-      }
-    },
-    {
-      "name": "with_proforma",
-      "description": "spectrum carrying a ProForma 2.0 peptidoform interpretation string",
-      "mode": "lossy",
-      "token": "spectrl.v1.owADBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgaeJxz-JHFAAIsVQ8YeBKXMq5IW_4AADoIBqmlABoAD0RLARoAD0RDAhoAD0z8AxkOEAVUeJxzWKPAAALPF6rPcO0GABnSBCQHcUVMVklTW1Bob3NwaG9dSy8y.5f75fcfd",
-      "tolerance": {
-        "abs": 1e-06,
-        "rel": 1e-06
-      },
-      "decoded": {
-        "default_array_length": 3,
-        "id": null,
-        "mz": [
-          147.113,
-          276.155,
-          389.239
-        ],
-        "intensity": [
-          100012.00990474736,
-          49996.19696916968,
-          20001.471324173166
-        ],
-        "charge": null,
-        "extra_arrays": {},
-        "array_units": {},
-        "params": [],
-        "scans": [],
-        "scan_combination": null,
-        "precursors": [],
-        "products": [],
-        "interp": "ELVIS[Phospho]K/2",
-        "user_params": [],
-        "checksum": "5f75fcfd",
-        "format_version": 1
-      }
-    },
-    {
-      "name": "with_proforma__lossless",
-      "description": "spectrum carrying a ProForma 2.0 peptidoform interpretation string (lossless)",
-      "mode": "lossless",
-      "token": "spectrl.v1.owADBoKkABoAD0RLARoAD0RCAhoAD0R-BVgheJwL49PdNDc5yUFknfvDKqdCh-e_V368FFzhAACAzQuWpAAaAA9ESwEaAA9EQwIaAA9EfgVXeJxjYACCrB8ODGD6BYTuuOwAADECBNAHcUVMVklTW1Bob3NwaG9dSy8y.4da80467",
-      "tolerance": {
-        "abs": 0.0,
-        "rel": 0.0
-      },
-      "decoded": {
-        "default_array_length": 3,
-        "id": null,
-        "mz": [
-          147.113,
-          276.155,
-          389.239
-        ],
-        "intensity": [
-          100000.0,
-          50000.0,
-          20000.0
-        ],
-        "charge": null,
-        "extra_arrays": {},
-        "array_units": {},
-        "params": [],
-        "scans": [],
-        "scan_combination": null,
-        "precursors": [],
-        "products": [],
-        "interp": "ELVIS[Phospho]K/2",
-        "user_params": [],
-        "checksum": "4da80467",
-        "format_version": 1
+        "checksum": "965c477e",
+        "format_version": 2
       }
     },
     {
       "name": "ion_mobility",
       "description": "spectrum with two distinct per-peak ion-mobility arrays",
       "mode": "lossy",
-      "token": "spectrl.v1.ogADBoSlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVd4nHP4kcUAAhNenWRUuDqZuQEAMh8F8qUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVR4nHNYo8AAAixTf0xw7QYAF3AD_qYAGgAPREsBGgAPTgACGgAPTPoDGgABhqAFWBh4nHP4kcUAAgEOjAwVyYwMHs0CACrTA-sGgmJNUxoAD00-pgAaAA9ESwEaAA9OkQIaAA9M-gMaAAGGoAVYGXicc_iRxQACE8qEGBKKRBgcgg8AADCRBPQGGBw.358752ac",
+      "token": "spectrl.v2.ogADBoSlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVd4nHP4kcUAAhNenWRUuDqZuQEAMh8F8qUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVR4nHNYo8AAAixTf0xw7QYAF3AD_qYAGgAPREsBGgAPTgACGgAPTPoDGgABhqAFWBh4nHP4kcUAAgEOjAwVyYwMHs0CACrTA-sGgmJNUxoAD00-pgAaAA9ESwEaAA9OkQIaAA9M-gMaAAGGoAVYGXicc_iRxQACE8qEGBKKRBgcgg8AADCRBPQGGBw.61de0a55",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -893,17 +807,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "358752ac",
-        "format_version": 1
+        "checksum": "61de0a55",
+        "format_version": 2
       }
     },
     {
       "name": "ion_mobility__lossless",
       "description": "spectrum with two distinct per-peak ion-mobility arrays (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v1.ogADBoSkABoAD0RLARoAD0RCAhoAD0R-BVgZeJybNRMIDhY5zALTTQ5pIKDU4wAAo7wL36QAGgAPREsBGgAPREMCGgAPRH4FWBh4nGNgAIKOxw4gisHnLoTuuOwAADAKBLClABoAD0RLARoAD04AAhoAD0R-BVgeeJyz5bq-uMD2lb186-vAHXJv7c-eAYEP9gCVAQ1yBoJiTVMaAA9NPqUAGgAPREsBGgAPTpECGgAPRH4FV3icMzYGAQ2Hs2dAQMshDQz0HABzHQmgBhgc.c936092b",
+      "token": "spectrl.v2.ogADBoSkABoAD0RLARoAD0RCAhoAD0R-BVgZeJybNRMIDhY5zALTTQ5pIKDU4wAAo7wL36QAGgAPREsBGgAPREMCGgAPRH4FWBh4nGNgAIKOxw4gisHnLoTuuOwAADAKBLClABoAD0RLARoAD04AAhoAD0R-BVgeeJyz5bq-uMD2lb186-vAHXJv7c-eAYEP9gCVAQ1yBoJiTVMaAA9NPqUAGgAPREsBGgAPTpECGgAPRH4FV3icMzYGAQ2Hs2dAQMshDQz0HABzHQmgBhgc.fece8341",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -949,17 +862,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "c936092b",
-        "format_version": 1
+        "checksum": "fece8341",
+        "format_version": 2
       }
     },
     {
       "name": "string_value_and_non_uo_unit",
       "description": "a string-valued spectrum param plus a value carrying an MS-ontology (non-UO) unit",
       "mode": "lossy",
-      "token": "spectrl.v1.owACAqMaAA9EOYL6R-pgAIJiTVMaAA9CwxoAD0Q_ARoAD0RAdEZUTVMgKyBwIEVTSSBGdWxsIG1zBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVZ4nHP4kcUAAg37djNEvNjOBAArgAWVpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFUXicc1ijwAAC2QvaGgEQyQMf.5f750011",
+      "token": "spectrl.v2.owACAqMaAA9EOYL6R-pgAIJiTVMaAA9CwxoAD0Q_ARoAD0RAdEZUTVMgKyBwIEVTSSBGdWxsIG1zBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVZ4nHP4kcUAAg37djNEvNjOBAArgAWVpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFUXicc1ijwAAC2QvaGgEQyQMf.7479a389",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -999,17 +911,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "5f750011",
-        "format_version": 1
+        "checksum": "7479a389",
+        "format_version": 2
       }
     },
     {
       "name": "string_value_and_non_uo_unit__lossless",
       "description": "a string-valued spectrum param plus a value carrying an MS-ontology (non-UO) unit (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v1.owACAqMaAA9EOYL6R-pgAIJiTVMaAA9CwxoAD0Q_ARoAD0RAdEZUTVMgKyBwIEVTSSBGdWxsIG1zBoKkABoAD0RLARoAD0RCAhoAD0R-BVgYeJw7_FUjpv9QnEPr68Adco01DgBJswgApAAaAA9ESwEaAA9EQwIaAA9EfgVUeJxjYACCn18dQBRDx2EHABnzA7o.971402e9",
+      "token": "spectrl.v2.owACAqMaAA9EOYL6R-pgAIJiTVMaAA9CwxoAD0Q_ARoAD0RAdEZUTVMgKyBwIEVTSSBGdWxsIG1zBoKkABoAD0RLARoAD0RCAhoAD0R-BVgYeJw7_FUjpv9QnEPr68Adco01DgBJswgApAAaAA9ESwEaAA9EQwIaAA9EfgVUeJxjYACCn18dQBRDx2EHABnzA7o.8766600f",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -1049,17 +960,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "971402e9",
-        "format_version": 1
+        "checksum": "8766600f",
+        "format_version": 2
       }
     },
     {
       "name": "extra_arrays",
       "description": "auxiliary per-peak arrays: signal-to-noise (named CV, float64), a non-standard float32 array, and a non-standard int32 array",
       "mode": "lossy",
-      "token": "spectrl.v1.ogAEBoWlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgZeJxz-JHFAAIeX58wTHh1ktGjWQIAQU4G66UAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVZ4nHNYo8AAAofnqc_4MaGtEQAlTQW8pQAaAA9ESwEaAA9ERQIaAA9M_AMZDhAFVnicc1ijwAAChc5nbK-bCqkAAB99BAylABoAD0RJARoAD0VSAhoAD0R-BGlpc29fc2NvcmUFWBh4nPN4WGV_-GuG_ZICW_uzZ3jsAUZYB7alABoAD0RHARoAD0VSAhoAD0R-BGpwZWFrX2ZsYWdzBVJ4nGNmYGBgZIAAJiAGAABUAAc.a29b8319",
+      "token": "spectrl.v2.ogAEBoWlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgZeJxz-JHFAAIeX58wTHh1ktGjWQIAQU4G66UAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVZ4nHNYo8AAAofnqc_4MaGtEQAlTQW8pQAaAA9ESwEaAA9ERQIaAA9M_AMZDhAFVnicc1ijwAAChc5nbK-bCqkAAB99BAylABoAD0RJARoAD0VSAhoAD0R-BGlpc29fc2NvcmUFWBh4nPN4WGV_-GuG_ZICW_uzZ3jsAUZYB7alABoAD0RHARoAD0VSAhoAD0R-BGpwZWFrX2ZsYWdzBVJ4nGNmYGBgZIAAJiAGAABUAAc.94198c02",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -1115,17 +1025,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "a29b8319",
-        "format_version": 1
+        "checksum": "94198c02",
+        "format_version": 2
       }
     },
     {
       "name": "extra_arrays__lossless",
       "description": "auxiliary per-peak arrays: signal-to-noise (named CV, float64), a non-standard float32 array, and a non-standard int32 array (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v1.ogAEBoWkABoAD0RLARoAD0RCAhoAD0R-BVgeeJybNRMIDiY5zALTRQ7GIKBc45AGAoeaHAAA-g4zpAAaAA9ESwEaAA9EQwIaAA9EfgVYHHicY2AAgo7PDiCKIesFhPa5C6E7DjsAAFtYBkKkABoAD0RLARoAD0RFAhoAD0R-BVgYeJxjYACBOAcwxRACoRvcoHwNBwAlIAKhpQAaAA9ESQEaAA9FUgIaAA9EfgRpaXNvX3Njb3JlBVgYeJzzeFhlf_hrhv2SAlv7s2d47AFGWAe2pQAaAA9ERwEaAA9FUgIaAA9EfgRqcGVha19mbGFncwVSeJxjZmBgYGSAACYgBgAAVAAH.c267c43a",
+      "token": "spectrl.v2.ogAEBoWkABoAD0RLARoAD0RCAhoAD0R-BVgeeJybNRMIDiY5zALTRQ7GIKBc45AGAoeaHAAA-g4zpAAaAA9ESwEaAA9EQwIaAA9EfgVYHHicY2AAgo7PDiCKIesFhPa5C6E7DjsAAFtYBkKkABoAD0RLARoAD0RFAhoAD0R-BVgYeJxjYACBOAcwxRACoRvcoHwNBwAlIAKhpQAaAA9ESQEaAA9FUgIaAA9EfgRpaXNvX3Njb3JlBVgYeJzzeFhlf_hrhv2SAlv7s2d47AFGWAe2pQAaAA9ERwEaAA9FUgIaAA9EfgRqcGVha19mbGFncwVSeJxjZmBgYGSAACYgBgAAVAAH.48348fd9",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -1181,17 +1090,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "c267c43a",
-        "format_version": 1
+        "checksum": "48348fd9",
+        "format_version": 2
       }
     },
     {
       "name": "user_params",
       "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level Thermo trailer extra",
       "mode": "lossy",
-      "token": "spectrl.v1.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvlNIBgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVVeJxz-JHFAAICIYaMCiuSmAAfmQNlpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFUnicc1ijwAAC6jN2zAIAEB4DHgiCo2FubE1hc2NvdCBzY29yZWF0aXhzZDpmbG9hdGF2-0BFWZmZmZmaomFub3JlYW5hbHlzaXMgbm90ZWF2dnJlcnVuIHdpdGggc2VtaXRyeXB0aWM.77744ed9",
+      "token": "spectrl.v2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvlNIBgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVVeJxz-JHFAAICIYaMCiuSmAAfmQNlpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFUnicc1ijwAAC6jN2zAIAEB4DHgiCo2FubE1hc2NvdCBzY29yZWF0aXhzZDpmbG9hdGF2-0BFWZmZmZmaomFub3JlYW5hbHlzaXMgbm90ZWF2dnJlcnVuIHdpdGggc2VtaXRyeXB0aWM.bfa0c547",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -1240,7 +1148,6 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [
           {
             "name": "Mascot score",
@@ -1255,15 +1162,15 @@
             "unit_accession": null
           }
         ],
-        "checksum": "77744ed9",
-        "format_version": 1
+        "checksum": "bfa0c547",
+        "format_version": 2
       }
     },
     {
       "name": "user_params__lossless",
       "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level Thermo trailer extra (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v1.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvlNIBgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpAAaAA9ESwEaAA9EQgIaAA9EfgVTeJwzNgYC5kwHYzBd6QAAG7IDZ6QAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgqwXDiCKweetAwAS7AMMCIKjYW5sTWFzY290IHNjb3JlYXRpeHNkOmZsb2F0YXb7QEVZmZmZmZqiYW5vcmVhbmFseXNpcyBub3RlYXZ2cmVydW4gd2l0aCBzZW1pdHJ5cHRpYw.50662f76",
+      "token": "spectrl.v2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvlNIBgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpAAaAA9ESwEaAA9EQgIaAA9EfgVTeJwzNgYC5kwHYzBd6QAAG7IDZ6QAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgqwXDiCKweetAwAS7AMMCIKjYW5sTWFzY290IHNjb3JlYXRpeHNkOmZsb2F0YXb7QEVZmZmZmZqiYW5vcmVhbmFseXNpcyBub3RlYXZ2cmVydW4gd2l0aCBzZW1pdHJ5cHRpYw.27bb4547",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -1312,7 +1219,6 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [
           {
             "name": "Mascot score",
@@ -1327,15 +1233,15 @@
             "unit_accession": null
           }
         ],
-        "checksum": "50662f76",
-        "format_version": 1
+        "checksum": "27bb4547",
+        "format_version": 2
       }
     },
     {
       "name": "non_ms_ontology_param_key",
       "description": "a UO-ontology spectrum parameter, whose map key is the full accession string",
       "mode": "lossy",
-      "token": "spectrl.v1.owACAqIaAA9EPwFqVU86MDAwMDAxMPlDAAaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVWeJxz-JHFAAIN-3YzRLzYzgQAK4AFlaUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVF4nHNYo8AAAtkL2hoBEMkDHw.b5cf8707",
+      "token": "spectrl.v2.owACAqIaAA9EPwFqVU86MDAwMDAxMPlDAAaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVWeJxz-JHFAAIN-3YzRLzYzgQAK4AFlaUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVF4nHNYo8AAAtkL2hoBEMkDHw.4b42cd66",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -1370,17 +1276,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "b5cf8707",
-        "format_version": 1
+        "checksum": "4b42cd66",
+        "format_version": 2
       }
     },
     {
       "name": "non_ms_ontology_param_key__lossless",
       "description": "a UO-ontology spectrum parameter, whose map key is the full accession string (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v1.owACAqIaAA9EPwFqVU86MDAwMDAxMPlDAAaCpAAaAA9ESwEaAA9EQgIaAA9EfgVYGHicO_xVI6b_UJxD6-vAHXKNNQ4ASbMIAKQAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgp9fHUAUQ8dhBwAZ8wO6.f40a4a3d",
+      "token": "spectrl.v2.owACAqIaAA9EPwFqVU86MDAwMDAxMPlDAAaCpAAaAA9ESwEaAA9EQgIaAA9EfgVYGHicO_xVI6b_UJxD6-vAHXKNNQ4ASbMIAKQAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgp9fHUAUQ8dhBwAZ8wO6.e9a330b1",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -1415,17 +1320,16 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "f40a4a3d",
-        "format_version": 1
+        "checksum": "e9a330b1",
+        "format_version": 2
       }
     },
     {
       "name": "zstd_codecs",
       "description": "official PSI-MS Numpress + zstd and byte-shuffled zstd pipelines",
       "mode": "lossy",
-      "token": "spectrl.v1.ogAYgAaDpQAaAA9ESwEaAA9EQgIaAA9RBwMaAAGGoAVYLii1L_0gcS0BAKhA-GoAgJaYAN7NpQD_cYiP9xiI_3EGAE45AIq5yQAoQ0c-AESlABoAD0RLARoAD0RDAhoAD1EJAxkOEAVZARIotS_9YAgAQQgAQKwgAAAAAAC4IeIiDiQ9JW0mnyfTKAgqPit2LK8t6i4lMGExnjLcMxo1WjaZN9o4GzpcO5484D0iP2VAqEHsQi9Ec0W3RvxHQEmFSspLD01UTplP3lAjUmlTrlT0VTpXf1jFWQtbUVyXXd1eI2BpYa9i9WM7ZYFmx2cNaVRqmmvgbCZubG-zcPlxP3OFdMx1EndYeJ555XorfHF9uH7-f0SBi4LRgxeFXoakh-qIMYp3i72MBI5Kj5CQ15Edk2OUqpXwljaYfZnDmgmcUJ2WntyfI6Fpoq-j9qQ8poKnyagPqlarnKzirSmvb7C1sfyyQrSItc-2FbhbuaK66LsuvXW-u78BwUjCpQAaAA9ESQEaAA9FUgIaAA9RBQRncXVhbGl0eQVZAZ0otS_9YAABnQwAhBgABAQGBIUGhwRFhcYGR4fIBCRFZYWlxuYGJkdnh6fI6AQUJDRFVWV1hZWltcbW5vYGFiY2R1dnd4eXp7fI2Oj4BAwUHCQsNDxFTVVdZW11fYWNlZ2lrbW9xs7W3ubu9v4GDhYeJi42PkdPV19nb3d_h4-Xn6evt7_I0Njg6PD4AAACAoMCQoPDAiJCYoOjw-MCEiIyQlJicoOTo7PD0-PzAgoSGiIqMjpCSlJaYmpyeoOLk5ujq7O7w8vT2-Pr8_sCBgoOEhYaHiImKi4yNjo-QkZKTlJWWl5iZmpucnZ6foOHi4-Tl5ufo6err7O3u7_Dx8vP09fb3-Pn6-_z9_sAAAGBwQEhQWGBkaGxwdHh8QEJERkhKTE5QUlRWWFpcXmBhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5_QEDBQcJCw0PERMVFxkbHR8hIyUnKSstLzEzNTc5Oz0_QUNFR0lLTU9RU1VXWVtdX2FjZWdpa21vcXN1d3l7fYAAPDw8PT0-PwMQAJSEeBluUw.1d46bc87",
+      "token": "spectrl.v2.ogAYgAaDpQAaAA9ESwEaAA9EQgIaAA9RBwMaAAGGoAVYLii1L_0gcS0BAKhA-GoAgJaYAN7NpQD_cYiP9xiI_3EGAE45AIq5yQAoQ0c-AESlABoAD0RLARoAD0RDAhoAD1EJAxkOEAVZARIotS_9YAgAQQgAQKwgAAAAAAC4IeIiDiQ9JW0mnyfTKAgqPit2LK8t6i4lMGExnjLcMxo1WjaZN9o4GzpcO5484D0iP2VAqEHsQi9Ec0W3RvxHQEmFSspLD01UTplP3lAjUmlTrlT0VTpXf1jFWQtbUVyXXd1eI2BpYa9i9WM7ZYFmx2cNaVRqmmvgbCZubG-zcPlxP3OFdMx1EndYeJ555XorfHF9uH7-f0SBi4LRgxeFXoakh-qIMYp3i72MBI5Kj5CQ15Edk2OUqpXwljaYfZnDmgmcUJ2WntyfI6Fpoq-j9qQ8poKnyagPqlarnKzirSmvb7C1sfyyQrSItc-2FbhbuaK66LsuvXW-u78BwUjCpQAaAA9ESQEaAA9FUgIaAA9RBQRncXVhbGl0eQVZAZ0otS_9YAABnQwAhBgABAQGBIUGhwRFhcYGR4fIBCRFZYWlxuYGJkdnh6fI6AQUJDRFVWV1hZWltcbW5vYGFiY2R1dnd4eXp7fI2Oj4BAwUHCQsNDxFTVVdZW11fYWNlZ2lrbW9xs7W3ubu9v4GDhYeJi42PkdPV19nb3d_h4-Xn6evt7_I0Njg6PD4AAACAoMCQoPDAiJCYoOjw-MCEiIyQlJicoOTo7PD0-PzAgoSGiIqMjpCSlJaYmpyeoOLk5ujq7O7w8vT2-Pr8_sCBgoOEhYaHiImKi4yNjo-QkZKTlJWWl5iZmpucnZ6foOHi4-Tl5ufo6err7O3u7_Dx8vP09fb3-Pn6-_z9_sAAAGBwQEhQWGBkaGxwdHh8QEJERkhKTE5QUlRWWFpcXmBhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5_QEDBQcJCw0PERMVFxkbHR8hIyUnKSstLzEzNTc5Oz0_QUNFR0lLTU9RU1VXWVtdX2FjZWdpa21vcXN1d3l7fYAAPDw8PT0-PwMQAJSEeBluUw.580d1c11",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -1835,10 +1739,9 @@
         "scan_combination": null,
         "precursors": [],
         "products": [],
-        "interp": null,
         "user_params": [],
-        "checksum": "1d46bc87",
-        "format_version": 1
+        "checksum": "580d1c11",
+        "format_version": 2
       }
     }
   ]

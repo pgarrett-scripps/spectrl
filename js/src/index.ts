@@ -1,7 +1,7 @@
 /**
  * spectrl: Inline Spectrum URL Encoder (JavaScript/TypeScript).
  *
- * Encodes a single mass spectrum into a compact, URL-safe `spectrl.v1` token and
+ * Encodes a single mass spectrum into a compact, URL-safe `spectrl.v2` token and
  * back. Byte-compatible with the Python reference implementation; validated
  * against the shared conformance vectors in `test-vectors/`.
  */
@@ -42,7 +42,7 @@ export interface EncodeOptions {
   allowUnsafeLossyCustom?: boolean;
 }
 
-/** Encode an {@link InlineSpectrum} into a `spectrl.v1` token (a single CBOR document). */
+/** Encode an {@link InlineSpectrum} into a `spectrl.v2` token (a single CBOR document). */
 export function encodeSpectrum(spec: InlineSpectrum, opts: EncodeOptions = {}): string {
   const {
     lossless = false,
@@ -67,7 +67,7 @@ export function encodeSpectrum(spec: InlineSpectrum, opts: EncodeOptions = {}): 
   return token;
 }
 
-/** Decode a `spectrl.v1` token into a {@link DecodedSpectrum}, verifying its trailing CRC-32 checksum. */
+/** Decode a `spectrl.v2` token into a {@link DecodedSpectrum}, verifying its trailing CRC-32 checksum. */
 export function decodeToken(token: string): DecodedSpectrum {
   return decodeCbor(token);
 }

@@ -8,7 +8,7 @@ Top-level key registry (mirrors mzML <spectrum>):
   4  precursorList: [precursor, ...]
   5  productList: [product, ...]
   6  binaryDataArrayList: [descriptor, ...]
-  7  interp: ProForma string (optional)
+  7  reserved and forbidden in v2
   8  userParamList: [user_param, ...] spectrum-level free-text params (optional)
 
 The format version lives only in the token magic, and the checksum only
@@ -282,8 +282,6 @@ def build_header_dict(spec: InlineSpectrum, descriptors: list[dict]) -> dict:
     if spec.products:
         h[5] = [_encode_product(p) for p in spec.products]
     h[6] = descriptors
-    if spec.interp is not None:
-        h[7] = spec.interp
     if spec.user_params:
         h[8] = _encode_user_params(spec.user_params)
     return h
@@ -310,7 +308,6 @@ def parse_header_dict(h: dict) -> DecodedSpectrum:
 
     precursors = [_decode_precursor(p) for p in h.get(4, [])]
     products = [_decode_product(p) for p in h.get(5, [])]
-    interp = h.get(7)
     user_params = _decode_user_params(h.get(8, []))
 
     return DecodedSpectrum(
@@ -321,7 +318,6 @@ def parse_header_dict(h: dict) -> DecodedSpectrum:
         scan_combination=scan_combination,
         precursors=precursors,
         products=products,
-        interp=interp,
         user_params=user_params,
         format_version=FORMAT_VERSION,
     )

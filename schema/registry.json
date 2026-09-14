@@ -2,8 +2,11 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/pgarrett-scripps/spectrl/schema/registry.json",
   "title": "spectrl registry",
-  "description": "Machine-readable registry of all integer keys, CV accession tails, and codec identifiers used in the spectrl.v1 token format.",
-  "spectrl_version": 1,
+  "description": "Machine-readable registry of all integer keys, CV accession tails, and codec identifiers used in the spectrl.v2 token format.",
+  "spectrl_version": 2,
+  "reserved_header_keys": [
+    7
+  ],
   "wire_constants": {
     "checksum_hex_chars": 8,
     "max_blob_bytes": 67108864,
@@ -16,7 +19,7 @@
     "max_safe_integer": 9007199254740991
   },
   "token_format": {
-    "magic": "spectrl.v1",
+    "magic": "spectrl.v2",
     "description": "identifier '.' version '.' base64url(CBOR document) '.' checksum. The CBOR document is the header map (see header_keys) with each array's compressed blob embedded inline as a CBOR byte string in its descriptor (descriptor key 5). Encoded deterministically (RFC 8949 \u00a74.2). The format version is carried only in the magic. The token string is the interchange unit.",
     "base64url": "RFC 4648 \u00a75: URL-safe alphabet, no padding ('=' stripped).",
     "checksum": "REQUIRED fourth part: CRC-32/ISO-HDLC over the ASCII text of the first three parts, 'spectrl.version.payload', encoded as eight lowercase hexadecimal characters. Consumers MUST reject a token on mismatch.",
@@ -29,7 +32,7 @@
       {
         "index": 1,
         "content": "version identifier",
-        "example": "v1"
+        "example": "v2"
       },
       {
         "index": 2,
@@ -184,12 +187,6 @@
           "description": "optional CV unit accession encoded with the same rules as cvParam units"
         }
       }
-    },
-    "7": {
-      "name": "interp",
-      "type": "string",
-      "required": false,
-      "description": "ProForma 2.0 peptide interpretation string. PSI-MOD terms as [MOD:00046], Unimod as [UNIMOD:21], bare mass deltas as [+79.966]."
     },
     "8": {
       "name": "user_param_list",
@@ -370,7 +367,7 @@
     }
   },
   "data_types": {
-    "description": "Binary data type accession tails. Used in array descriptor 'type' field. Only float64, float32, and int32 are permitted in spectrl.v1 tokens. Other mzML data types (int64, ASCII string) are listed for completeness but MUST NOT appear.",
+    "description": "Binary data type accession tails. Used in array descriptor 'type' field. Only float64, float32, and int32 are permitted in spectrl.v2 tokens. Other mzML data types (int64, ASCII string) are listed for completeness but MUST NOT appear.",
     "types": {
       "1000521": {
         "accession": "MS:1000521",
@@ -394,7 +391,7 @@
         "accession": "MS:1000522",
         "tail": 1000522,
         "name": "INT_64",
-        "description": "64-bit signed integer little-endian. NOT permitted in spectrl.v1."
+        "description": "64-bit signed integer little-endian. NOT permitted in spectrl.v2."
       },
       "1001479": {
         "accession": "MS:1001479",

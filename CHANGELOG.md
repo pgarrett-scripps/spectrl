@@ -5,10 +5,31 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-The **token format version** (the `spectrl.v1` magic prefix) is versioned
+The **token format version** (the `spectrl.v2` magic prefix) is versioned
 independently of the library version. See [SPECIFICATION.md](SPECIFICATION.md).
 
 ## [Unreleased]
+
+## [2.0.0] - 2026-09-14
+
+### Changed
+
+- Introduce `spectrl.v2` for measured spectra and acquisition context, with no
+  molecular identification or fragment assignment model.
+- Remove `interp` from Python and TypeScript spectrum models and encoders.
+  Remove the optional Python ProForma validation dependency.
+- Reserve header key 7 and reject every occurrence in v2, including null.
+  Retain the meanings of all other keys and the existing array codecs.
+- Normal decoding accepts only v2. Existing v1 tokens are not relabeled or
+  silently converted.
+
+### Added
+
+- Explicit legacy decoders in `spectrl.legacy` and `@spectrl-ms/spectrl/legacy`.
+  These preserve the v1 interpretation separately from the spectrum model.
+- Archived v1 conformance fixtures and tests for the version boundary,
+  checksums, migration, and rejection of identification inputs.
+- Regenerated bidirectional Python and TypeScript conformance vectors for v2.
 
 ## [1.1.0] - 2026-09-04
 

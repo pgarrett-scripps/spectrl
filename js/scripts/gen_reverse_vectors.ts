@@ -76,7 +76,6 @@ function decodedJson(d: DecodedSpectrum) {
       activation: p.activation ? { params: paramsJson(p.activation.params) } : null,
     })),
     products: d.products.map((pr) => ({ isolation_window: pr.isolationWindow ? { params: paramsJson(pr.isolationWindow.params) } : null })),
-    interp: d.interp,
     user_params: userParamsJson(d.userParams),
     extra_arrays: extraJson(d.extraArrays),
     array_units: d.arrayUnits,
@@ -138,7 +137,6 @@ const specs: Array<[string, string, InlineSpectrum]> = [
       ],
     },
   ],
-  ["with_proforma", "ProForma interpretation", { defaultArrayLength: 3, mz: [147.113, 276.155, 389.239], intensity: [1e5, 5e4, 2e4], interp: "ELVIS[Phospho]K/2" }],
   [
     "ion_mobility",
     "two distinct per-peak ion mobility arrays",

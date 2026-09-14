@@ -32,7 +32,6 @@ function makeSpec(): InlineSpectrum {
         activation: { params: [{ accession: "MS:1000422" }, { accession: "MS:1000045", value: 27.0, unitAccession: "UO:0000266" }] },
       },
     ],
-    interp: "ELVISK/2",
   };
 }
 
@@ -43,7 +42,6 @@ test("lossy round-trip recovers peaks within numpress tolerance", () => {
 
   assert.equal(d.defaultArrayLength, 5);
   assert.equal(d.id, "scan=42");
-  assert.equal(d.interp, "ELVISK/2");
   for (let i = 0; i < 5; i++) {
     assert.ok(Math.abs(d.mz![i]! - spec.mz![i]!) < 1e-3, `mz[${i}]`);
     assert.ok(Math.abs(d.intensity![i]! - (spec.intensity as number[])[i]!) / (spec.intensity as number[])[i]! < 1e-2, `int[${i}]`);

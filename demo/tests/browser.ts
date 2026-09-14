@@ -37,12 +37,12 @@ const tests: [string, () => Promise<void>][] = [
   }],
   ["metadata is rendered literally", async () => {
     const markup = '<img id="injected" src="missing" onerror="document.body.dataset.injected=1">'
-    await load(encodeSpectrum({ defaultArrayLength: 1, mz: [100], intensity: [10], id: markup, interp: markup,
+    await load(encodeSpectrum({ defaultArrayLength: 1, mz: [100], intensity: [10], id: markup,
       params: [{ accession: "MS:1000511", value: markup }], extraArrays: { [markup]: [1] } }))
     assert(!frame.contentDocument!.querySelector("#injected"), "Metadata created an HTML element")
     assert(!frame.contentDocument!.body.dataset.injected, "Metadata executed a handler")
     assert(element("#metaTable").textContent!.includes(markup), "Metadata text was lost")
-    assert(element("#spectrumSummary").textContent!.includes(markup), "Summary text was lost")
+    assert(!element("#spectrumSummary").textContent!.includes(markup), "Unmodeled text entered the summary")
     assert(element("#stats").textContent!.includes(markup), "Custom-array label was lost")
   }],
   ["peak import and lossless mode preserve user data", async () => {

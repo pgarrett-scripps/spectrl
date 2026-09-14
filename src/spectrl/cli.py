@@ -90,7 +90,7 @@ def _input_token(path: str) -> str:
     from . import extract_token
 
     value = _read_input(path).strip()
-    return value if value.startswith("spectrl.v1.") else extract_token(value)
+    return value if value.startswith("spectrl.v2.") else extract_token(value)
 
 
 def _input_spectrum(args):
@@ -158,7 +158,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(prog="spectrl", description="spectrl inline spectrum encoder/decoder")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
-    enc = sub.add_parser("encode", help="Encode a spectrum JSON to a spectrl.v1 token")
+    enc = sub.add_parser("encode", help="Encode a spectrum JSON to a spectrl.v2 token")
     _spectrum_input(enc)
     enc.add_argument("--max-len", type=int, default=None, help="Maximum token length in bytes")
     enc.add_argument(
@@ -175,14 +175,14 @@ def main() -> None:
     )
     enc.set_defaults(func=_encode_cmd)
 
-    dec = sub.add_parser("decode", help="Decode a spectrl.v1 token to JSON")
+    dec = sub.add_parser("decode", help="Decode a spectrl.v2 token to JSON")
     dec.add_argument("input", nargs="?", default="-", help="Token file or '-' for stdin")
     dec.add_argument(
         "--output-format", choices=["json", "csv", "tsv"], default="json", help="CSV/TSV exports only m/z and intensity"
     )
     dec.set_defaults(func=_decode_cmd)
 
-    ins = sub.add_parser("inspect", help="Inspect a spectrl.v1 token header as readable JSON")
+    ins = sub.add_parser("inspect", help="Inspect a spectrl.v2 token header as readable JSON")
     ins.add_argument("input", nargs="?", default="-", help="Token file or '-' for stdin")
     ins.set_defaults(func=_inspect_cmd)
 

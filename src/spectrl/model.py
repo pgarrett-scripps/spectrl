@@ -116,7 +116,6 @@ class InlineSpectrum:
         scan_combination: Optional scan-list combination CV param.
         precursors: List of precursor entries.
         products: List of product entries.
-        interp: Optional ProForma 2.0 interpretation string (header key 7).
         extra_arrays: Additional per-peak binary arrays, including every ion-
             mobility variant, keyed by a PSI-MS accession (e.g. 'MS:1003008') or
             a free-text name for a non-standard array (carried as MS:1000786).
@@ -134,7 +133,6 @@ class InlineSpectrum:
     scan_combination: SpectrlCvParam | None = None
     precursors: list[SpectrlPrecursor] = field(default_factory=list)
     products: list[SpectrlProduct] = field(default_factory=list)
-    interp: str | None = None
     extra_arrays: dict[str, NDArray] = field(default_factory=dict)
     array_units: dict[str, str] = field(default_factory=dict)
     user_params: list[SpectrlUserParam] = field(default_factory=list)
@@ -173,12 +171,11 @@ class DecodedSpectrum:
     scan_combination: SpectrlCvParam | None = None
     precursors: list[SpectrlPrecursor] = field(default_factory=list)
     products: list[SpectrlProduct] = field(default_factory=list)
-    interp: str | None = None
     extra_arrays: dict[str, NDArray] = field(default_factory=dict)
     array_units: dict[str, str] = field(default_factory=dict)
     user_params: list[SpectrlUserParam] = field(default_factory=list)
     checksum: str = ""
-    format_version: int = 1
+    format_version: int = 2
 
     @property
     def mobility_arrays(self) -> dict[str, NDArray]:
