@@ -9,6 +9,8 @@
 import { decodeCbor, encodeCbor } from "./cbor_format.js";
 import { tokenBreakdown } from "./inspect.js";
 import type { ArrayEncodingOption, DecodedSpectrum, InlineSpectrum } from "./model.js";
+import type { DecodeLimits } from "./limits.js"
+export { DEFAULT_DECODE_LIMITS, type DecodeLimits } from "./limits.js"
 
 export * from "./model.js";
 export * from "./array_accession.js";
@@ -67,9 +69,10 @@ export function encodeSpectrum(spec: InlineSpectrum, opts: EncodeOptions = {}): 
   return token;
 }
 
-/** Decode a `spectrl.v2` token into a {@link DecodedSpectrum}, verifying its trailing CRC-32 checksum. */
-export function decodeToken(token: string): DecodedSpectrum {
-  return decodeCbor(token);
+/** Decode a token with optional budgets checked before array decompression.
+ * Omitting limits preserves the existing wire-format ceilings. */
+export function decodeToken(token: string, limits?: DecodeLimits): DecodedSpectrum {
+  return decodeCbor(token, false, limits)
 }
 
 /** Resolve automatic codecs, fixed points, types, and units for a spectrum. */

@@ -3,12 +3,32 @@
 All notable changes to this project are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+and package major versions track the spectrl token format major version.
 
-The **token format version** (the `spectrl.v2` magic prefix) is versioned
-independently of the library version. See [SPECIFICATION.md](SPECIFICATION.md).
+Python and JavaScript packages share a version. Releases in the 2.x series use
+`spectrl.v2`. Minor and patch releases can improve the libraries without changing
+the token format. Runtime support changes are called out in the release notes.
+See [SPECIFICATION.md](SPECIFICATION.md).
 
 ## [Unreleased]
+
+## [2.1.0] - 2026-09-15
+
+### Added
+
+- Optional Python and JavaScript decoder budgets for complete token bytes,
+  declared peaks, array count, and aggregate decoded array bytes, including
+  explicit v1 decoding. Array budgets are checked before decompression.
+- Runnable Python producer and Node consumer examples with explicit precision,
+  HTTP response limits, decoder budgets, and error handling.
+- Service integration guidance covering concurrency, workers, and zstd setup.
+
+### Changed
+
+- Require Node 22+ for the JavaScript package, matching the tested Node 22 and
+  24 runtime range. Zstd remains an installed dependency with explicit setup.
+- Correct npm availability documentation and expand the JavaScript API guide.
+- Keep calls without decoder budgets compatible with the existing format limits.
 
 ## [2.0.0] - 2026-09-14
 

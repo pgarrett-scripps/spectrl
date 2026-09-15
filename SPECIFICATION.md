@@ -506,7 +506,9 @@ work and is out of scope for this version.
   registered in PSI-MS CV) keeps version `2`.
 - A **breaking** change (altered framing, altered semantics of an existing key,
   removed key) **MUST** increment the version, producing `spectrl.v3`, and so on.
-- The library (semver) version is independent of the format version.
+- Python and JavaScript packages share a version whose major component matches
+  the format version. Minor and patch releases can change the libraries without
+  changing the wire format. Runtime support changes are documented in release notes.
 - `spectrl.v2` is introduced by library release 2.0.0. Existing required fields
   and semantics will not change within this format version.
 - The published `spectrl.v1` format remains unchanged. Its optional key 7 is
@@ -589,6 +591,14 @@ CV/codec/key registry.
   documents with more than 100,000 items, and declared peak counts above
   4,000,000.
 
+Applications may impose stricter acceptance budgets without changing the wire
+format. The current Python and JavaScript implementations accept optional
+per-call limits on complete token bytes, declared peaks, array count, and the
+sum of decoded array bytes. Descriptor validation and aggregate accounting
+precede any array decompression. These application budgets do not bound total
+process memory or execution time. See [service integration](docs/services.md)
+for their API contract and release availability.
+
 ## 13. IANA considerations
 
 This section drafts the vendor-tree media-type registration to be submitted as
@@ -597,7 +607,7 @@ part of standardization ([RFC 6838][rfc6838]):
 - **Type name:** `application`
 - **Subtype name:** `vnd.spectrl`
 - **Required parameters:** none
-- **Optional parameters:** `v`, the spectrl format version (currently `1`). If
+- **Optional parameters:** `v`, the spectrl format version (currently `2`). If
   present it **MUST** match the token's magic version.
 - **Encoding considerations:** the payload is an ASCII token
   (`spectrl.v2.<base64url>.<checksum>`), safe for 7-bit transports.

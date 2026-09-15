@@ -94,7 +94,8 @@ jobs:
         run: |
           python -m venv /tmp/spectrl-wheel-smoke
           /tmp/spectrl-wheel-smoke/bin/pip install dist/*.whl
-          /tmp/spectrl-wheel-smoke/bin/python -c "import spectrl; print(spectrl.__name__)"
+          cp scripts/package_smoke.py /tmp/spectrl-wheel-smoke/smoke.py
+          /tmp/spectrl-wheel-smoke/bin/python /tmp/spectrl-wheel-smoke/smoke.py
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -136,6 +137,15 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Installed package workflows
+        shell: bash
+        run: |
+          smoke_root=$(mktemp -d)
+          npm pack --pack-destination "$smoke_root"
+          npm install --prefix "$smoke_root" "$smoke_root"/*.tgz
+          cp scripts/package_smoke.mjs "$smoke_root/smoke.mjs"
+          node "$smoke_root/smoke.mjs"
 
   demo:
     name: demo build

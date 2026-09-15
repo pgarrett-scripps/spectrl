@@ -48,6 +48,7 @@ import type { ArrayEncodingOption, DecodedSpectrum, InlineSpectrum } from "./mod
 import { MAGIC } from "./token.js";
 import { zlibDecompress } from "./zlibp.js";
 import { MAX_ARRAY_LENGTH, MAX_BLOB_BYTES, MAX_SAFE_INTEGER, MAX_TOKEN_BYTES } from "./format.js";
+import { resolveDecodeLimits, type DecodeLimits } from "./limits.js"
 
 /**
  * Drop free-text user params at spectrum and scan level.
@@ -204,8 +205,10 @@ function validateHeaderShape(h: MsgMap, legacy = false): void {
  * Decode a spectrl.v2 token, verifying the trailing CRC-32 checksum.
  * Throws SpectrlDecodeError on any malformed, corrupted, or unsupported input.
  */
-export function readTokenDocument(token: string, legacy = false): { doc: MsgMap, decoded: DecodedSpectrum } {
+export function readTokenDocument(token: string, legacy = false, limits?: DecodeLimits): { doc: MsgMap, decoded: DecodedSpectrum } {
+  const budget = resolveDecodeLimits(limits)
   if (typeof token !== "string" || token.length > Math.ceil(MAX_TOKEN_BYTES * 4 / 3) + MAGIC.length + 10) throw new SpectrlDecodeError("invalid token type or size")
+  if (budget && token.length > budget.maxTokenBytes) throw new SpectrlDecodeError("token exceeds maxTokenBytes")
   const magic = legacy ? "spectrl.v1" : MAGIC
   const prefix = `${magic}.`
   if (!token.startsWith(prefix)) throw new SpectrlDecodeError(`Not a ${magic} token`)
@@ -248,18 +251,25 @@ export function readTokenDocument(token: string, legacy = false): { doc: MsgMap,
   if (typeof n !== "number" || !Number.isInteger(n) || n < 0 || n > MAX_ARRAY_LENGTH) {
     throw new SpectrlDecodeError(`invalid declared array length (key 0): ${String(n)}`);
   }
+  if (budget && n > budget.maxPeaks) throw new SpectrlDecodeError("declared peak count exceeds maxPeaks")
   decoded.checksum = stored
   decoded.formatVersion = legacy ? 1 : 2
 
   const descriptors = h.get(6) ?? []
   if (!Array.isArray(descriptors)) throw new SpectrlDecodeError("binaryDataArrayList must be an array")
+  if (budget && descriptors.length > budget.maxArrays) throw new SpectrlDecodeError("array count exceeds maxArrays")
   const seen = new Set<string>()
-  for (const descriptor of descriptors) validateDescriptor(descriptor, seen)
+  let decodedBytes = 0
+  for (const descriptor of descriptors) {
+    validateDescriptor(descriptor, seen)
+    decodedBytes += n * (descriptor.get(DESC_TYPE) === TYPE_FLOAT64 ? 8 : 4)
+    if (budget && decodedBytes > budget.maxDecodedBytes) throw new SpectrlDecodeError("decoded array bytes exceed maxDecodedBytes")
+  }
   return { doc: h, decoded }
 }
 
-export function decodeCbor(token: string, legacy = false): DecodedSpectrum {
-  const { doc: h, decoded } = readTokenDocument(token, legacy)
+export function decodeCbor(token: string, legacy = false, limits?: DecodeLimits): DecodedSpectrum {
+  const { doc: h, decoded } = readTokenDocument(token, legacy, limits)
   const n = decoded.defaultArrayLength
 
   // Bound decompression by the declared array length (float64 worst case plus

@@ -37,6 +37,10 @@ versions = {
 if len(set(versions.values())) != 1:
     raise SystemExit("release versions disagree: " + ", ".join(f"{path}={value}" for path, value in versions.items()))
 
+format_version = json.loads((ROOT / "schema/registry.json").read_text())["spectrl_version"]
+if python_version.split(".")[0] != str(format_version):
+    raise SystemExit(f"package major version must match spectrl.v{format_version}")
+
 tag = sys.argv[1] if len(sys.argv) > 1 else ""
 if tag:
     expected = f"v{python_version}"

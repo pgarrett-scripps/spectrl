@@ -61,8 +61,16 @@ To install the unreleased development version:
 pip install "spectrl @ git+https://github.com/pgarrett-scripps/spectrl.git"
 ```
 
-The TypeScript implementation is tested and built from [`js/`](https://github.com/pgarrett-scripps/spectrl/tree/main/js), but is
-not yet published to npm because the final package scope has not been claimed.
+The TypeScript implementation is published as `@spectrl-ms/spectrl`:
+
+```bash
+npm install @spectrl-ms/spectrl
+```
+
+For service integration, see the [producer and consumer examples](docs/services.md),
+including precision policies, optional decoder budgets added in 2.1.0,
+HTTP limits, and worker guidance. JavaScript 2.1.0 requires Node
+22+ and also supports browser bundlers.
 
 ## Quick start
 
@@ -200,7 +208,8 @@ Unknown arrays remain lossless unless an expert explicitly passes
 incompatible array/codec combinations are rejected even with that option.
 
 In JavaScript, call `installZstd()` from `@spectrl-ms/spectrl/zstd` before encoding
-or decoding zstd arrays. The explicit setup cannot be removed by tree-shaking.
+or decoding zstd arrays. Zstd is installed with the package and initialized only
+through this explicit entry point. The setup cannot be removed by tree-shaking.
 
 ### User params (free-text metadata)
 
@@ -331,6 +340,11 @@ See [`demo/`](https://github.com/pgarrett-scripps/spectrl/tree/main/demo) for de
 - **Scope**: represents measured spectra and acquisition context across mass spectrometry. Molecular identifications and fragment assignments are outside the format.
 
 ## Scope and security
+
+- Services accepting public tokens should set per-call decoding budgets.
+  Version 2.1.0 adds `decode_token(token, limits=DecodeLimits(...))`
+  and `decodeToken(token, limits)`. See [service integration](docs/services.md)
+  for defaults, byte accounting, examples, and release availability.
 
 - URL lengths vary by browser and receiving system. Encoding warns above 8 KiB.
   Use `top_n()` or a repository identifier for spectra that are too large.

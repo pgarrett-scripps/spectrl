@@ -50,6 +50,7 @@ from .header import (
     build_header_dict,
     parse_header_dict,
 )
+from .limits import DecodeLimits
 from .model import ArrayEncoding, DecodedSpectrum, InlineSpectrum
 from .peaks import _validate_arrays, build_array_blobs, canonical_sort
 from .token import MAGIC, b64url_decode, b64url_encode
@@ -315,14 +316,20 @@ def _validate_numpress_fp(desc: dict, max_bytes: int) -> None:
         )
 
 
-def read_token_document(token: str, *, _legacy: bool = False) -> tuple[dict, DecodedSpectrum]:
+def read_token_document(
+    token: str, *, limits: DecodeLimits | None = None, _legacy: bool = False
+) -> tuple[dict, DecodedSpectrum]:
     """Decode a spectrl.v2 token, verifying the trailing CRC-32 checksum.
 
     Raises SpectrlDecodeError (a ValueError subclass) on any malformed,
     corrupted, or unsupported input.
     """
+    if limits is not None and not isinstance(limits, DecodeLimits):
+        raise TypeError("limits must be a DecodeLimits instance")
     if not isinstance(token, str):
         raise SpectrlDecodeError("a spectrl token must be a string")
+    if limits is not None and len(token) > limits.max_token_bytes:
+        raise SpectrlDecodeError("token exceeds max_token_bytes")
     if len(token) > (MAX_TOKEN_BYTES * 4 + 2) // 3 + len(MAGIC) + 10:
         raise SpectrlDecodeError("spectrl token exceeds the payload size limit")
     if not token.isascii():
@@ -364,6 +371,8 @@ def read_token_document(token: str, *, _legacy: bool = False) -> tuple[dict, Dec
 
     if not _is_wire_int(n) or n < 0 or n > MAX_ARRAY_LENGTH:
         raise SpectrlDecodeError(f"invalid declared array length (key 0): {n!r}")
+    if limits is not None and n > limits.max_peaks:
+        raise SpectrlDecodeError("declared peak count exceeds max_peaks")
 
     decoded.checksum = stored
     decoded.format_version = 1 if _legacy else 2
@@ -371,16 +380,22 @@ def read_token_document(token: str, *, _legacy: bool = False) -> tuple[dict, Dec
     descriptors = doc.get(6, [])
     if not isinstance(descriptors, list):
         raise SpectrlDecodeError("binaryDataArrayList (key 6) must be an array")
+    if limits is not None and len(descriptors) > limits.max_arrays:
+        raise SpectrlDecodeError("array count exceeds max_arrays")
     seen_arrays: set[tuple[int, str | None]] = set()
+    decoded_bytes = 0
     for desc in descriptors:
         _validate_descriptor(desc, seen_arrays)
+        decoded_bytes += n * (8 if desc[DESC_TYPE] == TYPE_FLOAT64 else 4)
+        if limits is not None and decoded_bytes > limits.max_decoded_bytes:
+            raise SpectrlDecodeError("decoded array bytes exceed max_decoded_bytes")
 
     return doc, decoded
 
 
-def decode_cbor(token: str, *, _legacy: bool = False) -> DecodedSpectrum:
+def decode_cbor(token: str, *, limits: DecodeLimits | None = None, _legacy: bool = False) -> DecodedSpectrum:
     """Decode a token after shared framing and metadata validation."""
-    doc, decoded = read_token_document(token, _legacy=_legacy)
+    doc, decoded = read_token_document(token, limits=limits, _legacy=_legacy)
     n = decoded.default_array_length
     descriptors = doc.get(6, [])
 

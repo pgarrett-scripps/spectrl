@@ -6,7 +6,7 @@ shared with no backend. The entire spectrum lives in the token.
 Public API::
 
     encode_spectrum(spec, *, lossless=False, max_len=None) -> str
-    decode_token(token) -> DecodedSpectrum
+    decode_token(token, *, limits=None) -> DecodedSpectrum
     from_mzmlpy(spec, ref_groups=None) -> InlineSpectrum
     top_n(spec, n) -> InlineSpectrum
     to_fragment(token, base) -> str
@@ -25,6 +25,7 @@ from .cbor_format import decode_cbor, encode_cbor
 from .compression_accession import CompressionAccession
 from .errors import SpectrlDecodeError, SpectrlError
 from .introspection import encoding_plan, inspect_token
+from .limits import DecodeLimits
 from .model import ArrayEncoding, DecodedSpectrum, InlineSpectrum, SpectrlCvParam, SpectrlUserParam
 from .peaklist import format_peak_list, parse_peak_list
 from .peaks import top_n
@@ -43,6 +44,7 @@ __all__ = [
     "extract_token",
     "InlineSpectrum",
     "DecodedSpectrum",
+    "DecodeLimits",
     "SpectrlCvParam",
     "SpectrlUserParam",
     "ArrayEncoding",
@@ -133,18 +135,20 @@ def encode_spectrum(
     return token
 
 
-def decode_token(token: str) -> DecodedSpectrum:
+def decode_token(token: str, *, limits: DecodeLimits | None = None) -> DecodedSpectrum:
     """Decode a spectrl.v2 token string into a DecodedSpectrum.
 
-    Verifies the mandatory trailing CRC-32 checksum.
+    Verifies the mandatory trailing CRC-32 checksum. Optional limits reject
+    oversized input before array decompression. Without limits, only the
+    existing wire-format ceilings apply.
 
     Raises:
         SpectrlDecodeError: On any malformed, corrupted, or unsupported input:
             bad magic, invalid base64url/CBOR, unsupported format version, checksum
-            mismatch, unknown codec, or array/length inconsistencies.
+            mismatch, unknown codec, array/length inconsistencies, or exceeded budgets.
             SpectrlDecodeError subclasses ValueError.
     """
-    return decode_cbor(token)
+    return decode_cbor(token, limits=limits)
 
 
 def from_mzmlpy(spec, ref_groups: dict | None = None, *, strict: bool = False) -> InlineSpectrum:

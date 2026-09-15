@@ -1,6 +1,6 @@
 {
   "name": "@spectrl-ms/spectrl",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Inline spectrum URL encoder, embeds peak arrays and modeled metadata in a compact, URL-safe token. JavaScript/TypeScript implementation of the spectrl.v2 format.",
   "type": "module",
   "main": "./dist/index.js",
@@ -56,7 +56,7 @@
     "directory": "js"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "dependencies": {
     "@cloudpss/zstd": "^0.3.23",

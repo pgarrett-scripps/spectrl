@@ -6,19 +6,20 @@ URL-safe string and back, with no backend required. Runs in the browser and in
 Node.
 
 This package is a separate implementation of the format specified in
-[`SPECIFICATION.md`](../SPECIFICATION.md) and is validated against the shared
-conformance vectors in [`test-vectors/`](../test-vectors). It decodes tokens
+[`SPECIFICATION.md`](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md) and is validated against the shared
+conformance vectors in [`test-vectors/`](https://github.com/pgarrett-scripps/spectrl/tree/main/test-vectors). It decodes tokens
 produced by the Python reference implementation byte-for-byte (including the
 MS-Numpress codecs and the CRC-32 transport checksum).
 
 ## Install
 
-> Not yet published to npm. Until then, build from source (below) or depend on
-> this directory directly (`"@spectrl-ms/spectrl": "file:../js"`).
-
 ```bash
-npm install @spectrl-ms/spectrl   # once published
+npm install @spectrl-ms/spectrl
 ```
+
+Version 2.1.0 requires Node 22+ and exports ESM JavaScript and TypeScript
+declarations. Browser applications can bundle the same package. Decoder budgets
+are available starting in 2.1.0. The token format remains `spectrl.v2`.
 
 ## Usage
 
@@ -79,10 +80,27 @@ codec for a semantically unknown custom array.
 
 ## API
 
-- `encodeSpectrum(spec, { lossless?, maxLen?, quiet?, arrayEncodings? }) => string`
-- `decodeToken(token) => DecodedSpectrum` (verifies the trailing CRC-32 checksum, throws on mismatch)
+- `encodeSpectrum(spec, options?) => string`, with lossless, size, warning,
+  user-param omission, per-array codec, and unsafe-custom-codec options
+- `decodeToken(token, limits?) => DecodedSpectrum`, verifying the checksum and
+  optional token-byte, peak-count, array-count, and total decoded-byte budgets
+- `DecodeLimits` and `DEFAULT_DECODE_LIMITS` describe the optional service budgets
+- `SpectrlDecodeError` identifies malformed, unsupported, and over-budget tokens
 - `encodingPlan(spec, options?)` reports resolved codecs, fixed points, types, and units
+- `tokenBreakdown(token)` reports compressed array and header sizes
+- `encodingReport(spec, options?)` measures encoding error against the source
+- `fitToBudget(spec, maxBytes, options?)` proposes explicitly permitted omissions
+- `parsePeakList(text)`, `formatPeakList(spec, delimiter?)`, and `topN(spec, n)`
 - `toFragment(token, base)`, `toQuery(token, base, param?)`, `toDataUri(token)`, `extractToken(urlOrUri)`
+
+See the [service integration guide](https://github.com/pgarrett-scripps/spectrl/blob/main/docs/services.md)
+for runnable Python-to-Node examples, budget defaults, precision policy, and
+worker guidance. Decoding is synchronous. Set ingress and concurrency limits
+in the consuming service as well as per-token decoder budgets.
+
+Zstd is an intentional installed dependency. The core import does not initialize
+its WASM backend. Call `installZstd()` from the `/zstd` entry point once in each
+execution context before accepting zstd tokens. The same setup works in workers.
 
 ## Develop
 
@@ -95,17 +113,16 @@ npm run typecheck
 
 ## License
 
-Apache-2.0. See [../LICENSE](../LICENSE).
+Apache-2.0. See [LICENSE](https://github.com/pgarrett-scripps/spectrl/blob/main/LICENSE).
 
 **Quality and sharing workflows**
 
 `encodingReport`, `fitToBudget`, `parsePeakList`, `formatPeakList`, and `topN`
-are exported from the main package. The [workflow guide](../docs/workflows.md)
+are exported from the main package. The [workflow guide](https://github.com/pgarrett-scripps/spectrl/blob/main/docs/workflows.md)
 includes examples and documents zero-reference error metrics, explicit
 omission permissions, complete URL budgets, and peak-list limitations.
 
-CI covers Node 22 and 24. The existing Node 18 package minimum remains for
-compatibility, but those CI versions are the supported verification targets.
+CI covers Node 22 and 24, matching the current Node 22 package minimum.
 
 ## Version 2 migration
 

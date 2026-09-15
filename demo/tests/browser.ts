@@ -28,6 +28,17 @@ function check(id: string) {
 }
 const currentToken = () => element<HTMLTextAreaElement>("#token").value
 const tests: [string, () => Promise<void>][] = [
+  ["decoder budgets reject excessive array data", async () => {
+    const token = encodeSpectrum({ defaultArrayLength: 2, mz: [100, 200], intensity: [1, 2] })
+    assert(decodeToken(token, { maxDecodedBytes: 32 }).defaultArrayLength === 2, "Exact budget was rejected")
+    let rejected = false
+    try {
+      decodeToken(token, { maxDecodedBytes: 31 })
+    } catch (error) {
+      rejected = error instanceof Error && error.message.includes("maxDecodedBytes")
+    }
+    assert(rejected, "Aggregate byte budget was ignored")
+  }],
   ["zstd loads on demand", async () => {
     const { installZstd } = await import("../../js/src/zstd")
     installZstd()

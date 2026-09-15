@@ -92,7 +92,7 @@ with Mzml("data.mzML") as mzml:
 
 The conversion result contains the spectrum, preserved peak/array/CV/user-param counts, and structured issues with `code`, XML `path`, `severity`, and `message`. It identifies unresolved reference groups, unsupported user-param locations, user parameters in reference groups that are not expanded, unmodeled elements, and omitted attributes. Provenance attributes such as an mzML spectrum index are informational. `strict=True` rejects warning-level omissions. The existing `from_mzmlpy(..., strict=True)` uses the same warning checks.
 
-The report can inspect only the supplied spectrum subtree. It is not an audit of an entire run, source-file links, processing history, or every semantic distinction in arbitrary mzML XML. These remain outside v1. The bridge is a Python feature and requires `pip install "spectrl[mzml]"`.
+The report can inspect only the supplied spectrum subtree. It is not an audit of an entire run, source-file links, processing history, or every semantic distinction in arbitrary mzML XML. These remain outside v2. The bridge is a Python feature and requires `pip install "spectrl[mzml]"`.
 
 **CLI examples**
 
