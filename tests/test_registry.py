@@ -87,8 +87,7 @@ def test_compression_codec_tails_match_cv():
 def test_all_header_keys_present():
     r = _load()
     keys = set(int(k) for k in r["header_keys"])
-    assert keys == {0, 1, 2, 3, 4, 5, 6, 8}
-    assert r["reserved_header_keys"] == [7]
+    assert keys == set(range(8))
 
 
 def test_magic_matches_token_module():

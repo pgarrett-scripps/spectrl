@@ -53,7 +53,7 @@ from .header import (
 from .limits import DecodeLimits
 from .model import ArrayEncoding, DecodedSpectrum, InlineSpectrum
 from .peaks import _validate_arrays, build_array_blobs, canonical_sort
-from .token import MAGIC, b64url_decode, b64url_encode
+from .token import FORMAT_VERSION, MAGIC, b64url_decode, b64url_encode
 
 
 def _canonical(doc: dict) -> bytes:
@@ -69,7 +69,7 @@ def token_checksum(body: str) -> str:
 def _without_user_params(spec: InlineSpectrum) -> InlineSpectrum:
     """Drop free-text user params at spectrum and scan level.
 
-    Header key 8 and scan-map key 2 are OPTIONAL and omitted when empty, so the
+    Header key 7 and scan-map key 2 are OPTIONAL and omitted when empty, so the
     result is a conforming token that simply carries no vendor free-text.
     """
     if not spec.user_params and not any(s.user_params for s in spec.scans):
@@ -193,9 +193,10 @@ def _is_wire_int(value: object) -> bool:
     return isinstance(value, int) and not isinstance(value, bool)
 
 
-def _validate_header_shape(doc: dict, *, legacy: bool = False) -> None:
-    if 7 in doc and (not legacy or not isinstance(doc[7], str)):
-        raise SpectrlDecodeError("header key 7 is reserved in v2 and must be a string in v1")
+def _validate_header_shape(doc: dict) -> None:
+    for key in doc:
+        if not _is_wire_int(key) or key not in range(8):
+            raise SpectrlDecodeError(f"unsupported spectrl header key: {key!r}")
     if 0 not in doc:
         raise SpectrlDecodeError("spectrl header is missing defaultArrayLength (key 0)")
     expected = {
@@ -205,7 +206,7 @@ def _validate_header_shape(doc: dict, *, legacy: bool = False) -> None:
         4: list,
         5: list,
         6: list,
-        8: list,
+        7: list,
     }
     for key, cls in expected.items():
         if key in doc and not isinstance(doc[key], cls):
@@ -316,9 +317,7 @@ def _validate_numpress_fp(desc: dict, max_bytes: int) -> None:
         )
 
 
-def read_token_document(
-    token: str, *, limits: DecodeLimits | None = None, _legacy: bool = False
-) -> tuple[dict, DecodedSpectrum]:
+def read_token_document(token: str, *, limits: DecodeLimits | None = None) -> tuple[dict, DecodedSpectrum]:
     """Decode a spectrl.v2 token, verifying the trailing CRC-32 checksum.
 
     Raises SpectrlDecodeError (a ValueError subclass) on any malformed,
@@ -335,7 +334,7 @@ def read_token_document(
     if not token.isascii():
         raise SpectrlDecodeError("a spectrl token must contain only ASCII characters")
 
-    magic = "spectrl.v1" if _legacy else MAGIC
+    magic = MAGIC
     prefix = f"{magic}."
     if not token.startswith(prefix):
         raise SpectrlDecodeError(f"Not a {magic} token: {token[:16]!r}")
@@ -359,7 +358,7 @@ def read_token_document(
         raise SpectrlDecodeError(f"spectrl payload is not valid CBOR: {e}") from e
     if not isinstance(doc, dict):
         raise SpectrlDecodeError("spectrl payload is not a CBOR map.")
-    _validate_header_shape(doc, legacy=_legacy)
+    _validate_header_shape(doc)
 
     try:
         decoded = parse_header_dict(doc)
@@ -375,7 +374,7 @@ def read_token_document(
         raise SpectrlDecodeError("declared peak count exceeds max_peaks")
 
     decoded.checksum = stored
-    decoded.format_version = 1 if _legacy else 2
+    decoded.format_version = FORMAT_VERSION
 
     descriptors = doc.get(6, [])
     if not isinstance(descriptors, list):
@@ -393,9 +392,9 @@ def read_token_document(
     return doc, decoded
 
 
-def decode_cbor(token: str, *, limits: DecodeLimits | None = None, _legacy: bool = False) -> DecodedSpectrum:
+def decode_cbor(token: str, *, limits: DecodeLimits | None = None) -> DecodedSpectrum:
     """Decode a token after shared framing and metadata validation."""
-    doc, decoded = read_token_document(token, limits=limits, _legacy=_legacy)
+    doc, decoded = read_token_document(token, limits=limits)
     n = decoded.default_array_length
     descriptors = doc.get(6, [])
 

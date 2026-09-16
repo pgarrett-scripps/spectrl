@@ -1,6 +1,6 @@
 {
   "spectrl_format_version": 2,
-  "generated_by": "spectrl-js 2.0.0",
+  "generated_by": "spectrl-js 2.1.0",
   "note": "Reverse vectors: tokens encoded by the JS implementation, decoded values recorded. Other implementations MUST decode `token` and match `decoded` within `tolerance`, and the `checksum` MUST verify.",
   "vectors": [
     {
@@ -797,7 +797,7 @@
       "name": "user_params",
       "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level trailer extra",
       "mode": "lossy",
-      "token": "spectrl.v2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvtANIAAAAAAABgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVVeJxz-JHFAAICIYaMCiuSmAAfmQNlpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFUnicc1ijwAAC6jN2zAIAEB4DHgiCo2FubE1hc2NvdCBzY29yZWF0aXhzZDpmbG9hdGF2-0BFWZmZmZmaomFub3JlYW5hbHlzaXMgbm90ZWF2dnJlcnVuIHdpdGggc2VtaXRyeXB0aWM.25672c1f",
+      "token": "spectrl.v2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvtANIAAAAAAABgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVVeJxz-JHFAAICIYaMCiuSmAAfmQNlpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFUnicc1ijwAAC6jN2zAIAEB4DHgeCo2FubE1hc2NvdCBzY29yZWF0aXhzZDpmbG9hdGF2-0BFWZmZmZmaomFub3JlYW5hbHlzaXMgbm90ZWF2dnJlcnVuIHdpdGggc2VtaXRyeXB0aWM.2342c947",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -860,7 +860,7 @@
         ],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "25672c1f",
+        "checksum": "2342c947",
         "format_version": 2
       }
     },
@@ -868,7 +868,7 @@
       "name": "user_params__lossless",
       "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level trailer extra (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvtANIAAAAAAABgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpAAaAA9ESwEaAA9EQgIaAA9EfgVTeJwzNgYC5kwHYzBd6QAAG7IDZ6QAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgqwXDiCKweetAwAS7AMMCIKjYW5sTWFzY290IHNjb3JlYXRpeHNkOmZsb2F0YXb7QEVZmZmZmZqiYW5vcmVhbmFseXNpcyBub3RlYXZ2cmVydW4gd2l0aCBzZW1pdHJ5cHRpYw.9d8428a1",
+      "token": "spectrl.v2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvtANIAAAAAAABgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpAAaAA9ESwEaAA9EQgIaAA9EfgVTeJwzNgYC5kwHYzBd6QAAG7IDZ6QAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgqwXDiCKweetAwAS7AMMB4KjYW5sTWFzY290IHNjb3JlYXRpeHNkOmZsb2F0YXb7QEVZmZmZmZqiYW5vcmVhbmFseXNpcyBub3RlYXZ2cmVydW4gd2l0aCBzZW1pdHJ5cHRpYw.dc7c6843",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -931,7 +931,7 @@
         ],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "9d8428a1",
+        "checksum": "dc7c6843",
         "format_version": 2
       }
     },

@@ -1,7 +1,6 @@
 import assert from "node:assert/strict"
 import test from "node:test"
 import { DEFAULT_DECODE_LIMITS, decodeToken, encodeSpectrum, SpectrlDecodeError } from "../src/index.ts"
-import { decodeV1Token } from "../src/legacy.ts"
 import { b64urlDecode, b64urlEncode } from "../src/base64url.ts"
 import { cborDecode, cborEncode } from "../src/cbor.ts"
 import { tokenChecksum } from "../src/checksum.ts"
@@ -68,13 +67,6 @@ test("invalid configuration is rejected and undefined fields keep defaults", () 
   }
   assert.ok(decodeToken(token, { maxArrays: undefined }))
   assert.ok(Object.isFrozen(DEFAULT_DECODE_LIMITS))
-})
-
-test("legacy decoding applies the same budgets", () => {
-  const body = `spectrl.v1.${token.split(".")[2]}`
-  const legacy = `${body}.${tokenChecksum(body)}`
-  assert.equal(decodeV1Token(legacy, { maxDecodedBytes: 48 }).spectrum.defaultArrayLength, 2)
-  assert.throws(() => decodeV1Token(legacy, { maxDecodedBytes: 47 }), /maxDecodedBytes/)
 })
 
 test("caller budgets cannot relax wire format ceilings", () => {

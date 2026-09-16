@@ -1,25 +1,60 @@
-"""Version boundaries must never silently reinterpret identification data."""
-
-import json
-from pathlib import Path
+"""The spectrum header has exactly eight supported field identifiers."""
 
 import cbor2
-import numpy as np
 import pytest
 
 from spectrl import InlineSpectrum, decode_token, encode_spectrum, spectrum_from_dict
 from spectrl.cbor_format import token_checksum
-from spectrl.legacy import decode_v1_token
-from spectrl.token import b64url_encode
-
-ROOT = Path(__file__).resolve().parent.parent
+from spectrl.model import SpectrlScan, SpectrlUserParam
+from spectrl.token import b64url_decode, b64url_encode
 
 
-@pytest.mark.parametrize("value", [None, "PEPTIDE", 0, {}, []])
-def test_reserved_identification_key_rejected(value):
-    body = "spectrl.v2." + b64url_encode(cbor2.dumps({0: 0, 7: value}))
-    with pytest.raises(ValueError, match="reserved"):
-        decode_token(body + "." + token_checksum(body))
+def _token(document, version=2):
+    body = f"spectrl.v{version}." + b64url_encode(cbor2.dumps(document, canonical=True))
+    return body + "." + token_checksum(body)
+
+
+@pytest.mark.parametrize("lossless", [False, True])
+def test_user_parameters_use_key_seven(lossless):
+    params = [SpectrlUserParam(name="elapsed", value=3.5, type="xsd:float", unit_accession="UO:0000010")]
+    source = InlineSpectrum(default_array_length=0, user_params=params, scans=[SpectrlScan(user_params=params)])
+    token = encode_spectrum(source, lossless=lossless)
+    document = cbor2.loads(b64url_decode(token.split(".")[2]))
+    assert set(document) <= set(range(8))
+    assert document[7][0]["n"] == "elapsed"
+    assert document[3]["s"][0][2] == document[7]
+    decoded = decode_token(token)
+    assert decoded.user_params == params
+    assert decoded.scans[0].user_params == params
+    assert decoded.format_version == 2
+
+
+def test_empty_parameters_are_omitted():
+    token = encode_spectrum(InlineSpectrum(default_array_length=0))
+    assert 7 not in cbor2.loads(b64url_decode(token.split(".")[2]))
+    assert decode_token(token).user_params == []
+
+
+@pytest.mark.parametrize("key", [8, 9, 99, -1, "7"])
+@pytest.mark.parametrize("include_parameters", [False, True])
+def test_unsupported_header_keys_are_rejected(key, include_parameters):
+    document = {0: 0, key: [{"n": "note", "v": "value"}]}
+    if include_parameters:
+        document[7] = [{"n": "current", "v": "value"}]
+    with pytest.raises(ValueError, match="unsupported spectrl header key"):
+        decode_token(_token(document))
+
+
+@pytest.mark.parametrize("value", [None, "PEPTIDE", 0, {}])
+def test_user_parameters_require_an_array(value):
+    with pytest.raises(ValueError, match="header key 7 must be list"):
+        decode_token(_token({0: 0, 7: value}))
+
+
+@pytest.mark.parametrize("version", [0, 1, 3, 99])
+def test_only_the_current_format_is_accepted(version):
+    with pytest.raises(ValueError, match="Not a spectrl.v2 token"):
+        decode_token(_token({0: 0}, version))
 
 
 def test_identification_inputs_are_not_silently_discarded():
@@ -27,36 +62,3 @@ def test_identification_inputs_are_not_silently_discarded():
         InlineSpectrum(default_array_length=0, interp="PEPTIDE")
     with pytest.raises(ValueError, match="identification"):
         spectrum_from_dict({"default_array_length": 0, "interp": "PEPTIDE"})
-    decoded = decode_token(encode_spectrum(InlineSpectrum(default_array_length=0)))
-    assert decoded.format_version == 2
-    assert not hasattr(decoded, "interp")
-    with pytest.raises(ValueError):
-        decode_v1_token(encode_spectrum(InlineSpectrum(default_array_length=0)))
-
-
-@pytest.mark.parametrize("filename", ["vectors.json", "reverse-vectors.json"])
-def test_archived_v1_tokens_require_explicit_legacy_decoder(filename):
-    vectors = json.loads((ROOT / "test-vectors/v1" / filename).read_text())["vectors"]
-    for vector in vectors:
-        with pytest.raises(ValueError):
-            decode_token(vector["token"])
-        legacy = decode_v1_token(vector["token"])
-        expected = vector["decoded"]
-        assert legacy.interpretation == expected["interp"]
-        assert legacy.spectrum.format_version == 1
-        assert not hasattr(legacy.spectrum, "interp")
-        migrated = decode_token(encode_spectrum(legacy.spectrum, lossless=True))
-        assert migrated.format_version == 2
-        assert migrated.params == legacy.spectrum.params
-        assert migrated.precursors == legacy.spectrum.precursors
-        assert migrated.user_params == legacy.spectrum.user_params
-        for name in ("mz", "intensity", "charge"):
-            actual = getattr(legacy.spectrum, name)
-            if expected[name] is None:
-                assert actual is None
-            else:
-                np.testing.assert_allclose(actual, expected[name], rtol=1e-6, atol=1e-6)
-                np.testing.assert_array_equal(getattr(migrated, name), actual)
-        corrupted = vector["token"][:-1] + ("0" if vector["token"][-1] != "0" else "1")
-        with pytest.raises(ValueError, match="checksum"):
-            decode_v1_token(corrupted)

@@ -9,12 +9,10 @@ from spectrl import (
     format_peak_list,
     parse_peak_list,
 )
-from spectrl.legacy import decode_v1_token
 
 source = parse_peak_list("mz,intensity\n100.123456,10\n200.123456,20")
 report = encoding_report(source, lossless=True)
 assert report["token"].startswith("spectrl.v2.")
-assert decode_v1_token("spectrl.v1.oQAA.548cad2e").spectrum.format_version == 1
 assert report["all_arrays_exact"]
 assert decode_token(report["token"], limits=DecodeLimits(max_decoded_bytes=32)).default_array_length == 2
 try:

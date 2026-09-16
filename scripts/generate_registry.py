@@ -149,7 +149,6 @@ registry = {
         "and codec identifiers used in the spectrl.v2 token format."
     ),
     "spectrl_version": FORMAT_VERSION,
-    "reserved_header_keys": [7],
     "wire_constants": {
         "checksum_hex_chars": 8,
         "max_blob_bytes": 64 * 1024 * 1024,
@@ -343,7 +342,7 @@ registry = {
                 },
             },
         },
-        "8": {
+        "7": {
             "name": "user_param_list",
             "type": "array of user_param objects",
             "required": False,

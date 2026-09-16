@@ -4,9 +4,6 @@
   "title": "spectrl registry",
   "description": "Machine-readable registry of all integer keys, CV accession tails, and codec identifiers used in the spectrl.v2 token format.",
   "spectrl_version": 2,
-  "reserved_header_keys": [
-    7
-  ],
   "wire_constants": {
     "checksum_hex_chars": 8,
     "max_blob_bytes": 67108864,
@@ -188,7 +185,7 @@
         }
       }
     },
-    "8": {
+    "7": {
       "name": "user_param_list",
       "type": "array of user_param objects",
       "required": false,

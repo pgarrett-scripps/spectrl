@@ -1,6 +1,6 @@
 {
   "spectrl_format_version": 2,
-  "generated_by": "spectrl-python 2.0.0",
+  "generated_by": "spectrl-python 2.1.0",
   "note": "Conformance vectors. A consumer MUST recover `decoded` from `token`. Numpress decode is deterministic; arrays should match the stored decoded values within `tolerance`. Lossless vectors MUST match exactly. The stored `checksum` MUST verify.",
   "vectors": [
     {
@@ -1099,7 +1099,7 @@
       "name": "user_params",
       "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level Thermo trailer extra",
       "mode": "lossy",
-      "token": "spectrl.v2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvlNIBgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVVeJxz-JHFAAICIYaMCiuSmAAfmQNlpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFUnicc1ijwAAC6jN2zAIAEB4DHgiCo2FubE1hc2NvdCBzY29yZWF0aXhzZDpmbG9hdGF2-0BFWZmZmZmaomFub3JlYW5hbHlzaXMgbm90ZWF2dnJlcnVuIHdpdGggc2VtaXRyeXB0aWM.bfa0c547",
+      "token": "spectrl.v2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvlNIBgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVVeJxz-JHFAAICIYaMCiuSmAAfmQNlpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFUnicc1ijwAAC6jN2zAIAEB4DHgeCo2FubE1hc2NvdCBzY29yZWF0aXhzZDpmbG9hdGF2-0BFWZmZmZmaomFub3JlYW5hbHlzaXMgbm90ZWF2dnJlcnVuIHdpdGggc2VtaXRyeXB0aWM.b985201f",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -1162,7 +1162,7 @@
             "unit_accession": null
           }
         ],
-        "checksum": "bfa0c547",
+        "checksum": "b985201f",
         "format_version": 2
       }
     },
@@ -1170,7 +1170,7 @@
       "name": "user_params__lossless",
       "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level Thermo trailer extra (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvlNIBgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpAAaAA9ESwEaAA9EQgIaAA9EfgVTeJwzNgYC5kwHYzBd6QAAG7IDZ6QAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgqwXDiCKweetAwAS7AMMCIKjYW5sTWFzY290IHNjb3JlYXRpeHNkOmZsb2F0YXb7QEVZmZmZmZqiYW5vcmVhbmFseXNpcyBub3RlYXZ2cmVydW4gd2l0aCBzZW1pdHJ5cHRpYw.27bb4547",
+      "token": "spectrl.v2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvlNIBgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpAAaAA9ESwEaAA9EQgIaAA9EfgVTeJwzNgYC5kwHYzBd6QAAG7IDZ6QAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgqwXDiCKweetAwAS7AMMB4KjYW5sTWFzY290IHNjb3JlYXRpeHNkOmZsb2F0YXb7QEVZmZmZmZqiYW5vcmVhbmFseXNpcyBub3RlYXZ2cmVydW4gd2l0aCBzZW1pdHJ5cHRpYw.664305a5",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -1233,7 +1233,7 @@
             "unit_accession": null
           }
         ],
-        "checksum": "27bb4547",
+        "checksum": "664305a5",
         "format_version": 2
       }
     },

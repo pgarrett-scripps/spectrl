@@ -72,7 +72,7 @@ export function encodeSpectrum(spec: InlineSpectrum, opts: EncodeOptions = {}): 
 /** Decode a token with optional budgets checked before array decompression.
  * Omitting limits preserves the existing wire-format ceilings. */
 export function decodeToken(token: string, limits?: DecodeLimits): DecodedSpectrum {
-  return decodeCbor(token, false, limits)
+  return decodeCbor(token, limits)
 }
 
 /** Resolve automatic codecs, fixed points, types, and units for a spectrum. */

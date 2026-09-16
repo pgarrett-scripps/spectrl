@@ -53,7 +53,7 @@ import { resolveDecodeLimits, type DecodeLimits } from "./limits.js"
 /**
  * Drop free-text user params at spectrum and scan level.
  *
- * Header key 8 and scan-map key 2 are OPTIONAL and omitted when empty, so the
+ * Header key 7 and scan-map key 2 are OPTIONAL and omitted when empty, so the
  * result is a conforming token that simply carries no vendor free-text.
  */
 function withoutUserParams(spec: InlineSpectrum): InlineSpectrum {
@@ -184,8 +184,12 @@ function validateNumpressFp(d: MsgMap, maxBytes: number): void {
   }
 }
 
-function validateHeaderShape(h: MsgMap, legacy = false): void {
-  if (h.has(7) && (!legacy || typeof h.get(7) !== "string")) throw new SpectrlDecodeError("header key 7 is reserved in v2 and must be a string in v1")
+function validateHeaderShape(h: MsgMap): void {
+  for (const key of h.keys()) {
+    if (typeof key !== "number" || !Number.isInteger(key) || key < 0 || key > 7) {
+      throw new SpectrlDecodeError(`unsupported spectrl header key: ${String(key)}`)
+    }
+  }
   if (!h.has(0)) throw new SpectrlDecodeError("spectrl header is missing defaultArrayLength (key 0)");
   const checks: Array<[number, (v: unknown) => boolean, string]> = [
     [1, (v) => typeof v === "string", "string"],
@@ -194,7 +198,7 @@ function validateHeaderShape(h: MsgMap, legacy = false): void {
     [4, Array.isArray, "array"],
     [5, Array.isArray, "array"],
     [6, Array.isArray, "array"],
-    [8, Array.isArray, "array"],
+    [7, Array.isArray, "array"],
   ];
   for (const [key, check, label] of checks) {
     if (h.has(key) && !check(h.get(key))) throw new SpectrlDecodeError(`spectrl header key ${key} must be ${label}`);
@@ -205,11 +209,11 @@ function validateHeaderShape(h: MsgMap, legacy = false): void {
  * Decode a spectrl.v2 token, verifying the trailing CRC-32 checksum.
  * Throws SpectrlDecodeError on any malformed, corrupted, or unsupported input.
  */
-export function readTokenDocument(token: string, legacy = false, limits?: DecodeLimits): { doc: MsgMap, decoded: DecodedSpectrum } {
+export function readTokenDocument(token: string, limits?: DecodeLimits): { doc: MsgMap, decoded: DecodedSpectrum } {
   const budget = resolveDecodeLimits(limits)
   if (typeof token !== "string" || token.length > Math.ceil(MAX_TOKEN_BYTES * 4 / 3) + MAGIC.length + 10) throw new SpectrlDecodeError("invalid token type or size")
   if (budget && token.length > budget.maxTokenBytes) throw new SpectrlDecodeError("token exceeds maxTokenBytes")
-  const magic = legacy ? "spectrl.v1" : MAGIC
+  const magic = MAGIC
   const prefix = `${magic}.`
   if (!token.startsWith(prefix)) throw new SpectrlDecodeError(`Not a ${magic} token`)
   const parts = token.slice(prefix.length).split(".");
@@ -239,7 +243,7 @@ export function readTokenDocument(token: string, legacy = false, limits?: Decode
   }
   if (!(doc instanceof Map)) throw new SpectrlDecodeError("spectrl payload is not a CBOR map");
   const h = doc as MsgMap;
-  validateHeaderShape(h, legacy);
+  validateHeaderShape(h);
 
   let decoded: DecodedSpectrum;
   try {
@@ -253,7 +257,7 @@ export function readTokenDocument(token: string, legacy = false, limits?: Decode
   }
   if (budget && n > budget.maxPeaks) throw new SpectrlDecodeError("declared peak count exceeds maxPeaks")
   decoded.checksum = stored
-  decoded.formatVersion = legacy ? 1 : 2
+  decoded.formatVersion = 2
 
   const descriptors = h.get(6) ?? []
   if (!Array.isArray(descriptors)) throw new SpectrlDecodeError("binaryDataArrayList must be an array")
@@ -268,8 +272,8 @@ export function readTokenDocument(token: string, legacy = false, limits?: Decode
   return { doc: h, decoded }
 }
 
-export function decodeCbor(token: string, legacy = false, limits?: DecodeLimits): DecodedSpectrum {
-  const { doc: h, decoded } = readTokenDocument(token, legacy, limits)
+export function decodeCbor(token: string, limits?: DecodeLimits): DecodedSpectrum {
+  const { doc: h, decoded } = readTokenDocument(token, limits)
   const n = decoded.defaultArrayLength
 
   // Bound decompression by the declared array length (float64 worst case plus

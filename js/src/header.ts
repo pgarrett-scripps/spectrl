@@ -3,8 +3,8 @@
  *
  * Top-level keys (mirror mzML <spectrum>):
  *   0 defaultArrayLength, 1 id, 2 spectrum params, 3 scanList,
- *   4 precursorList, 5 productList, 6 binaryDataArrayList, 7 reserved,
- *   8 userParamList. The format version lives only in the token magic, and
+ *   4 precursorList, 5 productList, 6 binaryDataArrayList,
+ *   7 userParamList. The format version lives only in the token magic, and
  *   the checksum only in the trailing token part.
  */
 
@@ -221,7 +221,7 @@ export function buildHeaderMap(spec: InlineSpectrum, descriptors: Descriptor[]):
     }),
   );
 
-  if (spec.userParams && spec.userParams.length) h.set(8, encodeUserParams(spec.userParams));
+  if (spec.userParams && spec.userParams.length) h.set(7, encodeUserParams(spec.userParams));
   return h;
 }
 
@@ -245,7 +245,7 @@ export function parseHeaderMap(h: MsgMap): { decoded: DecodedSpectrum; descripto
 
   const precursors = ((h.get(4) as MsgMap[] | undefined) ?? []).map(decodePrecursor);
   const products = ((h.get(5) as MsgMap[] | undefined) ?? []).map(decodeProduct);
-  const userParams = decodeUserParams(h.get(8) as MsgMap[] | undefined);
+  const userParams = decodeUserParams(h.get(7) as MsgMap[] | undefined);
   // The trailing token part; decodeCbor fills it in after verification.
   const checksum = "";
 

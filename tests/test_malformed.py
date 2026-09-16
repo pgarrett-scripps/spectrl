@@ -44,7 +44,7 @@ def _retoken(doc: dict) -> str:
         "",
         "notatoken",
         "spectrl.v2",
-        "spectrl1.AAAA",  # released legacy format has a different wire layout
+        "unsupported.AAAA",  # unsupported format identifier
         "spectrl.v2.",
         "spectrl.v2.!!!!",  # non-alphabet chars
         "spectrl.v2.abc�.def",  # non-ASCII mutation must not leak UnicodeEncodeError

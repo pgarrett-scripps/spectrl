@@ -7,7 +7,6 @@ import pytest
 
 from spectrl import DecodeLimits, InlineSpectrum, SpectrlDecodeError, decode_token, encode_spectrum
 from spectrl.cbor_format import read_token_document
-from spectrl.legacy import decode_v1_token
 
 
 @pytest.fixture
@@ -75,16 +74,6 @@ def test_numpress_is_budgeted_as_decoded_float64():
 def test_invalid_configuration(field, value):
     with pytest.raises(ValueError, match=field):
         DecodeLimits(**{field: value})
-
-
-def test_legacy_uses_the_same_budgets(token):
-    from spectrl.cbor_format import token_checksum
-
-    body = "spectrl.v1." + token.split(".")[2]
-    legacy = body + "." + token_checksum(body)
-    assert decode_v1_token(legacy, limits=DecodeLimits(max_decoded_bytes=48)).spectrum.default_array_length == 2
-    with pytest.raises(SpectrlDecodeError, match="max_decoded_bytes"):
-        decode_v1_token(legacy, limits=DecodeLimits(max_decoded_bytes=47))
 
 
 def test_limits_do_not_replace_wire_validation(token):

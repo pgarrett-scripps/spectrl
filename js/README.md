@@ -124,22 +124,8 @@ omission permissions, complete URL budgets, and peak-list limitations.
 
 CI covers Node 22 and 24, matching the current Node 22 package minimum.
 
-## Version 2 migration
+## Token format
 
-Version 2 removes `interp` from the spectrum model. Header key 7 is reserved and
-rejected. Normal APIs accept only v2 tokens. Identifications and fragment
-assignments belong in the surrounding application.
-
-Archived v1 tokens can be read explicitly:
-
-```ts
-import { decodeV1Token } from "@spectrl-ms/spectrl/legacy"
-import { encodeSpectrum } from "@spectrl-ms/spectrl"
-
-const legacy = decodeV1Token(oldToken)
-// Review or save legacy.interpretation before migrating the spectrum.
-const token = encodeSpectrum(legacy.spectrum)
-```
-
-The compatibility decoder preserves the legacy interpretation separately from
-the spectrum. Never migrate by changing a prefix by hand.
+The `spectrl.v2` header uses keys 0 through 7. Spectrum-level free-text
+parameters use key 7. Identifications and fragment assignments belong in
+the surrounding application.

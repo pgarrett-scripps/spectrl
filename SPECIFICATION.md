@@ -251,19 +251,16 @@ Each peak array's compressed blob is embedded inline in its descriptor as a CBOR
 | 4 | `precursorList` | array | | Precursors ([§6.3](#63-precursor)). |
 | 5 | `productList` | array | | Products ([§6.4](#64-product)). |
 | 6 | `binaryDataArrayList` | array | | Array descriptors ([§7.1](#71-array-descriptors)). |
-| 7 | Reserved | | | Forbidden in v2 ([§6.6](#66-identification-and-annotation-scope)). |
-| 8 | `userParamList` | array | | Spectrum-level free-text user params ([§6.5](#65-user-params)). |
+| 7 | `userParamList` | array | | Spectrum-level free-text user params ([§6.5](#65-user-params)). |
 
 All keys except 0 are OPTIONAL and **MUST** be omitted entirely when empty.
 a consumer **MUST** treat a missing key as "absent" (e.g. no user params), so a
 spectrum that uses none of an OPTIONAL feature is byte-identical to one produced
 before that feature existed.
 
-**Unknown and duplicate keys.** A consumer **MUST** ignore a top-level integer
-key it does not recognise (this is how OPTIONAL keys are added
-backward-compatibly, [§9](#9-versioning)). A consumer that re-emits a token
-SHOULD preserve such keys. A CBOR map with **duplicate keys** is not
-well-formed under RFC 8949 §4.2. A consumer **MUST** reject a document
+**Unknown and duplicate keys.** Header keys are the integers 0 through 7
+listed above. A consumer **MUST** reject any other top-level key.
+A CBOR map with **duplicate keys** is not well-formed under RFC 8949 §4.2. A consumer **MUST** reject a document
 containing a duplicate map key at any level.
 
 ### 6.1 CV param map
@@ -319,7 +316,7 @@ term. Each user param is a map with string keys:
 - `"t"` → XSD data-type annotation string (e.g. `xsd:float`, OPTIONAL).
 - `"u"` → unit accession, encoded per the unit rules of [§5](#5-controlled-vocabulary-binding) (OPTIONAL).
 
-User params appear spectrum-level (header key 8) and per-scan (scan map key 2).
+User params appear spectrum-level (header key 7) and per-scan (scan map key 2).
 Both are OPTIONAL arrays, omitted entirely when empty.
 
 ### 6.6 Identification and annotation scope
@@ -329,11 +326,7 @@ molecular identification or fragment assignment model. Peptide sequences,
 chemical structures, identification scores, and assigned fragment ions belong
 in surrounding applications or formats designed for those purposes.
 
-Header key 7 held an optional ProForma interpretation in v1. It is reserved in
-v2. Producers **MUST NOT** emit it and consumers **MUST** reject its presence,
-including a null value. The key is not reassigned. Other header keys and array
-semantics retain their published meanings. This scope does not impose chemical
-content filtering on arbitrary user parameters.
+This scope does not impose chemical content filtering on arbitrary user parameters.
 
 ## 7. Peak arrays
 
@@ -367,7 +360,7 @@ values. A consumer **MUST** reject the token otherwise.
 When key 6 is present, it identifies the unit of every value in that array. A
 producer **MUST** include it when the array term permits multiple units and the
 unit is known; this includes drift-time arrays that may be seconds or
-milliseconds. Consumers **MUST** accept legacy descriptors that omit it.
+milliseconds. Consumers **MUST** accept descriptors that omit it.
 
 **Additional arrays.** Beyond the dedicated m/z / intensity / charge fields, a
 producer **MAY** include additional per-peak arrays: any binary-data-array CV
@@ -502,19 +495,16 @@ work and is out of scope for this version.
 
 - The format version is carried in the magic (`spectrl.v2`) and **only** there
   ([§4](#4-token-structure)).
-- A **backward-compatible** change (new OPTIONAL header key, new codec
-  registered in PSI-MS CV) keeps version `2`.
+- A **backward-compatible** change (new controlled-vocabulary metadata or a
+  new codec registered in PSI-MS CV) keeps version `2`.
 - A **breaking** change (altered framing, altered semantics of an existing key,
-  removed key) **MUST** increment the version, producing `spectrl.v3`, and so on.
+  added or removed header key) **MUST** increment the version, producing
+  `spectrl.v3`, and so on.
 - Python and JavaScript packages share a version whose major component matches
   the format version. Minor and patch releases can change the libraries without
   changing the wire format. Runtime support changes are documented in release notes.
 - `spectrl.v2` is introduced by library release 2.0.0. Existing required fields
   and semantics will not change within this format version.
-- The published `spectrl.v1` format remains unchanged. Its optional key 7 is
-  defined by the archived v1 specification. A consumer MAY expose an explicit
-  legacy decoder, but MUST NOT silently accept v1 as v2 or discard its
-  interpretation during migration.
 
 ## 10. URI bindings
 
@@ -539,7 +529,7 @@ A **conformant producer**:
 - includes the CRC-32 checksum (fourth token part).
 
 A producer **MAY** omit any OPTIONAL key it chooses not to carry. In particular
-it may omit free-text user params (key 8 and scan-map key `2`, [§6.5](#65-user-params))
+it may omit free-text user params (key 7 and scan-map key `2`, [§6.5](#65-user-params))
 while retaining every CV param: vendor trailers are frequently a large share of a
 small MS2 token and commonly restate CV params the token already carries. Such a
 token is conformant, and a consumer **MUST NOT** treat missing user params as an
@@ -667,11 +657,9 @@ the Apache License, Version 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
 
 | Version | Date | Notes |
 |---------|------|-------|
-| 2.0 | September 2026 | Removes molecular interpretation, reserves header key 7, and uses the `spectrl.v2` prefix. Acquisition metadata and array codec semantics are retained. |
-| 1.0 | August 2026 | Frozen `spectrl.v1` specification: integer-keyed array descriptors with optional units, explicit Numpress fixed points, accession-keyed auxiliary arrays, and a required CRC-32 checksum. The format version is carried only in the prefix. |
-| ≤ 0.2 | 2025–2026 | Development revisions. Tokens from these revisions are not compatibility artifacts. |
+| 2.0 | September 2026 | The `spectrl.v2` format carries measured spectra and acquisition context with header keys 0 through 7. |
 
-The full change history, including library releases, is maintained in
+Implementation changes are recorded in
 [CHANGELOG.md](CHANGELOG.md).
 
 ## 20. References

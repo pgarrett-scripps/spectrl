@@ -19,7 +19,7 @@ spectrl.v2.<base64url(CBOR document)>.<checksum>
 [Read the format specification](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md) ·
 [See the changelog](https://github.com/pgarrett-scripps/spectrl/blob/main/CHANGELOG.md)
 
-[![A spectrl token embedded in a URL and decoded into a mass spectrum, with summary cards for token size, carriers, implementations, and client-side decoding.](https://raw.githubusercontent.com/pgarrett-scripps/spectrl/main/docs/spectrl-overview.png)](https://pgarrett-scripps.github.io/spectrl/)
+[![A spectrl token embedded in a URL and decoded into a mass spectrum, with portable text, Python and JavaScript implementations, and local decoding.](https://raw.githubusercontent.com/pgarrett-scripps/spectrl/main/docs/spectrl-overview.png)](https://pgarrett-scripps.github.io/spectrl/)
 
 *A spectrum travels as ordinary URL-safe text and decodes entirely client-side.*
 
@@ -363,26 +363,9 @@ The normative token format is specified in [SPECIFICATION.md](https://github.com
 specification is the contract. A machine-readable CV/codec/key registry lives in
 [schema/registry.json](https://github.com/pgarrett-scripps/spectrl/blob/main/schema/registry.json).
 
-`spectrl.v2` removes the optional identification field from the published v1
-format. Header key 7 is reserved and forbidden. Normal encoders and decoders
-use v2, and the spectrum model has no `interp` field. Remove that argument from
-encoding calls and store identifications in the surrounding application.
-
-Archived v1 tokens require an explicit compatibility decoder. It returns the
-spectrum and the legacy interpretation separately:
-
-```python
-from spectrl.legacy import decode_v1_token
-
-legacy = decode_v1_token(old_token)
-spectrum = legacy.spectrum
-identification = legacy.interpretation
-```
-
-The TypeScript equivalent is `decodeV1Token` from
-`@spectrl-ms/spectrl/legacy`. To migrate, review or save the legacy interpretation,
-then encode `legacy.spectrum` with the v2 encoder. Do not replace a token prefix
-by hand. Both the version and checksum must match the encoded document.
+`spectrl.v2` carries measured spectra and acquisition context. Its header
+uses keys 0 through 7, with spectrum-level free-text parameters at key 7.
+Molecular identifications belong in the surrounding application.
 
 ## Contributing
 
@@ -398,8 +381,6 @@ problems privately as described in [SECURITY.md](https://github.com/pgarrett-scr
 If spectrl supports published work, cite the archived software release rather
 than the moving `main` branch. GitHub exposes the current metadata through
 [`CITATION.cff`](https://github.com/pgarrett-scripps/spectrl/blob/main/CITATION.cff).
-The archived v1.0.0 release is available at
-[doi:10.5281/zenodo.21986776](https://doi.org/10.5281/zenodo.21986776).
 
 ## License
 

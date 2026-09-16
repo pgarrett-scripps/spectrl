@@ -1,6 +1,6 @@
 # spectrl conformance test vectors
 
-`vectors.json` is the **language-agnostic contract** for the `spectrl.v1` token
+`vectors.json` is the **language-agnostic contract** for the `spectrl.v2` token
 format. Every implementation must decode each `token` and reproduce the
 recorded `decoded` values. This is what makes spectrl interoperable across
 implementations rather than just a single library.
@@ -23,14 +23,14 @@ cd js && node --import tsx scripts/gen_reverse_vectors.ts  # reverse-vectors.jso
 
 ```jsonc
 {
-  "spectrl_format_version": 1,
+  "spectrl_format_version": 2,
   "generated_by": "spectrl-python <version>",
   "vectors": [
     {
       "name": "minimal",
       "description": "...",
       "mode": "lossy" | "lossless",
-      "token": "spectrl.v1....",          // the input
+      "token": "spectrl.v2....",          // the input
       "tolerance": { "abs": 1e-6, "rel": 1e-6 },
       "decoded": {                        // what a consumer MUST recover
         "default_array_length": 3,
@@ -43,12 +43,11 @@ cd js && node --import tsx scripts/gen_reverse_vectors.ts  # reverse-vectors.jso
         "scan_combination": { ... } | null,
         "precursors": [ { "isolation_window": {...}|null, "selected_ions": [...], "activation": {...}|null } ],
         "products": [ { "isolation_window": {...}|null } ],
-        "interp": "PROFORMA"|null,
         "user_params": [ { "name": "...", "value": ..., "type": "xsd:..."|null, "unit_accession": ...|null } ],
         "extra_arrays": { "<accession or name>": { "dtype": "float64"|"float32"|"int32", "values": [..] } },
         "array_units": { "<array key>": "<unit accession>" },
         "checksum": "<8 lowercase hex characters>",
-        "format_version": 1
+        "format_version": 2
       }
     }
   ]
@@ -67,7 +66,7 @@ params), mirroring header scan map key 2.
 - **The stored `checksum` must verify**: compute CRC-32/ISO-HDLC over the ASCII
   text before the last `.` exactly as received and compare its eight-character
   lowercase hexadecimal form with the required fourth part.
-- **Metadata** (`params`, `scans`, `precursors`, `products`, `id`, `interp`)
+- **Metadata** (`params`, `scans`, `precursors`, `products`, `id`)
   must round-trip exactly. These live in the header and are not lossy.
 
 ## Consumers

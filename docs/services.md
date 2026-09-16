@@ -111,8 +111,7 @@ Omitting `limits` preserves the existing format ceilings. Passing
 of 64 arrays and 64 MiB of total decoded array data. Default token and peak
 limits match the existing format ceilings. JavaScript exports the immutable
 `DEFAULT_DECODE_LIMITS` object. Applications can tighten these defaults or
-raise their own budgets, but cannot bypass format ceilings. Explicit v1
-decoders accept the same limits.
+raise their own budgets, but cannot bypass format ceilings.
 
 Decoded bytes measure retained array data. They exclude metadata, the token,
 CBOR objects, decompression buffers, and other temporary allocations. They
