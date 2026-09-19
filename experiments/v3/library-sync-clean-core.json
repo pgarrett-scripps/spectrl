@@ -656,7 +656,7 @@
     },
     {
       "path": "tests/test_vectors.py",
-      "sha256": "de07e9e4a752e2505e628f97ffa6ded6b7a61d7ff5d6361bf0822aea7c3bd57c"
+      "sha256": "71481e4baf81eed39da74445a29364ddb8a01568e86505727d2f1956eb8b4d2a"
     },
     {
       "path": "tests/test_workflows.py",

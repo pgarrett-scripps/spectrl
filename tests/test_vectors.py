@@ -147,7 +147,7 @@ def test_reverse_vector_decodes(vec: dict):
 
 
 def test_vectors_in_sync_with_generator(tmp_path):
-    """Regenerate the vectors to a temp file and diff against the committed file."""
+    """Require identical tokens and metadata with a tiny libm allowance for lossy arrays."""
     out = tmp_path / "vectors.json"
     result = subprocess.run([sys.executable, str(GENERATOR), str(out)], capture_output=True, text=True)
     assert result.returncode == 0, f"generator failed:\n{result.stderr}"
@@ -156,7 +156,21 @@ def test_vectors_in_sync_with_generator(tmp_path):
     committed = _load(VECTORS)
     # generated_by embeds the installed version; compare everything else
     fresh.pop("generated_by"), committed.pop("generated_by")
-    assert fresh == committed, "test-vectors/vectors.json is out of date; run: uv run python scripts/gen_vectors.py"
+    for actual, expected in zip(fresh["vectors"], committed["vectors"], strict=True):
+        if actual["mode"] != "lossy" or expected["mode"] != "lossy":
+            continue
+        for name in ("mz", "intensity"):
+            values = actual["decoded"][name]
+            reference = expected["decoded"][name]
+            if values is None or reference is None:
+                continue
+            # expm1 can differ by one last-place bit across operating systems.
+            # Keep this much tighter than the source quantization tolerance.
+            for a, e in zip(values, reference, strict=True):
+                assert math.isfinite(a) and math.isfinite(e)
+                assert abs(a - e) <= 2 * max(math.ulp(a), math.ulp(e)), (actual["name"], name, a, e)
+            actual["decoded"][name] = reference
+    assert fresh == committed, "test-vectors/vectors.json is out of date. Run: uv run python scripts/gen_vectors.py"
 
 
 @pytest.mark.parametrize("vec", _load(NEGATIVE)["vectors"], ids=lambda v: f"negative-{v['name']}")
