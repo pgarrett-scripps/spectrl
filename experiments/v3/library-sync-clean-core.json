@@ -380,7 +380,7 @@
     },
     {
       "path": "scripts/gen_vectors.py",
-      "sha256": "71e2e4548e2745ff32ed06f6c98b64674e9bf4326ab0ba39823d7720a83e5740"
+      "sha256": "21e962dd627966ca08a5103fbc61661de7ceaa97c061772e781ce86cd6eaff50"
     },
     {
       "path": "scripts/generate_registry.py",
@@ -512,7 +512,7 @@
     },
     {
       "path": "test-vectors/README.md",
-      "sha256": "6538ab5ec62eec2ca59cadb413ad1ced955039850772e4bb5fbfab16d7beb468"
+      "sha256": "abdd58a444310502a97fefa8cc74c0ba92de28bb6d6f6269ee87f855cf18e7e2"
     },
     {
       "path": "test-vectors/cbor-hardening.json",
@@ -525,6 +525,10 @@
     {
       "path": "test-vectors/delta-proposal.json",
       "sha256": "104900bb93ee1ef175d906100cc84289d0175deb6deb23333f71883c7952918b"
+    },
+    {
+      "path": "test-vectors/inputs/core-profile.json",
+      "sha256": "74a41aa98ad0b12a9b5391683dbc0b488dbb142e3c2f4894880a7bce268b9f97"
     },
     {
       "path": "test-vectors/negative-vectors.json",

@@ -87,3 +87,9 @@ truncation, trailing streams, dictionaries, wrong wrappers, corrupted checksums,
 and expansion beyond the CBOR limit. Regenerate it with
 `python scripts/gen_outer_vectors.py`. Both runtimes test full decoding and
 inspection against these cases.
+
+`inputs/core-profile.json` freezes the native source values for the synthetic
+core-profile fixtures. The generator reads these values instead of recalculating
+logarithmic spacing, whose last-place rounding can depend on the platform.
+Tokens, metadata, and lossless decoded values must remain exact. Regenerated
+lossy m/z and intensity values allow at most two ULPs of library-math variation.

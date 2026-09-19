@@ -404,11 +404,12 @@ def main() -> None:
         vectors.append(_vector(name, desc, spec, lossless=False, tol=LOSSY_TOL))
         vectors.append(_vector(f"{name}__lossless", desc + " (lossless)", spec, lossless=True, tol=EXACT_TOL))
 
+    core_input = json.loads((OUT.parent / "inputs/core-profile.json").read_text())
     core_spec = InlineSpectrum(
         default_array_length=128,
-        mz=np.linspace(100.0, 1200.0, 128),
-        intensity=np.geomspace(10.0, 1.0e6, 128),
-        extra_arrays={"quality": np.linspace(0.0, 1.0, 128, dtype=np.float32)},
+        mz=np.array(core_input["mz"], dtype=np.float64),
+        intensity=np.array(core_input["intensity"], dtype=np.float64),
+        extra_arrays={"quality": np.array(core_input["quality"], dtype=np.float32)},
     )
     vectors.append(
         _vector(

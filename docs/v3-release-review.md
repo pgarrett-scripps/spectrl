@@ -31,7 +31,7 @@ submission packaging.
   checks.
 - Excluded historical experiments from the Python source distribution. The
   package archives also omit the removed Zstandard backend.
-- Synchronized 166 library, documentation, configuration, and fixture files
+- Synchronized 167 library, documentation, configuration, and fixture files
   between the two repositories. The recorded hashes are in
   [the synchronization manifest](../experiments/v3/library-sync-clean-core.json).
 - Regenerated the paper assets and timing measurements, rebuilt PDF and Word,
@@ -55,7 +55,7 @@ submission packaging.
 | Manuscript | Full preflight passed, all 82 computed statistics independently reproduced |
 | Bibliography | All 29 DOI records checked against Crossref or DataCite |
 | Dependency advisories | No known vulnerabilities reported for audited Python dependencies, JavaScript dependencies, or the demo |
-| Synchronization | All 166 recorded files match their hashes and both repository copies |
+| Synchronization | All 167 recorded files match their hashes and both repository copies |
 
 The profile matrix and complete-file fidelity audit were regenerated after
 removing Zstandard. The release gate also reran shared conformance fixtures,
