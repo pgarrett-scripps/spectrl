@@ -1,0 +1,61 @@
+{
+  "status": "Conformance vectors for a proposed PSI-MS codec, with no assigned accession",
+  "vectors": [
+    {
+      "name": "empty32",
+      "item_size": 4,
+      "raw_hex": "",
+      "shuffled_hex": "",
+      "zlib_hex": "789c030000000001"
+    },
+    {
+      "name": "empty64",
+      "item_size": 8,
+      "raw_hex": "",
+      "shuffled_hex": "",
+      "zlib_hex": "789c030000000001"
+    },
+    {
+      "name": "singleton",
+      "item_size": 8,
+      "raw_hex": "0000000000005940",
+      "shuffled_hex": "0000000000005940",
+      "zlib_hex": "789c6360008148070000fa009a"
+    },
+    {
+      "name": "wrap32",
+      "item_size": 4,
+      "raw_hex": "00000000ffffffff00000000ffffff7f00000080",
+      "shuffled_hex": "00ff01ff0100ff00ff0000ff00ff0000ff007f00",
+      "zlib_hex": "789c63f8cff89f91e13f10c2887a060052e2077b"
+    },
+    {
+      "name": "wrap64",
+      "item_size": 8,
+      "raw_hex": "0000000000000000ffffffffffffffff0000000000000000ffffffffffffff7f0000000000000080",
+      "shuffled_hex": "00ff01ff0100ff00ff0000ff00ff0000ff00ff0000ff00ff0000ff00ff0000ff00ff0000ff007f00",
+      "zlib_hex": "789c63f8cff89f91e13f10e223ea190046390f73"
+    },
+    {
+      "name": "float32_bits",
+      "item_size": 4,
+      "raw_hex": "0000000000000080010000000000807f000080ff3412c07f0000803f",
+      "shuffled_hex": "000001ff0034cc000000ff0012ed0000007f0040bf0080807f8080bf",
+      "zlib_hex": "789c636060fccf6072868181e13f83d05b2055cfe0b09fa1a1a1bea1613f0068aa08bb"
+    },
+    {
+      "name": "float64_bits",
+      "item_size": 8,
+      "raw_hex": "000000000000000000000000000000800100000000000000000000000000f07f000000000000f0ff341200000000f87f000000000000f03f",
+      "shuffled_hex": "000001ff0034cc000000ff0012ed000000ff0000ff000000ff0000ff000000ff0000ff000000ff0000ff000000ef0008f70080807f8080bf",
+      "zlib_hex": "789c636060fccf6072868181e13f83d05b300542d8a9f70c1cdf191a1aea1b1af60300b45d1123"
+    },
+    {
+      "name": "mz64",
+      "item_size": 8,
+      "raw_hex": "00000000000059406666666666065940cdcccccccc0c5940",
+      "shuffled_hex": "006667006666006666006666006666000606590000400000",
+      "zlib_hex": "789c63484b67484b432036b648060607060600451c04a3"
+    }
+  ]
+}

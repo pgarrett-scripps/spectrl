@@ -1,7 +1,7 @@
 """Generate language-agnostic conformance test vectors from the Python reference impl.
 
-Each vector pairs a canonical `spectrl.v2` token with the exact values a conformant
-consumer must recover from it. Numpress decode is deterministic, so the stored
+Each vector pairs a canonical `spectrl.v3` token with the exact values a conformant
+consumer must recover from it. Core numeric decoding is deterministic, so the stored
 arrays are the *decoded* values and consumers MUST reproduce them (within a tiny
 float epsilon). Lossless arrays MUST match exactly.
 
@@ -125,7 +125,7 @@ def _vector(
     }
 
 
-# tolerance for lossy comparisons; numpress decode is deterministic so consumers
+# tolerance for lossy comparisons; core numeric decoding is deterministic so consumers
 # should match the stored (already-decoded) arrays to near machine precision.
 LOSSY_TOL = {"abs": 1e-6, "rel": 1e-6}
 EXACT_TOL = {"abs": 1e-9, "rel": 0.0}
@@ -404,7 +404,7 @@ def main() -> None:
         vectors.append(_vector(name, desc, spec, lossless=False, tol=LOSSY_TOL))
         vectors.append(_vector(f"{name}__lossless", desc + " (lossless)", spec, lossless=True, tol=EXACT_TOL))
 
-    zstd_spec = InlineSpectrum(
+    core_spec = InlineSpectrum(
         default_array_length=128,
         mz=np.linspace(100.0, 1200.0, 128),
         intensity=np.geomspace(10.0, 1.0e6, 128),
@@ -412,15 +412,24 @@ def main() -> None:
     )
     vectors.append(
         _vector(
-            "zstd_codecs",
-            "official PSI-MS Numpress + zstd and byte-shuffled zstd pipelines",
-            zstd_spec,
+            "adaptive_lossless",
+            "fixed lossless core policy",
+            core_spec,
+            lossless=True,
+            tol=EXACT_TOL,
+        )
+    )
+    vectors.append(
+        _vector(
+            "explicit_core_encodings",
+            "core numeric encodings with whole-document compression",
+            core_spec,
             lossless=False,
             tol=LOSSY_TOL,
             array_encodings={
-                "mz": "numlin-zstd",
-                "intensity": "numslof-zstd",
-                "quality": "byte-shuffled-zstd",
+                "mz": "modular-delta-shuffle",
+                "intensity": "byte-shuffle",
+                "quality": "byte-shuffle",
             },
         )
     )
@@ -430,7 +439,7 @@ def main() -> None:
         "generated_by": f"spectrl-python {pyver}",
         "note": (
             "Conformance vectors. A consumer MUST recover `decoded` from `token`. "
-            "Numpress decode is deterministic; arrays should match the stored decoded "
+            "Core numeric decoding is deterministic; arrays should match the stored decoded "
             "values within `tolerance`. Lossless vectors MUST match exactly. The stored "
             "`checksum` MUST verify."
         ),

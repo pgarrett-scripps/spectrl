@@ -15,7 +15,6 @@ from mzmlpy.constants import (
     BinaryDataArrayAccession,
     BinaryDataTypeAccession,
     CollisionDissociationTypeAccession,
-    CompressionTypeAccessions,
     ScanPolarity,
     SpectrumCombinationAccession,
     SpectrumMSAccession,
@@ -23,17 +22,14 @@ from mzmlpy.constants import (
 )
 
 from spectrl.cv import accession_tail
-from spectrl.header import (
-    DESC_ARRAY,
-    DESC_COMP,
-    DESC_DATA,
-    DESC_FP,
-    DESC_NAME,
-    DESC_TYPE,
-)
-
-FORMAT_VERSION = 2
-MAGIC = "spectrl.v2"
+FORMAT_VERSION = 3
+MAGIC = "spectrl.v3"
+DESC_TYPE = 0
+DESC_ARRAY = 1
+DESC_ENCODING = 2
+DESC_NAME = 4
+DESC_DATA = 5
+DESC_UNIT = 6
 
 
 def _tail(acc: str) -> int:
@@ -72,17 +68,7 @@ ION_MOBILITY_ACCESSIONS = (
 DESC_UNIT = 6
 MAX_SAFE_INTEGER = 9_007_199_254_740_991
 
-COMPRESSION_SYMBOLS = {
-    "MS:1002746": "NUMPRESS_LINEAR_ZLIB",
-    "MS:1002748": "NUMPRESS_SLOF_ZLIB",
-    "MS:1002747": "NUMPRESS_PIC_ZLIB",
-    "MS:1000574": "ZLIB",
-    "MS:1003780": "ZSTD",
-    "MS:1003781": "BYTE_SHUFFLED_ZSTD",
-    "MS:1003783": "NUMPRESS_LINEAR_ZSTD",
-    "MS:1003784": "NUMPRESS_PIC_ZSTD",
-    "MS:1003785": "NUMPRESS_SLOF_ZSTD",
-}
+
 
 UNIT_ACCESSIONS = {
     "MZ": "MS:1000040",
@@ -146,7 +132,7 @@ registry = {
     "title": "spectrl registry",
     "description": (
         "Machine-readable registry of all integer keys, CV accession tails, "
-        "and codec identifiers used in the spectrl.v2 token format."
+        "and codec identifiers used in the spectrl.v3 token format."
     ),
     "spectrl_version": FORMAT_VERSION,
     "wire_constants": {
@@ -156,31 +142,37 @@ registry = {
         "max_array_length": 4_000_000,
         "max_cbor_depth": 32,
         "max_cbor_items": 100_000,
-        "default_numlin_fp": 100_000,
-        "default_numslof_fp": 3_600,
+        "default_mz_ppm": 0.1,
+        "default_intensity_scale": 3_600,
         "max_safe_integer": MAX_SAFE_INTEGER,
     },
     # ── Token format ──────────────────────────────────────────────────────────
     "token_format": {
         "magic": MAGIC,
         "description": (
-            "identifier '.' version '.' base64url(CBOR document) '.' checksum. The CBOR document is "
-            "the header map (see header_keys) with each array's compressed blob embedded "
+            "identifier '.' version '.' mode '.' base64url(payload) '.' checksum. The CBOR document is "
+            "the header map (see header_keys) with each array's encoded words embedded "
             "inline as a CBOR byte string in its descriptor (descriptor key 5). Encoded "
             "deterministically (RFC 8949 §4.2). The format version is carried only in the "
             "magic. The token string is the interchange unit."
         ),
+        "payload_modes": {"r": "raw CBOR", "z": "zlib stream", "b": "Brotli stream"},
+        "selection": "Default zlib-6. Explicit auto chooses the shortest available token, ties z/r/s/b",
+        "presets": {"z": 6, "s": 3, "b": 5},
+        "required_payload_modes": ["r", "z"],
+        "expanded_payload_limit": 16 * 1024 * 1024,
         "base64url": "RFC 4648 §5: URL-safe alphabet, no padding ('=' stripped).",
         "checksum": (
-            "REQUIRED fourth part: CRC-32/ISO-HDLC over the ASCII text of the first three parts, "
-            "'spectrl.version.payload', encoded as eight lowercase hexadecimal characters. "
+            "REQUIRED fifth part: CRC-32/ISO-HDLC over the ASCII text of the first four parts, "
+            "'spectrl.version.mode.payload', encoded as eight lowercase hexadecimal characters. "
             "Consumers MUST reject a token on mismatch."
         ),
         "parts": [
             {"index": 0, "content": "format identifier", "example": "spectrl"},
             {"index": 1, "content": "version identifier", "example": f"v{FORMAT_VERSION}"},
-            {"index": 2, "content": "base64url(CBOR document), header map + inline array blobs"},
-            {"index": 3, "content": "CRC-32 checksum over parts 0-2 (required, 8 lowercase hex chars)"},
+            {"index": 2, "content": "payload compression: r raw, z zlib, b Brotli"},
+            {"index": 3, "content": "base64url(raw or compressed CBOR document)"},
+            {"index": 4, "content": "CRC-32 checksum over parts 0-3 (required, 8 lowercase hex chars)"},
         ],
     },
     # ── Ontology defaults ─────────────────────────────────────────────────────
@@ -197,39 +189,12 @@ registry = {
     },
     # ── CV param encoding rules ───────────────────────────────────────────────
     "cvparam_encoding": {
-        "description": "How a single cvParam is stored as a CBOR map entry.",
+        "description": "Ordered list of [accession, value] pairs. Repeated accessions are retained.",
         "forms": [
-            {
-                "form": "flag",
-                "key": "tail_int (MS: default)",
-                "value": "null",
-                "example": {"1000130": None},
-                "meaning": "Presence is the meaning (e.g. positive scan).",
-            },
-            {
-                "form": "valued",
-                "key": "tail_int",
-                "value": "number or string",
-                "example": {"1000511": 2},
-                "meaning": "Param with a scalar value (e.g. ms level = 2).",
-            },
-            {
-                "form": "valued_with_unit",
-                "key": "tail_int",
-                "value": "[value, unit_tail_int]  OR  [value, [ontology, unit_tail_int]]",
-                "example": {"1000016": [23.41, 31]},
-                "meaning": "Param with value and unit (e.g. scan time 23.41 min, UO:0000031=31).",
-            },
-            {
-                "form": "non_ms_ontology",
-                "key": "full accession string",
-                "value": "same value rules as above",
-                "example": {"UO:0000010": 3.5},
-                "meaning": (
-                    "Param from a non-MS ontology (or with a non-7-digit tail). "
-                    "the map key is the full accession string."
-                ),
-            },
+            {"form": "flag", "example": [1000130, None]},
+            {"form": "valued", "example": [1000511, 2]},
+            {"form": "with_unit", "example": [1000016, [23.41, 31]]},
+            {"form": "other_ontology", "example": ["NCIT:C25330", "sample"]},
         ],
     },
     # ── Top-level header keys ─────────────────────────────────────────────────
@@ -248,10 +213,10 @@ registry = {
         },
         "2": {
             "name": "spectrum_params",
-            "type": "cvparam_map",
+            "type": "cvparam_list",
             "required": False,
             "description": (
-                "Spectrum-level CV parameters as a tail-keyed map. "
+                "Spectrum-level CV parameters as a ordered list of [accession, value] pairs. "
                 "Includes ms level, polarity flag, centroid/profile flag, TIC, "
                 "base peak m/z and intensity, lowest/highest observed m/z, etc."
             ),
@@ -270,10 +235,10 @@ registry = {
                 "s": {
                     "name": "scans",
                     "type": "array of scan objects",
-                    "description": "Each scan: {0: cvparam_map, 1: [scan_window_cvparam_maps], 2: [user_params]}.",
+                    "description": "Each scan: {0: cvparam_list, 1: [scan_window_cvparam_lists], 2: [user_params]}.",
                     "scan_fields": {
-                        "0": "cvparam_map: scan params (start time, ion injection time, filter string, …)",
-                        "1": "array of cvparam_maps: one per scan window (lower/upper m/z limits)",
+                        "0": "cvparam_list: scan params (start time, ion injection time, filter string, …)",
+                        "1": "array of cvparam_lists: one per scan window (lower/upper m/z limits)",
                         "2": "array of user_param maps: scan-level free-text params (optional)",
                     },
                 },
@@ -285,16 +250,16 @@ registry = {
             "required": False,
             "description": "Mirrors mzML precursorList.",
             "precursor_fields": {
-                "0": "isolation_window: cvparam_map (target m/z, lower/upper offsets)",
-                "1": "selected_ions: array of cvparam_maps (m/z, charge, intensity, IM)",
-                "2": "activation: cvparam_map (method as flag + collision energy as value)",
+                "0": "isolation_window: cvparam_list (target m/z, lower/upper offsets)",
+                "1": "selected_ions: array of cvparam_lists (m/z, charge, intensity, IM)",
+                "2": "activation: cvparam_list (method as flag + collision energy as value)",
             },
         },
         "5": {
             "name": "product_list",
             "type": "array of product objects",
             "required": False,
-            "description": "Mirrors mzML productList. Each product: {0: isolation_window cvparam_map}.",
+            "description": "Mirrors mzML productList. Each product: {0: isolation_window cvparam_list}.",
         },
         "6": {
             "name": "binary_data_array_list",
@@ -315,26 +280,22 @@ registry = {
                         "int: array type accession tail (see array_types). MS:1000786 = non-standard, see key 4"
                     ),
                 },
-                str(DESC_COMP): {
-                    "name": "comp",
-                    "description": "int: compression accession tail (see compression_codecs)",
-                },
-                str(DESC_FP): {
-                    "name": "fp",
-                    "description": (
-                        "int: numpress fixed-point scale factor actually used by the blob, a whole "
-                        "number. REQUIRED for linear/slof codecs and forbidden for all other codecs."
-                    ),
-                },
+                "2": {"name": "encoding", "description": "[identifier, revision, optional parameter map]"},
+                "7": {"name": "fidelity", "description": "0 bit-exact or 1 potentially lossy relative to the encoder input"},
+                "8": {"name": "params", "description": "Ordered scientific CV parameter pairs"},
+                "9": {"name": "user_params", "description": "User parameters"},
+                "10": {"name": "processing", "description": "Ordered processing records"},
+                "11": {"name": "extensions", "description": "Namespaced extension map"},
                 str(DESC_NAME): {
                     "name": "name",
                     "description": (
-                        "str: free-text descriptor name. REQUIRED iff key 1 is MS:1000786 (non-standard array)"
+                        "Nonempty str: required for MS:1000786, optional for standard arrays. "
+                        "Names do not change standard array identity."
                     ),
                 },
                 str(DESC_DATA): {
                     "name": "d",
-                    "description": "bytes: the array's compressed blob, embedded inline as a CBOR byte string",
+                    "description": "bytes: the array's encoded words, embedded inline as a CBOR byte string",
                 },
                 str(DESC_UNIT): {
                     "name": "unit",
@@ -354,97 +315,6 @@ registry = {
         },
     },
     # ── Compression codecs ────────────────────────────────────────────────────
-    "compression_codecs": {
-        "description": (
-            "Keyed by MS: accession tail integer. The 'pipeline' field describes encode order (decode is reversed)."
-        ),
-        "codecs": {
-            str(_tail(CompressionTypeAccessions.MS_NUMPRESS_LINEAR_PREDICTION_ZLIB)): {
-                "accession": str(CompressionTypeAccessions.MS_NUMPRESS_LINEAR_PREDICTION_ZLIB),
-                "name": "MS-Numpress linear prediction + zlib",
-                "use_for": "m/z arrays (lossy default)",
-                "pipeline": ["numpress_encode_linear(data, fp)", "zlib_compress"],
-                "decode_pipeline": ["zlib_decompress", "numpress_decode_linear"],
-                "lossy": True,
-                "library_hint": "pynumpress.encode_linear / decode_linear",
-            },
-            str(_tail(CompressionTypeAccessions.MS_NUMPRESS_SHORT_LOGGED_FLOAT_ZLIB)): {
-                "accession": str(CompressionTypeAccessions.MS_NUMPRESS_SHORT_LOGGED_FLOAT_ZLIB),
-                "name": "MS-Numpress short logged float + zlib",
-                "use_for": "intensity arrays (lossy default)",
-                "pipeline": ["numpress_encode_slof(data, fp)", "zlib_compress"],
-                "decode_pipeline": ["zlib_decompress", "numpress_decode_slof"],
-                "lossy": True,
-                "library_hint": "pynumpress.encode_slof / decode_slof",
-            },
-            str(_tail(CompressionTypeAccessions.MS_NUMPRESS_POSITIVE_INTEGER_ZLIB)): {
-                "accession": str(CompressionTypeAccessions.MS_NUMPRESS_POSITIVE_INTEGER_ZLIB),
-                "name": "MS-Numpress positive integer + zlib",
-                "use_for": "charge arrays (lossy, rounds to nearest integer)",
-                "pipeline": ["numpress_encode_pic(data)", "zlib_compress"],
-                "decode_pipeline": ["zlib_decompress", "numpress_decode_pic"],
-                "lossy": True,
-                "library_hint": "pynumpress.encode_pic / decode_pic",
-            },
-            str(_tail(CompressionTypeAccessions.ZLIB_COMPRESSION)): {
-                "accession": str(CompressionTypeAccessions.ZLIB_COMPRESSION),
-                "name": "zlib",
-                "use_for": (
-                    "canonical lossless default and fallback for unknown auxiliary arrays. "
-                    "raw little-endian bytes of the declared type (float64/float32/int32) + zlib"
-                ),
-                "pipeline": ["to_little_endian_bytes(data, type)", "zlib_compress"],
-                "decode_pipeline": ["zlib_decompress", "from_little_endian_bytes(type)"],
-                "lossy": False,
-                "library_hint": "zlib.compress / decompress",
-            },
-            str(_tail(CompressionTypeAccessions.ZSTD_COMPRESSION)): {
-                "accession": str(CompressionTypeAccessions.ZSTD_COMPRESSION),
-                "name": "zstd",
-                "use_for": "lossless raw arrays when explicitly selected",
-                "pipeline": ["to_little_endian_bytes(data, type)", "zstd_compress"],
-                "decode_pipeline": ["zstd_decompress", "from_little_endian_bytes(type)"],
-                "lossy": False,
-                "library_hint": "zstandard / @cloudpss/zstd",
-            },
-            str(_tail(CompressionTypeAccessions.BYTE_SHUFFLED_ZSTD)): {
-                "accession": str(CompressionTypeAccessions.BYTE_SHUFFLED_ZSTD),
-                "name": "byte-shuffled zstd",
-                "use_for": "lossless raw numeric arrays when explicitly selected",
-                "pipeline": ["to_little_endian_bytes(data, type)", "byte_shuffle", "zstd_compress"],
-                "decode_pipeline": ["zstd_decompress", "byte_unshuffle", "from_little_endian_bytes(type)"],
-                "lossy": False,
-                "library_hint": "zstandard / @cloudpss/zstd",
-            },
-            str(_tail(CompressionTypeAccessions.MS_NUMPRESS_LINEAR_PREDICTION_ZSTD)): {
-                "accession": str(CompressionTypeAccessions.MS_NUMPRESS_LINEAR_PREDICTION_ZSTD),
-                "name": "MS-Numpress linear prediction + zstd",
-                "use_for": "coordinate arrays when explicitly selected",
-                "pipeline": ["numpress_encode_linear(data, fp)", "zstd_compress"],
-                "decode_pipeline": ["zstd_decompress", "numpress_decode_linear"],
-                "lossy": True,
-                "library_hint": "pynumpress + zstandard / @cloudpss/zstd",
-            },
-            str(_tail(CompressionTypeAccessions.MS_NUMPRESS_POSITIVE_INTEGER_ZSTD)): {
-                "accession": str(CompressionTypeAccessions.MS_NUMPRESS_POSITIVE_INTEGER_ZSTD),
-                "name": "MS-Numpress positive integer + zstd",
-                "use_for": "non-negative integer arrays when explicitly selected",
-                "pipeline": ["numpress_encode_pic(data)", "zstd_compress"],
-                "decode_pipeline": ["zstd_decompress", "numpress_decode_pic"],
-                "lossy": True,
-                "library_hint": "pynumpress + zstandard / @cloudpss/zstd",
-            },
-            str(_tail(CompressionTypeAccessions.MS_NUMPRESS_SHORT_LOGGED_FLOAT_ZSTD)): {
-                "accession": str(CompressionTypeAccessions.MS_NUMPRESS_SHORT_LOGGED_FLOAT_ZSTD),
-                "name": "MS-Numpress short logged float + zstd",
-                "use_for": "positive magnitude arrays when explicitly selected",
-                "pipeline": ["numpress_encode_slof(data, fp)", "zstd_compress"],
-                "decode_pipeline": ["zstd_decompress", "numpress_decode_slof"],
-                "lossy": True,
-                "library_hint": "pynumpress + zstandard / @cloudpss/zstd",
-            },
-        },
-    },
     "unit_accessions": {
         "description": "Stable unit accessions commonly used by binary arrays.",
         "units": {name: {"accession": accession} for name, accession in UNIT_ACCESSIONS.items()},
@@ -453,7 +323,7 @@ registry = {
     "data_types": {
         "description": (
             "Binary data type accession tails. Used in array descriptor 'type' field. "
-            "Only float64, float32, and int32 are permitted in spectrl.v2 tokens. Other "
+            "Only float64, float32, and int32 are permitted in spectrl.v3 tokens. Other "
             "mzML data types (int64, ASCII string) are listed for completeness but MUST NOT appear."
         ),
         "types": _enum_to_dict(
@@ -463,7 +333,7 @@ registry = {
                 str(BinaryDataTypeAccession.FLOAT_32): "32-bit IEEE-754 little-endian float.",
                 str(BinaryDataTypeAccession.INT_32): "32-bit signed integer little-endian.",
                 str(BinaryDataTypeAccession.INT_64): (
-                    "64-bit signed integer little-endian. NOT permitted in spectrl.v2."
+                    "64-bit signed integer little-endian. NOT permitted in spectrl.v3."
                 ),
             },
         ),
@@ -472,33 +342,6 @@ registry = {
     "array_types": {
         "description": "Array semantic type accession tails. Used in array descriptor 'array' field.",
         "core": _binary_array_dict(),
-    },
-    "auxiliary_encoding_profiles": {
-        "description": (
-            "Conservative lossy defaults for known PSI-MS auxiliary arrays. Any array not listed here "
-            "uses its declared raw type with zlib. Negative values always fall back to a raw codec."
-        ),
-        "numlin": [
-            str(BinaryDataArrayAccession.TIME),
-            str(BinaryDataArrayAccession.WAVELENGTH),
-            str(BinaryDataArrayAccession.SAMPLED_NOISE_MZ),
-            str(BinaryDataArrayAccession.MASS),
-            str(BinaryDataArrayAccession.SCANNING_QUADRUPOLE_POSITION_LOWER_BOUND_MZ),
-            str(BinaryDataArrayAccession.SCANNING_QUADRUPOLE_POSITION_UPPER_BOUND_MZ),
-            *ION_MOBILITY_ACCESSIONS,
-        ],
-        "numslof": [
-            str(BinaryDataArrayAccession.SIGNAL_TO_NOISE),
-            str(BinaryDataArrayAccession.FLOW_RATE),
-            str(BinaryDataArrayAccession.PRESSURE),
-            str(BinaryDataArrayAccession.VACUUM_PUMP_PRESSURE),
-            str(BinaryDataArrayAccession.RESOLUTION),
-            str(BinaryDataArrayAccession.BASELINE),
-            str(BinaryDataArrayAccession.NOISE),
-            str(BinaryDataArrayAccession.SAMPLED_NOISE_INTENSITY),
-            str(BinaryDataArrayAccession.SAMPLED_NOISE_BASELINE),
-        ],
-        "numpic": ["MS:1003870"],
     },
     # ── Well-known spectrum CV params ─────────────────────────────────────────
     "well_known_cv_params": {
@@ -637,18 +480,48 @@ registry = {
             "NaN and Inf values are not allowed in any float array.",
             "Array descriptors emitted in fixed order: m/z, intensity, charge, then additional arrays sorted "
             "ascending by key (CV accession string, or name for non-standard arrays).",
-            "CRC-32/ISO-HDLC checksum (required fourth token part) is computed over the ASCII text before "
-            "the checksum, 'spectrl.version.payload' (blobs are inline and therefore covered).",
+            "CRC-32/ISO-HDLC checksum (required fifth token part) is computed over the ASCII text before "
+            "the checksum, 'spectrl.version.mode.payload' (blobs are inline and therefore covered).",
             "Checksum encoding: eight lowercase hexadecimal characters, zero-padded.",
-            "Numpress fp is required in every linear/slof descriptor and is a whole number. "
-            "Defaults: linear 100000, slof floor(min(3600, "
-            "65535/ln(max+1))), clamped DOWN so no encoded value overflows uint16. A descriptor omits "
-            "fp for codecs that do not use a fixed point.",
-            "Arrays containing negative values fall back to the lossless zlib codec in lossy mode "
-            "(numpress cannot represent them). Negative m/z is rejected.",
+            "Default lossy arrays use quantized words with a pointwise 0.1 ppm bound for m/z and log1p scale 3600 for intensity.",
+            "Default lossless m/z uses delta and shuffle, intensity uses shuffle, and other arrays use raw words.",
+            "Integer and auxiliary arrays remain exact in both profiles. Invalid automatic quantization falls back to exact.",
+            "Array blobs have no individual compression. Whole-document zlib level 6 is the default payload compression.",
         ],
     },
 }
+
+# Versioned operation and context registries are independent of PSI-MS aliases.
+from spectrl.pipeline import ENCODING_NAMES
+from spectrl.context import FIELDS, ALLOWED
+registry["encodings"] = {str(v): {"name": k, "revision": 1, "lossless": v < 3,
+    "parameters": {"scale": "finite positive number", "width": "1, 2, 4, or 8", "log": "optional boolean", "delta": "optional boolean"} if v == 3 else {}}
+    for k, v in ENCODING_NAMES.items()}
+registry["core_encodings"] = [0, 1, 2, 3]
+registry["default_profiles"] = {"lossless": {"mz": 2, "intensity": 1, "other": 0},
+    "lossy": {"mz": {"encoding": 3, "max_error_ppm": 0.1, "log": True, "delta": True},
+              "intensity": {"encoding": 3, "scale": 3600, "log": True}, "other": 0},
+    "integer_arrays": "exact", "outer_compression": "zlib"}
+registry["operation_descriptor"] = {
+    "form": "[identifier, revision, optional string-keyed parameters]",
+    "identifier": "nonnegative built-in integer or namespaced string, such as org.example:codec",
+    "revision": "positive safe integer",
+    "unknown": "inspection and forwarding allowed, full decoding fails",
+}
+registry["context_fields"] = {str(v): k for k, v in FIELDS.items()}
+registry["context_records"] = {kind: sorted(keys) for kind, keys in ALLOWED.items()}
+registry["extension_record"] = {"revision": "positive safe integer", "required": "boolean", "data": "CBOR value"}
+for key, name, kind in [(8, "source", "source record"), (9, "acquisition", "acquisition record"),
+                        (10, "processing", "ordered processing records"), (11, "extensions", "namespaced map")]:
+    registry["header_keys"][str(key)] = {"name": name, "type": kind, "required": False}
+registry["parameter_group"] = {"0": "ordered CV pairs", "1": "optional user parameters"}
+registry["header_keys"]["3"]["fields"]["s"]["scan_fields"] = {
+    "0": "CV pairs", "1": "parameter groups for scan windows", "2": "user parameters",
+    "3": "source", "4": "acquisition", "5": "processing"}
+registry["header_keys"]["4"]["precursor_fields"] = {
+    "0": "isolation window parameter group", "1": "selected ion parameter groups", "2": "activation parameter group",
+    "3": "source", "4": "acquisition", "5": "processing"}
+registry["header_keys"]["5"]["description"] = "Each product is {0: optional isolation window parameter group}."
 
 
 def _entry_tail(entries: dict, accession: str) -> int:
@@ -657,10 +530,8 @@ def _entry_tail(entries: dict, accession: str) -> int:
 
 def _generated_values(r: dict) -> dict[str, object]:
     descriptors = r["header_keys"]["6"]["descriptor_keys"]
-    codecs = r["compression_codecs"]["codecs"]
     types = r["data_types"]["types"]
     arrays = r["array_types"]["core"]
-    profiles = r["auxiliary_encoding_profiles"]
     return {
         "FORMAT_VERSION": r["spectrl_version"],
         "MAGIC": r["token_format"]["magic"],
@@ -674,18 +545,9 @@ def _generated_values(r: dict) -> dict[str, object]:
         "MAX_ARRAY_LENGTH": r["wire_constants"]["max_array_length"],
         "MAX_CBOR_DEPTH": r["wire_constants"]["max_cbor_depth"],
         "MAX_CBOR_ITEMS": r["wire_constants"]["max_cbor_items"],
-        "DEFAULT_NUMLIN_FP": r["wire_constants"]["default_numlin_fp"],
-        "DEFAULT_NUMSLOF_FP": r["wire_constants"]["default_numslof_fp"],
+        "DEFAULT_MZ_PPM": r["wire_constants"]["default_mz_ppm"],
+        "DEFAULT_INTENSITY_SCALE": r["wire_constants"]["default_intensity_scale"],
         "MAX_SAFE_INTEGER": r["wire_constants"]["max_safe_integer"],
-        "COMP_NUMLIN_ZLIB": _entry_tail(codecs, "MS:1002746"),
-        "COMP_NUMSLOF_ZLIB": _entry_tail(codecs, "MS:1002748"),
-        "COMP_NUMPIC_ZLIB": _entry_tail(codecs, "MS:1002747"),
-        "COMP_ZLIB": _entry_tail(codecs, "MS:1000574"),
-        "COMP_ZSTD": _entry_tail(codecs, "MS:1003780"),
-        "COMP_BYTE_SHUFFLED_ZSTD": _entry_tail(codecs, "MS:1003781"),
-        "COMP_NUMLIN_ZSTD": _entry_tail(codecs, "MS:1003783"),
-        "COMP_NUMPIC_ZSTD": _entry_tail(codecs, "MS:1003784"),
-        "COMP_NUMSLOF_ZSTD": _entry_tail(codecs, "MS:1003785"),
         "TYPE_FLOAT64": _entry_tail(types, "MS:1000523"),
         "TYPE_FLOAT32": _entry_tail(types, "MS:1000521"),
         "TYPE_INT32": _entry_tail(types, "MS:1000519"),
@@ -694,9 +556,6 @@ def _generated_values(r: dict) -> dict[str, object]:
         "ARRAY_CHARGE": _entry_tail(arrays, "MS:1000516"),
         "ARRAY_NON_STANDARD": _entry_tail(arrays, "MS:1000786"),
         "ION_MOBILITY_ARRAY_TAILS": tuple(int(v) for v in r["ion_mobility_array_types"]["tails"]),
-        "EXTRA_NUMLIN_ARRAY_TAILS": tuple(_tail(v) for v in profiles["numlin"]),
-        "EXTRA_NUMSLOF_ARRAY_TAILS": tuple(_tail(v) for v in profiles["numslof"]),
-        "EXTRA_NUMPIC_ARRAY_TAILS": tuple(_tail(v) for v in profiles["numpic"]),
     }
 
 
@@ -725,11 +584,11 @@ def _typescript_module(values: dict[str, object]) -> str:
             rendered = json.dumps(value)
         elif isinstance(value, tuple):
             rendered = "new Set([" + ", ".join(str(v) for v in value) + "])"
-            lines.append(f"export const {ts_name}: ReadonlySet<number> = {rendered};")
+            lines.append(f"export const {ts_name}: ReadonlySet<number> = {rendered}")
             continue
         else:
             rendered = str(value).lower() if isinstance(value, bool) else str(value)
-        lines.append(f"export const {ts_name} = {rendered};")
+        lines.append(f"export const {ts_name} = {rendered}")
     return "\n".join(lines) + "\n"
 
 
@@ -762,9 +621,9 @@ def _typescript_array_accession_module(r: dict) -> str:
     lines.extend(f"  {name}: {json.dumps(accession)}," for name, accession in _array_accession_entries(r))
     lines.extend(
         [
-            "} as const;",
+            "} as const",
             "",
-            "export type ArrayAccession = (typeof ArrayAccession)[keyof typeof ArrayAccession];",
+            "export type ArrayAccession = (typeof ArrayAccession)[keyof typeof ArrayAccession]",
             "",
         ]
     )
@@ -789,13 +648,8 @@ def _python_simple_accession_module(class_name: str, doc: str, entries: list[tup
 def _typescript_simple_accession_module(name: str, entries: list[tuple[str, str]]) -> str:
     lines = [f"/** Generated {name} values. Do not edit by hand. */", "", f"export const {name} = {{"]
     lines.extend(f"  {symbol}: {json.dumps(accession)}," for symbol, accession in entries)
-    lines.extend(["} as const;", "", f"export type {name} = (typeof {name})[keyof typeof {name}];", ""])
+    lines.extend(["} as const", "", f"export type {name} = (typeof {name})[keyof typeof {name}]", ""])
     return "\n".join(lines)
-
-
-def _compression_entries(r: dict) -> list[tuple[str, str]]:
-    accessions = [entry["accession"] for entry in r["compression_codecs"]["codecs"].values()]
-    return [(COMPRESSION_SYMBOLS[accession], accession) for accession in accessions]
 
 
 def _unit_entries(r: dict) -> list[tuple[str, str]]:
@@ -808,14 +662,6 @@ def _write_generated_modules(r: dict, root: Path) -> None:
     (root / "js/src/format.ts").write_text(_typescript_module(values))
     (root / "src/spectrl/array_accession.py").write_text(_python_array_accession_module(r))
     (root / "js/src/array_accession.ts").write_text(_typescript_array_accession_module(r))
-    (root / "src/spectrl/compression_accession.py").write_text(
-        _python_simple_accession_module(
-            "CompressionAccession", "Stable PSI-MS compression accessions", _compression_entries(r)
-        )
-    )
-    (root / "js/src/compression_accession.ts").write_text(
-        _typescript_simple_accession_module("CompressionAccession", _compression_entries(r))
-    )
     (root / "src/spectrl/unit_accession.py").write_text(
         _python_simple_accession_module("UnitAccession", "Common binary-array unit accessions", _unit_entries(r))
     )
@@ -832,12 +678,6 @@ if len(sys.argv) > 1 and sys.argv[1] == "--check-generated":
         root / "js/src/format.ts": _typescript_module(values),
         root / "src/spectrl/array_accession.py": _python_array_accession_module(registry),
         root / "js/src/array_accession.ts": _typescript_array_accession_module(registry),
-        root / "src/spectrl/compression_accession.py": _python_simple_accession_module(
-            "CompressionAccession", "Stable PSI-MS compression accessions", _compression_entries(registry)
-        ),
-        root / "js/src/compression_accession.ts": _typescript_simple_accession_module(
-            "CompressionAccession", _compression_entries(registry)
-        ),
         root / "src/spectrl/unit_accession.py": _python_simple_accession_module(
             "UnitAccession", "Common binary-array unit accessions", _unit_entries(registry)
         ),

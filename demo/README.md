@@ -1,7 +1,7 @@
 # spectrl demo
 
 A single-page browser demo of [spectrl](../README.md): it **encodes** example
-mass spectra into `spectrl.v2` tokens, shows the **shareable URL + QR code**, and
+mass spectra into `spectrl.v3` tokens, shows the **shareable URL + QR code**, and
 **decodes** the token back into a plotted spectrum, entirely client-side, with
 no server or network call. It runs on the real
 [`@spectrl-ms/spectrl`](../js) JavaScript codec.
@@ -23,8 +23,8 @@ cd ../demo && npm install && npm run dev
 
 Then open **http://127.0.0.1:8000**.
 
-The default playground bundle stays small. PSI-MS zstd support is loaded as a
-separate browser chunk only when a pasted token actually uses a zstd codec.
+The default playground bundle stays small. Brotli support is loaded as a
+separate browser chunk only when a pasted token uses a Brotli payload.
 
 ## What it shows
 
@@ -44,7 +44,7 @@ recomputed live on each example or encoding-mode change.
     server). The raw URL isn't shown because it isn't human-readable.
   - **QR code**: reveals a QR of the URL on demand. Oversized tokens (e.g. the
     500-peak example) surface the token-too-large guidance.
-- **View token**: reveals the bare token and accepts any `spectrl.v2` token to decode.
+- **View token**: reveals the bare token and accepts any `spectrl.v3` token to decode.
 - **Technical details**: an expandable inspector containing token size (KB)
   and B/peak, complete-token size relative to raw peak arrays, what
   the *other* mode would cost, m/z range, base peak, round-trip precision
@@ -54,13 +54,13 @@ recomputed live on each example or encoding-mode change.
   (ms level, polarity, precursor m/z, charge, activation, ProForma, …).
 
 The page reads a token from its own URL fragment on load, so a link like
-`…/index.html#spectrl.v2.…` opens straight to that spectrum, which is handy for slides.
+`…/index.html#spectrl.v3.…` opens straight to that spectrum, which is handy for slides.
 
 ## Talking points for a live demo
 
 - Open the page, encode the MS² example, then **turn off Wi-Fi** and reload the
   shareable URL: it still decodes. The data was never on a server.
-- Decode in this JS app a token your Python session produced (same `spectrl.v2`
+- Decode in this JS app a token your Python session produced (same `spectrl.v3`
   format) to show cross-implementation interop.
 - Truncate a character in the token textarea to show the checksum rejecting a
   corrupted token instead of plotting garbage.

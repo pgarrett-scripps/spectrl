@@ -1,4 +1,5 @@
-/** Quality measurement and explicit share-budget selection for v2 tokens. */
+/** Quality measurement and explicit share-budget selection for v3 tokens. */
+import { checkArrayMutation, recordChange, withoutUserParams } from "./context.js"
 import { canonicalSort, validateArrays } from "./canonical.js"
 import { decodeCbor, encodeCbor } from "./cbor_format.js"
 import { tokenBreakdown } from "./inspect.js"
@@ -7,8 +8,11 @@ import type { InlineSpectrum } from "./model.js"
 import { toFragment } from "./url.js"
 
 type Options = Omit<EncodeOptions, "maxLen" | "quiet">
-const userCount = (s: InlineSpectrum) => (s.userParams?.length ?? 0) + (s.scans ?? []).reduce((n, scan) => n + (scan.userParams?.length ?? 0), 0)
-const encode = (s: InlineSpectrum, o: Options) => encodeCbor(s, o.lossless, o.dropUserParams, o.arrayEncodings, o.allowUnsafeLossyCustom)
+const userCount = (s: InlineSpectrum) => {
+  const stripped = withoutUserParams(s)
+  return (stripped.processing?.length ?? 0) > (s.processing?.length ?? 0) ? stripped.processing!.at(-1)!.parameters!.userParamsRemoved as number : 0
+}
+const encode = (s: InlineSpectrum, o: Options) => encodeCbor(s, o.lossless, o.dropUserParams, o.arrayEncodings, o.allowUnsafeLossyCustom, o.compression)
 const dtype = (a: ArrayLike<number>) => a instanceof Int32Array ? "int32" : a instanceof Float32Array ? "float32" : "float64"
 const finite = (n: number) => Number.isFinite(n) ? n : null
 
@@ -72,17 +76,19 @@ export function topN(spec: InlineSpectrum, n: number): InlineSpectrum {
   validateArrays(spec)
   if (!Number.isSafeInteger(n) || n < 0) throw new Error("n must be a non-negative integer")
   if (spec.intensity == null || n >= spec.defaultArrayLength) return spec
+  checkArrayMutation(spec)
+  const change = recordChange(spec, "spectrl:peak-selection", { method: "highest-intensity", inputPeakCount: spec.defaultArrayLength, outputPeakCount: n })
   const intensity = spec.intensity
   const secondary = (i: number) => spec.mz?.[i] ?? i
   const indices = Array.from({ length: spec.defaultArrayLength }, (_, i) => i)
     .sort((a, b) => intensity[b]! - intensity[a]! || secondary(a) - secondary(b) || a - b)
     .slice(0, n).sort((a, b) => secondary(a) - secondary(b) || a - b)
-  const pick = (a: ArrayLike<number> | null | undefined) => a == null ? a : Float64Array.from(indices, i => a[i]!)
+  const pick = (a: ArrayLike<number> | null | undefined) => a == null ? a : a instanceof Float32Array ? Float32Array.from(indices, i => a[i]!) : a instanceof Int32Array ? Int32Array.from(indices, i => a[i]!) : Float64Array.from(indices, i => a[i]!)
   const extras = Object.fromEntries(Object.entries(spec.extraArrays ?? {}).map(([key, a]) => {
     const values = indices.map(i => a[i]!)
     return [key, a instanceof Int32Array ? Int32Array.from(values) : a instanceof Float32Array ? Float32Array.from(values) : Float64Array.from(values)]
   }))
-  return { ...spec, defaultArrayLength: n, mz: pick(spec.mz), intensity: pick(intensity), charge: pick(spec.charge), extraArrays: extras }
+  return { ...spec, ...change, defaultArrayLength: n, mz: pick(spec.mz), intensity: pick(intensity), charge: pick(spec.charge), extraArrays: extras }
 }
 
 export interface BudgetOptions extends Options {
@@ -121,9 +127,7 @@ export function fitToBudget(spec: InlineSpectrum, maxBytes: number, options: Bud
       } else high = mid
     }
   }
-  if (options.dropUserParams) best.spectrum = {
-    ...best.spectrum, userParams: [], scans: best.spectrum.scans?.map(scan => ({ ...scan, userParams: [] })),
-  }
+  if (options.dropUserParams) best.spectrum = withoutUserParams(best.spectrum)
   return { ...best, maxBytes, originalPeaks: original, keptPeaks: best.spectrum.defaultArrayLength,
     droppedPeaks: original - best.spectrum.defaultArrayLength,
     omittedUserParams: options.dropUserParams ? userCount(spec) : 0 }

@@ -1,0 +1,1139 @@
+{
+  "format": "spectrl-v3-pipelines",
+  "vectors": [
+    {
+      "name": "float32-0",
+      "token": "spectrl.v3.z.eJxbwcDG1NQkxcDvYp9oBKWNmRcmFjcuYmhgBBIYkkDBxLy0vNTiktSUxLKU7NSCEramZQwgWU9GEOnE1MTAyBohwcDA0MAABg32QMIBghvc2Rk4MAxF1u9MUD8nphM4FjGnF5Xm6RUllrOnFScn5tkaci7kWMSU7OlsCFTOlZGYl5hTWZVaxM3Ihc1XPED9qRWJuQU5qSyJhtwLc6Acq7z8ktTFKSmJJYkLU3MSk4C4IqMotbA0syg15QuQVZZZnJmfxwgA6XdZEA.bd08209e",
+      "dtype": "float32",
+      "hex": "00000080000000000000803f000000400000004000008047",
+      "metadata": {
+        "0": 6,
+        "2": [
+          [
+            1000511,
+            "2"
+          ],
+          [
+            1000511,
+            "3"
+          ]
+        ],
+        "3": {
+          "s": [
+            {
+              "0": [],
+              "1": [
+                {
+                  "0": [
+                    [
+                      1000511,
+                      "2"
+                    ],
+                    [
+                      1000511,
+                      "3"
+                    ]
+                  ],
+                  "1": [
+                    {
+                      "n": "nested",
+                      "v": "kept"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "6": [
+          {
+            "0": 1000521,
+            "1": 1000514,
+            "2": [
+              0,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "8": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ]
+          },
+          {
+            "0": 1000521,
+            "1": 1000515,
+            "2": [
+              0,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "9": [
+              {
+                "n": "nested",
+                "v": "kept"
+              }
+            ]
+          }
+        ],
+        "8": {
+          "3": "run.raw",
+          "7": "scan=1"
+        },
+        "9": {
+          "8": {
+            "2": "IC1",
+            "9": [
+              {
+                "10": "analyzer",
+                "11": 1
+              }
+            ]
+          }
+        },
+        "10": [
+          {
+            "0": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ],
+            "12": {
+              "3": "example",
+              "4": "1"
+            }
+          }
+        ],
+        "11": {
+          "example:note": {
+            "data": {
+              "label": "x"
+            },
+            "required": false,
+            "revision": 1
+          }
+        }
+      }
+    },
+    {
+      "name": "float32-1",
+      "token": "spectrl.v3.z.eJxbwcDG1NQkxcDvYp9oBKWNmRcmFjcuYmhgBBIYkkDBxLy0vNTiktSUxLKU7NSCEramZQwgWU9GEOnE1MTIyBohwYACGoCogcHewcGdnYEDw1Bk_c4E9XNiOoFjEXN6UWmeXlFiOXtacXJinq0h50KORUzJns6GQOVcGYl5iTmVValF3Ixc2HzFA9SfWpGYW5CTypJoyL0wB8qxyssvSV2ckpJYkrgwNScxCYgrMopSC0szi1JTvgBZZZnFmfl5jADULVkS.4cb5980c",
+      "dtype": "float32",
+      "hex": "00000080000000000000803f000000400000004000008047",
+      "metadata": {
+        "0": 6,
+        "2": [
+          [
+            1000511,
+            "2"
+          ],
+          [
+            1000511,
+            "3"
+          ]
+        ],
+        "3": {
+          "s": [
+            {
+              "0": [],
+              "1": [
+                {
+                  "0": [
+                    [
+                      1000511,
+                      "2"
+                    ],
+                    [
+                      1000511,
+                      "3"
+                    ]
+                  ],
+                  "1": [
+                    {
+                      "n": "nested",
+                      "v": "kept"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "6": [
+          {
+            "0": 1000521,
+            "1": 1000514,
+            "2": [
+              1,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "8": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ]
+          },
+          {
+            "0": 1000521,
+            "1": 1000515,
+            "2": [
+              1,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "9": [
+              {
+                "n": "nested",
+                "v": "kept"
+              }
+            ]
+          }
+        ],
+        "8": {
+          "3": "run.raw",
+          "7": "scan=1"
+        },
+        "9": {
+          "8": {
+            "2": "IC1",
+            "9": [
+              {
+                "10": "analyzer",
+                "11": 1
+              }
+            ]
+          }
+        },
+        "10": [
+          {
+            "0": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ],
+            "12": {
+              "3": "example",
+              "4": "1"
+            }
+          }
+        ],
+        "11": {
+          "example:note": {
+            "data": {
+              "label": "x"
+            },
+            "required": false,
+            "revision": 1
+          }
+        }
+      }
+    },
+    {
+      "name": "float32-2",
+      "token": "spectrl.v3.z.eJxbwcDG1NQkxcDvYp9oBKWNmRcmFjcuYmhgBBIYkkDBxLy0vNTiktSUxLKU7NSCEramZQwgWU9GEOnE1MTEyBohwYACGhqAqMGegYGdnYEDw1Bk_c4E9XNiOoFjEXN6UWmeXlFiOXtacXJinq0h50KORUzJns6GQOVcGYl5iTmVValF3Ixc2HzFA9SfWpGYW5CTypJoyL0wB8qxyssvSV2ckpJYkrgwNScxCYgrMopSC0szi1JTvgBZZZnFmfl5jAA7YFmU.63f239b4",
+      "dtype": "float32",
+      "hex": "00000080000000000000803f000000400000004000008047",
+      "metadata": {
+        "0": 6,
+        "2": [
+          [
+            1000511,
+            "2"
+          ],
+          [
+            1000511,
+            "3"
+          ]
+        ],
+        "3": {
+          "s": [
+            {
+              "0": [],
+              "1": [
+                {
+                  "0": [
+                    [
+                      1000511,
+                      "2"
+                    ],
+                    [
+                      1000511,
+                      "3"
+                    ]
+                  ],
+                  "1": [
+                    {
+                      "n": "nested",
+                      "v": "kept"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "6": [
+          {
+            "0": 1000521,
+            "1": 1000514,
+            "2": [
+              2,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "8": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ]
+          },
+          {
+            "0": 1000521,
+            "1": 1000515,
+            "2": [
+              2,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "9": [
+              {
+                "n": "nested",
+                "v": "kept"
+              }
+            ]
+          }
+        ],
+        "8": {
+          "3": "run.raw",
+          "7": "scan=1"
+        },
+        "9": {
+          "8": {
+            "2": "IC1",
+            "9": [
+              {
+                "10": "analyzer",
+                "11": 1
+              }
+            ]
+          }
+        },
+        "10": [
+          {
+            "0": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ],
+            "12": {
+              "3": "example",
+              "4": "1"
+            }
+          }
+        ],
+        "11": {
+          "example:note": {
+            "data": {
+              "label": "x"
+            },
+            "required": false,
+            "revision": 1
+          }
+        }
+      }
+    },
+    {
+      "name": "float64-0",
+      "token": "spectrl.v3.z.eJxbwcDG1NQkxcDvYp9oBKWNmRcmFjcuYmhgBBIYkkDBxLy0vNTiktSUxLKU7NSCEramZQwgWW9GEOnE1MTAyBphwAABDQwo4IM9lOGASn9wYGfgwLAM2Vxnss3lxHQyxyLm9KLSPL2ixHL2tOLkxDxbQ86FHIuYkj2dDYHKuTIS8xJzKqtSi7gZubCFAg9Qf2pFYm5BTipLoiH3whwoxyovvyR1cUpKYkniwtScxCQgrsgoSi0szSxKTfkCZJVlFmfm5zECAB1_WvY.3252ba7f",
+      "dtype": "float64",
+      "hex": "00000000000000800000000000000000000000000000f03f00000000000000400000000000000040000000000000f040",
+      "metadata": {
+        "0": 6,
+        "2": [
+          [
+            1000511,
+            "2"
+          ],
+          [
+            1000511,
+            "3"
+          ]
+        ],
+        "3": {
+          "s": [
+            {
+              "0": [],
+              "1": [
+                {
+                  "0": [
+                    [
+                      1000511,
+                      "2"
+                    ],
+                    [
+                      1000511,
+                      "3"
+                    ]
+                  ],
+                  "1": [
+                    {
+                      "n": "nested",
+                      "v": "kept"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "6": [
+          {
+            "0": 1000523,
+            "1": 1000514,
+            "2": [
+              0,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "8": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ]
+          },
+          {
+            "0": 1000523,
+            "1": 1000515,
+            "2": [
+              0,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "9": [
+              {
+                "n": "nested",
+                "v": "kept"
+              }
+            ]
+          }
+        ],
+        "8": {
+          "3": "run.raw",
+          "7": "scan=1"
+        },
+        "9": {
+          "8": {
+            "2": "IC1",
+            "9": [
+              {
+                "10": "analyzer",
+                "11": 1
+              }
+            ]
+          }
+        },
+        "10": [
+          {
+            "0": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ],
+            "12": {
+              "3": "example",
+              "4": "1"
+            }
+          }
+        ],
+        "11": {
+          "example:note": {
+            "data": {
+              "label": "x"
+            },
+            "required": false,
+            "revision": 1
+          }
+        }
+      }
+    },
+    {
+      "name": "float64-1",
+      "token": "spectrl.v3.z.eJxbwcDG1NQkxcDvYp9oBKWNmRcmFjcuYmhgBBIYkkDBxLy0vNTiktSUxLKU7NSCEramZQwgWW9GEOnE1MTIyBphwEAU-ABEDQz2Dg4O7AwcGJYhm-tMtrmcmE7mWMScXlSap1eUWM6eVpycmGdryLmQYxFTsqezIVA5V0ZiXmJOZVVqETcjF7ZQ4AHqT61IzC3ISWVJNORemAPlWOXll6QuTklJLElcmJqTmATEFRlFqYWlmUWpKV-ArLLM4sz8PEYA0uZa-A.0449040a",
+      "dtype": "float64",
+      "hex": "00000000000000800000000000000000000000000000f03f00000000000000400000000000000040000000000000f040",
+      "metadata": {
+        "0": 6,
+        "2": [
+          [
+            1000511,
+            "2"
+          ],
+          [
+            1000511,
+            "3"
+          ]
+        ],
+        "3": {
+          "s": [
+            {
+              "0": [],
+              "1": [
+                {
+                  "0": [
+                    [
+                      1000511,
+                      "2"
+                    ],
+                    [
+                      1000511,
+                      "3"
+                    ]
+                  ],
+                  "1": [
+                    {
+                      "n": "nested",
+                      "v": "kept"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "6": [
+          {
+            "0": 1000523,
+            "1": 1000514,
+            "2": [
+              1,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "8": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ]
+          },
+          {
+            "0": 1000523,
+            "1": 1000515,
+            "2": [
+              1,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "9": [
+              {
+                "n": "nested",
+                "v": "kept"
+              }
+            ]
+          }
+        ],
+        "8": {
+          "3": "run.raw",
+          "7": "scan=1"
+        },
+        "9": {
+          "8": {
+            "2": "IC1",
+            "9": [
+              {
+                "10": "analyzer",
+                "11": 1
+              }
+            ]
+          }
+        },
+        "10": [
+          {
+            "0": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ],
+            "12": {
+              "3": "example",
+              "4": "1"
+            }
+          }
+        ],
+        "11": {
+          "example:note": {
+            "data": {
+              "label": "x"
+            },
+            "required": false,
+            "revision": 1
+          }
+        }
+      }
+    },
+    {
+      "name": "float64-2",
+      "token": "spectrl.v3.z.eJxbwcDG1NQkxcDvYp9oBKWNmRcmFjcuYmhgBBIYkkDBxLy0vNTiktSUxLKU7NSCEramZQwgWW9GEOnE1MTEyBphwEAU-CDA8KGhwR7IYmfgwLAM2Vxnss3lxHQyxyLm9KLSPL2ixHL2tOLkxDxbQ86FHIuYkj2dDYHKuTIS8xJzKqtSi7gZubCFAg9Qf2pFYm5BTipLoiH3whwoxyovvyR1cUpKYkniwtScxCQgrsgoSi0szSxKTfkCZJVlFmfm5zECAI-SWpo.2783f351",
+      "dtype": "float64",
+      "hex": "00000000000000800000000000000000000000000000f03f00000000000000400000000000000040000000000000f040",
+      "metadata": {
+        "0": 6,
+        "2": [
+          [
+            1000511,
+            "2"
+          ],
+          [
+            1000511,
+            "3"
+          ]
+        ],
+        "3": {
+          "s": [
+            {
+              "0": [],
+              "1": [
+                {
+                  "0": [
+                    [
+                      1000511,
+                      "2"
+                    ],
+                    [
+                      1000511,
+                      "3"
+                    ]
+                  ],
+                  "1": [
+                    {
+                      "n": "nested",
+                      "v": "kept"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "6": [
+          {
+            "0": 1000523,
+            "1": 1000514,
+            "2": [
+              2,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "8": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ]
+          },
+          {
+            "0": 1000523,
+            "1": 1000515,
+            "2": [
+              2,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "9": [
+              {
+                "n": "nested",
+                "v": "kept"
+              }
+            ]
+          }
+        ],
+        "8": {
+          "3": "run.raw",
+          "7": "scan=1"
+        },
+        "9": {
+          "8": {
+            "2": "IC1",
+            "9": [
+              {
+                "10": "analyzer",
+                "11": 1
+              }
+            ]
+          }
+        },
+        "10": [
+          {
+            "0": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ],
+            "12": {
+              "3": "example",
+              "4": "1"
+            }
+          }
+        ],
+        "11": {
+          "example:note": {
+            "data": {
+              "label": "x"
+            },
+            "required": false,
+            "revision": 1
+          }
+        }
+      }
+    },
+    {
+      "name": "int32-0",
+      "token": "spectrl.v3.z.eJxbwcDG1NQkxcDvYp9oBKWNmRcmFjcuYmhgBBIYkkDBxLy0vNTiktSUxLKU7NSCEramZQwgWXdGEOnE1MTAyBohwQAFjEDMBMUgHjsDB4ahyPqdCernxHQCxyLm9KLSPL2ixHL2tOLkxDxbQ86FHIuYkj2dDYHKuTIS8xJzKqtSi7gZubD5igeoP7UiMbcgJ5Ul0ZB7YQ6UY5WXX5K6OCUlsSRxYWpOYhIQV2QUpRaWZhalpnwBssoyizPz8xgBKl5UDA.6353920e",
+      "dtype": "int32",
+      "hex": "000000000000000001000000020000000200000000000100",
+      "metadata": {
+        "0": 6,
+        "2": [
+          [
+            1000511,
+            "2"
+          ],
+          [
+            1000511,
+            "3"
+          ]
+        ],
+        "3": {
+          "s": [
+            {
+              "0": [],
+              "1": [
+                {
+                  "0": [
+                    [
+                      1000511,
+                      "2"
+                    ],
+                    [
+                      1000511,
+                      "3"
+                    ]
+                  ],
+                  "1": [
+                    {
+                      "n": "nested",
+                      "v": "kept"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "6": [
+          {
+            "0": 1000519,
+            "1": 1000514,
+            "2": [
+              0,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "8": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ]
+          },
+          {
+            "0": 1000519,
+            "1": 1000515,
+            "2": [
+              0,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "9": [
+              {
+                "n": "nested",
+                "v": "kept"
+              }
+            ]
+          }
+        ],
+        "8": {
+          "3": "run.raw",
+          "7": "scan=1"
+        },
+        "9": {
+          "8": {
+            "2": "IC1",
+            "9": [
+              {
+                "10": "analyzer",
+                "11": 1
+              }
+            ]
+          }
+        },
+        "10": [
+          {
+            "0": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ],
+            "12": {
+              "3": "example",
+              "4": "1"
+            }
+          }
+        ],
+        "11": {
+          "example:note": {
+            "data": {
+              "label": "x"
+            },
+            "required": false,
+            "revision": 1
+          }
+        }
+      }
+    },
+    {
+      "name": "int32-1",
+      "token": "spectrl.v3.z.eJxbwcDG1NQkxcDvYp9oBKWNmRcmFjcuYmhgBBIYkkDBxLy0vNTiktSUxLKU7NSCEramZQwgWXdGEOnE1MTIyBohwcDAyMTEgAQYIRQ7AweGocj6nQnq58R0Asci5vSi0jy9osRy9rTi5MQ8W0POhRyLmJI9nQ2ByrkyEvMScyqrUou4Gbmw-YoHqD-1IjG3ICeVJdGQe2EOlGOVl1-SujglJbEkcWFqTmISEFdkFKUWlmYWpaZ8AbLKMosz8_MYASxsVA4.82cf5316",
+      "dtype": "int32",
+      "hex": "000000000000000001000000020000000200000000000100",
+      "metadata": {
+        "0": 6,
+        "2": [
+          [
+            1000511,
+            "2"
+          ],
+          [
+            1000511,
+            "3"
+          ]
+        ],
+        "3": {
+          "s": [
+            {
+              "0": [],
+              "1": [
+                {
+                  "0": [
+                    [
+                      1000511,
+                      "2"
+                    ],
+                    [
+                      1000511,
+                      "3"
+                    ]
+                  ],
+                  "1": [
+                    {
+                      "n": "nested",
+                      "v": "kept"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "6": [
+          {
+            "0": 1000519,
+            "1": 1000514,
+            "2": [
+              1,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "8": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ]
+          },
+          {
+            "0": 1000519,
+            "1": 1000515,
+            "2": [
+              1,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "9": [
+              {
+                "n": "nested",
+                "v": "kept"
+              }
+            ]
+          }
+        ],
+        "8": {
+          "3": "run.raw",
+          "7": "scan=1"
+        },
+        "9": {
+          "8": {
+            "2": "IC1",
+            "9": [
+              {
+                "10": "analyzer",
+                "11": 1
+              }
+            ]
+          }
+        },
+        "10": [
+          {
+            "0": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ],
+            "12": {
+              "3": "example",
+              "4": "1"
+            }
+          }
+        ],
+        "11": {
+          "example:note": {
+            "data": {
+              "label": "x"
+            },
+            "required": false,
+            "revision": 1
+          }
+        }
+      }
+    },
+    {
+      "name": "int32-2",
+      "token": "spectrl.v3.z.eJyFT0sKwkAMzdRfWwW34iGE6k4QQQXxBm6jE7VYp3VavyvtTaaCeEDX6hS6ECr4IN-XF5IHlI04bkJ91Md2FjsFheE1gQvTLkfqJoqFoDAijnu-piAqx3dI2TFL_cCIDVaaNgAYgxekeMMXKmDmln7rh3_1Vv4EMyks5U60JB4qi3COoudYykyM-WTo6HF7hQK905lkldm_vqppPR1xE3hURKeqvKzoCj-iG-cYoSIPZ9qOK0nbnSuJP3W2d0PXF-wDN2lYAg.4f741530",
+      "dtype": "int32",
+      "hex": "000000000000000001000000020000000200000000000100",
+      "metadata": {
+        "0": 6,
+        "2": [
+          [
+            1000511,
+            "2"
+          ],
+          [
+            1000511,
+            "3"
+          ]
+        ],
+        "3": {
+          "s": [
+            {
+              "0": [],
+              "1": [
+                {
+                  "0": [
+                    [
+                      1000511,
+                      "2"
+                    ],
+                    [
+                      1000511,
+                      "3"
+                    ]
+                  ],
+                  "1": [
+                    {
+                      "n": "nested",
+                      "v": "kept"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "6": [
+          {
+            "0": 1000519,
+            "1": 1000514,
+            "2": [
+              2,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "8": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ]
+          },
+          {
+            "0": 1000519,
+            "1": 1000515,
+            "2": [
+              2,
+              1
+            ],
+            "5": "<bytes>",
+            "7": 0,
+            "9": [
+              {
+                "n": "nested",
+                "v": "kept"
+              }
+            ]
+          }
+        ],
+        "8": {
+          "3": "run.raw",
+          "7": "scan=1"
+        },
+        "9": {
+          "8": {
+            "2": "IC1",
+            "9": [
+              {
+                "10": "analyzer",
+                "11": 1
+              }
+            ]
+          }
+        },
+        "10": [
+          {
+            "0": [
+              [
+                1000511,
+                "2"
+              ],
+              [
+                1000511,
+                "3"
+              ]
+            ],
+            "12": {
+              "3": "example",
+              "4": "1"
+            }
+          }
+        ],
+        "11": {
+          "example:note": {
+            "data": {
+              "label": "x"
+            },
+            "required": false,
+            "revision": 1
+          }
+        }
+      }
+    }
+  ]
+}

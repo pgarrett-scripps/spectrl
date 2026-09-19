@@ -1,3 +1,4 @@
+import { readTokenPayload } from "../src/cbor_format.ts"
 import assert from "node:assert/strict"
 import test from "node:test"
 import { DEFAULT_DECODE_LIMITS, decodeToken, encodeSpectrum, SpectrlDecodeError } from "../src/index.ts"
@@ -24,13 +25,13 @@ test("exact budgets account for all arrays and declared dtypes", () => {
   assert.equal(limits.maxDecodedBytes, 48)
 })
 
-function frame(doc: unknown, version = 2) {
-  const body = `spectrl.v${version}.${b64urlEncode(cborEncode(doc))}`
+function frame(doc: unknown, version = 3) {
+  const body = `spectrl.v${version}.r.${b64urlEncode(cborEncode(doc))}`
   return `${body}.${tokenChecksum(body)}`
 }
 
 test("aggregate budget is checked before decompressing even the first array", () => {
-  const doc = cborDecode(b64urlDecode(token.split(".")[2]!)) as Map<number, unknown>
+  const doc = cborDecode(readTokenPayload(token)) as Map<number, unknown>
   const descriptors = doc.get(6) as Map<number, unknown>[]
   descriptors[0]!.set(5, new Uint8Array([0xff]))
   const badBlob = frame(doc)
@@ -53,7 +54,7 @@ test("metadata only and empty arrays still obey peak and array limits", () => {
   assert.ok(decodeToken(encodeSpectrum({ defaultArrayLength: 0 }), { maxPeaks: 0, maxArrays: 0, maxDecodedBytes: 0 }))
 })
 
-test("Numpress is budgeted as decoded float64", () => {
+test("Quantization is budgeted as decoded float64", () => {
   const compressed = encodeSpectrum({ defaultArrayLength: 2, mz: [100, 200], intensity: [1, 2] })
   assert.ok(decodeToken(compressed, { maxDecodedBytes: 32 }))
   assert.throws(() => decodeToken(compressed, { maxDecodedBytes: 31 }), /maxDecodedBytes/)
@@ -70,7 +71,7 @@ test("invalid configuration is rejected and undefined fields keep defaults", () 
 })
 
 test("caller budgets cannot relax wire format ceilings", () => {
-  const doc = cborDecode(b64urlDecode(token.split(".")[2]!)) as Map<number, unknown>
+  const doc = cborDecode(readTokenPayload(token)) as Map<number, unknown>
   doc.set(0, 4_000_001)
   assert.throws(() => decodeToken(frame(doc), { maxPeaks: 10_000_000 }), /invalid declared array length/)
 })

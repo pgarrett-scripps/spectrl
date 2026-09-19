@@ -1,0 +1,775 @@
+{
+  "summary": {
+    "spectra": 127,
+    "all_arrays_bit_exact": true,
+    "all_metadata_equal_to_zlib": true,
+    "matches_prior_exhaustive_selector": true,
+    "size_regressions": 0,
+    "total_saving_pct": 37.61241092435989,
+    "median_saving_pct": 12.895369011077007
+  },
+  "spectra": [
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1269",
+      "baseline_chars": 2107,
+      "adaptive_chars": 1859
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1118",
+      "baseline_chars": 9108,
+      "adaptive_chars": 7762
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1532",
+      "baseline_chars": 21463,
+      "adaptive_chars": 18263
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=3550",
+      "baseline_chars": 1022,
+      "adaptive_chars": 1000
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=3187",
+      "baseline_chars": 2175,
+      "adaptive_chars": 1990
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=3064",
+      "baseline_chars": 4739,
+      "adaptive_chars": 4172
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "baseline_chars": 3348,
+      "adaptive_chars": 2987
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1096",
+      "baseline_chars": 8950,
+      "adaptive_chars": 7940
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1723",
+      "baseline_chars": 12284,
+      "adaptive_chars": 10807
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=18",
+      "baseline_chars": 891,
+      "adaptive_chars": 891
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=308",
+      "baseline_chars": 1018,
+      "adaptive_chars": 1007
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=963",
+      "baseline_chars": 1755,
+      "adaptive_chars": 1642
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "index=500",
+      "baseline_chars": 5586,
+      "adaptive_chars": 4871
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=509",
+      "baseline_chars": 6367,
+      "adaptive_chars": 5583
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=506",
+      "baseline_chars": 6680,
+      "adaptive_chars": 5839
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=507",
+      "baseline_chars": 1679,
+      "adaptive_chars": 1527
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=510",
+      "baseline_chars": 2212,
+      "adaptive_chars": 1982
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=501",
+      "baseline_chars": 2334,
+      "adaptive_chars": 2095
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=502",
+      "baseline_chars": 1512,
+      "adaptive_chars": 1464
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=505",
+      "baseline_chars": 1682,
+      "adaptive_chars": 1610
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=508",
+      "baseline_chars": 1736,
+      "adaptive_chars": 1642
+    },
+    {
+      "dataset": "profile_ms1",
+      "id": "spectrum=1",
+      "baseline_chars": 121286,
+      "adaptive_chars": 60172
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=3",
+      "baseline_chars": 4228,
+      "adaptive_chars": 3478
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=2",
+      "baseline_chars": 144256,
+      "adaptive_chars": 89510
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=99",
+      "baseline_chars": 143620,
+      "adaptive_chars": 88535
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=69",
+      "baseline_chars": 42402,
+      "adaptive_chars": 18820
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=96",
+      "baseline_chars": 62546,
+      "adaptive_chars": 35486
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=27",
+      "baseline_chars": 61272,
+      "adaptive_chars": 26635
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=1",
+      "baseline_chars": 254238,
+      "adaptive_chars": 216112
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=2",
+      "baseline_chars": 6056,
+      "adaptive_chars": 5119
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=5",
+      "baseline_chars": 12791,
+      "adaptive_chars": 10486
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=4",
+      "baseline_chars": 20292,
+      "adaptive_chars": 16546
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=80",
+      "baseline_chars": 2656,
+      "adaptive_chars": 2459
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=45248",
+      "baseline_chars": 26082,
+      "adaptive_chars": 23314
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=89755",
+      "baseline_chars": 47756,
+      "adaptive_chars": 42494
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=239",
+      "baseline_chars": 930,
+      "adaptive_chars": 930
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=23860",
+      "baseline_chars": 8606,
+      "adaptive_chars": 7431
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=72096",
+      "baseline_chars": 37018,
+      "adaptive_chars": 31603
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=1882",
+      "baseline_chars": 5554,
+      "adaptive_chars": 4910
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=62809",
+      "baseline_chars": 37559,
+      "adaptive_chars": 33415
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=83466",
+      "baseline_chars": 47915,
+      "adaptive_chars": 42222
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=4674",
+      "baseline_chars": 1018,
+      "adaptive_chars": 976
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=80748",
+      "baseline_chars": 4480,
+      "adaptive_chars": 3944
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=74788",
+      "baseline_chars": 58090,
+      "adaptive_chars": 49371
+    },
+    {
+      "dataset": "prm",
+      "id": "controllerType=0 controllerNumber=1 scan=15",
+      "baseline_chars": 876,
+      "adaptive_chars": 876
+    },
+    {
+      "dataset": "prm",
+      "id": "controllerType=0 controllerNumber=1 scan=1215",
+      "baseline_chars": 1156,
+      "adaptive_chars": 1107
+    },
+    {
+      "dataset": "prm",
+      "id": "controllerType=0 controllerNumber=1 scan=357",
+      "baseline_chars": 1886,
+      "adaptive_chars": 1691
+    },
+    {
+      "dataset": "srm",
+      "id": "scan=1246",
+      "baseline_chars": 482,
+      "adaptive_chars": 482
+    },
+    {
+      "dataset": "srm",
+      "id": "scan=1252",
+      "baseline_chars": 519,
+      "adaptive_chars": 519
+    },
+    {
+      "dataset": "srm",
+      "id": "scan=1261",
+      "baseline_chars": 522,
+      "adaptive_chars": 522
+    },
+    {
+      "dataset": "mrm",
+      "id": "merged=0 frame=1 scanStart=1 scanEnd=274",
+      "baseline_chars": 2003,
+      "adaptive_chars": 1875
+    },
+    {
+      "dataset": "mrm",
+      "id": "merged=1 frame=2 scanStart=1 scanEnd=274",
+      "baseline_chars": 32315,
+      "adaptive_chars": 28506
+    },
+    {
+      "dataset": "negative_rna",
+      "id": "controllerType=0 controllerNumber=1 scan=726",
+      "baseline_chars": 161600,
+      "adaptive_chars": 144495
+    },
+    {
+      "dataset": "negative_rna",
+      "id": "controllerType=0 controllerNumber=1 scan=727",
+      "baseline_chars": 33336,
+      "adaptive_chars": 29763
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=2",
+      "baseline_chars": 68539,
+      "adaptive_chars": 57074
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=42",
+      "baseline_chars": 73191,
+      "adaptive_chars": 55430
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=9",
+      "baseline_chars": 77100,
+      "adaptive_chars": 57698
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=27",
+      "baseline_chars": 5296,
+      "adaptive_chars": 4646
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=19",
+      "baseline_chars": 6246,
+      "adaptive_chars": 5434
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=49",
+      "baseline_chars": 6883,
+      "adaptive_chars": 6010
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=1 experiment=1",
+      "baseline_chars": 3711,
+      "adaptive_chars": 3168
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=6 experiment=1",
+      "baseline_chars": 6314,
+      "adaptive_chars": 5407
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=2 experiment=1",
+      "baseline_chars": 7427,
+      "adaptive_chars": 6299
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=6 experiment=10",
+      "baseline_chars": 1690,
+      "adaptive_chars": 1552
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=3 experiment=8",
+      "baseline_chars": 3344,
+      "adaptive_chars": 2771
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=11 experiment=11",
+      "baseline_chars": 27082,
+      "adaptive_chars": 21546
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=3 process=0 scan=1",
+      "baseline_chars": 42944,
+      "adaptive_chars": 35856
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=3 process=0 scan=2",
+      "baseline_chars": 649816,
+      "adaptive_chars": 382438
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=1 process=0 scan=1",
+      "baseline_chars": 994675,
+      "adaptive_chars": 506060
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=2 process=0 scan=5",
+      "baseline_chars": 18023,
+      "adaptive_chars": 15260
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=2 process=0 scan=3",
+      "baseline_chars": 27832,
+      "adaptive_chars": 23475
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=2 process=0 scan=1",
+      "baseline_chars": 84908,
+      "adaptive_chars": 65966
+    },
+    {
+      "dataset": "mse_profile",
+      "id": "function=3 process=0 scan=1",
+      "baseline_chars": 444283,
+      "adaptive_chars": 268039
+    },
+    {
+      "dataset": "mse_profile",
+      "id": "function=1 process=0 scan=1",
+      "baseline_chars": 629403,
+      "adaptive_chars": 334096
+    },
+    {
+      "dataset": "mse_profile",
+      "id": "function=2 process=0 scan=1",
+      "baseline_chars": 518340,
+      "adaptive_chars": 297598
+    },
+    {
+      "dataset": "etd",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "baseline_chars": 3803,
+      "adaptive_chars": 3464
+    },
+    {
+      "dataset": "ethcd",
+      "id": "controllerType=0 controllerNumber=1 scan=6",
+      "baseline_chars": 6367,
+      "adaptive_chars": 5520
+    },
+    {
+      "dataset": "uvpd_positive",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "baseline_chars": 614722,
+      "adaptive_chars": 117322
+    },
+    {
+      "dataset": "uvpd_negative",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "baseline_chars": 114680,
+      "adaptive_chars": 13603
+    },
+    {
+      "dataset": "uvpd_orbitrap",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "baseline_chars": 452359,
+      "adaptive_chars": 293392
+    },
+    {
+      "dataset": "native_protein",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "baseline_chars": 527390,
+      "adaptive_chars": 438278
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=43794",
+      "baseline_chars": 1236,
+      "adaptive_chars": 1116
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=25516",
+      "baseline_chars": 12663,
+      "adaptive_chars": 10756
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=44704",
+      "baseline_chars": 22288,
+      "adaptive_chars": 19610
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=3502",
+      "baseline_chars": 971,
+      "adaptive_chars": 971
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=8294",
+      "baseline_chars": 2262,
+      "adaptive_chars": 2059
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=29747",
+      "baseline_chars": 10092,
+      "adaptive_chars": 8739
+    },
+    {
+      "dataset": "uvpd_mlac",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "baseline_chars": 607888,
+      "adaptive_chars": 108522
+    },
+    {
+      "dataset": "native_aqpz_cdl",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "baseline_chars": 854448,
+      "adaptive_chars": 696286
+    },
+    {
+      "dataset": "native_aqpz_dopg",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "baseline_chars": 855462,
+      "adaptive_chars": 694736
+    },
+    {
+      "dataset": "uvpd_dope",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "baseline_chars": 10526,
+      "adaptive_chars": 8958
+    },
+    {
+      "dataset": "uvpd_dopg",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "baseline_chars": 5460,
+      "adaptive_chars": 4696
+    },
+    {
+      "dataset": "mse_mix",
+      "id": "scan=1",
+      "baseline_chars": 873371,
+      "adaptive_chars": 460503
+    },
+    {
+      "dataset": "mse_mix",
+      "id": "scan=2",
+      "baseline_chars": 489758,
+      "adaptive_chars": 300459
+    },
+    {
+      "dataset": "mse_clpb",
+      "id": "scan=1",
+      "baseline_chars": 160300,
+      "adaptive_chars": 110491
+    },
+    {
+      "dataset": "mse_clpb",
+      "id": "scan=2",
+      "baseline_chars": 94856,
+      "adaptive_chars": 66978
+    },
+    {
+      "dataset": "hela_pasef_ms1",
+      "id": "merged=14 frame=6 scanStart=1 scanEnd=100",
+      "baseline_chars": 17974,
+      "adaptive_chars": 16219
+    },
+    {
+      "dataset": "waters_hddda_ms1",
+      "id": "merged=1 function=1 block=1",
+      "baseline_chars": 37486,
+      "adaptive_chars": 30450
+    },
+    {
+      "dataset": "ethcd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=7333",
+      "baseline_chars": 13034,
+      "adaptive_chars": 11359
+    },
+    {
+      "dataset": "ethcd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=36993",
+      "baseline_chars": 30802,
+      "adaptive_chars": 27343
+    },
+    {
+      "dataset": "ethcd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=7335",
+      "baseline_chars": 1035,
+      "adaptive_chars": 1020
+    },
+    {
+      "dataset": "ethcd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=37017",
+      "baseline_chars": 10594,
+      "adaptive_chars": 9094
+    },
+    {
+      "dataset": "etd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=17558",
+      "baseline_chars": 22212,
+      "adaptive_chars": 19744
+    },
+    {
+      "dataset": "etd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=35190",
+      "baseline_chars": 34774,
+      "adaptive_chars": 30840
+    },
+    {
+      "dataset": "etd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=35208",
+      "baseline_chars": 1056,
+      "adaptive_chars": 1027
+    },
+    {
+      "dataset": "etd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=17573",
+      "baseline_chars": 8238,
+      "adaptive_chars": 7070
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=707",
+      "baseline_chars": 4527,
+      "adaptive_chars": 4034
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=609",
+      "baseline_chars": 14350,
+      "adaptive_chars": 12730
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=791",
+      "baseline_chars": 58850,
+      "adaptive_chars": 50876
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=418",
+      "baseline_chars": 3255,
+      "adaptive_chars": 2991
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=708",
+      "baseline_chars": 5143,
+      "adaptive_chars": 4559
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=610",
+      "baseline_chars": 13694,
+      "adaptive_chars": 11811
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=324",
+      "baseline_chars": 4051,
+      "adaptive_chars": 3620
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=1710",
+      "baseline_chars": 29972,
+      "adaptive_chars": 26107
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=562",
+      "baseline_chars": 66163,
+      "adaptive_chars": 56804
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=325",
+      "baseline_chars": 3266,
+      "adaptive_chars": 2983
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=2065",
+      "baseline_chars": 5182,
+      "adaptive_chars": 4548
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=563",
+      "baseline_chars": 10472,
+      "adaptive_chars": 9148
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=767",
+      "baseline_chars": 42172,
+      "adaptive_chars": 36259
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=773",
+      "baseline_chars": 50946,
+      "adaptive_chars": 43526
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=755",
+      "baseline_chars": 69102,
+      "adaptive_chars": 59952
+    },
+    {
+      "dataset": "maldi_ms2",
+      "id": "scan=1",
+      "baseline_chars": 36254,
+      "adaptive_chars": 30498
+    },
+    {
+      "dataset": "maldi_ms2",
+      "id": "scan=2",
+      "baseline_chars": 36551,
+      "adaptive_chars": 30558
+    },
+    {
+      "dataset": "glycopeptide",
+      "id": "controllerType=0 controllerNumber=1 scan=147",
+      "baseline_chars": 5246,
+      "adaptive_chars": 4528
+    },
+    {
+      "dataset": "glycopeptide",
+      "id": "controllerType=0 controllerNumber=1 scan=161",
+      "baseline_chars": 3255,
+      "adaptive_chars": 2974
+    },
+    {
+      "dataset": "topdown_etd",
+      "id": "controllerType=0 controllerNumber=1 scan=2382",
+      "baseline_chars": 3799,
+      "adaptive_chars": 3334
+    },
+    {
+      "dataset": "topdown_etd",
+      "id": "controllerType=0 controllerNumber=1 scan=2385",
+      "baseline_chars": 59346,
+      "adaptive_chars": 50895
+    }
+  ]
+}

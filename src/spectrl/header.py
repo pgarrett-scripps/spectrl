@@ -26,12 +26,11 @@ from __future__ import annotations
 import re
 
 from ._format import DESC_ARRAY as DESC_ARRAY
-from ._format import DESC_COMP as DESC_COMP
 from ._format import DESC_DATA as DESC_DATA
-from ._format import DESC_FP as DESC_FP
 from ._format import DESC_NAME as DESC_NAME
 from ._format import DESC_TYPE as DESC_TYPE
 from ._format import DESC_UNIT as DESC_UNIT
+from .context import decode_record, encode_record, validate_extensions
 from .cv import (
     _DEFAULT_PARAM_ONTOLOGY,
     accession_ontology,
@@ -96,9 +95,7 @@ def _encode_cvparam(p: SpectrlCvParam) -> tuple[int | str, object]:
     else:
         tail_key = p.accession
 
-    if p.value is None:
-        val = None
-    elif p.unit_accession is not None:
+    if p.unit_accession is not None:
         val = [p.value, encode_unit(p.unit_accession)]
     else:
         val = p.value
@@ -106,45 +103,41 @@ def _encode_cvparam(p: SpectrlCvParam) -> tuple[int | str, object]:
     return tail_key, val
 
 
-def _encode_param_map(params: list[SpectrlCvParam]) -> dict:
-    """Encode a list of CvParams into an integer-keyed map.
-
-    The map is keyed by accession, so repeated accessions are not representable
-    and are rejected rather than silently losing scientific metadata.
-    """
-    m: dict = {}
-    for p in params:
-        key, val = _encode_cvparam(p)
-        if key in m:
-            raise ValueError(f"duplicate CV accession {p.accession} in parameter list")
-        m[key] = val
-    return m
+def _encode_param_map(params: list[SpectrlCvParam]) -> list:
+    """Ordered pairs preserve repeated CV terms without duplicate CBOR map keys."""
+    return [list(_encode_cvparam(p)) for p in params]
 
 
-def _decode_param_map(m: dict) -> list[SpectrlCvParam]:
-    """Decode an integer-keyed param map into a list of SpectrlCvParam."""
-    _require_map(m, "CV parameter list")
-    params = []
-    for raw_key, raw_val in m.items():
-        if isinstance(raw_key, str):
-            accession = raw_key
-            _validate_accession(accession)
-        elif isinstance(raw_key, int) and not isinstance(raw_key, bool) and raw_key >= 0:
-            accession = decode_tail(raw_key)
+def _decode_param_map(raw) -> list[SpectrlCvParam]:
+    _require_list(raw, "CV parameter list")
+    out = []
+    for item in raw:
+        if not isinstance(item, list) or len(item) != 2:
+            raise ValueError("CV parameter record must have two members")
+        key, value = item
+        if isinstance(key, str):
+            accession = key
+        elif type(key) is int and 0 <= key <= 9999999:
+            accession = decode_tail(key)
         else:
-            raise ValueError(f"invalid CV parameter key {raw_key!r}")
+            raise ValueError("invalid CV parameter accession")
+        _validate_accession(accession)
+        unit = None
+        if isinstance(value, list):
+            if len(value) != 2:
+                raise ValueError("invalid CV value and unit pair")
+            value, raw_unit = value
+            unit = decode_unit_tail(raw_unit)
+        if value is not None and (type(value) not in (str, int, float)):
+            raise ValueError("invalid CV scalar value")
+        import math
 
-        if raw_val is None:
-            params.append(SpectrlCvParam(accession=accession))
-        elif isinstance(raw_val, list):
-            if len(raw_val) != 2:
-                raise ValueError(f"CV parameter {accession} value/unit pair must have two items")
-            value = raw_val[0]
-            unit_accession = decode_unit_tail(raw_val[1])
-            params.append(SpectrlCvParam(accession=accession, value=value, unit_accession=unit_accession))
-        else:
-            params.append(SpectrlCvParam(accession=accession, value=raw_val))
-    return params
+        if isinstance(value, float) and not math.isfinite(value):
+            raise ValueError("CV numbers must be finite")
+        if type(value) is int and abs(value) > 9007199254740991:
+            raise ValueError("CV integer exceeds safe range")
+        out.append(SpectrlCvParam(accession, value, unit))
+    return out
 
 
 # ─── UserParam encoding ──────────────────────────────────────────────────────
@@ -174,7 +167,10 @@ def _decode_user_params(raw: list[dict]) -> list[SpectrlUserParam]:
     _require_list(raw, "user parameter list")
     out: list[SpectrlUserParam] = []
     for m in raw:
-        _require_map(m, "user parameter")
+        _shape(m, ["n", "v", "t", "u"], "user parameter")
+        _scalar(m.get("v"))
+        if "t" in m and not isinstance(m["t"], str):
+            raise ValueError("user parameter type must be a string")
         if not isinstance(m.get("n"), str) or not m["n"]:
             raise ValueError("user parameter name must be a non-empty string")
         out.append(
@@ -191,39 +187,76 @@ def _decode_user_params(raw: list[dict]) -> list[SpectrlUserParam]:
 # ─── Scan/ScanWindow encoding ────────────────────────────────────────────────
 
 
-def _encode_scan_window(w: SpectrlScanWindow) -> dict:
-    return _encode_param_map(w.params)
+def _encode_group(value):
+    out = {0: _encode_param_map(value.params)}
+    if value.user_params:
+        out[1] = _encode_user_params(value.user_params)
+    return out
 
 
-def _decode_scan_window(d: dict) -> SpectrlScanWindow:
-    return SpectrlScanWindow(params=_decode_param_map(d))
+def _decode_group(value, cls):
+    _require_map(value, "parameter group")
+    if any(type(k) is not int or k not in (0, 1) for k in value):
+        raise ValueError("unknown parameter group key")
+    return cls(params=_decode_param_map(value.get(0, [])), user_params=_decode_user_params(value.get(1, [])))
 
 
-def _encode_scan(s: SpectrlScan) -> dict:
-    d: dict = {0: _encode_param_map(s.params)}
+def _encode_scan_window(w):
+    return _encode_group(w)
+
+
+def _decode_scan_window(d):
+    return _decode_group(d, SpectrlScanWindow)
+
+
+def _context_out(value, out):
+    if value.source is not None:
+        out[3] = encode_record(value.source, "source")
+    if value.acquisition is not None:
+        out[4] = encode_record(value.acquisition, "acquisition")
+    if value.processing:
+        out[5] = [encode_record(x, "processing") for x in value.processing]
+    return out
+
+
+def _context_in(d):
+    _require_list(d.get(5, []), "processing")
+    return dict(
+        source=decode_record(d[3], "source") if 3 in d else None,
+        acquisition=decode_record(d[4], "acquisition") if 4 in d else None,
+        processing=[decode_record(x, "processing") for x in d.get(5, [])],
+    )
+
+
+def _encode_scan(s):
+    d = {0: _encode_param_map(s.params)}
     if s.windows:
         d[1] = [_encode_scan_window(w) for w in s.windows]
     if s.user_params:
         d[2] = _encode_user_params(s.user_params)
-    return d
+    return _context_out(s, d)
 
 
-def _decode_scan(d: dict) -> SpectrlScan:
-    params = _decode_param_map(d.get(0, {}))
-    windows = [_decode_scan_window(w) for w in d.get(1, [])]
-    user_params = _decode_user_params(d.get(2, []))
-    return SpectrlScan(params=params, windows=windows, user_params=user_params)
+def _decode_scan(d):
+    _shape(d, range(6), "scan")
+    _require_list(d.get(1, []), "scan windows")
+    return SpectrlScan(
+        params=_decode_param_map(d.get(0, [])),
+        windows=[_decode_scan_window(w) for w in d.get(1, [])],
+        user_params=_decode_user_params(d.get(2, [])),
+        **_context_in(d),
+    )
 
 
 # ─── Precursor/Product encoding ──────────────────────────────────────────────
 
 
 def _encode_isolation_window(iw: SpectrlIsolationWindow) -> dict:
-    return _encode_param_map(iw.params)
+    return _encode_group(iw)
 
 
 def _decode_isolation_window(d: dict) -> SpectrlIsolationWindow:
-    return SpectrlIsolationWindow(params=_decode_param_map(d))
+    return _decode_group(d, SpectrlIsolationWindow)
 
 
 def _encode_precursor(p: SpectrlPrecursor) -> dict:
@@ -231,17 +264,19 @@ def _encode_precursor(p: SpectrlPrecursor) -> dict:
     if p.isolation_window is not None:
         d[0] = _encode_isolation_window(p.isolation_window)
     if p.selected_ions:
-        d[1] = [_encode_param_map(si.params) for si in p.selected_ions]
+        d[1] = [_encode_group(si) for si in p.selected_ions]
     if p.activation is not None:
-        d[2] = _encode_param_map(p.activation.params)
-    return d
+        d[2] = _encode_group(p.activation)
+    return _context_out(p, d)
 
 
 def _decode_precursor(d: dict) -> SpectrlPrecursor:
+    _shape(d, range(6), "precursor")
+    _require_list(d.get(1, []), "selected ions")
     iw = _decode_isolation_window(d[0]) if 0 in d else None
-    selected_ions = [SpectrlSelectedIon(params=_decode_param_map(si)) for si in d.get(1, [])]
-    activation = SpectrlActivation(params=_decode_param_map(d[2])) if 2 in d else None
-    return SpectrlPrecursor(isolation_window=iw, selected_ions=selected_ions, activation=activation)
+    selected_ions = [_decode_group(si, SpectrlSelectedIon) for si in d.get(1, [])]
+    activation = _decode_group(d[2], SpectrlActivation) if 2 in d else None
+    return SpectrlPrecursor(isolation_window=iw, selected_ions=selected_ions, activation=activation, **_context_in(d))
 
 
 def _encode_product(p: SpectrlProduct) -> dict:
@@ -252,6 +287,7 @@ def _encode_product(p: SpectrlProduct) -> dict:
 
 
 def _decode_product(d: dict) -> SpectrlProduct:
+    _shape(d, [0], "product")
     iw = _decode_isolation_window(d[0]) if 0 in d else None
     return SpectrlProduct(isolation_window=iw)
 
@@ -283,6 +319,15 @@ def build_header_dict(spec: InlineSpectrum, descriptors: list[dict]) -> dict:
     h[6] = descriptors
     if spec.user_params:
         h[7] = _encode_user_params(spec.user_params)
+    if spec.source is not None:
+        h[8] = encode_record(spec.source, "source")
+    if spec.acquisition is not None:
+        h[9] = encode_record(spec.acquisition, "acquisition")
+    if spec.processing:
+        h[10] = [encode_record(x, "processing") for x in spec.processing]
+    if spec.extensions:
+        validate_extensions(spec.extensions, require_supported=False)
+        h[11] = spec.extensions
     return h
 
 
@@ -294,15 +339,19 @@ def parse_header_dict(h: dict) -> DecodedSpectrum:
     """
     default_array_length = h[0]
     id_ = h.get(1)
-    params = _decode_param_map(h.get(2, {}))
+    params = _decode_param_map(h.get(2, []))
 
     scans: list[SpectrlScan] = []
     scan_combination: SpectrlCvParam | None = None
     scan_entry = h.get(3, {})
+    _shape(scan_entry, ["s", "c"], "scan list")
+    _require_list(scan_entry.get("s", []), "scans")
     if scan_entry:
         scans = [_decode_scan(s) for s in scan_entry.get("s", [])]
         if "c" in scan_entry:
             combo_tail = scan_entry["c"]
+            if type(combo_tail) is not int or not 0 <= combo_tail <= 9999999:
+                raise ValueError("invalid scan combination")
             scan_combination = SpectrlCvParam(accession=decode_tail(combo_tail))
 
     precursors = [_decode_precursor(p) for p in h.get(4, [])]
@@ -318,5 +367,29 @@ def parse_header_dict(h: dict) -> DecodedSpectrum:
         precursors=precursors,
         products=products,
         user_params=user_params,
+        source=decode_record(h[8], "source") if 8 in h else None,
+        acquisition=decode_record(h[9], "acquisition") if 9 in h else None,
+        processing=[decode_record(x, "processing") for x in h.get(10, [])],
+        extensions=h.get(11, {}),
         format_version=FORMAT_VERSION,
     )
+
+
+def _scalar(value):
+    import math
+
+    if value is None or isinstance(value, str):
+        return
+    if (
+        type(value) in (int, float)
+        and math.isfinite(value)
+        and (not isinstance(value, int) or abs(value) <= 9007199254740991)
+    ):
+        return
+    raise ValueError("invalid parameter scalar")
+
+
+def _shape(value, keys, label):
+    _require_map(value, label)
+    if any(isinstance(k, bool) or k not in keys for k in value):
+        raise ValueError(f"unsupported {label} field")

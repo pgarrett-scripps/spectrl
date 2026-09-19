@@ -1,0 +1,27 @@
+{
+  "lossy": {
+    "totals": {
+      "raw": 17325826,
+      "zlib": 4907430,
+      "brotli": 4668188,
+      "auto": 4667939
+    },
+    "previous_default_chars": 5177997,
+    "zlib_change_pct": -5.225321683268646,
+    "brotli_saving_vs_zlib_pct": 4.875097556154651
+  },
+  "lossless": {
+    "totals": {
+      "raw": 29609194,
+      "zlib": 7187540,
+      "brotli": 6898681,
+      "auto": 6898669
+    },
+    "previous_default_chars": 6815155,
+    "zlib_change_pct": 5.4640723505188005,
+    "brotli_saving_vs_zlib_pct": 4.018885460115696
+  },
+  "exchanges_per_direction": 1896,
+  "n_selected": 237,
+  "source_report_sha256": "4eb29d1a03827ae9f8e91d75ccb753c4541c0832c9b5f6f7158de93b70cd43a9"
+}

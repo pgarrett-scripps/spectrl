@@ -41,18 +41,18 @@ uv run ruff format --check .
 - Add or update tests for any behavior change. The round-trip and
   canonical-hash tests are the contract. Do not weaken them without discussion.
 - Run `just test` and `just lint` before pushing.
-- Update [CHANGELOG.md](CHANGELOG.md) under `## [Unreleased]`.
+- Update [CHANGELOG.md](CHANGELOG.md) under the current unreleased version.
 
 ## Format changes (token wire format)
 
-The `spectrl.v2` token format is normative. Any change that affects how a token
+The `spectrl.v3` token format is normative. Any change that affects how a token
 is produced or parsed (new header keys, codec changes, framing changes)
 **must**:
 
 1. Be discussed in an issue tagged `format`.
 2. Update [SPECIFICATION.md](SPECIFICATION.md) and `schema/registry.json`.
 3. Preserve backward compatibility, or bump the format version
-   (`spectrl.v2` → `spectrl.v3`) per the versioning policy in the specification.
+   (`spectrl.v3` → `spectrl.v4`) per the versioning policy in the specification.
 4. Include round-trip test vectors.
 
 `schema/registry.json` also drives the generated internal constant modules for

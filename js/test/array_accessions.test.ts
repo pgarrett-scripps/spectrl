@@ -27,10 +27,10 @@ test("multiple mobility accessions survive independently", () => {
 });
 
 test("core accession aliases and friendly encoding keys are identical", () => {
-  const byName = encodeSpectrum(spec(), { quiet: true, arrayEncodings: { mz: "zlib" } });
+  const byName = encodeSpectrum(spec(), { quiet: true, arrayEncodings: { mz: "raw" } });
   const byAccession = encodeSpectrum(spec(), {
     quiet: true,
-    arrayEncodings: { [ArrayAccession.MZ]: "zlib" },
+    arrayEncodings: { [ArrayAccession.MZ]: "raw" },
   });
   assert.equal(byAccession, byName);
 });
@@ -39,7 +39,7 @@ test("mobility enum selects its exact encoding override", () => {
   const d = decodeToken(
     encodeSpectrum(spec({ [ArrayAccession.RAW_INVERSE_REDUCED_ION_MOBILITY]: [0.8, 0.9, 1.0] }), {
       quiet: true,
-      arrayEncodings: { [ArrayAccession.RAW_INVERSE_REDUCED_ION_MOBILITY]: "zlib" },
+      arrayEncodings: { [ArrayAccession.RAW_INVERSE_REDUCED_ION_MOBILITY]: "raw" },
     }),
   );
   assert.deepEqual(Array.from(d.extraArrays["MS:1003008"]!), [0.8, 0.9, 1.0]);
@@ -50,7 +50,7 @@ test("conflicting core aliases are rejected", () => {
     () =>
       encodeSpectrum(spec(), {
         quiet: true,
-        arrayEncodings: { mz: "zlib", "MS:1000514": "numlin-zlib" },
+        arrayEncodings: { mz: "raw", "MS:1000514": "numlin-zlib" },
       }),
     /conflicting aliases/,
   );

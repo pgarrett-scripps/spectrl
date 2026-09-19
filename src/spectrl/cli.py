@@ -31,6 +31,7 @@ def _encode_cmd(args: argparse.Namespace) -> None:
         array_encodings=array_encodings,
         allow_unsafe_lossy_custom=args.allow_unsafe_lossy_custom,
         drop_user_params=args.drop_user_params,
+        compression=args.compression,
     )
     print(token)
 
@@ -54,22 +55,20 @@ def _decode_cmd(args: argparse.Namespace) -> None:
 
 
 def _inspect_cmd(args: argparse.Namespace) -> None:
-    from .cbor_format import read_token_document
+    from .cbor_format import read_token_document, read_token_payload
     from .header import DESC_DATA
     from .introspection import inspect_token
-    from .token import b64url_decode
 
     token = _input_token(args.input)
     doc, _ = read_token_document(token)
-    raw = b64url_decode(token.split(".")[2])
+    raw = read_token_payload(token)
     arrays = doc.get(6, [])
     print(f"CBOR document: {len(raw)} bytes ({len(arrays)} array(s))")
     for i, info in enumerate(inspect_token(token)):
         unit = f" unit={info['unit_accession']}" if "unit_accession" in info else ""
-        fp = f" fp={info['fixed_point']}" if info["fixed_point"] is not None else ""
         print(
             f"  array {i}: {info['accession']} type={info['type_accession']} "
-            f"comp={info['compression_accession']}{fp}{unit} blob={info['compressed_bytes']} bytes"
+            f"encoding={info['encoding']}{unit} blob={info['encoded_bytes']} bytes"
         )
 
     # Show the header without the (large) embedded blobs.
@@ -90,7 +89,7 @@ def _input_token(path: str) -> str:
     from . import extract_token
 
     value = _read_input(path).strip()
-    return value if value.startswith("spectrl.v2.") else extract_token(value)
+    return value if value.startswith("spectrl.v3.") else extract_token(value)
 
 
 def _input_spectrum(args):
@@ -141,7 +140,7 @@ def _mzml_cmd(args):
         if args.index >= len(mzml.spectra):
             raise ValueError("spectrum index is out of range")
         groups = mzml.referenceable_param_groups
-        report = conversion_report(mzml.spectra[args.index], groups, strict=args.strict)
+        report = conversion_report(mzml.spectra[args.index], groups, strict=args.strict, run=mzml)
         report["encoding"] = encoding_report(report["spectrum"], lossless=args.lossless)
         report["spectrum"] = spectrum_to_dict(report["spectrum"])
     print(json.dumps(report, indent=2, allow_nan=False))
@@ -158,15 +157,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(prog="spectrl", description="spectrl inline spectrum encoder/decoder")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
-    enc = sub.add_parser("encode", help="Encode a spectrum JSON to a spectrl.v2 token")
+    enc = sub.add_parser("encode", help="Encode a spectrum JSON to a spectrl.v3 token")
     _spectrum_input(enc)
     enc.add_argument("--max-len", type=int, default=None, help="Maximum token length in bytes")
+    enc.add_argument("--compression", choices=["raw", "zlib", "brotli", "auto"], default="zlib")
     enc.add_argument(
         "--array-encoding",
         action="append",
         default=[],
         metavar="ARRAY=CODEC",
-        help="Override an array codec, for example mz=numlin-zstd. Repeat for multiple arrays.",
+        help="Override an array codec, for example mz=modular-delta-shuffle. Repeat for multiple arrays.",
     )
     enc.add_argument(
         "--allow-unsafe-lossy-custom",
@@ -175,14 +175,14 @@ def main() -> None:
     )
     enc.set_defaults(func=_encode_cmd)
 
-    dec = sub.add_parser("decode", help="Decode a spectrl.v2 token to JSON")
+    dec = sub.add_parser("decode", help="Decode a spectrl.v3 token to JSON")
     dec.add_argument("input", nargs="?", default="-", help="Token file or '-' for stdin")
     dec.add_argument(
         "--output-format", choices=["json", "csv", "tsv"], default="json", help="CSV/TSV exports only m/z and intensity"
     )
     dec.set_defaults(func=_decode_cmd)
 
-    ins = sub.add_parser("inspect", help="Inspect a spectrl.v2 token header as readable JSON")
+    ins = sub.add_parser("inspect", help="Inspect a spectrl.v3 token header as readable JSON")
     ins.add_argument("input", nargs="?", default="-", help="Token file or '-' for stdin")
     ins.set_defaults(func=_inspect_cmd)
 

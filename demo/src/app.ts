@@ -308,7 +308,7 @@ function encodeAndShow(spec: InlineSpectrum) {
   setToken(token);
 }
 
-let zstdBackendPromise: Promise<unknown> | null = null;
+let brotliBackendPromise: Promise<unknown> | null = null
 
 async function renderFromToken(token: string) {
   token = token.trim();
@@ -323,16 +323,14 @@ async function renderFromToken(token: string) {
     decoded = decodeToken(token);
     decodeMs = performance.now() - t0;
   } catch (e) {
-    if ((e as Error).message.includes("zstd support is not installed")) {
-      zstdBackendPromise ??= import("../../js/dist/zstd.js").then(module => module.installZstd())
+    if ((e as Error).message.includes("Brotli support is unavailable")) {
+      brotliBackendPromise ??= import("../../js/dist/brotli.js").then(module => module.installBrotli())
       try {
-        await zstdBackendPromise
+        await brotliBackendPromise
         if (tokenEl.value.trim() !== token) return
         await renderFromToken(token)
-        return;
-      } catch (loadError) {
-        e = loadError;
-      }
+        return
+      } catch (loadError) { e = loadError }
     }
     decodeErr.textContent = `Decode failed: ${(e as Error).message}`
     $("#qualityReport").textContent = "A valid token and its original spectrum are needed to measure encoding error."
@@ -364,12 +362,12 @@ function renderSpectrumSummary(d: DecodedSpectrum) {
     .flatMap((p) => p.selectedIons ?? [])
     .flatMap((ion) => ion.params)
     .find((p) => p.accession === "MS:1000744")?.value;
-  if (typeof precursorMz === "number") chips.push([precursorMz.toFixed(4), "precursor m/z"]);
+  if (precursorMz != null && Number.isFinite(Number(precursorMz))) chips.push([Number(precursorMz).toFixed(4), "precursor m/z"]);
   const charge = d.precursors
     .flatMap((p) => p.selectedIons ?? [])
     .flatMap((ion) => ion.params)
     .find((p) => p.accession === "MS:1000041")?.value;
-  if (typeof charge === "number") chips.push([`${charge}+`, "charge"]);
+  if (charge != null && Number.isFinite(Number(charge))) chips.push([`${charge}+`, "charge"]);
   const activation = d.precursors
     .flatMap((p) => p.activation?.params ?? [])
     .find((p) => p.accession === "MS:1000422" || p.accession === "MS:1000133");
@@ -441,6 +439,22 @@ function renderMeta(d: DecodedSpectrum) {
       add(`isolation${tag}: ${label(p.accession)}`, fmtVal(p), p.accession);
   });
 
+  const details = (value: unknown, path: string) => {
+    if (value == null || rows.length >= 500) return
+    if (Array.isArray(value)) value.forEach((item, i) => details(item, `${path} ${i + 1}`))
+    else if (typeof value === "object") {
+      const object = value as Record<string, unknown>
+      if (typeof object.accession === "string") add(`${path}: ${label(object.accession)}`, fmtVal(object as unknown as CvParam), object.accession)
+      else for (const [key, child] of Object.entries(object)) details(child, `${path} ${key}`)
+    } else add(path.trim(), String(value))
+  }
+  for (const key of ["source", "acquisition", "processing", "arrayParams", "arrayUserParams", "arrayProcessing", "userParams"] as const) details(d[key], key)
+  d.scans.forEach((scan, i) => {
+    details(scan.userParams, `scan ${i + 1} notes`)
+    details(scan.windows, `scan ${i + 1} windows`)
+    details(scan.source, `scan ${i + 1} source`)
+    details(scan.acquisition, `scan ${i + 1} acquisition`)
+  })
   metaTable.replaceChildren(...rows)
 }
 
@@ -496,15 +510,14 @@ function renderStats(token: string, d: DecodedSpectrum, decodeMs: number) {
   cards.push(statCard("token size", fmtBytes(token.length), `${bytesPerPeak.toFixed(1)} B/peak`, "accent"));
 
   // raw IEEE-754 float64 payload (what the numbers cost uncompressed)
-  let rawBytes = n * 16; // m/z + intensity
-  if (d.charge) rawBytes += n * 8;
+  let rawBytes = (d.mz?.byteLength ?? 0) + (d.intensity?.byteLength ?? 0) + (d.charge?.byteLength ?? 0)
   for (const array of Object.values(d.extraArrays)) rawBytes += array.byteLength;
   const tokenOverRaw = token.length / Math.max(rawBytes, 1);
   cards.push(
     statCard(
       "complete token vs peak arrays",
       `${tokenOverRaw.toFixed(1)}×`,
-      `${fmtBytes(rawBytes)} raw float64 arrays. Token also includes metadata + framing`,
+      `${fmtBytes(rawBytes)} raw arrays. Token also includes metadata + framing`,
     ),
   );
 
@@ -567,14 +580,14 @@ function renderStats(token: string, d: DecodedSpectrum, decodeMs: number) {
       );
     })
     .join("");
-  cards.push(`<div class="stat wide"><div class="label">size breakdown (CBOR document bytes)</div><div class="bars">${bars}</div></div>`);
+  cards.push(`<div class="stat wide"><div class="label">size breakdown (before outer compression)</div><div class="bars">${bars}</div></div>`);
 
   statsEl.innerHTML = cards.join("");
 }
 
 function msLevel(d: DecodedSpectrum): number | null {
   const p = d.params.find((x) => x.accession === "MS:1000511");
-  return p && typeof p.value === "number" ? p.value : null;
+  return p?.value != null && Number.isFinite(Number(p.value)) ? Number(p.value) : null
 }
 
 function basePeakIndex(d: DecodedSpectrum): number {
@@ -585,13 +598,12 @@ function basePeakIndex(d: DecodedSpectrum): number {
   return bi;
 }
 
-const NUMPRESS_COMPS = new Set([1002746, 1002747, 1002748, 1003783, 1003784, 1003785]);
 
 /** Mode of the token actually displayed (a pasted token may differ from the checkbox). */
 function tokenMode(token: string): string {
   try {
-    const lossy = tokenBreakdown(token).some((p) => p.comp !== undefined && NUMPRESS_COMPS.has(p.comp));
-    return lossy ? "lossy (MS-Numpress)" : "lossless";
+    const lossy = tokenBreakdown(token).some((p) => p.fidelity === "lossy");
+    return lossy ? "lossy encoding" : "lossless encoding"
   } catch {
     return "unknown";
   }
@@ -601,7 +613,7 @@ function tokenMode(token: string): string {
 // SVG stick plot
 // ---------------------------------------------------------------------------
 function renderPlot(d: DecodedSpectrum) {
-  const plotted = d.defaultArrayLength > 5000 && d.intensity ? topN(d, 5000) : d
+  const plotted = d.defaultArrayLength > 5000 && d.intensity ? topN({ ...d, extensions: {}, arrayExtensions: {} }, 5000) : d
   const mz = Array.from(plotted.mz ?? []).slice(0, 5000)
   const inten = Array.from(plotted.intensity ?? []).slice(0, 5000)
   $("#plotNote").textContent = d.defaultArrayLength > 5000 ? "Plot shows at most 5,000 peaks. The token and exported data retain all peaks." : ""
@@ -687,9 +699,12 @@ document.querySelectorAll<HTMLButtonElement>("button[data-example]").forEach((bt
   });
 });
 
-losslessEl.addEventListener("change", () => {
+losslessEl.addEventListener("change", async () => {
   try {
-    encodeAndShow(lastSource ?? decodeToken(tokenEl.value))
+    const source = lastSource ?? decodeToken(tokenEl.value)
+    const initialToken = tokenEl.value
+    if (tokenEl.value !== initialToken) return
+    encodeAndShow(source)
   } catch (error) { decodeErr.textContent = (error as Error).message }
 })
 

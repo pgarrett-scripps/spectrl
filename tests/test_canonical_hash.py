@@ -47,13 +47,14 @@ def test_checksum_stored_in_token():
     assert decoded.checksum == decoded.checksum.lower()
 
 
-def test_token_is_four_parts():
-    """A spectrl.v2 token is identifier + version + CBOR document + checksum."""
+def test_token_is_five_parts():
+    """A spectrl.v3 token is identifier, version, payload mode, payload, and checksum."""
     token = encode_spectrum(_make_spec())
     parts = token.split(".")
-    assert parts[:2] == ["spectrl", "v2"]
-    assert len(parts) == 4
-    assert len(parts[3]) == 8
+    assert parts[:2] == ["spectrl", "v3"]
+    assert len(parts) == 5
+    assert parts[2] in ("r", "z")
+    assert len(parts[4]) == 8
 
 
 def test_checksum_is_crc32_of_prefix():
@@ -65,7 +66,7 @@ def test_checksum_is_crc32_of_prefix():
 def test_missing_checksum_is_rejected():
     token = encode_spectrum(_make_spec())
     body = token.rsplit(".", 1)[0]
-    with pytest.raises(ValueError, match="exactly four"):
+    with pytest.raises(ValueError, match="exactly five"):
         decode_token(body)
 
 

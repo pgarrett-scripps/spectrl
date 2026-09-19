@@ -76,12 +76,11 @@ def _with_vendor_params():
     )
 
 
-def test_drop_user_params_matches_a_spectrum_that_never_had_them():
-    """drop_user_params MUST yield the same token as omitting them at the source."""
-    without = _base(
-        scans=[SpectrlScan(params=[SpectrlCvParam(accession="MS:1000016", value=10.0, unit_accession="UO:0000031")])]
-    )
-    assert encode_spectrum(_with_vendor_params(), drop_user_params=True) == encode_spectrum(without)
+def test_drop_user_params_records_omission():
+    decoded = decode_token(encode_spectrum(_with_vendor_params(), drop_user_params=True))
+    assert decoded.user_params == []
+    assert decoded.processing[-1]["operation"] == "spectrl:metadata-omission"
+    assert decoded.processing[-1]["parameters"]["userParamsRemoved"] > 0
 
 
 def test_drop_user_params_keeps_cv_params_and_peaks():

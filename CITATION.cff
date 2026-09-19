@@ -3,10 +3,13 @@ message: "If you use spectrl, please cite this software using these metadata."
 title: "spectrl: URL-safe interchange for mass spectra"
 abstract: >-
   spectrl defines and implements a URL-safe interchange format for individual
-  mass spectra. A spectrl.v2 token contains peak arrays, precursor information,
-  modeled metadata based on mzML controlled-vocabulary terms. The payload is encoded as CBOR and Base64url text
-  with a CRC-32 checksum. Peak arrays can use MS-Numpress compression or
-  lossless floating-point storage. Because the spectrum is carried in the
+  mass spectra. A spectrl.v3 token contains peak arrays, precursor information,
+  selected acquisition context and modeled metadata based on mzML controlled-vocabulary terms. The payload is encoded as CBOR and Base64url text
+  with a CRC-32 checksum. Four versioned numeric encodings support fixed
+  lossless and controlled-loss profiles. Compression applies once to the complete
+  CBOR document, using zlib by default. PSI-MS accessions retain scientific array
+  and metadata identity. Applications can register namespaced custom numeric
+  encodings and extensions. Because the spectrum is carried in the
   token, it can be placed in URL fragments, query parameters, data URIs, QR
   codes, notebooks, and publication supplements without requiring a repository
   lookup or application backend. The Python package provides encoding,
@@ -28,7 +31,6 @@ authors:
     orcid: https://orcid.org/0000-0001-5267-1672
     affiliation: Scripps Research Institute
 license: Apache-2.0
-doi: "10.5281/zenodo.21960544"
 repository-code: "https://github.com/pgarrett-scripps/spectrl"
 repository-artifact: "https://github.com/pgarrett-scripps/spectrl/releases"
 url: "https://pgarrett-scripps.github.io/spectrl/"
@@ -39,5 +41,4 @@ keywords:
   - mzML
   - Spectrum Sharing
   - Spectrum Encoding
-version: "2.1.0"
-date-released: "2026-09-15"
+version: "3.0.0"

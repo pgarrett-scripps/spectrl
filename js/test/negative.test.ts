@@ -4,7 +4,6 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { decodeToken, encodeSpectrum, type InlineSpectrum } from "../src/index.ts";
-import { encodeLinear, encodePic, encodeSlof } from "../src/numpress.js";
 
 test("negative charge sentinels round-trip exactly in lossy mode", () => {
   const spec: InlineSpectrum = {
@@ -46,10 +45,4 @@ test("negative m/z is rejected", () => {
   };
   assert.throws(() => encodeSpectrum(spec, { quiet: true }), /mz/);
   assert.throws(() => encodeSpectrum(spec, { quiet: true, lossless: true }), /mz/);
-});
-
-test("numpress codecs throw on negative input instead of corrupting", () => {
-  assert.throws(() => encodePic(Float64Array.from([1, -1, 2])), /negative/);
-  assert.throws(() => encodeSlof(Float64Array.from([5, -3])), /negative/);
-  assert.throws(() => encodeLinear(Float64Array.from([-2, 100]), 100000.0), /negative/);
 });

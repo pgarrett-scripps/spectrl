@@ -1,0 +1,11 @@
+{
+  "input_dtype": "float32",
+  "model_mz_dtype": "float64",
+  "model_intensity_dtype": "float64",
+  "source_peak_count": 3,
+  "decoded_peak_count": 1,
+  "decoded_intensity_sum": 3.0,
+  "retained_source_tic": 6.0,
+  "has_processing_field": false,
+  "scope": "Synthetic probe of current v2 model promotion and top_n metadata behavior"
+}

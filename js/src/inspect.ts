@@ -1,19 +1,18 @@
 /** Size introspection for tokens (used by the demo and handy for tooling). */
 
-import { b64urlDecode } from "./base64url.js";
-import { readTokenDocument } from "./cbor_format.js"
+import { descriptor, type Operation } from "./pipeline.js"
+import { readTokenDocument, readTokenPayload } from "./cbor_format.js"
 import { ARRAY_CHARGE, ARRAY_INTENSITY, ARRAY_MZ, ARRAY_NON_STANDARD, ION_MOBILITY_ARRAY_TAILS, decodeTail, decodeUnitTail } from "./cv.js";
-import { DESC_ARRAY, DESC_COMP, DESC_DATA, DESC_FP, DESC_NAME, DESC_TYPE, DESC_UNIT } from "./header.js";
+import { DESC_ARRAY, DESC_DATA, DESC_NAME, DESC_TYPE, DESC_UNIT } from "./header.js";
 
 export interface TokenPart {
   label: string;
-  /** Size in payload bytes (compressed blob bytes; "header" is everything else). */
+  /** Size in payload bytes (encoded blob bytes; "header" is everything else). */
   bytes: number;
-  /** Compression codec accession tail; absent for the header part. */
-  comp?: number;
+  encoding?: Operation
+  fidelity?: "exact" | "lossy"
   accession?: string;
   typeAccession?: string;
-  fixedPoint?: number;
   unitAccession?: string;
 }
 
@@ -28,12 +27,12 @@ function arrayLabel(tail: number, name: string | undefined): string {
 }
 
 /**
- * Break a token's payload into header bytes vs each array's compressed blob.
- * Sizes are CBOR-document bytes (before base64url expansion).
+ * Break a token's payload into header bytes vs each array's encoded blob.
+ * Sizes are expanded CBOR bytes, before outer compression and base64url encoding.
  */
 export function tokenBreakdown(token: string): TokenPart[] {
   const { doc } = readTokenDocument(token)
-  const raw = b64urlDecode(token.split(".")[2]!)
+  const raw = readTokenPayload(token)
 
   const parts: TokenPart[] = [];
   let blobTotal = 0;
@@ -46,10 +45,10 @@ export function tokenBreakdown(token: string): TokenPart[] {
     parts.push({
       label: arrayLabel(d.get(DESC_ARRAY) as number, d.get(DESC_NAME) as string | undefined),
       bytes,
-      comp: d.get(DESC_COMP) as number,
+      encoding: descriptor(d.get(2) as any),
+      fidelity: d.get(7) === 0 ? "exact" : "lossy",
       accession: decodeTail(tail),
       typeAccession: decodeTail(d.get(DESC_TYPE) as number),
-      ...(d.has(DESC_FP) ? { fixedPoint: d.get(DESC_FP) as number } : {}),
       ...(d.has(DESC_UNIT) ? {
         unitAccession: decodeUnitTail(d.get(DESC_UNIT) as number | [string, number] | string),
       } : {}),

@@ -6,7 +6,7 @@ test("quality measures sorted arrays and zero references", () => {
   const spec = { defaultArrayLength: 3, mz: [200.123456, 0, 100.123456], intensity: [-1, 0, 10],
     extraArrays: { score: Int32Array.from([1, 2, 3]) }, userParams: [{ name: "note", value: "hello" }] }
   const r = encodingReport(spec, { dropUserParams: true })
-  assert.ok(r.arrays[0]!.maxAbsoluteError! > 0 && r.arrays[0]!.maxAbsoluteError! < 1e-5)
+  assert.ok(r.arrays[0]!.maxErrorPpm! > 0 && r.arrays[0]!.maxErrorPpm! <= 0.1)
   assert.equal(r.arrays[0]!.zeroReferenceValues, 1)
   assert.equal(r.arrays[1]!.maxRelativeError, 0)
   assert.equal(r.arrays[2]!.exact, true)
@@ -20,9 +20,9 @@ test("quality measures sorted arrays and zero references", () => {
 test("fit requires opt-in and counts carrier UTF-8 bytes", () => {
   const spec = { defaultArrayLength: 100, mz: Array.from({ length: 100 }, (_, i) => i * 1.2345),
     intensity: Array.from({ length: 100 }, (_, i) => i), extraArrays: { score: Int32Array.from({ length: 100 }, (_, i) => i) } }
-  assert.throws(() => fitToBudget(spec, 250))
-  const r = fitToBudget(spec, 250, { baseUrl: "https://example.org/é#old", allowPeakTrimming: true })
-  assert.ok(r.carrierBytes <= 250)
+  assert.throws(() => fitToBudget(spec, 500))
+  const r = fitToBudget(spec, 500, { baseUrl: "https://example.org/é#old", allowPeakTrimming: true })
+  assert.ok(r.carrierBytes <= 500)
   assert.equal(r.carrierBytes, new TextEncoder().encode(r.carrier).length)
   assert.ok(r.keptPeaks > 0 && r.keptPeaks < 100)
   assert.deepEqual(Array.from(decodeToken(r.token).extraArrays.score!), Array.from({ length: r.keptPeaks }, (_, i) => 100 - r.keptPeaks + i))

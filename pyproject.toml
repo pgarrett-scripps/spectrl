@@ -1,6 +1,6 @@
 [project]
 name = "spectrl"
-version = "2.1.0"
+version = "3.0.0"
 description = "Inline spectrum URL encoder: embeds a complete mass spectrum in a compact, URL-safe token."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -21,7 +21,6 @@ classifiers = [
 dependencies = [
     "numpy>=1.26.0",
     "cbor2>=5.6.0",
-    "zstandard>=0.23.0",
 ]
 authors = [
     { name = "Patrick T. Garrett", email = "pgarrett@scripps.edu" },
@@ -41,10 +40,8 @@ Changelog = "https://github.com/pgarrett-scripps/spectrl/blob/main/CHANGELOG.md"
 DOI = "https://doi.org/10.5281/zenodo.21960544"
 
 [project.optional-dependencies]
+brotli = ["brotli>=1.2.0"]
 mzml = ["mzmlpy>=0.4.0"]
-# The C-extension numpress backend. Optional: the bundled pure-Python backend is
-# byte-identical and used automatically when pynumpress is not installed.
-speed = ["pynumpress>=0.0.4"]
 
 [project.scripts]
 spectrl = "spectrl.cli:main"
@@ -64,6 +61,7 @@ exclude = [
     "demo",
     "js",
     "paper",
+    "experiments",
     ".github",
     "uv.lock",
 ]
@@ -78,9 +76,6 @@ dev = [
     "pytest>=8.0.0",
     "pytest-cov>=6.0.0",
     "ruff>=0.3.0",
-    # C backend for the byte-identity tests (they importorskip when absent).
-    # pynumpress builds from sdist and only builds reliably on Linux.
-    "pynumpress>=0.0.4; platform_system == 'Linux'",
 ]
 
 [tool.pytest.ini_options]

@@ -29,7 +29,7 @@ def test_registry_has_required_top_level_keys():
         "wire_constants",
         "token_format",
         "header_keys",
-        "compression_codecs",
+        "encodings",
         "data_types",
         "array_types",
         "cvparam_encoding",
@@ -62,32 +62,10 @@ def test_generated_format_modules_are_current():
     assert result.returncode == 0, result.stderr or result.stdout
 
 
-def test_compression_codec_tails_match_cv():
-    """Codec tails in registry match live mzmlpy constants."""
-    from mzmlpy.constants import CompressionTypeAccessions
-
-    from spectrl.cv import accession_tail
-
-    r = _load()
-    codec_tails = set(int(k) for k in r["compression_codecs"]["codecs"])
-    expected = {
-        accession_tail(str(CompressionTypeAccessions.MS_NUMPRESS_LINEAR_PREDICTION_ZLIB)),
-        accession_tail(str(CompressionTypeAccessions.MS_NUMPRESS_SHORT_LOGGED_FLOAT_ZLIB)),
-        accession_tail(str(CompressionTypeAccessions.MS_NUMPRESS_POSITIVE_INTEGER_ZLIB)),
-        accession_tail(str(CompressionTypeAccessions.ZLIB_COMPRESSION)),
-        accession_tail(str(CompressionTypeAccessions.ZSTD_COMPRESSION)),
-        accession_tail(str(CompressionTypeAccessions.BYTE_SHUFFLED_ZSTD)),
-        accession_tail(str(CompressionTypeAccessions.MS_NUMPRESS_LINEAR_PREDICTION_ZSTD)),
-        accession_tail(str(CompressionTypeAccessions.MS_NUMPRESS_POSITIVE_INTEGER_ZSTD)),
-        accession_tail(str(CompressionTypeAccessions.MS_NUMPRESS_SHORT_LOGGED_FLOAT_ZSTD)),
-    }
-    assert codec_tails == expected
-
-
 def test_all_header_keys_present():
     r = _load()
     keys = set(int(k) for k in r["header_keys"])
-    assert keys == set(range(8))
+    assert keys == set(range(12))
 
 
 def test_magic_matches_token_module():

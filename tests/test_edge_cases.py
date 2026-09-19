@@ -14,29 +14,12 @@ from spectrl import (
     to_query,
     top_n,
 )
-from spectrl.codecs import get_codec
-from spectrl.cv import COMP_ZSTD, TYPE_FLOAT64
 from spectrl.model import InlineSpectrum
 
 
 def _spec(mz, intensity, **kw) -> InlineSpectrum:
     mz = np.asarray(mz, dtype=float)
     return InlineSpectrum(default_array_length=len(mz), mz=mz, intensity=np.asarray(intensity, dtype=float), **kw)
-
-
-def test_zstd_decoding_honors_output_bound():
-    codec = get_codec(COMP_ZSTD)
-    blob = codec.encode(np.arange(1000, dtype=np.float64), None, TYPE_FLOAT64)
-    with pytest.raises(ValueError, match="exceeds"):
-        codec.decode(blob, TYPE_FLOAT64, 32)
-
-
-@pytest.mark.parametrize("n", [0, 1, 2, 3, 1000])
-def test_zstd_raw_boundary_array_lengths(n):
-    codec = get_codec(COMP_ZSTD)
-    expected = np.arange(n, dtype=np.float64) * 0.25
-    blob = codec.encode(expected, None, TYPE_FLOAT64)
-    assert np.array_equal(codec.decode(blob, TYPE_FLOAT64, 64 + 8 * n), expected)
 
 
 # ── numpress array-size boundaries (linear: 0/1/2/n have distinct code paths) ──
@@ -99,57 +82,6 @@ def test_large_intensities_slof_clamp():
     d = decode_token(encode_spectrum(spec))
     rel = np.abs(d.intensity - intensity) / intensity
     assert np.all(rel < 0.02), f"max rel error {rel.max()}"
-
-
-def test_descriptor_fp_matches_blob_fp():
-    """When the slof fp is clamped for large intensities, the descriptor must
-    record the fp the blob actually uses, not the requested default."""
-    import struct
-    import zlib
-
-    import cbor2
-
-    from spectrl.cv import ARRAY_INTENSITY
-    from spectrl.header import DESC_ARRAY, DESC_DATA, DESC_FP
-    from spectrl.token import b64url_decode
-
-    intensity = np.array([1.0e8, 5.0e8, 9.9e8])
-    token = encode_spectrum(_spec([100.0, 200.0, 300.0], intensity))
-    doc = cbor2.loads(b64url_decode(token.split(".")[2]))
-    desc = next(d for d in doc[6] if d[DESC_ARRAY] == ARRAY_INTENSITY)
-    blob_fp = struct.unpack(">d", zlib.decompress(desc[DESC_DATA])[:8])[0]
-    assert desc[DESC_FP] == blob_fp
-    # Whole number, carried as a CBOR integer rather than a float64.
-    assert isinstance(desc[DESC_FP], int)
-
-
-def test_descriptor_records_fp_when_it_is_the_codec_default():
-    """Linear and slof descriptors always record the fixed point in use."""
-    import cbor2
-
-    from spectrl.codecs.numpress import DEFAULT_NUMLIN_FP, DEFAULT_NUMSLOF_FP
-    from spectrl.cv import ARRAY_INTENSITY, ARRAY_MZ
-    from spectrl.header import DESC_ARRAY, DESC_FP
-    from spectrl.token import b64url_decode
-
-    token = encode_spectrum(_spec([100.0, 200.0, 300.0], np.array([1.0e3, 2.0e3, 3.0e3])))
-    doc = cbor2.loads(b64url_decode(token.split(".")[2]))
-    descs = {d[DESC_ARRAY]: d for d in doc[6]}
-    assert descs[ARRAY_MZ][DESC_FP] == DEFAULT_NUMLIN_FP
-    assert descs[ARRAY_INTENSITY][DESC_FP] == DEFAULT_NUMSLOF_FP
-
-
-def test_clamped_fp_cannot_overflow_the_slof_uint16_range():
-    """Flooring the clamped fp must round down, never up, or slof overflows."""
-    import math
-
-    from spectrl.codecs.numpress import _SLOF_UINT16_MAX, _safe_slof_fp
-
-    for peak in (9.9e8, 1.0e9, 5.0e9, 1.0e12):
-        data = np.array([1.0, peak])
-        fp = _safe_slof_fp(data, 3600)
-        assert isinstance(fp, int)
-        assert math.log(peak + 1) * fp <= _SLOF_UINT16_MAX
 
 
 def test_zero_intensity_roundtrips():

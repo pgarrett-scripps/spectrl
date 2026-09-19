@@ -7,6 +7,7 @@ import zlib
 
 import cbor2
 
+from spectrl.cbor_format import read_token_payload
 from spectrl import InlineSpectrum, SpectrlDecodeError, decode_token, encode_spectrum
 from spectrl.cbor_format import token_checksum
 from spectrl.header import DESC_DATA
@@ -15,9 +16,9 @@ from spectrl.token import b64url_decode, b64url_encode
 
 def main() -> None:
     seed = encode_spectrum(InlineSpectrum(3, mz=[100, 200, 300], intensity=[10, 20, 30]))
-    raw = b64url_decode(seed.split(".")[2])
+    raw = read_token_payload(seed)
     rng = random.Random(0x5EC7)
-    counts = {"framing": 0, "cbor": 0, "array": 0}
+    counts = {"framing": 0, "cbor": 0, "array": 0, "outer": 0}
 
     def mutate(value):
         value = bytearray(value)
@@ -32,21 +33,26 @@ def main() -> None:
         return bytes(value)
 
     for trial in range(2_000):
-        mode = trial % 3
+        mode = trial % 4
         if mode == 0:
             token = mutate(seed.encode()).decode("ascii", errors="replace")
             counts["framing"] += 1
         else:
-            if mode == 1:
+            payload_mode = "r"
+            if mode == 3:
+                payload = mutate(zlib.compress(raw))
+                payload_mode = "z"
+                counts["outer"] += 1
+            elif mode == 1:
                 payload = mutate(raw)
                 counts["cbor"] += 1
             else:
                 doc = cbor2.loads(raw)
                 descriptor = doc[6][rng.randrange(2)]
-                descriptor[DESC_DATA] = zlib.compress(mutate(zlib.decompress(descriptor[DESC_DATA])))
+                descriptor[DESC_DATA] = mutate(descriptor[DESC_DATA])
                 payload = cbor2.dumps(doc)
                 counts["array"] += 1
-            body = "spectrl.v2." + b64url_encode(payload)
+            body = f"spectrl.v3.{payload_mode}." + b64url_encode(payload)
             token = body + "." + token_checksum(body)
         try:
             decode_token(token)

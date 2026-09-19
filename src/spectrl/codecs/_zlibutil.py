@@ -16,9 +16,7 @@ def bounded_decompress(blob: bytes, max_bytes: int | None = None) -> bytes:
     d = zlib.decompressobj()
     out = d.decompress(blob, 0 if max_bytes is None else max_bytes + 1)
     if max_bytes is not None and (len(out) > max_bytes or d.unconsumed_tail):
-        raise ValueError(
-            f"array blob decompresses beyond the {max_bytes}-byte bound implied by the declared array length"
-        )
+        raise ValueError(f"zlib output exceeds the {max_bytes}-byte bound")
     if not d.eof:
         raise ValueError("truncated zlib stream")
     if d.unused_data:

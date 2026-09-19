@@ -1,8 +1,8 @@
 /** Single-stream zlib with bounded inflation and explicit framing checks. */
 import pako from "pako"
 
-export function zlibCompress(data: Uint8Array): Uint8Array {
-  return pako.deflate(data)
+export function zlibCompress(data: Uint8Array, level: pako.DeflateOptions["level"] = -1): Uint8Array {
+  return pako.deflate(data, { level })
 }
 
 export function zlibDecompress(data: Uint8Array, maxBytes?: number): Uint8Array {

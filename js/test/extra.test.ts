@@ -4,9 +4,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { decodeToken, encodeSpectrum, tokenBreakdown, type InlineSpectrum } from "../src/index.ts";
-import { installZstd } from "../src/zstd.ts";
 
-installZstd();
 
 function spec(extraArrays: InlineSpectrum["extraArrays"]): InlineSpectrum {
   return {
@@ -51,7 +49,7 @@ test("multiple non-standard arrays disambiguated by name", () => {
   assert.deepEqual(Array.from(d.extraArrays["score_b"]!), [5, 6, 7, 8]);
 });
 
-for (const codec of ["zstd", "byte-shuffled-zstd"] as const) {
+for (const codec of ["raw", "byte-shuffle"] as const) {
   test(`per-array ${codec} override round-trips`, () => {
     const expected = new Float64Array([1, 2, 3, 4]);
     const d = decodeToken(
@@ -61,56 +59,13 @@ for (const codec of ["zstd", "byte-shuffled-zstd"] as const) {
   });
 }
 
-for (const codec of ["numlin-zstd", "numslof-zstd", "numpic-zstd"] as const) {
-  test(`unknown auxiliary arrays reject ${codec}`, () => {
-    assert.throws(() => encodeSpectrum(spec({ custom: [1, 2, 3, 4] }), {
-      quiet: true, arrayEncodings: { custom: codec },
-    }), /not compatible/);
-  });
-}
-
-test("expert override allows lossy custom arrays but not known mismatches", () => {
-  const source = spec({ custom: [1, 2, 3, 4] });
-  assert.doesNotThrow(() => encodeSpectrum(source, {
-    quiet: true,
-    allowUnsafeLossyCustom: true,
-    arrayEncodings: { custom: "numlin-zlib" },
-  }));
-  assert.throws(() => encodeSpectrum(source, {
-    quiet: true,
-    allowUnsafeLossyCustom: true,
-    arrayEncodings: { mz: "numpic-zlib" },
-  }), /not compatible/);
-});
-
 test("unknown auxiliary arrays stay lossless by default", () => {
   const expected = new Float64Array([0.123456789, 0.234567891, 0.345678912, 0.456789123]);
   const d = decodeToken(encodeSpectrum(spec({ custom: expected }), { quiet: true }));
   assert.deepEqual(d.extraArrays.custom, expected);
 });
 
-test("lossless mode rejects explicit lossy overrides", () => {
-  assert.throws(
-    () => encodeSpectrum(spec({ custom: new Float64Array([1, 2, 3, 4]) }), {
-      quiet: true,
-      lossless: true,
-      arrayEncodings: { custom: "numlin-zstd" },
-    }),
-    /lossy codec/,
-  );
-});
 
-test("fixedPoint requires a compatible codec and a whole number", () => {
-  const source = spec({ "MS:1000517": new Float64Array([1, 2, 3, 4]) });
-  assert.throws(
-    () => encodeSpectrum(source, { quiet: true, arrayEncodings: { "MS:1000517": { codec: "zstd", fixedPoint: 1000 } } }),
-    /takes no fixed point/,
-  );
-  assert.throws(
-    () => encodeSpectrum(source, { quiet: true, arrayEncodings: { "MS:1000517": { codec: "numlin-zstd", fixedPoint: 1.5 } } }),
-    /positive whole number/,
-  );
-});
 
 test("extra arrays permuted by canonical m/z sort", () => {
   const d = decodeToken(
@@ -119,7 +74,7 @@ test("extra arrays permuted by canonical m/z sort", () => {
       { quiet: true },
     ),
   );
-  assert.deepEqual(Array.from(d.mz!), [100, 200, 300]);
+  for (const [i, value] of [100, 200, 300].entries()) assert.ok(Math.abs(d.mz![i]! - value) <= value * 1e-7)
   assert.deepEqual(Array.from(d.extraArrays["snr"]!), [10, 20, 30]);
 });
 

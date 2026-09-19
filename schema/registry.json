@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/pgarrett-scripps/spectrl/schema/registry.json",
   "title": "spectrl registry",
-  "description": "Machine-readable registry of all integer keys, CV accession tails, and codec identifiers used in the spectrl.v2 token format.",
-  "spectrl_version": 2,
+  "description": "Machine-readable registry of all integer keys, CV accession tails, and codec identifiers used in the spectrl.v3 token format.",
+  "spectrl_version": 3,
   "wire_constants": {
     "checksum_hex_chars": 8,
     "max_blob_bytes": 67108864,
@@ -11,15 +11,31 @@
     "max_array_length": 4000000,
     "max_cbor_depth": 32,
     "max_cbor_items": 100000,
-    "default_numlin_fp": 100000,
-    "default_numslof_fp": 3600,
+    "default_mz_ppm": 0.1,
+    "default_intensity_scale": 3600,
     "max_safe_integer": 9007199254740991
   },
   "token_format": {
-    "magic": "spectrl.v2",
-    "description": "identifier '.' version '.' base64url(CBOR document) '.' checksum. The CBOR document is the header map (see header_keys) with each array's compressed blob embedded inline as a CBOR byte string in its descriptor (descriptor key 5). Encoded deterministically (RFC 8949 \u00a74.2). The format version is carried only in the magic. The token string is the interchange unit.",
+    "magic": "spectrl.v3",
+    "description": "identifier '.' version '.' mode '.' base64url(payload) '.' checksum. The CBOR document is the header map (see header_keys) with each array's encoded words embedded inline as a CBOR byte string in its descriptor (descriptor key 5). Encoded deterministically (RFC 8949 \u00a74.2). The format version is carried only in the magic. The token string is the interchange unit.",
+    "payload_modes": {
+      "r": "raw CBOR",
+      "z": "zlib stream",
+      "b": "Brotli stream"
+    },
+    "selection": "Default zlib-6. Explicit auto chooses the shortest available token, ties z/r/s/b",
+    "presets": {
+      "z": 6,
+      "s": 3,
+      "b": 5
+    },
+    "required_payload_modes": [
+      "r",
+      "z"
+    ],
+    "expanded_payload_limit": 16777216,
     "base64url": "RFC 4648 \u00a75: URL-safe alphabet, no padding ('=' stripped).",
-    "checksum": "REQUIRED fourth part: CRC-32/ISO-HDLC over the ASCII text of the first three parts, 'spectrl.version.payload', encoded as eight lowercase hexadecimal characters. Consumers MUST reject a token on mismatch.",
+    "checksum": "REQUIRED fifth part: CRC-32/ISO-HDLC over the ASCII text of the first four parts, 'spectrl.version.mode.payload', encoded as eight lowercase hexadecimal characters. Consumers MUST reject a token on mismatch.",
     "parts": [
       {
         "index": 0,
@@ -29,15 +45,19 @@
       {
         "index": 1,
         "content": "version identifier",
-        "example": "v2"
+        "example": "v3"
       },
       {
         "index": 2,
-        "content": "base64url(CBOR document), header map + inline array blobs"
+        "content": "payload compression: r raw, z zlib, b Brotli"
       },
       {
         "index": 3,
-        "content": "CRC-32 checksum over parts 0-2 (required, 8 lowercase hex chars)"
+        "content": "base64url(raw or compressed CBOR document)"
+      },
+      {
+        "index": 4,
+        "content": "CRC-32 checksum over parts 0-3 (required, 8 lowercase hex chars)"
       }
     ]
   },
@@ -47,46 +67,38 @@
     "description": "CV param tails are integers from the MS: namespace by default. Tail encoding requires an exactly-7-digit tail. Param keys from any other ontology (or with a non-7-digit tail) are the full accession string. Unit tails (values) are integers from the UO: namespace by default. Other ontologies use [ontology_string, tail_int], or the full accession string when the tail is not 7 digits."
   },
   "cvparam_encoding": {
-    "description": "How a single cvParam is stored as a CBOR map entry.",
+    "description": "Ordered list of [accession, value] pairs. Repeated accessions are retained.",
     "forms": [
       {
         "form": "flag",
-        "key": "tail_int (MS: default)",
-        "value": "null",
-        "example": {
-          "1000130": null
-        },
-        "meaning": "Presence is the meaning (e.g. positive scan)."
+        "example": [
+          1000130,
+          null
+        ]
       },
       {
         "form": "valued",
-        "key": "tail_int",
-        "value": "number or string",
-        "example": {
-          "1000511": 2
-        },
-        "meaning": "Param with a scalar value (e.g. ms level = 2)."
+        "example": [
+          1000511,
+          2
+        ]
       },
       {
-        "form": "valued_with_unit",
-        "key": "tail_int",
-        "value": "[value, unit_tail_int]  OR  [value, [ontology, unit_tail_int]]",
-        "example": {
-          "1000016": [
+        "form": "with_unit",
+        "example": [
+          1000016,
+          [
             23.41,
             31
           ]
-        },
-        "meaning": "Param with value and unit (e.g. scan time 23.41 min, UO:0000031=31)."
+        ]
       },
       {
-        "form": "non_ms_ontology",
-        "key": "full accession string",
-        "value": "same value rules as above",
-        "example": {
-          "UO:0000010": 3.5
-        },
-        "meaning": "Param from a non-MS ontology (or with a non-7-digit tail). the map key is the full accession string."
+        "form": "other_ontology",
+        "example": [
+          "NCIT:C25330",
+          "sample"
+        ]
       }
     ]
   },
@@ -105,9 +117,9 @@
     },
     "2": {
       "name": "spectrum_params",
-      "type": "cvparam_map",
+      "type": "cvparam_list",
       "required": false,
-      "description": "Spectrum-level CV parameters as a tail-keyed map. Includes ms level, polarity flag, centroid/profile flag, TIC, base peak m/z and intensity, lowest/highest observed m/z, etc."
+      "description": "Spectrum-level CV parameters as a ordered list of [accession, value] pairs. Includes ms level, polarity flag, centroid/profile flag, TIC, base peak m/z and intensity, lowest/highest observed m/z, etc."
     },
     "3": {
       "name": "scan_list",
@@ -123,11 +135,14 @@
         "s": {
           "name": "scans",
           "type": "array of scan objects",
-          "description": "Each scan: {0: cvparam_map, 1: [scan_window_cvparam_maps], 2: [user_params]}.",
+          "description": "Each scan: {0: cvparam_list, 1: [scan_window_cvparam_lists], 2: [user_params]}.",
           "scan_fields": {
-            "0": "cvparam_map: scan params (start time, ion injection time, filter string, \u2026)",
-            "1": "array of cvparam_maps: one per scan window (lower/upper m/z limits)",
-            "2": "array of user_param maps: scan-level free-text params (optional)"
+            "0": "CV pairs",
+            "1": "parameter groups for scan windows",
+            "2": "user parameters",
+            "3": "source",
+            "4": "acquisition",
+            "5": "processing"
           }
         }
       }
@@ -138,16 +153,19 @@
       "required": false,
       "description": "Mirrors mzML precursorList.",
       "precursor_fields": {
-        "0": "isolation_window: cvparam_map (target m/z, lower/upper offsets)",
-        "1": "selected_ions: array of cvparam_maps (m/z, charge, intensity, IM)",
-        "2": "activation: cvparam_map (method as flag + collision energy as value)"
+        "0": "isolation window parameter group",
+        "1": "selected ion parameter groups",
+        "2": "activation parameter group",
+        "3": "source",
+        "4": "acquisition",
+        "5": "processing"
       }
     },
     "5": {
       "name": "product_list",
       "type": "array of product objects",
       "required": false,
-      "description": "Mirrors mzML productList. Each product: {0: isolation_window cvparam_map}."
+      "description": "Each product is {0: optional isolation window parameter group}."
     },
     "6": {
       "name": "binary_data_array_list",
@@ -164,20 +182,36 @@
           "description": "int: array type accession tail (see array_types). MS:1000786 = non-standard, see key 4"
         },
         "2": {
-          "name": "comp",
-          "description": "int: compression accession tail (see compression_codecs)"
+          "name": "encoding",
+          "description": "[identifier, revision, optional parameter map]"
         },
-        "3": {
-          "name": "fp",
-          "description": "int: numpress fixed-point scale factor actually used by the blob, a whole number. REQUIRED for linear/slof codecs and forbidden for all other codecs."
+        "7": {
+          "name": "fidelity",
+          "description": "0 bit-exact or 1 potentially lossy relative to the encoder input"
+        },
+        "8": {
+          "name": "params",
+          "description": "Ordered scientific CV parameter pairs"
+        },
+        "9": {
+          "name": "user_params",
+          "description": "User parameters"
+        },
+        "10": {
+          "name": "processing",
+          "description": "Ordered processing records"
+        },
+        "11": {
+          "name": "extensions",
+          "description": "Namespaced extension map"
         },
         "4": {
           "name": "name",
-          "description": "str: free-text descriptor name. REQUIRED iff key 1 is MS:1000786 (non-standard array)"
+          "description": "Nonempty str: required for MS:1000786, optional for standard arrays. Names do not change standard array identity."
         },
         "5": {
           "name": "d",
-          "description": "bytes: the array's compressed blob, embedded inline as a CBOR byte string"
+          "description": "bytes: the array's encoded words, embedded inline as a CBOR byte string"
         },
         "6": {
           "name": "unit",
@@ -190,148 +224,26 @@
       "type": "array of user_param objects",
       "required": false,
       "description": "Spectrum-level free-text userParams (no CV accession). Each: {n: name, v?: value, t?: xsd-type, u?: unit-tail}. Scan-level userParams live under scan_fields key 2. Omitted entirely when empty."
-    }
-  },
-  "compression_codecs": {
-    "description": "Keyed by MS: accession tail integer. The 'pipeline' field describes encode order (decode is reversed).",
-    "codecs": {
-      "1002746": {
-        "accession": "MS:1002746",
-        "name": "MS-Numpress linear prediction + zlib",
-        "use_for": "m/z arrays (lossy default)",
-        "pipeline": [
-          "numpress_encode_linear(data, fp)",
-          "zlib_compress"
-        ],
-        "decode_pipeline": [
-          "zlib_decompress",
-          "numpress_decode_linear"
-        ],
-        "lossy": true,
-        "library_hint": "pynumpress.encode_linear / decode_linear"
-      },
-      "1002748": {
-        "accession": "MS:1002748",
-        "name": "MS-Numpress short logged float + zlib",
-        "use_for": "intensity arrays (lossy default)",
-        "pipeline": [
-          "numpress_encode_slof(data, fp)",
-          "zlib_compress"
-        ],
-        "decode_pipeline": [
-          "zlib_decompress",
-          "numpress_decode_slof"
-        ],
-        "lossy": true,
-        "library_hint": "pynumpress.encode_slof / decode_slof"
-      },
-      "1002747": {
-        "accession": "MS:1002747",
-        "name": "MS-Numpress positive integer + zlib",
-        "use_for": "charge arrays (lossy, rounds to nearest integer)",
-        "pipeline": [
-          "numpress_encode_pic(data)",
-          "zlib_compress"
-        ],
-        "decode_pipeline": [
-          "zlib_decompress",
-          "numpress_decode_pic"
-        ],
-        "lossy": true,
-        "library_hint": "pynumpress.encode_pic / decode_pic"
-      },
-      "1000574": {
-        "accession": "MS:1000574",
-        "name": "zlib",
-        "use_for": "canonical lossless default and fallback for unknown auxiliary arrays. raw little-endian bytes of the declared type (float64/float32/int32) + zlib",
-        "pipeline": [
-          "to_little_endian_bytes(data, type)",
-          "zlib_compress"
-        ],
-        "decode_pipeline": [
-          "zlib_decompress",
-          "from_little_endian_bytes(type)"
-        ],
-        "lossy": false,
-        "library_hint": "zlib.compress / decompress"
-      },
-      "1003780": {
-        "accession": "MS:1003780",
-        "name": "zstd",
-        "use_for": "lossless raw arrays when explicitly selected",
-        "pipeline": [
-          "to_little_endian_bytes(data, type)",
-          "zstd_compress"
-        ],
-        "decode_pipeline": [
-          "zstd_decompress",
-          "from_little_endian_bytes(type)"
-        ],
-        "lossy": false,
-        "library_hint": "zstandard / @cloudpss/zstd"
-      },
-      "1003781": {
-        "accession": "MS:1003781",
-        "name": "byte-shuffled zstd",
-        "use_for": "lossless raw numeric arrays when explicitly selected",
-        "pipeline": [
-          "to_little_endian_bytes(data, type)",
-          "byte_shuffle",
-          "zstd_compress"
-        ],
-        "decode_pipeline": [
-          "zstd_decompress",
-          "byte_unshuffle",
-          "from_little_endian_bytes(type)"
-        ],
-        "lossy": false,
-        "library_hint": "zstandard / @cloudpss/zstd"
-      },
-      "1003783": {
-        "accession": "MS:1003783",
-        "name": "MS-Numpress linear prediction + zstd",
-        "use_for": "coordinate arrays when explicitly selected",
-        "pipeline": [
-          "numpress_encode_linear(data, fp)",
-          "zstd_compress"
-        ],
-        "decode_pipeline": [
-          "zstd_decompress",
-          "numpress_decode_linear"
-        ],
-        "lossy": true,
-        "library_hint": "pynumpress + zstandard / @cloudpss/zstd"
-      },
-      "1003784": {
-        "accession": "MS:1003784",
-        "name": "MS-Numpress positive integer + zstd",
-        "use_for": "non-negative integer arrays when explicitly selected",
-        "pipeline": [
-          "numpress_encode_pic(data)",
-          "zstd_compress"
-        ],
-        "decode_pipeline": [
-          "zstd_decompress",
-          "numpress_decode_pic"
-        ],
-        "lossy": true,
-        "library_hint": "pynumpress + zstandard / @cloudpss/zstd"
-      },
-      "1003785": {
-        "accession": "MS:1003785",
-        "name": "MS-Numpress short logged float + zstd",
-        "use_for": "positive magnitude arrays when explicitly selected",
-        "pipeline": [
-          "numpress_encode_slof(data, fp)",
-          "zstd_compress"
-        ],
-        "decode_pipeline": [
-          "zstd_decompress",
-          "numpress_decode_slof"
-        ],
-        "lossy": true,
-        "library_hint": "pynumpress + zstandard / @cloudpss/zstd"
-      }
+    },
+    "8": {
+      "name": "source",
+      "type": "source record",
+      "required": false
+    },
+    "9": {
+      "name": "acquisition",
+      "type": "acquisition record",
+      "required": false
+    },
+    "10": {
+      "name": "processing",
+      "type": "ordered processing records",
+      "required": false
+    },
+    "11": {
+      "name": "extensions",
+      "type": "namespaced map",
+      "required": false
     }
   },
   "unit_accessions": {
@@ -364,7 +276,7 @@
     }
   },
   "data_types": {
-    "description": "Binary data type accession tails. Used in array descriptor 'type' field. Only float64, float32, and int32 are permitted in spectrl.v2 tokens. Other mzML data types (int64, ASCII string) are listed for completeness but MUST NOT appear.",
+    "description": "Binary data type accession tails. Used in array descriptor 'type' field. Only float64, float32, and int32 are permitted in spectrl.v3 tokens. Other mzML data types (int64, ASCII string) are listed for completeness but MUST NOT appear.",
     "types": {
       "1000521": {
         "accession": "MS:1000521",
@@ -388,7 +300,7 @@
         "accession": "MS:1000522",
         "tail": 1000522,
         "name": "INT_64",
-        "description": "64-bit signed integer little-endian. NOT permitted in spectrl.v2."
+        "description": "64-bit signed integer little-endian. NOT permitted in spectrl.v3."
       },
       "1001479": {
         "accession": "MS:1001479",
@@ -561,41 +473,6 @@
         "name": "SAMPLED_NOISE_MZ"
       }
     }
-  },
-  "auxiliary_encoding_profiles": {
-    "description": "Conservative lossy defaults for known PSI-MS auxiliary arrays. Any array not listed here uses its declared raw type with zlib. Negative values always fall back to a raw codec.",
-    "numlin": [
-      "MS:1000595",
-      "MS:1000617",
-      "MS:1002743",
-      "MS:1003143",
-      "MS:1003157",
-      "MS:1003158",
-      "MS:1003007",
-      "MS:1002477",
-      "MS:1003156",
-      "MS:1003006",
-      "MS:1002816",
-      "MS:1003155",
-      "MS:1003153",
-      "MS:1003008",
-      "MS:1003154",
-      "MS:1002893"
-    ],
-    "numslof": [
-      "MS:1000517",
-      "MS:1000820",
-      "MS:1000821",
-      "MS:4000210",
-      "MS:1002529",
-      "MS:1002530",
-      "MS:1002742",
-      "MS:1002744",
-      "MS:1002745"
-    ],
-    "numpic": [
-      "MS:1003870"
-    ]
   },
   "well_known_cv_params": {
     "description": "Commonly used CV params in spectrl tokens. All are MS: ontology. This list is not exhaustive. Any valid PSI-MS cvParam may appear.",
@@ -889,10 +766,150 @@
       "Peaks sorted m/z-ascending before encoding. All parallel arrays (incl. auxiliary) permuted identically.",
       "NaN and Inf values are not allowed in any float array.",
       "Array descriptors emitted in fixed order: m/z, intensity, charge, then additional arrays sorted ascending by key (CV accession string, or name for non-standard arrays).",
-      "CRC-32/ISO-HDLC checksum (required fourth token part) is computed over the ASCII text before the checksum, 'spectrl.version.payload' (blobs are inline and therefore covered).",
+      "CRC-32/ISO-HDLC checksum (required fifth token part) is computed over the ASCII text before the checksum, 'spectrl.version.mode.payload' (blobs are inline and therefore covered).",
       "Checksum encoding: eight lowercase hexadecimal characters, zero-padded.",
-      "Numpress fp is required in every linear/slof descriptor and is a whole number. Defaults: linear 100000, slof floor(min(3600, 65535/ln(max+1))), clamped DOWN so no encoded value overflows uint16. A descriptor omits fp for codecs that do not use a fixed point.",
-      "Arrays containing negative values fall back to the lossless zlib codec in lossy mode (numpress cannot represent them). Negative m/z is rejected."
+      "Default lossy arrays use quantized words with a pointwise 0.1 ppm bound for m/z and log1p scale 3600 for intensity.",
+      "Default lossless m/z uses delta and shuffle, intensity uses shuffle, and other arrays use raw words.",
+      "Integer and auxiliary arrays remain exact in both profiles. Invalid automatic quantization falls back to exact.",
+      "Array blobs have no individual compression. Whole-document zlib level 6 is the default payload compression."
     ]
+  },
+  "encodings": {
+    "0": {
+      "name": "raw",
+      "revision": 1,
+      "lossless": true,
+      "parameters": {}
+    },
+    "1": {
+      "name": "byte-shuffle",
+      "revision": 1,
+      "lossless": true,
+      "parameters": {}
+    },
+    "2": {
+      "name": "modular-delta-shuffle",
+      "revision": 1,
+      "lossless": true,
+      "parameters": {}
+    },
+    "3": {
+      "name": "quantized",
+      "revision": 1,
+      "lossless": false,
+      "parameters": {
+        "scale": "finite positive number",
+        "width": "1, 2, 4, or 8",
+        "log": "optional boolean",
+        "delta": "optional boolean"
+      }
+    }
+  },
+  "core_encodings": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "default_profiles": {
+    "lossless": {
+      "mz": 2,
+      "intensity": 1,
+      "other": 0
+    },
+    "lossy": {
+      "mz": {
+        "encoding": 3,
+        "max_error_ppm": 0.1,
+        "log": true,
+        "delta": true
+      },
+      "intensity": {
+        "encoding": 3,
+        "scale": 3600,
+        "log": true
+      },
+      "other": 0
+    },
+    "integer_arrays": "exact",
+    "outer_compression": "zlib"
+  },
+  "operation_descriptor": {
+    "form": "[identifier, revision, optional string-keyed parameters]",
+    "identifier": "nonnegative built-in integer or namespaced string, such as org.example:codec",
+    "revision": "positive safe integer",
+    "unknown": "inspection and forwarding allowed, full decoding fails"
+  },
+  "context_fields": {
+    "0": "params",
+    "1": "user_params",
+    "2": "id",
+    "3": "name",
+    "4": "version",
+    "5": "location",
+    "6": "external_ids",
+    "7": "spectrum_ref",
+    "8": "instrument",
+    "9": "components",
+    "10": "kind",
+    "11": "order",
+    "12": "software",
+    "13": "operation",
+    "14": "revision",
+    "15": "parameters",
+    "16": "source_params"
+  },
+  "context_records": {
+    "source": [
+      "external_ids",
+      "id",
+      "location",
+      "name",
+      "params",
+      "spectrum_ref",
+      "user_params"
+    ],
+    "acquisition": [
+      "instrument"
+    ],
+    "instrument": [
+      "components",
+      "id",
+      "name",
+      "params",
+      "software",
+      "user_params"
+    ],
+    "component": [
+      "kind",
+      "order",
+      "params",
+      "user_params"
+    ],
+    "software": [
+      "id",
+      "name",
+      "params",
+      "user_params",
+      "version"
+    ],
+    "processing": [
+      "operation",
+      "parameters",
+      "params",
+      "revision",
+      "software",
+      "source_params",
+      "user_params"
+    ]
+  },
+  "extension_record": {
+    "revision": "positive safe integer",
+    "required": "boolean",
+    "data": "CBOR value"
+  },
+  "parameter_group": {
+    "0": "ordered CV pairs",
+    "1": "optional user parameters"
   }
 }

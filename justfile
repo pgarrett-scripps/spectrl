@@ -37,9 +37,9 @@ mzml-smoke:
 clean-install-smoke:
     bash scripts/clean_install_smoke.sh
 
-release-check: check fuzz build release-version mzml-smoke clean-install-smoke
-    cd js && npm ci && npm run typecheck && npm test && npm run build && npm pack --dry-run
-    cd demo && npm ci && npm run build
+release-check: check coverage fuzz build release-version mzml-smoke clean-install-smoke
+    cd js && npm ci && npm run typecheck && npm test && npm run fuzz && npm run build && npm pack --dry-run
+    cd demo && npm ci && npm test
 
 # Build the JS library and launch the browser demo at http://127.0.0.1:8000
 demo:

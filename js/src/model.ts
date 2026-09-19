@@ -1,3 +1,5 @@
+import type { OperationOption } from "./pipeline.js"
+import type { NumArray } from "./codecs.js"
 /** Data models for spectrl encode input and decode output. Mirrors the Python reference impl. */
 
 /** A CV parameter, mirroring mzML cvParam semantics.
@@ -20,27 +22,31 @@ export interface UserParam {
 
 export interface ScanWindow {
   params: CvParam[];
+  userParams?: UserParam[];
 }
 
-export interface Scan {
+export interface Scan extends ContextFields {
   params: CvParam[];
-  windows?: ScanWindow[];
   userParams?: UserParam[];
+  windows?: ScanWindow[];
 }
 
 export interface IsolationWindow {
   params: CvParam[];
+  userParams?: UserParam[];
 }
 
 export interface SelectedIon {
   params: CvParam[];
+  userParams?: UserParam[];
 }
 
 export interface Activation {
   params: CvParam[];
+  userParams?: UserParam[];
 }
 
-export interface Precursor {
+export interface Precursor extends ContextFields {
   isolationWindow?: IsolationWindow | null;
   selectedIons?: SelectedIon[];
   activation?: Activation | null;
@@ -50,32 +56,17 @@ export interface Product {
   isolationWindow?: IsolationWindow | null;
 }
 
-export type ArrayCodec =
-  | "auto"
-  | "zlib"
-  | "zstd"
-  | "byte-shuffled-zstd"
-  | "numlin-zlib"
-  | "numlin-zstd"
-  | "numslof-zlib"
-  | "numslof-zstd"
-  | "numpic-zlib"
-  | "numpic-zstd"
-  | `MS:${string}`;
-
 export interface ArrayEncoding {
-  codec?: ArrayCodec | number;
-  fixedPoint?: number;
+  encoding?: OperationOption
 }
-
-export type ArrayEncodingOption = ArrayCodec | number | ArrayEncoding;
+export type ArrayEncodingOption = OperationOption | ArrayEncoding
 
 /** Input to {@link encodeSpectrum}. Mirrors an mzML <spectrum>. */
-export interface InlineSpectrum {
+export interface InlineSpectrum extends ContextFields, ArrayMetadata {
   defaultArrayLength: number;
-  mz?: Float64Array | number[] | null;
-  intensity?: Float64Array | number[] | null;
-  charge?: Float64Array | number[] | null;
+  mz?: NumArray | number[] | null;
+  intensity?: NumArray | number[] | null;
+  charge?: NumArray | number[] | null;
   id?: string | null;
   params?: CvParam[];
   scans?: Scan[];
@@ -94,11 +85,11 @@ export interface InlineSpectrum {
 }
 
 /** Output from {@link decodeToken}. */
-export interface DecodedSpectrum {
+export interface DecodedSpectrum extends ContextFields, ArrayMetadata {
   defaultArrayLength: number;
-  mz: Float64Array | null;
-  intensity: Float64Array | null;
-  charge: Float64Array | null;
+  mz: NumArray | null;
+  intensity: NumArray | null;
+  charge: NumArray | null;
   id: string | null;
   params: CvParam[];
   scans: Scan[];
@@ -112,4 +103,39 @@ export interface DecodedSpectrum {
   arrayUnits: Record<string, string>;
   checksum: string;
   formatVersion: number;
+}
+
+export interface ContextRecord {
+  params?: CvParam[]
+  userParams?: UserParam[]
+  id?: string
+  name?: string
+  version?: string
+  location?: string
+  externalIds?: string[]
+  spectrumRef?: string
+  instrument?: ContextRecord
+  components?: ContextRecord[]
+  kind?: "source" | "analyzer" | "detector"
+  order?: number
+  software?: ContextRecord
+  operation?: string
+  revision?: number
+  parameters?: Record<string, unknown>
+  sourceParams?: CvParam[]
+}
+export type Extensions = Record<string, { revision: number, required: boolean, data: unknown }>
+export interface ContextFields {
+  source?: ContextRecord | null
+  acquisition?: ContextRecord | null
+  processing?: ContextRecord[]
+}
+export interface ArrayMetadata {
+  /** Optional array names, keyed by the canonical array key. */
+  arrayNames?: Record<string, string>
+  arrayParams?: Record<string, CvParam[]>
+  arrayUserParams?: Record<string, UserParam[]>
+  arrayProcessing?: Record<string, ContextRecord[]>
+  arrayExtensions?: Record<string, Extensions>
+  extensions?: Extensions
 }

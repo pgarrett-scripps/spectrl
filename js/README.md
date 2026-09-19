@@ -1,6 +1,6 @@
 # @spectrl-ms/spectrl
 
-JavaScript / TypeScript implementation of the **spectrl.v2** inline-spectrum token
+JavaScript / TypeScript implementation of the **spectrl.v3** inline-spectrum token
 format. Encodes peak arrays and modeled spectrum metadata into a compact,
 URL-safe string and back, with no backend required. Runs in the browser and in
 Node.
@@ -9,7 +9,7 @@ This package is a separate implementation of the format specified in
 [`SPECIFICATION.md`](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md) and is validated against the shared
 conformance vectors in [`test-vectors/`](https://github.com/pgarrett-scripps/spectrl/tree/main/test-vectors). It decodes tokens
 produced by the Python reference implementation byte-for-byte (including the
-MS-Numpress codecs and the CRC-32 transport checksum).
+core numeric encodings and the CRC-32 transport checksum).
 
 ## Install
 
@@ -17,9 +17,9 @@ MS-Numpress codecs and the CRC-32 transport checksum).
 npm install @spectrl-ms/spectrl
 ```
 
-Version 2.1.0 requires Node 22+ and exports ESM JavaScript and TypeScript
+Version 3.0.0 requires Node 22+ and exports ESM JavaScript and TypeScript
 declarations. Browser applications can bundle the same package. Decoder budgets
-are available starting in 2.1.0. The token format remains `spectrl.v2`.
+are available in v3. The token format remains `spectrl.v3`.
 
 ## Usage
 
@@ -37,7 +37,7 @@ const token = encodeSpectrum({
     { accession: "MS:1000127" },           // centroid spectrum
   ],
 });
-// "spectrl.v2.hQ..."
+// "spectrl.v3.z.…"
 
 const spec = decodeToken(token);
 spec.mz;        // Float64Array
@@ -52,31 +52,51 @@ extractToken(url) === token; // true
 ### Lossless encoding
 
 ```ts
-// Default is lossy MS-Numpress. Use lossless for bit-exact IEEE-754 doubles:
-const token = encodeSpectrum(spec, { lossless: true });
+// Default is lossy quantization. Use lossless for bit-exact native arrays:
+const token = encodeSpectrum(spec, { lossless: true })
 ```
+
+Lossless encoding uses modular delta plus byte shuffle for m/z, byte shuffle
+for intensity, and raw typed words for auxiliary arrays. Default lossy encoding
+uses one quantized-word layout with a logarithmic m/z grid calibrated to a
+maximum error of 0.1 ppm per source value, and a log1p intensity grid with
+scale 3600. Zero m/z remains exact. Unsupported quantization falls back to
+exact encoding.
+Integer and auxiliary arrays remain exact. Both profiles default to one zlib
+compression pass over the complete CBOR document.
+
+Payload compression is independent of fidelity:
+
+```ts
+encodeSpectrum(spec, { lossless: true, compression: "zlib" })
+encodeSpectrum(spec, { compression: "auto" })
+```
+
+Choices are `raw`, `zlib` (level 6), and `brotli` (quality 5).
+Initialize Brotli with `await installBrotli()` from `@spectrl-ms/spectrl/brotli`.
+This uses native Node support or browser WebAssembly. Browser bundlers must
+serve the Brotli WASM asset beside the generated entry module.
+Explicit `auto` compares available backends, with ties preferring zlib, raw, then Brotli. The selected mode is stored in the token.
+An explicit unavailable backend raises an error.
 
 ### Per-array encoding
 
 ```ts
-import { installZstd } from "@spectrl-ms/spectrl/zstd";
-
-installZstd();
-
 const token = encodeSpectrum(spec, {
+  lossless: true,
   arrayEncodings: {
-    mz: "numlin-zstd",
-    "MS:1000517": { codec: "numslof-zstd", fixedPoint: 3600 },
-    iso_score: "byte-shuffled-zstd",
+    mz: "modular-delta-shuffle",
+    intensity: "byte-shuffle",
+    iso_score: "raw",
   },
-});
+})
 ```
 
-Known PSI-MS auxiliary arrays receive semantic Numpress defaults. Unknown arrays
-remain lossless raw + zlib. Supported explicit codecs include zlib, zstd,
-byte-shuffled zstd, and all three Numpress transforms followed by zlib or zstd.
-Expert callers may combine `allowUnsafeLossyCustom: true` with an explicit
-codec for a semantically unknown custom array.
+The four core encodings are raw (0), byte shuffle (1), modular delta plus shuffle
+(2), and quantized words (3). Compression applies once to the complete document.
+Auxiliary arrays stay exact by default. Custom namespaced encodings use trusted
+callbacks registered explicitly. Unknown custom array semantics require
+`allowUnsafeLossyCustom: true` before applying an explicit lossy encoding.
 
 ## API
 
@@ -98,9 +118,9 @@ for runnable Python-to-Node examples, budget defaults, precision policy, and
 worker guidance. Decoding is synchronous. Set ingress and concurrency limits
 in the consuming service as well as per-token decoder budgets.
 
-Zstd is an intentional installed dependency. The core import does not initialize
-its WASM backend. Call `installZstd()` from the `/zstd` entry point once in each
-execution context before accepting zstd tokens. The same setup works in workers.
+Brotli is an optional capability. Call `await installBrotli()` from the
+`/brotli` entry point in each execution context that accepts Brotli tokens.
+The same setup works in workers.
 
 ## Develop
 
@@ -126,6 +146,36 @@ CI covers Node 22 and 24, matching the current Node 22 package minimum.
 
 ## Token format
 
-The `spectrl.v2` header uses keys 0 through 7. Spectrum-level free-text
+The `spectrl.v3` header uses keys 0 through 11. Spectrum-level free-text
 parameters use key 7. Identifications and fragment assignments belong in
 the surrounding application.
+
+## V3 operations
+
+```ts
+const token = encodeSpectrum(spectrum, {
+  lossless: true,
+  arrayEncodings: {
+    mz: { encoding: "modular-delta-shuffle", compression: "zlib" },
+    intensity: "MS:1003782",
+  },
+})
+```
+
+`registerEncoding`, `registerCompressor`, and `registerExtension` accept versioned
+namespaced IDs. Custom code is installed locally and never loaded from a token.
+`readTokenDocument` inspects metadata and operation declarations without invoking
+array decoders. Unknown required operations or extensions fail full decoding.
+The decoded model preserves source, acquisition, processing, nested user parameters,
+and per-array metadata. Core Float32Array and Int32Array retain their types in
+lossless mode. Sorting and selection require explicitly updating or removing
+extensions that might depend on array content or order.
+
+### Outer payload compression
+
+Tokens use `spectrl.v3.<mode>.<payload>.<checksum>`. Mode `z` is the default
+zlib-compressed CBOR. Mode `r` is raw CBOR and `b` is Brotli.
+All use unpadded base64url. Only `r` and `z` are required reader capabilities.
+Optional `auto` selection is described above.
+The checksum includes the mode and is checked before bounded decompression.
+The expanded CBOR limit is 16 MiB, including during metadata inspection.

@@ -12,9 +12,7 @@ import { test } from "node:test";
 import { b64urlEncode } from "../src/base64url.ts";
 import { tokenChecksum } from "../src/checksum.ts";
 import { decodeToken } from "../src/index.ts";
-import { installZstd } from "../src/zstd.ts";
 
-installZstd();
 
 const here = dirname(fileURLToPath(import.meta.url));
 const vectorsPath = resolve(here, "../../test-vectors/vectors.json");
@@ -137,19 +135,19 @@ test("tampered token fails checksum verification", () => {
   const t: string = doc.vectors[0].token;
   // perturb the tail of the CBOR payload; the stored checksum no longer matches
   const parts = t.split(".");
-  const payload = parts[2]!;
-  parts[2] = payload.slice(0, -3) + (payload.slice(-3) === "AAA" ? "BBB" : "AAA");
+  const payload = parts[3]!;
+  parts[3] = payload.slice(0, -3) + (payload.slice(-3) === "AAA" ? "BBB" : "AAA");
   const bad = parts.join(".");
   assert.throws(() => decodeToken(bad), /checksum mismatch/);
 });
 
 test("bad magic is rejected", () => {
-  assert.throws(() => decodeToken("spectrl9.aaaa"), /spectrl.v2|magic|version/i);
+  assert.throws(() => decodeToken("spectrl9.aaaa"), /spectrl.v3|magic|version/i);
 });
 
 for (const v of negativeDoc.vectors) {
   test(`negative vector: ${v.name}`, () => {
-    const body = `spectrl.v2.${b64urlEncode(Uint8Array.from(Buffer.from(v.cbor_hex, "hex")))}`;
+    const body = `spectrl.v3.r.${b64urlEncode(Uint8Array.from(Buffer.from(v.cbor_hex, "hex")))}`;
     const token = `${body}.${tokenChecksum(body)}`;
     assert.throws(() => decodeToken(token), new RegExp(v.error));
   });

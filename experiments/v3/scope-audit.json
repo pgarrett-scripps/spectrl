@@ -1,0 +1,1840 @@
+{
+  "scope": "Existing 127-spectrum codec selection, metadata presence only, not an exhaustive mzML conversion audit",
+  "selection_sha256": "76ffa9a07bba0fee23a0eac5d31b266e86bf922cfab46874fce9f39092351348",
+  "datasets": 40,
+  "spectra": 127,
+  "spectra_with_feature": {
+    "explicit_source_reference": 119,
+    "file_contains_source_records": 127,
+    "instrument_reference": 127,
+    "nested_user_params_outside_v2": 15,
+    "precursor_spectrum_reference": 38,
+    "processing_reference": 127,
+    "resolved_instrument": 127,
+    "resolved_instrument_components": 113,
+    "resolved_processing": 127,
+    "resolved_processing_software": 127
+  },
+  "declared_binary_array_dtypes": {
+    "MS:1000521": 104,
+    "MS:1000523": 153
+  },
+  "direct_user_params_by_parent": {
+    "activation": 3,
+    "isolationWindow": 9,
+    "scan": 33,
+    "scanWindow": 3,
+    "spectrum": 18
+  },
+  "rows": [
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1269",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1118",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1532",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=3550",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=3187",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=3064",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1096",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1723",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=18",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=308",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=963",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "index=500",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=509",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=506",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=507",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=510",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=501",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=502",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=505",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=508",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "profile_ms1",
+      "id": "spectrum=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=3",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=2",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=99",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=69",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "nested_user_params_outside_v2",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=96",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "nested_user_params_outside_v2",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=27",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "nested_user_params_outside_v2",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=1",
+      "features": [
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=2",
+      "features": [
+        "file_contains_source_records",
+        "instrument_reference",
+        "nested_user_params_outside_v2",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=5",
+      "features": [
+        "file_contains_source_records",
+        "instrument_reference",
+        "nested_user_params_outside_v2",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=4",
+      "features": [
+        "file_contains_source_records",
+        "instrument_reference",
+        "nested_user_params_outside_v2",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=80",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=45248",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=89755",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=239",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=23860",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=72096",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=1882",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=62809",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=83466",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=4674",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=80748",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=74788",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "prm",
+      "id": "controllerType=0 controllerNumber=1 scan=15",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "nested_user_params_outside_v2",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "prm",
+      "id": "controllerType=0 controllerNumber=1 scan=1215",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "nested_user_params_outside_v2",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "prm",
+      "id": "controllerType=0 controllerNumber=1 scan=357",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "nested_user_params_outside_v2",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "srm",
+      "id": "scan=1246",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "srm",
+      "id": "scan=1252",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "srm",
+      "id": "scan=1261",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "mrm",
+      "id": "merged=0 frame=1 scanStart=1 scanEnd=274",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "mrm",
+      "id": "merged=1 frame=2 scanStart=1 scanEnd=274",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "negative_rna",
+      "id": "controllerType=0 controllerNumber=1 scan=726",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "negative_rna",
+      "id": "controllerType=0 controllerNumber=1 scan=727",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "nested_user_params_outside_v2",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=2",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=42",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=9",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=27",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=19",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=49",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=1 experiment=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=6 experiment=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=2 experiment=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=6 experiment=10",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=3 experiment=8",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=11 experiment=11",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=3 process=0 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=3 process=0 scan=2",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=1 process=0 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=2 process=0 scan=5",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=2 process=0 scan=3",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=2 process=0 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "mse_profile",
+      "id": "function=3 process=0 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "mse_profile",
+      "id": "function=1 process=0 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "mse_profile",
+      "id": "function=2 process=0 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "etd",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "nested_user_params_outside_v2",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "ethcd",
+      "id": "controllerType=0 controllerNumber=1 scan=6",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "nested_user_params_outside_v2",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "uvpd_positive",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "uvpd_negative",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "uvpd_orbitrap",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "native_protein",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=43794",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=25516",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=44704",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=3502",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=8294",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=29747",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "uvpd_mlac",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "native_aqpz_cdl",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "native_aqpz_dopg",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "uvpd_dope",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "uvpd_dopg",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "mse_mix",
+      "id": "scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "mse_mix",
+      "id": "scan=2",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "mse_clpb",
+      "id": "scan=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "mse_clpb",
+      "id": "scan=2",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "hela_pasef_ms1",
+      "id": "merged=14 frame=6 scanStart=1 scanEnd=100",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "waters_hddda_ms1",
+      "id": "merged=1 function=1 block=1",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "ethcd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=7333",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "ethcd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=36993",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "ethcd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=7335",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "ethcd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=37017",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "etd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=17558",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "etd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=35190",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "etd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=35208",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "etd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=17573",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=707",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=609",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=791",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=418",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=708",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=610",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=324",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=1710",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=562",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=325",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=2065",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=563",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=767",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "nested_user_params_outside_v2",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=773",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "nested_user_params_outside_v2",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=755",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "nested_user_params_outside_v2",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "maldi_ms2",
+      "id": "scan=1",
+      "features": [
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "maldi_ms2",
+      "id": "scan=2",
+      "features": [
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "glycopeptide",
+      "id": "controllerType=0 controllerNumber=1 scan=147",
+      "features": [
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "glycopeptide",
+      "id": "controllerType=0 controllerNumber=1 scan=161",
+      "features": [
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "topdown_etd",
+      "id": "controllerType=0 controllerNumber=1 scan=2382",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    },
+    {
+      "dataset": "topdown_etd",
+      "id": "controllerType=0 controllerNumber=1 scan=2385",
+      "features": [
+        "explicit_source_reference",
+        "file_contains_source_records",
+        "instrument_reference",
+        "precursor_spectrum_reference",
+        "processing_reference",
+        "resolved_instrument",
+        "resolved_instrument_components",
+        "resolved_processing",
+        "resolved_processing_software"
+      ]
+    }
+  ]
+}

@@ -11,9 +11,7 @@ import { dirname, resolve } from "node:path";
 import { test } from "node:test";
 
 import { decodeToken } from "../src/index.ts";
-import { installZstd } from "../src/zstd.ts";
 
-installZstd();
 
 const here = dirname(fileURLToPath(import.meta.url));
 const path = resolve(here, "../../test-vectors/reverse-vectors.json");

@@ -1,5 +1,7 @@
 /** Shared browser assertions, runnable manually or through the CI driver. */
-import { encodeSpectrum, decodeToken } from "../../js/src/index"
+import { encodeSpectrum, decodeToken, tokenBreakdown } from "../../js/src/index"
+
+import { installBrotli } from "../../js/src/brotli"
 
 const frame = document.querySelector<HTMLIFrameElement>("#viewer")!
 const result = document.querySelector<HTMLElement>("#result")!
@@ -28,6 +30,28 @@ function check(id: string) {
 }
 const currentToken = () => element<HTMLTextAreaElement>("#token").value
 const tests: [string, () => Promise<void>][] = [
+  ["Brotli browser backend round trips a quantized token", async () => {
+    await installBrotli()
+    const token = encodeSpectrum({ defaultArrayLength: 2, mz: [100, 200], intensity: [10, 20] }, { compression: "brotli" })
+    assert(token.startsWith("spectrl.v3.b."), "Brotli mode missing")
+    const decoded = decodeToken(token)
+    assert(Math.abs(decoded.mz![0]! - 100) <= 100 * 1e-7 && Math.abs(decoded.intensity![1]! - 20) < 0.01, "Brotli round trip failed")
+    await load(token)
+    await waitFor(() => element("#tokenMeta").textContent!.includes("checksum verified"))
+    assert(!element("#decodeErr").textContent, "Viewer failed to initialize Brotli")
+  }],
+  ["raw and compressed payloads preserve metadata in the browser", async () => {
+    const raw = encodeSpectrum({ defaultArrayLength: 0 }, { compression: "raw" })
+    assert(raw.startsWith("spectrl.v3.r."), "Explicit raw token has the wrong mode")
+    assert(decodeToken(raw).defaultArrayLength === 0, "Raw token did not decode")
+    const id = "context-record-".repeat(100)
+    const compressed = encodeSpectrum({ defaultArrayLength: 2, id, mz: [100, 200], intensity: [1, 2] })
+    assert(compressed.startsWith("spectrl.v3.z."), "Metadata-rich token did not choose zlib mode")
+    assert(decodeToken(compressed).id === id, "Compressed metadata changed")
+    await load(compressed)
+    await waitFor(() => element("#tokenMeta").textContent!.includes("checksum verified"))
+    assert(!element("#decodeErr").textContent, "Compressed token failed to render")
+  }],
   ["decoder budgets reject excessive array data", async () => {
     const token = encodeSpectrum({ defaultArrayLength: 2, mz: [100, 200], intensity: [1, 2] })
     assert(decodeToken(token, { maxDecodedBytes: 32 }).defaultArrayLength === 2, "Exact budget was rejected")
@@ -38,13 +62,6 @@ const tests: [string, () => Promise<void>][] = [
       rejected = error instanceof Error && error.message.includes("maxDecodedBytes")
     }
     assert(rejected, "Aggregate byte budget was ignored")
-  }],
-  ["zstd loads on demand", async () => {
-    const { installZstd } = await import("../../js/src/zstd")
-    installZstd()
-    await load(encodeSpectrum({ defaultArrayLength: 1, mz: [100], intensity: [10] }, { arrayEncodings: { mz: "zstd" } }))
-    await waitFor(() => element("#tokenMeta").textContent!.includes("checksum verified"))
-    assert(!element("#decodeErr").textContent, "Zstd token failed to render")
   }],
   ["metadata is rendered literally", async () => {
     const markup = '<img id="injected" src="missing" onerror="document.body.dataset.injected=1">'
@@ -63,6 +80,7 @@ const tests: [string, () => Promise<void>][] = [
     assert(decodeToken(currentToken()).defaultArrayLength === 2, "Import failed")
     element<HTMLInputElement>("#lossless").checked = true
     element("#lossless").dispatchEvent(new Event("change", { bubbles: true }))
+    await waitFor(() => decodeToken(currentToken()).mz![0] === 100.123456)
     assert(decodeToken(currentToken()).mz![0] === 100.123456, "Lossless mode replaced or rounded imported data")
     assert(element("#qualityReport").textContent!.includes('"allArraysExact": true'), "Quality report did not update")
     const previous = currentToken()
@@ -71,12 +89,25 @@ const tests: [string, () => Promise<void>][] = [
     assert(currentToken() === previous, "Invalid import replaced the current spectrum")
     assert(element("#importStatus").textContent!.includes("line 1"), "Missing useful import error")
   }],
+  ["lossless mode uses the fixed core policy", async () => {
+    await load()
+    const mz = Array.from({ length: 256 }, (_, i) => 100 + i / 8)
+    change("#peakInput", mz.map((value, i) => `${value},${i * i}`).join("\n"))
+    element("#importPeaks").click()
+    element<HTMLInputElement>("#lossless").checked = true
+    element("#lossless").dispatchEvent(new Event("change", { bubbles: true }))
+    await waitFor(() => tokenBreakdown(currentToken()).some(part => part.encoding?.[0] === 2))
+    const decoded = decodeToken(currentToken())
+    assert(decoded.mz!.every((value, i) => value === mz[i]), "Lossless encoding changed m/z values")
+    assert(decoded.intensity!.every((value, i) => value === i * i), "Lossless encoding changed intensities")
+
+  }],
   ["budget preview requires consent and apply", async () => {
     await load(encodeSpectrum({ defaultArrayLength: 300,
       mz: Array.from({ length: 300 }, (_, i) => 100 + i * 1.234567),
       intensity: Array.from({ length: 300 }, (_, i) => i + 1) }))
     const original = currentToken()
-    change("#shareBudget", "220")
+    change("#shareBudget", "600")
     element("#previewBudget").click()
     assert(element<HTMLButtonElement>("#applyBudget").disabled, "Trimming did not require opt-in")
     check("#allowTrim")

@@ -6,45 +6,19 @@ import dataclasses
 import re
 
 import numpy as np
-from numpy.typing import NDArray
 
-from ._format import (
-    EXTRA_NUMLIN_ARRAY_TAILS,
-    EXTRA_NUMPIC_ARRAY_TAILS,
-    EXTRA_NUMSLOF_ARRAY_TAILS,
-    ION_MOBILITY_ARRAY_TAILS,
-    MAX_ARRAY_LENGTH,
-    MAX_SAFE_INTEGER,
-)
-from .codecs import get_codec
-from .codecs.numpress import (
-    DEFAULT_NUMLIN_FP,
-    DEFAULT_NUMSLOF_FP,
-    _safe_slof_fp,
-    validate_linear_domain,
-    validate_pic_domain,
-)
+from ._format import DEFAULT_INTENSITY_SCALE, DEFAULT_MZ_PPM, MAX_ARRAY_LENGTH
 from .cv import (
     ARRAY_CHARGE,
     ARRAY_INTENSITY,
     ARRAY_MZ,
     ARRAY_NON_STANDARD,
-    COMP_BYTE_SHUFFLED_ZSTD,
-    COMP_NUMLIN_ZLIB,
-    COMP_NUMLIN_ZSTD,
-    COMP_NUMPIC_ZLIB,
-    COMP_NUMPIC_ZSTD,
-    COMP_NUMSLOF_ZLIB,
-    COMP_NUMSLOF_ZSTD,
-    COMP_ZLIB,
-    COMP_ZSTD,
     TYPE_FLOAT32,
     TYPE_FLOAT64,
     TYPE_INT32,
     accession_tail,
     encode_unit,
 )
-from .header import DESC_ARRAY, DESC_COMP, DESC_FP, DESC_NAME, DESC_TYPE, DESC_UNIT
 from .model import ArrayEncoding, InlineSpectrum
 
 # A dict key that looks like a CV accession (e.g. "MS:1000517") names a standard
@@ -58,69 +32,17 @@ _CORE_ARRAY_ALIASES = {
 }
 _RESERVED_EXTRA_NAMES = {"mz", "intensity", "charge"}
 
-_CODEC_NAMES = {
-    "zlib": COMP_ZLIB,
-    "zstd": COMP_ZSTD,
-    "byte-shuffled-zstd": COMP_BYTE_SHUFFLED_ZSTD,
-    "numlin-zlib": COMP_NUMLIN_ZLIB,
-    "numlin-zstd": COMP_NUMLIN_ZSTD,
-    "numslof-zlib": COMP_NUMSLOF_ZLIB,
-    "numslof-zstd": COMP_NUMSLOF_ZSTD,
-    "numpic-zlib": COMP_NUMPIC_ZLIB,
-    "numpic-zstd": COMP_NUMPIC_ZSTD,
-}
-_LOSSY_CODECS = {
-    COMP_NUMLIN_ZLIB,
-    COMP_NUMLIN_ZSTD,
-    COMP_NUMSLOF_ZLIB,
-    COMP_NUMSLOF_ZSTD,
-    COMP_NUMPIC_ZLIB,
-    COMP_NUMPIC_ZSTD,
-}
-_LINEAR_EXTRA_ARRAYS = set(EXTRA_NUMLIN_ARRAY_TAILS) | set(ION_MOBILITY_ARRAY_TAILS)
-_SLOF_EXTRA_ARRAYS = set(EXTRA_NUMSLOF_ARRAY_TAILS)
-_PIC_EXTRA_ARRAYS = set(EXTRA_NUMPIC_ARRAY_TAILS)
 
-
-def _parse_encoding(value: ArrayEncoding | str | int | dict | None) -> ArrayEncoding:
-    if value is None:
+def _parse_encoding(value) -> ArrayEncoding:
+    if value is None or value == "auto":
         return ArrayEncoding()
     if isinstance(value, ArrayEncoding):
         return value
-    if isinstance(value, (str, int)):
-        return ArrayEncoding(codec=value)
-    if isinstance(value, dict):
-        unknown = set(value) - {"codec", "fixed_point"}
-        if unknown:
-            raise ValueError(f"unknown array encoding option(s): {', '.join(sorted(unknown))}")
-        return ArrayEncoding(codec=value.get("codec", "auto"), fixed_point=value.get("fixed_point"))
-    raise TypeError(f"invalid array encoding {value!r}")
-
-
-def _codec_tail(codec: str | int) -> int | None:
-    if codec == "auto":
-        return None
-    if isinstance(codec, int):
-        return codec
-    if _MS_ACCESSION_RE.fullmatch(codec):
-        return accession_tail(codec)
-    try:
-        return _CODEC_NAMES[codec]
-    except KeyError:
-        raise ValueError(f"unknown array codec {codec!r}") from None
-
-
-def _default_extra_codec(array_tail: int, arr: np.ndarray, lossless: bool) -> tuple[int, float | None, int]:
-    type_tail = _type_tail_for_dtype(arr.dtype)
-    if lossless:
-        return COMP_ZLIB, None, type_tail
-    if array_tail in _LINEAR_EXTRA_ARRAYS and not _has_negative(arr):
-        return COMP_NUMLIN_ZLIB, DEFAULT_NUMLIN_FP, TYPE_FLOAT64
-    if array_tail in _SLOF_EXTRA_ARRAYS and not _has_negative(arr):
-        return COMP_NUMSLOF_ZLIB, _safe_slof_fp(np.asarray(arr, dtype=np.float64), DEFAULT_NUMSLOF_FP), TYPE_FLOAT64
-    if array_tail in _PIC_EXTRA_ARRAYS and not _has_negative(arr):
-        return COMP_NUMPIC_ZLIB, None, TYPE_FLOAT64
-    return COMP_ZLIB, None, type_tail
+    if isinstance(value, dict) and "encoding" in value:
+        if set(value) != {"encoding"}:
+            raise ValueError("only encoding is accepted in an array override")
+        return ArrayEncoding(**value)
+    return ArrayEncoding(encoding=value)
 
 
 def _extra_key_to_array(key: str) -> tuple[int, str | None]:
@@ -185,6 +107,10 @@ def canonical_sort(spec: InlineSpectrum) -> InlineSpectrum:
     if spec.mz is None or len(spec.mz) == 0:
         return spec
     order = np.argsort(spec.mz, kind="stable")
+    if not np.array_equal(order, np.arange(len(order))):
+        from .context import check_array_mutation
+
+        check_array_mutation(spec)
     return dataclasses.replace(
         spec,
         mz=spec.mz[order],
@@ -254,183 +180,116 @@ def _validate_arrays(spec: InlineSpectrum) -> None:
 def build_array_blobs(
     spec: InlineSpectrum,
     lossless: bool,
-    mz_fp: float = DEFAULT_NUMLIN_FP,
-    int_fp: float = DEFAULT_NUMSLOF_FP,
+    mz_ppm: float = DEFAULT_MZ_PPM,
+    int_fp: float = DEFAULT_INTENSITY_SCALE,
     array_encodings: dict[str, ArrayEncoding | str | int | dict] | None = None,
     allow_unsafe_lossy_custom: bool = False,
 ) -> tuple[list[bytes], list[dict]]:
-    """Encode all peak arrays and return (blobs, descriptors).
+    from .context import encode_record, validate_extensions
+    from .header import _encode_param_map, _encode_user_params
+    from .pipeline import (
+        ENCODING_NAMES,
+        ENCODINGS,
+        descriptor,
+        encode_pipeline,
+        operation,
+    )
 
-    Returns a list of raw byte blobs and matching array descriptor dicts (without 'seg').
-    The caller assigns seg indices.
-    """
-    blobs: list[bytes] = []
-    descriptors: list[dict] = []
-    encodings = _normalise_encoding_keys(array_encodings or {})
-
-    valid_keys = {"mz", "intensity", "charge", *(str(key) for key in spec.extra_arrays)}
-    unknown_keys = set(encodings) - valid_keys
-    if unknown_keys:
-        raise ValueError(f"array_encodings contains unknown array key(s): {', '.join(sorted(unknown_keys))}")
-
-    def resolve(
-        key: str,
-        array: NDArray,
-        default_comp: int,
-        default_fp_value: float | None,
-        default_type: int = TYPE_FLOAT64,
-    ) -> tuple[int, float | None, int]:
-        setting = _parse_encoding(encodings.get(key))
-        comp = _codec_tail(setting.codec)
-        automatic = comp is None
-        if automatic:
-            comp = default_comp
-            if setting.fixed_point is None:
-                try:
-                    if comp in {COMP_NUMLIN_ZLIB, COMP_NUMLIN_ZSTD}:
-                        validate_linear_domain(array, default_fp_value)
-                    elif comp in {COMP_NUMPIC_ZLIB, COMP_NUMPIC_ZSTD}:
-                        validate_pic_domain(array)
-                except ValueError:
-                    raw_type = (
-                        TYPE_FLOAT64 if key in {"mz", "intensity", "charge"} else _type_tail_for_dtype(array.dtype)
-                    )
-                    return COMP_ZLIB, None, raw_type
-        if lossless and comp in _LOSSY_CODECS:
-            raise ValueError(f"array '{key}' requests lossy codec {setting.codec!r} while lossless=True")
-        fp_codecs = {COMP_NUMLIN_ZLIB, COMP_NUMLIN_ZSTD, COMP_NUMSLOF_ZLIB, COMP_NUMSLOF_ZSTD}
-        if comp not in fp_codecs and setting.fixed_point is not None:
-            raise ValueError(f"array '{key}' sets fixed_point for a codec that takes no fixed point")
-        if setting.fixed_point is not None and (
-            isinstance(setting.fixed_point, (bool, np.bool_))
-            or not isinstance(setting.fixed_point, (int, np.integer))
-            or setting.fixed_point <= 0
-            or setting.fixed_point > MAX_SAFE_INTEGER
+    for key in spec.extra_arrays:
+        _extra_key_to_array(key)
+    settings = _normalise_encoding_keys(array_encodings or {})
+    arrays = [(key, getattr(spec, key)) for key in ("mz", "intensity", "charge")]
+    arrays += [(key, spec.extra_arrays[key]) for key in sorted(spec.extra_arrays)]
+    present = {key for key, array in arrays if array is not None}
+    if set(settings) - present:
+        raise ValueError("array_encodings contains unknown array key")
+    for field in ("array_names", "array_params", "array_user_params", "array_processing", "array_extensions"):
+        if set(getattr(spec, field)) - present:
+            raise ValueError(f"{field} contains an absent or noncanonical array key")
+    for key, name in spec.array_names.items():
+        if not isinstance(name, str) or not name:
+            raise ValueError("array name must be a non-empty string")
+        if key in spec.extra_arrays and _extra_key_to_array(key)[0] == ARRAY_NON_STANDARD and name != key:
+            raise ValueError("a non-standard array name must match its extra_arrays key")
+    representation = {
+        1000519,
+        1000521,
+        1000522,
+        1000523,
+        1000576,
+        1000574,
+        *range(1002312, 1002315),
+        *range(1002746, 1002749),
+        *range(1003780, 1003786),
+    }
+    for key, values in spec.array_params.items():
+        identity = {"mz": ARRAY_MZ, "intensity": ARRAY_INTENSITY, "charge": ARRAY_CHARGE}.get(key)
+        if identity is None:
+            identity = _extra_key_to_array(key)[0]
+        if any(
+            p.accession.startswith("MS:")
+            and p.accession[3:].isdigit()
+            and int(p.accession[3:]) in representation | {identity}
+            for p in values
         ):
-            raise ValueError(f"array '{key}' fixed_point must be a positive whole number")
-        linear = {COMP_NUMLIN_ZLIB, COMP_NUMLIN_ZSTD}
-        slof = {COMP_NUMSLOF_ZLIB, COMP_NUMSLOF_ZSTD}
-        pic = {COMP_NUMPIC_ZLIB, COMP_NUMPIC_ZSTD}
-        lossy_allowed = (
-            linear
-            if key == "mz"
-            else linear | slof
-            if key == "intensity"
-            else pic
-            if key == "charge"
-            else linear
-            if key.startswith("MS:") and accession_tail(key) in _LINEAR_EXTRA_ARRAYS
-            else linear | slof
-            if key.startswith("MS:") and accession_tail(key) in _SLOF_EXTRA_ARRAYS
-            else pic
-            if key.startswith("MS:") and accession_tail(key) in _PIC_EXTRA_ARRAYS
-            else set()
-        )
-        semantic_unknown = key not in {"mz", "intensity", "charge"} and (
-            not key.startswith("MS:")
-            or accession_tail(key) not in (_LINEAR_EXTRA_ARRAYS | _SLOF_EXTRA_ARRAYS | _PIC_EXTRA_ARRAYS)
-        )
-        if comp in _LOSSY_CODECS and comp not in lossy_allowed and not (semantic_unknown and allow_unsafe_lossy_custom):
-            raise ValueError(f"array '{key}' is not compatible with codec {setting.codec!r}")
-        if comp in _LOSSY_CODECS and _has_negative(array):
-            raise ValueError(f"array '{key}' contains negative values and cannot use codec {setting.codec!r}")
-        if comp in pic and np.any(np.asarray(array) != np.rint(np.asarray(array))):
-            raise ValueError(f"array '{key}' contains fractional values and cannot use a positive-integer codec")
-        type_tail = TYPE_FLOAT64 if comp in _LOSSY_CODECS else default_type
-        fp = setting.fixed_point
-        if comp in {COMP_NUMLIN_ZLIB, COMP_NUMLIN_ZSTD}:
-            fp = (default_fp_value if automatic else mz_fp) if fp is None else fp
-        elif comp in {COMP_NUMSLOF_ZLIB, COMP_NUMSLOF_ZSTD}:
-            desired = (default_fp_value if automatic else int_fp) if fp is None else fp
-            safe = _safe_slof_fp(np.asarray(array, dtype=np.float64), desired)
-            if setting.fixed_point is not None and safe != desired:
-                raise ValueError(f"array '{key}' fixed_point {desired} would overflow the SLOF representation")
-            fp = safe
-        else:
-            fp = None
-        return comp, fp, type_tail
+            raise ValueError("array scientific parameters conflict with representation declarations")
+    blobs, descriptors = [], []
+    for key, array in arrays:
+        if array is None:
+            continue
+        tail, name = {"mz": (ARRAY_MZ, None), "intensity": (ARRAY_INTENSITY, None), "charge": (ARRAY_CHARGE, None)}.get(
+            key
+        ) or _extra_key_to_array(key)
+        setting = _parse_encoding(settings.get(key))
+        dtype = _type_tail_for_dtype(array.dtype)
+        automatic = setting.encoding is None
+        default_enc = 2 if key == "mz" else 1 if key == "intensity" else 0
+        default_params = None
+        if not lossless and key in {"mz", "intensity"} and array.dtype.kind == "f" and not _has_negative(array):
+            from .codecs.quantized import parameters, ppm_parameters
 
-    def add_array(
-        array: NDArray,
-        array_tail: int,
-        comp_tail: int,
-        fp: int | None,
-        type_tail: int = TYPE_FLOAT64,
-        name: str | None = None,
-        unit: str | None = None,
-    ) -> None:
-        codec = get_codec(comp_tail)
-        blob = codec.encode(array, fp, type_tail)
-        blobs.append(blob)
-        desc: dict = {
-            DESC_TYPE: type_tail,
-            DESC_ARRAY: array_tail,
-            DESC_COMP: comp_tail,
-        }
-        if fp is not None:
-            desc[DESC_FP] = int(fp)
+            try:
+                default_params = ppm_parameters(array, mz_ppm) if key == "mz" else parameters(array, int_fp, log=True)
+                default_enc = 3
+            except ValueError:
+                pass
+        enc = descriptor(
+            setting.encoding if not automatic else [3, 1, default_params] if default_enc == 3 else default_enc,
+            ENCODING_NAMES,
+        )
+        implementation, params = operation(ENCODINGS, enc)
+        if not implementation.lossless:
+            if lossless:
+                raise ValueError("lossy encoding requested while lossless=True")
+            if key not in {"mz", "intensity"} and not allow_unsafe_lossy_custom:
+                raise ValueError(f"array {key!r} needs explicit permission for custom lossy encoding")
+            dtype = TYPE_FLOAT64 if dtype not in implementation.types else dtype
+        try:
+            blob, fidelity = encode_pipeline(array, dtype, enc)
+        except ValueError:
+            if not automatic:
+                raise
+            dtype = _type_tail_for_dtype(array.dtype)
+            enc = [2 if key == "mz" else 1 if key == "intensity" else 0, 1]
+            blob, fidelity = encode_pipeline(array, dtype, enc)
+        desc = {0: dtype, 1: tail, 2: enc, 7: fidelity}
+        name = spec.array_names.get(key, name)
         if name is not None:
-            desc[DESC_NAME] = name
-        if unit is not None:
-            desc[DESC_UNIT] = encode_unit(unit)
+            desc[4] = name
+        unit = spec.array_units.get(key) or spec.array_units.get(f"MS:{tail}")
+        if unit:
+            desc[6] = encode_unit(unit)
+        if spec.array_params.get(key):
+            desc[8] = _encode_param_map(spec.array_params[key])
+        if spec.array_user_params.get(key):
+            desc[9] = _encode_user_params(spec.array_user_params[key])
+        if spec.array_processing.get(key):
+            desc[10] = [encode_record(x, "processing") for x in spec.array_processing[key]]
+        if spec.array_extensions.get(key):
+            validate_extensions(spec.array_extensions[key], require_supported=False)
+            desc[11] = spec.array_extensions[key]
+        blobs.append(blob)
         descriptors.append(desc)
-
-    if spec.mz is not None:
-        comp = COMP_ZLIB if lossless else COMP_NUMLIN_ZLIB
-        fp = None if lossless else mz_fp
-        comp, fp, type_tail = resolve("mz", spec.mz, comp, fp)
-        add_array(
-            spec.mz,
-            ARRAY_MZ,
-            comp,
-            fp,
-            type_tail,
-            unit=spec.array_units.get("mz") or spec.array_units.get("MS:1000514"),
-        )
-
-    if spec.intensity is not None:
-        # The slof codec computes log(v + 1) and cannot represent negative values
-        # (baseline-subtracted data may contain them), so fall back to lossless
-        # zlib when the array contains any negative value.
-        use_zlib = lossless or _has_negative(spec.intensity)
-        comp = COMP_ZLIB if use_zlib else COMP_NUMSLOF_ZLIB
-        # Clamp the slof fixed point here so the descriptor records the fp the
-        # blob actually uses (large intensities force a smaller fp).
-        fp = None if use_zlib else _safe_slof_fp(np.asarray(spec.intensity, dtype=np.float64), int_fp)
-        comp, fp, type_tail = resolve("intensity", spec.intensity, comp, fp)
-        add_array(
-            spec.intensity,
-            ARRAY_INTENSITY,
-            comp,
-            fp,
-            type_tail,
-            unit=spec.array_units.get("intensity") or spec.array_units.get("MS:1000515"),
-        )
-
-    if spec.charge is not None:
-        # The PIC integer codec only handles non-negative values; charge arrays
-        # may carry negative sentinels (e.g. unassigned/singleton), so fall back
-        # to lossless zlib when the array contains any negative value.
-        comp = COMP_ZLIB if (lossless or _has_negative(spec.charge)) else COMP_NUMPIC_ZLIB
-        comp, fp, type_tail = resolve("charge", spec.charge, comp, None)
-        add_array(
-            spec.charge,
-            ARRAY_CHARGE,
-            comp,
-            fp,
-            type_tail,
-            unit=spec.array_units.get("charge") or spec.array_units.get("MS:1000516"),
-        )
-
-    # Known PSI-MS auxiliary arrays receive conservative semantic defaults.
-    # Unknown and non-standard arrays remain lossless. Explicit settings win.
-    for key in sorted(spec.extra_arrays):
-        arr = np.asarray(spec.extra_arrays[key])
-        array_tail, name = _extra_key_to_array(key)
-        default_comp, fp, type_tail = _default_extra_codec(array_tail, arr, lossless)
-        comp, fp, type_tail = resolve(key, arr, default_comp, fp, type_tail)
-        add_array(arr, array_tail, comp, fp, type_tail=type_tail, name=name, unit=spec.array_units.get(key))
-
     return blobs, descriptors
 
 
@@ -445,6 +304,18 @@ def top_n(spec: InlineSpectrum, n: int) -> InlineSpectrum:
         raise ValueError(f"top_n: n must be >= 0, got {n}")
     if spec.intensity is None or n >= len(spec.intensity):
         return spec
+    from .context import check_array_mutation, record_change
+
+    check_array_mutation(spec)
+    params, processing = record_change(
+        spec,
+        "spectrl:peak-selection",
+        {
+            "method": "highest-intensity",
+            "inputPeakCount": spec.default_array_length,
+            "outputPeakCount": int(n),
+        },
+    )
     if n == 0:
         top_idx = np.array([], dtype=np.intp)
     else:
@@ -459,6 +330,8 @@ def top_n(spec: InlineSpectrum, n: int) -> InlineSpectrum:
     return dataclasses.replace(
         spec,
         default_array_length=n,
+        params=params,
+        processing=processing,
         mz=spec.mz[top_idx] if spec.mz is not None else None,
         intensity=spec.intensity[top_idx],
         charge=spec.charge[top_idx] if spec.charge is not None else None,

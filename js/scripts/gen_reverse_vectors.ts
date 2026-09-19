@@ -22,9 +22,7 @@ import {
   type EncodeOptions,
   type UserParam,
 } from "../src/index.ts";
-import { installZstd } from "../src/zstd.ts";
 
-installZstd();
 
 const here = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(here, "../../test-vectors/reverse-vectors.json");
@@ -193,10 +191,24 @@ const specs: Array<[string, string, InlineSpectrum]> = [
 ];
 
 const vectors = specs.flatMap(([name, desc, spec]) => [vector(name, desc, spec, false), vector(name, desc, spec, true)]);
+vectors.push(vector(
+  "adaptive_lossless",
+  "fixed lossless core policy",
+  {
+    defaultArrayLength: 128,
+    mz: Array.from({ length: 128 }, (_, i) => 100 + i / 8),
+    intensity: Array.from({ length: 128 }, (_, i) => i * i),
+    extraArrays: {
+      quality: Float32Array.from({ length: 128 }, (_, i) => i / 8),
+      flags: Int32Array.from({ length: 128 }, (_, i) => i - 64),
+    },
+  },
+  true,
+))
 vectors.push(
   vector(
-    "zstd_codecs",
-    "official PSI-MS Numpress + zstd and byte-shuffled zstd pipelines",
+    "explicit_core_encodings",
+    "core numeric encodings with whole-document compression",
     {
       defaultArrayLength: 128,
       mz: Array.from({ length: 128 }, (_, i) => 100 + i * (1100 / 127)),
@@ -204,7 +216,7 @@ vectors.push(
       extraArrays: { quality: Float32Array.from({ length: 128 }, (_, i) => i / 127) },
     },
     false,
-    { arrayEncodings: { mz: "numlin-zstd", intensity: "numslof-zstd", quality: "byte-shuffled-zstd" } },
+    { arrayEncodings: { mz: "modular-delta-shuffle", intensity: "byte-shuffle", quality: "byte-shuffle" } },
   ),
 );
 

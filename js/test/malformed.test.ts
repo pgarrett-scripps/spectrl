@@ -1,3 +1,4 @@
+import { readTokenPayload } from "../src/cbor_format.ts"
 /** Adversarial decode: every malformed token must throw SpectrlDecodeError. */
 
 import assert from "node:assert/strict";
@@ -7,7 +8,7 @@ import { deflateSync, inflateSync } from "node:zlib";
 import { b64urlDecode, b64urlEncode } from "../src/base64url.js";
 import { cborDecode, cborEncode } from "../src/cbor.js";
 import { tokenChecksum } from "../src/checksum.js";
-import { DESC_ARRAY, DESC_COMP, DESC_DATA, DESC_FP } from "../src/header.js";
+import { DESC_ARRAY, DESC_DATA } from "../src/header.js";
 import { SpectrlDecodeError, decodeToken, encodeSpectrum, type InlineSpectrum } from "../src/index.ts";
 
 function token(): string {
@@ -22,16 +23,16 @@ function token(): string {
 type Doc = Map<unknown, unknown>;
 
 function payload(t: string): Doc {
-  return cborDecode(b64urlDecode(t.split(".")[2]!)) as Doc;
+  return cborDecode(readTokenPayload(t)) as Doc;
 }
 
 /** Re-wrap a tampered document with a valid checksum so decode reaches it. */
 function retoken(doc: Doc): string {
-  const body = "spectrl.v2." + b64urlEncode(cborEncode(doc));
+  const body = "spectrl.v3.r." + b64urlEncode(cborEncode(doc));
   return `${body}.${tokenChecksum(body)}`;
 }
 
-const GARBAGE = ["", "notatoken", "spectrl.v2", "spectrl1.AAAA", "spectrl.v2.", "spectrl.v2.!!!!", "spectrl.v2.A", "spectrl.v2.AAAA"];
+const GARBAGE = ["", "notatoken", "spectrl.v3", "spectrl1.AAAA", "spectrl.v3.", "spectrl.v3.!!!!", "spectrl.v3.A", "spectrl.v3.AAAA"];
 
 for (const bad of GARBAGE) {
   test(`garbage token ${JSON.stringify(bad)} throws SpectrlDecodeError`, () => {
@@ -61,7 +62,7 @@ for (const badLength of [-1, 1.5, true, "3"]) {
 
 test("duplicate CBOR map keys are rejected before decoding", () => {
   const raw = Uint8Array.from(Buffer.from("a40001000101000780", "hex"));
-  const body = "spectrl.v2." + b64urlEncode(raw);
+  const body = "spectrl.v3.r." + b64urlEncode(raw);
   assert.throws(() => decodeToken(`${body}.${tokenChecksum(body)}`), /duplicate/);
 });
 
@@ -79,24 +80,24 @@ test("unknown array data types are rejected", () => {
   assert.throws(() => decodeToken(retoken(doc)), /data type/);
 });
 
-test("Numpress descriptor fixed point must match the stream", () => {
-  const doc = payload(token());
-  const descs = doc.get(6) as Array<Map<number, unknown>>;
-  descs[0]!.set(3, 100001);
-  assert.throws(() => decodeToken(retoken(doc)), /fixed point mismatch/);
+test("Quantized descriptor rejects unknown parameters", () => {
+  const doc = payload(encodeSpectrum({ defaultArrayLength: 3, mz: [100, 200, 300] }))
+  const descs = doc.get(6) as Array<Map<number, unknown>>
+  (descs[0]!.get(2) as any[])[2].set("fp", 100001)
+  assert.throws(() => decodeToken(retoken(doc)), /scale|width|parameter/);
 });
 
-test("Numpress descriptor requires a fixed point", () => {
+test("Quantized descriptor requires parameters", () => {
   const doc = payload(token());
   const descs = doc.get(6) as Array<Map<number, unknown>>;
-  descs[0]!.delete(DESC_FP);
-  assert.throws(() => decodeToken(retoken(doc)), /require fp/);
+  descs[0]!.set(2, [3, 1]);
+  assert.throws(() => decodeToken(retoken(doc)), /scale|width|parameter/);
 });
 
 test("unknown codec throws SpectrlDecodeError", () => {
   const doc = payload(token());
   const descs = doc.get(6) as Array<Map<string, unknown>>;
-  descs[0]!.set(DESC_COMP, 999999);
+  descs[0]!.set(2, [999999, 1]);
   assert.throws(() => decodeToken(retoken(doc)), SpectrlDecodeError);
 });
 
@@ -110,13 +111,13 @@ test("corrupt blob throws SpectrlDecodeError", () => {
 test("array length mismatch throws SpectrlDecodeError", () => {
   const doc = payload(token());
   doc.set(0, 5); // header claims 5 peaks; blobs hold 3
-  assert.throws(() => decodeToken(retoken(doc)), /declares/);
+  assert.throws(() => decodeToken(retoken(doc)), /shape|count/);
 });
 
 test("zlib bomb is rejected without materializing", () => {
   const doc = payload(token());
   const descs = doc.get(6) as Array<Map<string, unknown>>;
-  descs[0]!.set(DESC_COMP, 1000574); // zlib raw
+  descs[0]!.set(2, [0, 1]); // zlib raw
   descs[0]!.set(DESC_DATA, new Uint8Array(deflateSync(new Uint8Array(10 * 1024 * 1024)))); // expands ~1000x past the bound
   assert.throws(() => decodeToken(retoken(doc)), SpectrlDecodeError);
 });
@@ -124,16 +125,16 @@ test("zlib bomb is rejected without materializing", () => {
 test("misaligned raw blob throws SpectrlDecodeError", () => {
   const doc = payload(token());
   const descs = doc.get(6) as Array<Map<string, unknown>>;
-  descs[0]!.set(DESC_COMP, 1000574); // zlib raw; 7 bytes is not a float64 multiple
+  descs[0]!.set(2, [0, 1]); // zlib raw; 7 bytes is not a float64 multiple
   descs[0]!.set(DESC_DATA, new Uint8Array(deflateSync(new Uint8Array(7))));
   assert.throws(() => decodeToken(retoken(doc)), SpectrlDecodeError);
 });
 
-test("truncated numpress stream throws instead of decoding garbage", () => {
-  const doc = payload(token());
+test("truncated quantized words throws instead of decoding garbage", () => {
+  const doc = payload(encodeSpectrum({ defaultArrayLength: 3, mz: [100, 200, 300], intensity: [1, 2, 3] }));
   const descs = doc.get(6) as Array<Map<string, unknown>>;
   const mzDesc = descs.find((d) => d.get(DESC_ARRAY) === 1000514)!;
-  const raw = new Uint8Array(inflateSync(mzDesc.get(DESC_DATA) as Uint8Array));
-  mzDesc.set(DESC_DATA, new Uint8Array(deflateSync(raw.subarray(0, raw.length - 1))));
+  const raw = mzDesc.get(DESC_DATA) as Uint8Array;
+  mzDesc.set(DESC_DATA, raw.subarray(0, raw.length - 1));
   assert.throws(() => decodeToken(retoken(doc)), SpectrlDecodeError);
 });

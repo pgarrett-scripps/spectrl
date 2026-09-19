@@ -1,0 +1,16 @@
+{
+  "baseline_chars": 4907430,
+  "metadata_only_chars": 4916520,
+  "full_prototype_chars": 5059461,
+  "baseline_array_bytes": 4366568,
+  "prototype_array_bytes": 5105504,
+  "width_transitions": {
+    "2 to 2": 192,
+    "2 to 1": 2,
+    "2 to 4": 18,
+    "4 to 2": 25
+  },
+  "additional_chars_metadata": 9090,
+  "additional_chars_words_given_metadata": 142941,
+  "scope": "Counterfactual size accounting only. Metadata-only documents deliberately retain the old words and are not valid numerical encodings."
+}

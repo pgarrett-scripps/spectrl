@@ -33,6 +33,6 @@ export const ArrayAccession = {
   MASS: "MS:1003143",
   TEMPERATURE: "MS:1000822",
   SAMPLED_NOISE_MZ: "MS:1002743",
-} as const;
+} as const
 
-export type ArrayAccession = (typeof ArrayAccession)[keyof typeof ArrayAccession];
+export type ArrayAccession = (typeof ArrayAccession)[keyof typeof ArrayAccession]

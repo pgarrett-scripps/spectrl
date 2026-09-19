@@ -1,6 +1,6 @@
 **Quality, sharing, and conversion workflows**
 
-These APIs use the `spectrl.v2` format. They do not add token fields or require a service. Python uses snake_case names and TypeScript uses camelCase names.
+These APIs use the `spectrl.v3` format. They do not require a service. Python uses snake_case names and TypeScript uses camelCase names.
 
 **Measure encoding quality**
 
@@ -18,7 +18,7 @@ token = report["token"]
 
 The comparison uses the same stable m/z ordering as the encoder and retains the alignment of every parallel array. Relative-error statistics exclude zero reference values. `zero_reference_values` and `changed_zero_values` make those cases visible. A relative statistic with no nonzero references is `None` in Python and `null` in JSON. A metric too large for a finite float64 is also unavailable. Negative intensities use an absolute denominator. Empty arrays have zero maximum absolute error.
 
-`omitted_user_params` counts spectrum and scan user parameters removed by an explicit `drop_user_params=True` option. The report measures array encoding error, not peak-selection quality or all possible mzML metadata loss. Use the conversion report for mzML omissions. A token alone cannot reveal its error relative to an unavailable original spectrum.
+`omitted_user_params` counts user parameters at all modeled locations removed by an explicit `drop_user_params=True` option. The report measures array encoding error, not peak-selection quality or all possible mzML metadata loss. Use the conversion report for mzML omissions. A token alone cannot reveal its error relative to an unavailable original spectrum.
 
 ```typescript
 import { parsePeakList, encodingReport } from "@spectrl-ms/spectrl"
@@ -72,7 +72,7 @@ console.log(candidate.carrier, candidate.droppedPeaks)
 
 **Spectrum JSON and typed arrays**
 
-Python `spectrum_to_dict` produces JSON-compatible arrays and an `extra_array_dtypes` object mapping each custom-array key to `int32`, `float32`, or `float64`. `spectrum_from_dict` restores those dtypes and validates their numeric ranges. Existing plain-list JSON remains supported, with custom arrays interpreted as float64 when dtype metadata is absent. The dtype metadata belongs to the JSON representation, not the token format. Core arrays use float64 in the Python input model.
+Python `spectrum_to_dict` produces JSON-compatible arrays and an `extra_array_dtypes` object mapping each custom-array key to `int32`, `float32`, or `float64`. `spectrum_from_dict` restores those dtypes and validates their numeric ranges. Existing plain-list JSON remains supported, with custom arrays interpreted as float64 when dtype metadata is absent. The dtype metadata belongs to the JSON representation, not the token format. Core arrays retain float32, float64, or int32 through `array_dtypes`. Plain lists default to float64. Byte strings and non-string map keys in opaque extensions use the tagged JSON forms documented in the README.
 
 **Report mzML conversion fidelity**
 
@@ -83,16 +83,16 @@ from spectrl import conversion_report, encoding_report
 with Mzml("data.mzML") as mzml:
     conversion = conversion_report(
         mzml.spectra[0],
-        ref_groups=mzml.referenceable_param_groups,
+        run=mzml,
     )
     for issue in conversion["issues"]:
         print(issue["severity"], issue["path"], issue["message"])
     encoded = encoding_report(conversion["spectrum"])
 ```
 
-The conversion result contains the spectrum, preserved peak/array/CV/user-param counts, and structured issues with `code`, XML `path`, `severity`, and `message`. It identifies unresolved reference groups, unsupported user-param locations, user parameters in reference groups that are not expanded, unmodeled elements, and omitted attributes. Provenance attributes such as an mzML spectrum index are informational. `strict=True` rejects warning-level omissions. The existing `from_mzmlpy(..., strict=True)` uses the same warning checks.
+The conversion result contains the spectrum, preserved peak/array/CV/user-param counts, and structured issues with `code`, XML `path`, `severity`, and `message`. It identifies unresolved reference groups, unsupported user-param locations, unmodeled elements, and omitted attributes. Provenance attributes such as an mzML spectrum index are informational. `strict=True` rejects warning-level omissions. The existing `from_mzmlpy(..., strict=True)` uses the same warning checks.
 
-The report can inspect only the supplied spectrum subtree. It is not an audit of an entire run, source-file links, processing history, or every semantic distinction in arbitrary mzML XML. These remain outside v2. The bridge is a Python feature and requires `pip install "spectrl[mzml]"`.
+Pass `run=mzml` to resolve relevant source, instrument, software, and processing references. The report identifies observable omissions in the selected spectrum and reference context. It does not audit every semantic distinction in a complete mzML run. The bridge is a Python feature and requires `pip install "spectrl[mzml]"`.
 
 **CLI examples**
 
@@ -113,4 +113,10 @@ Expand Import your own peaks to paste text or load a CSV, TSV, or text file. Sel
 
 Expand Fit a share budget, set a byte limit, and explicitly select permitted omissions. Preview candidate reports the proposed removals without replacing the token. Apply candidate replaces the displayed spectrum. The quality report under Technical details can be downloaded for spectra encoded in the page. Pasted tokens have no known source for an error measurement.
 
-The plot displays at most 5,000 peaks to keep rendering bounded. This visual limit does not trim tokens or exports. Zstd support loads only when needed for decoding.
+The plot displays at most 5,000 peaks to keep rendering bounded. This visual limit does not trim tokens or exports. Optional compressor backends load when needed for decoding. Both default profiles use zlib payload compression.
+
+V3 records peak selection and user-parameter omission in processing history.
+Known prior lossy encoding history survives later exact recompression. Sorting
+or selecting arrays with attached extensions requires the caller to update or
+remove those extensions explicitly. Inspection works without custom codecs,
+but full decoding requires registered implementations and required extensions.

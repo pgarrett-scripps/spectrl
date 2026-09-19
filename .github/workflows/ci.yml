@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, "codex/release-*"]
   pull_request:
   workflow_dispatch:
 
@@ -40,16 +40,14 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}
         run: uv python install ${{ matrix.python-version }}
 
-      # Not --all-extras: the `speed` extra builds pynumpress from sdist, which
-      # only works on Linux; there the dev group installs it anyway.
       - name: Install dependencies
-        run: uv sync --locked --dev
+        run: uv sync --locked --dev --extra brotli
 
       - name: Run tests
-        run: uv run --locked pytest --cov=spectrl --cov-fail-under=80 tests/ -q
+        run: uv run --locked --extra brotli pytest --cov=spectrl --cov-fail-under=80 tests/ -q
 
       - name: Decoder mutation smoke test
-        run: uv run --locked python scripts/fuzz_decode.py
+        run: uv run --locked --extra brotli python scripts/fuzz_decode.py
 
   lint:
     name: lint

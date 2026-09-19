@@ -7,7 +7,6 @@ import pytest
 
 from spectrl import (
     ArrayAccession,
-    CompressionAccession,
     UnitAccession,
     decode_token,
     encode_spectrum,
@@ -42,14 +41,6 @@ def test_array_units_roundtrip_and_appear_in_plan():
     assert decoded.array_units[accession] == UnitAccession.MILLISECOND
     item = next(v for v in encoding_plan(spec) if v["accession"] == accession)
     assert item["unit_accession"] == UnitAccession.MILLISECOND
-
-
-def test_full_compression_accession_and_semantic_guards():
-    spec = InlineSpectrum(default_array_length=2, mz=[100.1, 200.2], intensity=[1.0, 2.0])
-    decoded = decode_token(encode_spectrum(spec, array_encodings={"mz": CompressionAccession.NUMPRESS_LINEAR_ZSTD}))
-    np.testing.assert_allclose(decoded.mz, spec.mz, atol=1e-5)
-    with pytest.raises(ValueError, match="not compatible"):
-        encode_spectrum(spec, array_encodings={"mz": CompressionAccession.NUMPRESS_PIC_ZLIB})
 
 
 def test_reserved_custom_array_names_are_rejected():

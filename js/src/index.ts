@@ -1,7 +1,7 @@
 /**
  * spectrl: Inline Spectrum URL Encoder (JavaScript/TypeScript).
  *
- * Encodes a single mass spectrum into a compact, URL-safe `spectrl.v2` token and
+ * Encodes a single mass spectrum into a compact, URL-safe `spectrl.v3` token and
  * back. Byte-compatible with the Python reference implementation; validated
  * against the shared conformance vectors in `test-vectors/`.
  */
@@ -10,11 +10,12 @@ import { decodeCbor, encodeCbor } from "./cbor_format.js";
 import { tokenBreakdown } from "./inspect.js";
 import type { ArrayEncodingOption, DecodedSpectrum, InlineSpectrum } from "./model.js";
 import type { DecodeLimits } from "./limits.js"
+import type { PayloadCompression } from "./payload.js"
+export type { PayloadCompression } from "./payload.js"
 export { DEFAULT_DECODE_LIMITS, type DecodeLimits } from "./limits.js"
 
 export * from "./model.js";
 export * from "./array_accession.js";
-export * from "./compression_accession.js";
 export * from "./unit_accession.js";
 export { mobilityArrays } from "./array_helpers.js";
 export { SpectrlError, SpectrlDecodeError } from "./errors.js";
@@ -25,7 +26,9 @@ export { MAGIC, FORMAT_VERSION } from "./token.js";
 const SIZE_WARN = 8192;
 
 export interface EncodeOptions {
-  /** Use raw IEEE-754 + zlib (bit-exact) instead of the default lossy MS-Numpress. */
+  /** Whole-document compression, zlib by default. Auto searches available backends. */
+  compression?: PayloadCompression
+  /** Preserve native bits using fixed delta/shuffle transforms. Explicit overrides win. */
   lossless?: boolean;
   /** Throw if the encoded token exceeds this many characters. */
   maxLen?: number;
@@ -44,7 +47,7 @@ export interface EncodeOptions {
   allowUnsafeLossyCustom?: boolean;
 }
 
-/** Encode an {@link InlineSpectrum} into a `spectrl.v2` token (a single CBOR document). */
+/** Encode an {@link InlineSpectrum} into a `spectrl.v3` token (a single CBOR document). */
 export function encodeSpectrum(spec: InlineSpectrum, opts: EncodeOptions = {}): string {
   const {
     lossless = false,
@@ -55,7 +58,7 @@ export function encodeSpectrum(spec: InlineSpectrum, opts: EncodeOptions = {}): 
     allowUnsafeLossyCustom = false,
   } = opts;
 
-  const token = encodeCbor(spec, lossless, dropUserParams, arrayEncodings, allowUnsafeLossyCustom);
+  const token = encodeCbor(spec, lossless, dropUserParams, arrayEncodings, allowUnsafeLossyCustom, opts.compression)
 
   if (!quiet && token.length > SIZE_WARN) {
     console.warn(
@@ -88,3 +91,7 @@ export function encodingPlan(
 
 export { encodingReport, fitToBudget, topN, type BudgetOptions } from "./workflows.js"
 export { parsePeakList, formatPeakList, type PeakDelimiter } from "./peaklist.js"
+
+export { registerEncoding, type Encoding, type Operation, type OperationOption } from "./pipeline.js"
+export { registerExtension } from "./context.js"
+export { readTokenDocument } from "./cbor_format.js"

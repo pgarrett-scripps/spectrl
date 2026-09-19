@@ -65,20 +65,18 @@ const VENDOR: Partial<InlineSpectrum> = {
   ],
 };
 
-test("dropUserParams matches a spectrum that never had them", () => {
-  const without = base({ scans: [{ params: [{ accession: "MS:1000016", value: 10.0, unitAccession: "UO:0000031" }] }] });
-  assert.equal(
-    encodeSpectrum(base(VENDOR), { quiet: true, dropUserParams: true }),
-    encodeSpectrum(without, { quiet: true }),
-  );
-});
+test("dropUserParams records the omission", () => {
+  const d = decodeToken(encodeSpectrum(base(VENDOR), { quiet: true, dropUserParams: true }))
+  assert.equal(d.processing!.at(-1)!.operation, "spectrl:metadata-omission")
+  assert.equal(d.processing!.at(-1)!.parameters!.userParamsRemoved, 2)
+})
 
 test("dropUserParams keeps CV params and peaks", () => {
   const d = decodeToken(encodeSpectrum(base(VENDOR), { quiet: true, dropUserParams: true }));
   assert.deepEqual(d.userParams, []);
   assert.deepEqual(d.scans[0]!.userParams ?? [], []);
   assert.equal(d.scans[0]!.params[0]!.accession, "MS:1000016");
-  assert.deepEqual(Array.from(d.mz!), [100, 200]);
+  for (const [i, value] of [100, 200].entries()) assert.ok(Math.abs(d.mz![i]! - value) <= value * 1e-7)
 });
 
 test("dropUserParams is inert when there are none", () => {

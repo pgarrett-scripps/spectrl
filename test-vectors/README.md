@@ -1,6 +1,6 @@
 # spectrl conformance test vectors
 
-`vectors.json` is the **language-agnostic contract** for the `spectrl.v2` token
+`vectors.json` is the **language-agnostic contract** for the `spectrl.v3` token
 format. Every implementation must decode each `token` and reproduce the
 recorded `decoded` values. This is what makes spectrl interoperable across
 implementations rather than just a single library.
@@ -11,6 +11,10 @@ implementation and decoded by the Python reference implementation
 
 `negative-vectors.json` is the shared rejection contract. Each entry contains
 a raw CBOR payload that every implementation must reject for the stated reason.
+
+`cbor-hardening.json` adds handcrafted malformed CBOR bytes, including ambiguous
+map keys, tags, invalid UTF-8, unsupported simple values, and invalid extension
+scalars. Both full decoding and metadata inspection must reject every entry.
 
 The files are generated with:
 
@@ -23,14 +27,14 @@ cd js && node --import tsx scripts/gen_reverse_vectors.ts  # reverse-vectors.jso
 
 ```jsonc
 {
-  "spectrl_format_version": 2,
+  "spectrl_format_version": 3,
   "generated_by": "spectrl-python <version>",
   "vectors": [
     {
       "name": "minimal",
       "description": "...",
       "mode": "lossy" | "lossless",
-      "token": "spectrl.v2....",          // the input
+      "token": "spectrl.v3....",          // the input
       "tolerance": { "abs": 1e-6, "rel": 1e-6 },
       "decoded": {                        // what a consumer MUST recover
         "default_array_length": 3,
@@ -47,7 +51,7 @@ cd js && node --import tsx scripts/gen_reverse_vectors.ts  # reverse-vectors.jso
         "extra_arrays": { "<accession or name>": { "dtype": "float64"|"float32"|"int32", "values": [..] } },
         "array_units": { "<array key>": "<unit accession>" },
         "checksum": "<8 lowercase hex characters>",
-        "format_version": 2
+        "format_version": 3
       }
     }
   ]
@@ -60,12 +64,12 @@ params), mirroring header scan map key 2.
 ## Conformance rules
 
 - **Arrays** must match the recorded values within `tolerance`
-  (`|actual - expected| <= abs + rel * |expected|`). MS-Numpress decode is
-  deterministic, so a correct implementation matches to near machine precision.
+  (`|actual - expected| <= abs + rel * |expected|`). Quantized and compatibility Numpress decoding should agree to near machine
+  precision. Token bytes may differ between compressors.
 - **`lossless` vectors** must match exactly (`tolerance` is zero).
 - **The stored `checksum` must verify**: compute CRC-32/ISO-HDLC over the ASCII
   text before the last `.` exactly as received and compare its eight-character
-  lowercase hexadecimal form with the required fourth part.
+  lowercase hexadecimal form with the required fifth part.
 - **Metadata** (`params`, `scans`, `precursors`, `products`, `id`)
   must round-trip exactly. These live in the header and are not lossy.
 
@@ -77,3 +81,9 @@ params), mirroring header scan map key 2.
 The negative vectors also cover incomplete zlib trailers, trailing junk, and
 concatenated streams for both empty and nonempty arrays. Consumers rebuild a
 valid outer checksum so these cases exercise compressed-stream validation.
+
+`outer-payload.json` contains shared raw, zlib, and Brotli framing cases, including
+truncation, trailing streams, dictionaries, wrong wrappers, corrupted checksums,
+and expansion beyond the CBOR limit. Regenerate it with
+`python scripts/gen_outer_vectors.py`. Both runtimes test full decoding and
+inspection against these cases.

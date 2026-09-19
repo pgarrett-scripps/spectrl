@@ -1,13 +1,13 @@
 {
-  "spectrl_format_version": 2,
-  "generated_by": "spectrl-python 2.1.0",
-  "note": "Conformance vectors. A consumer MUST recover `decoded` from `token`. Numpress decode is deterministic; arrays should match the stored decoded values within `tolerance`. Lossless vectors MUST match exactly. The stored `checksum` MUST verify.",
+  "spectrl_format_version": 3,
+  "generated_by": "spectrl-python 3.0.0",
+  "note": "Conformance vectors. A consumer MUST recover `decoded` from `token`. Core numeric decoding is deterministic; arrays should match the stored decoded values within `tolerance`. Lossless vectors MUST match exactly. The stored `checksum` MUST verify.",
   "vectors": [
     {
       "name": "minimal",
       "description": "m/z and intensity arrays only, no metadata",
       "mode": "lossy",
-      "token": "spectrl.v2.ogADBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgaeJxz-JHFAAI3Kh4w3DHlZlS4vtABAEQZBsilABoAD0RLARoAD0RDAhoAD0z8AxkOEAVUeJxzWKPAAALPFx6e93AiAB2SBWg.962aa4dd",
+      "token": "spectrl.v3.z.eJxbxMDM1rSUQYqB38WbEUQ6MTUzMy5JzslP_5qakppTkvg1tTg5MSdVisHnAmtqeWZKSQYLq8-TZ5HPfdnreaUYGRjYGZH1O4P0L4boB2uU5BOAaGNidXt--OHCeRPZGQEP9iSi.ee96f576",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -16,9 +16,9 @@
         "default_array_length": 3,
         "id": null,
         "mz": [
-          147.11,
-          175.119,
-          246.156
+          147.11000866834732,
+          175.1189976012429,
+          246.15601761612123
         ],
         "intensity": [
           100012.00990474736,
@@ -34,15 +34,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "962aa4dd",
-        "format_version": 2
+        "checksum": "ee96f576",
+        "format_version": 3
       }
     },
     {
       "name": "minimal__lossless",
       "description": "m/z and intensity arrays only, no metadata (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.ogADBoKkABoAD0RLARoAD0RCAhoAD0R-BVgheJx7E7hDrjU5yUG7XezmucepDotct33-eyTPAQCUZQyUpAAaAA9ESwEaAA9EQwIaAA9EfgVYGHicY2AAgqwfDiCKoeMzhHa47wAAMfoEvQ.328dcb51",
+      "token": "spectrl.v3.z.eJxbxMDM1rSUQYqB38WbEUQ6MTUxMbJGSLyxLw803bcjbr7cLqlWT_3khodJzBwODAzsDMiqnZmaGEGqGVBBVofDj8_3HRwc2BkANpgVBQ.f2ebde40",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -69,15 +69,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "328dcb51",
-        "format_version": 2
+        "checksum": "f2ebde40",
+        "format_version": 3
       }
     },
     {
       "name": "centroid_ms2_params",
       "description": "MS2 centroid spectrum with ms-level (int), positive-scan flag, centroid flag, TIC",
       "mode": "lossy",
-      "token": "spectrl.v2.pAAEAXgtY29udHJvbGxlclR5cGU9MCBjb250cm9sbGVyTnVtYmVyPTEgc2Nhbj0xMDQyAqQaAA9Cv_YaAA9CwvYaAA9DXfpINzQAGgAPRD8CBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgdeJxz-JHFAAI1X5Yz3DHlZlSQ8XTuZkgAAFLjBoqlABoAD0RLARoAD0RDAhoAD0z8AxkOEAVWeJxzWKPAAAJfug8ttJkp1gIAJm0FXg.773199c0",
+      "token": "spectrl.v3.z.eJxbwsDCWKGbnJ9XUpSfk5NaFFJZkGproIAQ8CvNTUotsjVUKE5OzLM1NDAxYmppkmLgd7FnAlFOh76Bqf1gyjn2l4e5CQNb01IGkBJvRhDpxNTMzLgkOSc__WtqSmpOSeLXVKBZOalSDD5_NqWWZ6aUZLCwBvi0PkudX6unkaWsJsXIwMDAzohshjPIjMUQM8CaJfkEIFqZWD2-HLIR6144s4WdEQCGhEDD.cb03016b",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -86,10 +86,10 @@
         "default_array_length": 4,
         "id": "controllerType=0 controllerNumber=1 scan=1042",
         "mz": [
-          110.071,
-          175.119,
-          288.203,
-          405.221
+          110.07099233344773,
+          175.11901311188154,
+          288.20298199381966,
+          405.22099587259356
         ],
         "intensity": [
           20997.834648185497,
@@ -102,8 +102,8 @@
         "array_units": {},
         "params": [
           {
-            "accession": "MS:1000127",
-            "value": null,
+            "accession": "MS:1000511",
+            "value": 2,
             "unit_accession": null
           },
           {
@@ -112,13 +112,13 @@
             "unit_accession": null
           },
           {
-            "accession": "MS:1000285",
-            "value": 187600.0,
+            "accession": "MS:1000127",
+            "value": null,
             "unit_accession": null
           },
           {
-            "accession": "MS:1000511",
-            "value": 2,
+            "accession": "MS:1000285",
+            "value": 187600.0,
             "unit_accession": null
           }
         ],
@@ -127,15 +127,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "773199c0",
-        "format_version": 2
+        "checksum": "cb03016b",
+        "format_version": 3
       }
     },
     {
       "name": "centroid_ms2_params__lossless",
       "description": "MS2 centroid spectrum with ms-level (int), positive-scan flag, centroid flag, TIC (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.pAAEAXgtY29udHJvbGxlclR5cGU9MCBjb250cm9sbGVyTnVtYmVyPTEgc2Nhbj0xMDQyAqQaAA9Cv_YaAA9CwvYaAA9DXfpINzQAGgAPRD8CBoKkABoAD0RLARoAD0RCAhoAD0R-BVgpeJxja5zq3N0S7aDdLnbz3ONUh4yJb2vsmYscVhzzNu8MrnQAAOQnDdykABoAD0RLARoAD0RDAhoAD0R-BVgdeJxjYACCpisOIKpB-weYZoh7BaELjjsAAF8LBnk.30afbeca",
+      "token": "spectrl.v3.z.eJxbwsDCWKGbnJ9XUpSfk5NaFFJZkGproIAQ8CvNTUotsjVUKE5OzLM1NDAxYmppkmLgd7FnAlFOh76Bqf1gyjn2l4e5CQNb01IGkBJvRhDpxNTExMgaocCmauvQyMZlOrXxepzz1MW7up0LPFvi5QOiuXjYHRgYGNgZkHU5MzUxgnQxoIMGBoYm7biCKz9eHXcAAnYGAJ_zMko.3f21988a",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -160,8 +160,8 @@
         "array_units": {},
         "params": [
           {
-            "accession": "MS:1000127",
-            "value": null,
+            "accession": "MS:1000511",
+            "value": 2,
             "unit_accession": null
           },
           {
@@ -170,13 +170,13 @@
             "unit_accession": null
           },
           {
-            "accession": "MS:1000285",
-            "value": 187600.0,
+            "accession": "MS:1000127",
+            "value": null,
             "unit_accession": null
           },
           {
-            "accession": "MS:1000511",
-            "value": 2,
+            "accession": "MS:1000285",
+            "value": 187600.0,
             "unit_accession": null
           }
         ],
@@ -185,15 +185,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "30afbeca",
-        "format_version": 2
+        "checksum": "3f21988a",
+        "format_version": 3
       }
     },
     {
       "name": "with_charge_array",
       "description": "deconvoluted spectrum carrying a per-peak charge array",
       "mode": "lossy",
-      "token": "spectrl.v2.ogADBoOlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgYeJxz-JHFAAIaQb-ZGFgrWSyECwEu5gRYpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFU3icc1ijwAACLFNdu9saARUNA32kABoAD0RLARoAD0REAhoAD0z7BUt4nCsqLAQAAqwBVQ.2498f3c5",
+      "token": "spectrl.v3.z.eJxbxMDM1ryUQYqB38WbEUQ6MTUzMy5JzslP_5qakppTkvg1tTg5MSdVisGnyCe1PDOlJIOF1Wf61hS3T1y35cQYGRjYGZH1O4P0L4boB2uU5BOAaGNidWNxbZva3YiqwYWpiYGRNUKCAQIcINQHexjNzgAAuTAoTA.7954e9a6",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -202,9 +202,9 @@
         "default_array_length": 3,
         "id": null,
         "mz": [
-          500.25,
-          750.4,
-          1001.5
+          500.24999254925905,
+          750.4000660995275,
+          1001.5000647349817
         ],
         "intensity": [
           40000.27736321897,
@@ -224,15 +224,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "2498f3c5",
-        "format_version": 2
+        "checksum": "7954e9a6",
+        "format_version": 3
       }
     },
     {
       "name": "with_charge_array__lossless",
       "description": "deconvoluted spectrum carrying a per-peak charge array (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJxjYAACl3oHYxAobncAcRl8-h0ALv0EWKQAGgAPREsBGgAPREMCGgAPRH4FVnicY2AAgo7HDgxg-jKUPuwAADIaBNKkABoAD0RLARoAD0REAhoAD0R-BVJ4nGNgAAMHCPXBHkYDABIOAp8.7995b0cc",
+      "token": "spectrl.v3.z.eJxbxMDM1ryUQYqB38WbEUQ6MTUxMbJGSDAYn2UwPgNHLvo36jnYHRgY2BmQVTszNTGCVaOCjo6Ox5cPOzg4oKp2YWpiQFLtAKE-2MNodgYAspcY4w.6613d44e",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -263,15 +263,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "7995b0cc",
-        "format_version": 2
+        "checksum": "6613d44e",
+        "format_version": 3
       }
     },
     {
       "name": "negative_charge_sentinel",
       "description": "charge array with a negative (unassigned/singleton) sentinel; lossy encode falls back to lossless zlib for the charge array and round-trips exactly",
       "mode": "lossy",
-      "token": "spectrl.v2.ogADBoOlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgYeJxz-JHFAAIaQb-ZGFgrWSyECwEu5gRYpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFU3icc1ijwAACLFNdu9saARUNA32kABoAD0RLARoAD0REAhoAD0R-BVN4nGNgAAMHCPVhP5S2BwAWjgMf.b9eafb40",
+      "token": "spectrl.v3.z.eJxbxMDM1ryUQYqB38WbEUQ6MTUzMy5JzslP_5qakppTkvg1tTg5MSdVisGnyCe1PDOlJIOF1Wf61hS3T1y35cQYGRjYGZH1O4P0L4boB2uU5BOAaGNidWNxbZva3YiqwYWpiYGRNUKCAQIcINSH_VDanp0BAL6wKMw.1dca2f46",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -280,9 +280,9 @@
         "default_array_length": 3,
         "id": null,
         "mz": [
-          500.25,
-          750.4,
-          1001.5
+          500.24999254925905,
+          750.4000660995275,
+          1001.5000647349817
         ],
         "intensity": [
           40000.27736321897,
@@ -302,15 +302,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "b9eafb40",
-        "format_version": 2
+        "checksum": "1dca2f46",
+        "format_version": 3
       }
     },
     {
       "name": "negative_charge_sentinel__lossless",
       "description": "charge array with a negative (unassigned/singleton) sentinel; lossy encode falls back to lossless zlib for the charge array and round-trips exactly (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.ogADBoOkABoAD0RLARoAD0RCAhoAD0R-BVgZeJxjYAACl3oHYxAobncAcRl8-h0ALv0EWKQAGgAPREsBGgAPREMCGgAPRH4FVnicY2AAgo7HDgxg-jKUPuwAADIaBNKkABoAD0RLARoAD0REAhoAD0R-BVN4nGNgAAMHCPVhP5S2BwAWjgMf.cc145ab1",
+      "token": "spectrl.v3.z.eJxbxMDM1ryUQYqB38WbEUQ6MTUxMbJGSDAYn2UwPgNHLvo36jnYHRgY2BmQVTszNTGCVaOCjo6Ox5cPOzg4oKp2YWpiQFLtAKE-7IfS9uwMALgXGWM.d6beb245",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -341,15 +341,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "cc145ab1",
-        "format_version": 2
+        "checksum": "d6beb245",
+        "format_version": 3
       }
     },
     {
       "name": "negative_intensity_fallback",
       "description": "baseline-subtracted intensities with negative values; lossy encode falls back to lossless zlib for the intensity array and round-trips exactly",
       "mode": "lossy",
-      "token": "spectrl.v2.ogADBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVd4nHP4kcUAAg3TZjAw6BoyNgAAKSgEMKQAGgAPREsBGgAPREMCGgAPRH4FV3icY2AAgQf7wVTHYQcwzcBxAAAtDQPz.7ad6681f",
+      "token": "spectrl.v3.z.eJxbxMDM1rSUQYqB38WbEUQ6MTUzMy5JzslP_5qakppTkvg1tTg5MSdVisGXb2JqeWZKSQYLq091y6YF7LLJpvKMDAzsjMj6nZmaGBlZIyQY0EAHw4PDHPsdDrAzAADQ0Brq.6095903d",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -358,9 +358,9 @@
         "default_array_length": 3,
         "id": null,
         "mz": [
-          100.0,
-          200.0,
-          300.0
+          99.99999549662343,
+          199.9999964574955,
+          300.0000271739131
         ],
         "intensity": [
           -0.5,
@@ -376,15 +376,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "7ad6681f",
-        "format_version": 2
+        "checksum": "6095903d",
+        "format_version": 3
       }
     },
     {
       "name": "negative_intensity_fallback__lossless",
       "description": "baseline-subtracted intensities with negative values; lossy encode falls back to lossless zlib for the intensity array and round-trips exactly (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.ogADBoKkABoAD0RLARoAD0RCAhoAD0R-BVZ4nGNgAIFIBzDFkAmhDxQ5AAAUWAK1pAAaAA9ESwEaAA9EQwIaAA9EfgVXeJxjYACBB_vBVMdhBzDNwHEAAC0NA_M.5d0e347b",
+      "token": "spectrl.v3.z.eJxbxMDM1rSUQYqB38WbEUQ6MTUxMbJGSDCggwORApwODAzsDMiqnZmaGLGp7mB4cJhjv8MBdgYARhEMsg.835b424e",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -411,15 +411,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "5d0e347b",
-        "format_version": 2
+        "checksum": "835b424e",
+        "format_version": 3
       }
     },
     {
       "name": "scan_list_with_window",
       "description": "scan list with scan-start-time (minute unit) and a scan window m/z range",
       "mode": "lossy",
-      "token": "spectrl.v2.pAACAqEaAA9EPwEDoWFzgaIAoRoAD0JQgvtALq4UeuFHrhgfAYGiGgAPRDSC-WfQgmJNUxoAD0JoGgAPRDWC-VZAgmJNUxoAD0JoBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVV4nHP4kcUAAgIhhowKK5KYAB-ZA2WlABoAD0RLARoAD0RDAhoAD0z8AxkOEAVSeJxzWKPAAALqM3bMAgAQHgMe.c5ac1eec",
+      "token": "spectrl.v3.z.eJxbwsDE1NgkxcDvYs_IvDCxuHERA5jrFND020FvnUjVQ_d1EvKMjQsZmsCqTJt-hjk0JfkGg9RkgIVMmn6mX4ALsTUtZQCJejOCSCemZmbGJck5-elfU1NSc0oSv6YWJyfmpEox-Ky5m1qemVKSwcLqMefK6i_TTBgZ2BmR9TqD9C6G6AVrkuQTgGhhYnVR3zFjFjsjAPxdO3g.6368b513",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -428,8 +428,8 @@
         "default_array_length": 2,
         "id": null,
         "mz": [
-          200.1,
-          400.2
+          200.09999201652346,
+          400.20001255255943
         ],
         "intensity": [
           49996.19696916968,
@@ -458,13 +458,13 @@
               {
                 "params": [
                   {
-                    "accession": "MS:1000500",
-                    "value": 2000.0,
+                    "accession": "MS:1000501",
+                    "value": 100.0,
                     "unit_accession": "MS:1000040"
                   },
                   {
-                    "accession": "MS:1000501",
-                    "value": 100.0,
+                    "accession": "MS:1000500",
+                    "value": 2000.0,
                     "unit_accession": "MS:1000040"
                   }
                 ]
@@ -477,15 +477,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "c5ac1eec",
-        "format_version": 2
+        "checksum": "6368b513",
+        "format_version": 3
       }
     },
     {
       "name": "scan_list_with_window__lossless",
       "description": "scan list with scan-start-time (minute unit) and a scan window m/z range (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.pAACAqEaAA9EPwEDoWFzgaIAoRoAD0JQgvtALq4UeuFHrhgfAYGiGgAPRDSC-WfQgmJNUxoAD0JoGgAPRDWC-VZAgmJNUxoAD0JoBoKkABoAD0RLARoAD0RCAhoAD0R-BVN4nDM2BgLmTAdjMF3pAAAbsgNnpAAaAA9ESwEaAA9EQwIaAA9EfgVUeJxjYACCrBcOIIrB560DABLsAww.19f865ce",
+      "token": "spectrl.v3.z.eJxbwsDE1NgkxcDvYs_IvDCxuHERA5jrFND020FvnUjVQ_d1EvKMjQsZmsCqTJt-hjk0JfkGg9RkgIVMmn6mX4ALsTUtZQCJejOCSCemJiZG1gBjBhhkZsgUcGBgZ0BW5MzUxAhUxAAHWT4v3jo4sDMAABCdJHE.25e0fd5f",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -524,13 +524,13 @@
               {
                 "params": [
                   {
-                    "accession": "MS:1000500",
-                    "value": 2000.0,
+                    "accession": "MS:1000501",
+                    "value": 100.0,
                     "unit_accession": "MS:1000040"
                   },
                   {
-                    "accession": "MS:1000501",
-                    "value": 100.0,
+                    "accession": "MS:1000500",
+                    "value": 2000.0,
                     "unit_accession": "MS:1000040"
                   }
                 ]
@@ -543,15 +543,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "19f865ce",
-        "format_version": 2
+        "checksum": "25e0fd5f",
+        "format_version": 3
       }
     },
     {
       "name": "precursor_full",
       "description": "precursor with isolation window, selected ion (m/z, charge), and HCD activation",
       "mode": "lossy",
-      "token": "spectrl.v2.pQADAqEaAA9EPwIEgaMAoxoAD0V7-0B70euFHrhSGgAPRXz5OgAaAA9Fffk6AAGBohoAD0JpAhoAD0Uo-0B70euFHrhSAqIaAA9CbYL5TsAZAQoaAA9D5vYFgaEAoRoAD0V7-0B70euFHrhSBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgZeJxz-JHFAAIV_44wGLzqZNyxNg8AQLIHVKUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVR4nHNYo8AAAj8mPJ7j2g0AHN8E5A.78cf2716",
+      "token": "spectrl.v3.z.eJxbysDM1NgkxcDvYs_E0riYYSFDM4jnWv3bofri61a5HUFgbs1PKwYwoxbIYGxcyNAE5mmgqHLKZGKCyjg_-wYWyW366XdAkpGLFahlIUMjmtFsTUsZQFZ7M4JIJ6ZmZsYlyTn56V9TU1JzShK_phYnJ-akSjH4POpKLc9MKclgYfV5ULbP5_fdMhM5RgYGdkZk_c4g_Ysh-sEaJfkEINqYWN1-PHadMKebnREAEeFPeQ.4f9b1e68",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -560,9 +560,9 @@
         "default_array_length": 3,
         "id": null,
         "mz": [
-          129.102,
-          258.156,
-          386.18
+          129.10200577196818,
+          258.1559868106147,
+          386.1799766399732
         ],
         "intensity": [
           29997.08690833916,
@@ -606,13 +606,13 @@
               {
                 "params": [
                   {
-                    "accession": "MS:1000041",
-                    "value": 2,
+                    "accession": "MS:1000744",
+                    "value": 445.12,
                     "unit_accession": null
                   },
                   {
-                    "accession": "MS:1000744",
-                    "value": 445.12,
+                    "accession": "MS:1000041",
+                    "value": 2,
                     "unit_accession": null
                   }
                 ]
@@ -621,14 +621,14 @@
             "activation": {
               "params": [
                 {
-                  "accession": "MS:1000045",
-                  "value": 27.0,
-                  "unit_accession": "UO:0000266"
-                },
-                {
                   "accession": "MS:1000422",
                   "value": null,
                   "unit_accession": null
+                },
+                {
+                  "accession": "MS:1000045",
+                  "value": 27.0,
+                  "unit_accession": "UO:0000266"
                 }
               ]
             }
@@ -648,15 +648,15 @@
           }
         ],
         "user_params": [],
-        "checksum": "78cf2716",
-        "format_version": 2
+        "checksum": "4f9b1e68",
+        "format_version": 3
       }
     },
     {
       "name": "precursor_full__lossless",
       "description": "precursor with isolation window, selected ion (m/z, charge), and HCD activation (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.pQADAqEaAA9EPwIEgaMAoxoAD0V7-0B70euFHrhSGgAPRXz5OgAaAA9Fffk6AAGBohoAD0JpAhoAD0Uo-0B70euFHrhSAqIaAA9CbYL5TsAZAQoaAA9D5vYFgaEAoRoAD0V7-0B70euFHrhSBoKkABoAD0RLARoAD0RCAhoAD0R-BVggeJxTZWuc6qyc4HBR6fbPOqUCh2qRde4PlSocAHLeCZ6kABoAD0RLARoAD0RDAhoAD0R-BVgYeJxjYAACn7sOIIpB_COE7rjsAAApqwRN.965c477e",
+      "token": "spectrl.v3.z.eJxbysDM1NgkxcDvYs_E0riYYSFDM4jnWv3bofri61a5HUFgbs1PKwYwoxbIYGxcyNAE5mmgqHLKZGKCyjg_-wYWyW366XdAkpGLFahlIUMjmtFsTUsZQFZ7M4JIJ6YmJkbWCAnVNavYZD42Rl2amuLrbJ2k_J8hgZ_DgYGBnQFZtTNTEyNINQMq8BHvuPvxsoODAzsDADdzPZw.23983126",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -711,13 +711,13 @@
               {
                 "params": [
                   {
-                    "accession": "MS:1000041",
-                    "value": 2,
+                    "accession": "MS:1000744",
+                    "value": 445.12,
                     "unit_accession": null
                   },
                   {
-                    "accession": "MS:1000744",
-                    "value": 445.12,
+                    "accession": "MS:1000041",
+                    "value": 2,
                     "unit_accession": null
                   }
                 ]
@@ -726,14 +726,14 @@
             "activation": {
               "params": [
                 {
-                  "accession": "MS:1000045",
-                  "value": 27.0,
-                  "unit_accession": "UO:0000266"
-                },
-                {
                   "accession": "MS:1000422",
                   "value": null,
                   "unit_accession": null
+                },
+                {
+                  "accession": "MS:1000045",
+                  "value": 27.0,
+                  "unit_accession": "UO:0000266"
                 }
               ]
             }
@@ -753,15 +753,15 @@
           }
         ],
         "user_params": [],
-        "checksum": "965c477e",
-        "format_version": 2
+        "checksum": "23983126",
+        "format_version": 3
       }
     },
     {
       "name": "ion_mobility",
       "description": "spectrum with two distinct per-peak ion-mobility arrays",
       "mode": "lossy",
-      "token": "spectrl.v2.ogADBoSlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVd4nHP4kcUAAhNenWRUuDqZuQEAMh8F8qUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVR4nHNYo8AAAixTf0xw7QYAF3AD_qYAGgAPREsBGgAPTgACGgAPTPoDGgABhqAFWBh4nHP4kcUAAgEOjAwVyYwMHs0CACrTA-sGgmJNUxoAD00-pgAaAA9ESwEaAA9OkQIaAA9M-gMaAAGGoAVYGXicc_iRxQACE8qEGBKKRBgcgg8AADCRBPQGGBw.61de0a55",
+      "token": "spectrl.v3.z.eJxbxMDM1rKUQYqB38WbEUQ6MTUzMy5JzslP_5qakppTkvg1tTg5MSdVisGnJyy1PDOlJIOF1efb5MNP3v3bYiLHyMDAzois3xmkfzFEP1ijJJ8ARBsTqxvLD9epE7rZGZchNPgxMDUxMLJGSNhyXV9cYPvKXr71deAOubf2Z8-AwAd7tqYk32CgQl87dgZkfROh-ozBQMMBol7LIQ0M9BzYJGTYGQBhr0Us.6234ce53",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -770,9 +770,9 @@
         "default_array_length": 3,
         "id": null,
         "mz": [
-          300.1,
-          600.2,
-          900.3
+          300.10002501041845,
+          600.1999733918219,
+          900.2999318497257
         ],
         "intensity": [
           40000.27736321897,
@@ -808,15 +808,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "61de0a55",
-        "format_version": 2
+        "checksum": "6234ce53",
+        "format_version": 3
       }
     },
     {
       "name": "ion_mobility__lossless",
       "description": "spectrum with two distinct per-peak ion-mobility arrays (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.ogADBoSkABoAD0RLARoAD0RCAhoAD0R-BVgZeJybNRMIDhY5zALTTQ5pIKDU4wAAo7wL36QAGgAPREsBGgAPREMCGgAPRH4FWBh4nGNgAIKOxw4gisHnLoTuuOwAADAKBLClABoAD0RLARoAD04AAhoAD0R-BVgeeJyz5bq-uMD2lb186-vAHXJv7c-eAYEP9gCVAQ1yBoJiTVMaAA9NPqUAGgAPREsBGgAPTpECGgAPRH4FV3icMzYGAQ2Hs2dAQMshDQz0HABzHQmgBhgc.fece8341",
+      "token": "spectrl.v3.z.eJxbxMDM1rKUQYqB38WbEUQ6MTUxMbJGSMxiODMTCR1kSCgS4HRgYGBnQFbtzNTECFLNgAo6fDoe373s4ODAzrAModqPgamJAaTaluv64gLbV_byra8Dd8i9tT97BgQ-2LM1JfkGAxX62qHqmwjVZwwGGg4Q9VoOaWCg58AmIcPOAABIETSs.df7a18c5",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -863,15 +863,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "fece8341",
-        "format_version": 2
+        "checksum": "df7a18c5",
+        "format_version": 3
       }
     },
     {
       "name": "string_value_and_non_uo_unit",
       "description": "a string-valued spectrum param plus a value carrying an MS-ontology (non-UO) unit",
       "mode": "lossy",
-      "token": "spectrl.v2.owACAqMaAA9EOYL6R-pgAIJiTVMaAA9CwxoAD0Q_ARoAD0RAdEZUTVMgKyBwIEVTSSBGdWxsIG1zBoKlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVZ4nHP4kcUAAg37djNEvNjOBAArgAWVpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFUXicc1ijwAAC2QvaGgEQyQMf.7479a389",
+      "token": "spectrl.v3.z.eJxbzMDE1NwkxcDvYs8IphxK3EJ8gxW0FQoUXIM9FdxKc3IUcovBUpZNv9xfJTA0JfkGA7lOh9maljKAxL0ZQaQTUzMz45LknPz0r6kpqTkliV9Ti5MTc1KlGHxe_kstz0wpyWBh9VgRcjSgKIWRgZ0RWa8zSO9iiF6wJkk-AYgWJlaX7LYFjeyMABChMk8.49753a6d",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -880,8 +880,8 @@
         "default_array_length": 2,
         "id": null,
         "mz": [
-          123.04,
-          456.07
+          123.03999556212888,
+          456.07001197333443
         ],
         "intensity": [
           89993.15475170835,
@@ -892,11 +892,6 @@
         "array_units": {},
         "params": [
           {
-            "accession": "MS:1000505",
-            "value": 120000.0,
-            "unit_accession": "MS:1000131"
-          },
-          {
             "accession": "MS:1000511",
             "value": 1,
             "unit_accession": null
@@ -905,6 +900,11 @@
             "accession": "MS:1000512",
             "value": "FTMS + p ESI Full ms",
             "unit_accession": null
+          },
+          {
+            "accession": "MS:1000505",
+            "value": 120000.0,
+            "unit_accession": "MS:1000131"
           }
         ],
         "scans": [],
@@ -912,15 +912,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "7479a389",
-        "format_version": 2
+        "checksum": "49753a6d",
+        "format_version": 3
       }
     },
     {
       "name": "string_value_and_non_uo_unit__lossless",
       "description": "a string-valued spectrum param plus a value carrying an MS-ontology (non-UO) unit (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.owACAqMaAA9EOYL6R-pgAIJiTVMaAA9CwxoAD0Q_ARoAD0RAdEZUTVMgKyBwIEVTSSBGdWxsIG1zBoKkABoAD0RLARoAD0RCAhoAD0R-BVgYeJw7_FUjpv9QnEPr68Adco01DgBJswgApAAaAA9ESwEaAA9EQwIaAA9EfgVUeJxjYACCn18dQBRDx2EHABnzA7o.8766600f",
+      "token": "spectrl.v3.z.eJxbzMDE1NwkxcDvYs8IphxK3EJ8gxW0FQoUXIM9FdxKc3IUcovBUpZNv9xfJTA0JfkGA7lOh9maljKAxL0ZQaQTUxMTI2vA4UNfv2poxMT09x_aFyfrwMDOgKzImamJEaiIAQ5-dnw97ODAzgAAjjoing.8d524dad",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -941,11 +941,6 @@
         "array_units": {},
         "params": [
           {
-            "accession": "MS:1000505",
-            "value": 120000.0,
-            "unit_accession": "MS:1000131"
-          },
-          {
             "accession": "MS:1000511",
             "value": 1,
             "unit_accession": null
@@ -954,6 +949,11 @@
             "accession": "MS:1000512",
             "value": "FTMS + p ESI Full ms",
             "unit_accession": null
+          },
+          {
+            "accession": "MS:1000505",
+            "value": 120000.0,
+            "unit_accession": "MS:1000131"
           }
         ],
         "scans": [],
@@ -961,15 +961,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "8766600f",
-        "format_version": 2
+        "checksum": "8d524dad",
+        "format_version": 3
       }
     },
     {
       "name": "extra_arrays",
       "description": "auxiliary per-peak arrays: signal-to-noise (named CV, float64), a non-standard float32 array, and a non-standard int32 array",
       "mode": "lossy",
-      "token": "spectrl.v2.ogAEBoWlABoAD0RLARoAD0RCAhoAD0z6AxoAAYagBVgZeJxz-JHFAAIeX58wTHh1ktGjWQIAQU4G66UAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVZ4nHNYo8AAAofnqc_4MaGtEQAlTQW8pQAaAA9ESwEaAA9ERQIaAA9M_AMZDhAFVnicc1ijwAAChc5nbK-bCqkAAB99BAylABoAD0RJARoAD0VSAhoAD0R-BGlpc29fc2NvcmUFWBh4nPN4WGV_-GuG_ZICW_uzZ3jsAUZYB7alABoAD0RHARoAD0VSAhoAD0R-BGpwZWFrX2ZsYWdzBVJ4nGNmYGBgZIAAJiAGAABUAAc.94198c02",
+      "token": "spectrl.v3.z.eJxbxMDC1rqUQYqB38WbEUQ6MTUzMy5JzslP_5qakppTkvg1tTg5MSdVisHnbHZqeWZKSQYLa0CEYE5e7G8BvkYTeTFGBgYGdkZkM5xBZiyGmAHWLMknANHKxOpxWP1H27wZExpRtbgyNTEwskYoMIBBnAOEDoHQDW5QvoYDO8MysC5PkC7XIJAulszM4vz44uT8olTWAI-HVfaHv2bYLymwtT97hscept4dSX1WQWpidnxaTmJ6MWsAM9BYRojpDEwgnzAAAFU2QR4.01744cdf",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -978,10 +978,10 @@
         "default_array_length": 4,
         "id": null,
         "mz": [
-          150.05,
-          300.1,
-          450.2,
-          600.3
+          150.0499883727744,
+          300.0999831473671,
+          450.20002678686114,
+          600.3000120828068
         ],
         "intensity": [
           79994.22482781614,
@@ -994,10 +994,10 @@
           "MS:1000517": {
             "dtype": "float64",
             "values": [
-              120.00517742689206,
-              79.99961847243104,
-              44.998606893708214,
-              12.000658369670637
+              120.0,
+              80.0,
+              45.0,
+              12.0
             ]
           },
           "iso_score": {
@@ -1026,15 +1026,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "94198c02",
-        "format_version": 2
+        "checksum": "01744cdf",
+        "format_version": 3
       }
     },
     {
       "name": "extra_arrays__lossless",
       "description": "auxiliary per-peak arrays: signal-to-noise (named CV, float64), a non-standard float32 array, and a non-standard int32 array (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.ogAEBoWkABoAD0RLARoAD0RCAhoAD0R-BVgeeJybNRMIDiY5zALTRQ7GIKBc45AGAoeaHAAA-g4zpAAaAA9ESwEaAA9EQwIaAA9EfgVYHHicY2AAgo7PDiCKIesFhPa5C6E7DjsAAFtYBkKkABoAD0RLARoAD0RFAhoAD0R-BVgYeJxjYACBOAcwxRACoRvcoHwNBwAlIAKhpQAaAA9ESQEaAA9FUgIaAA9EfgRpaXNvX3Njb3JlBVgYeJzzeFhlf_hrhv2SAlv7s2d47AFGWAe2pQAaAA9ERwEaAA9FUgIaAA9EfgRqcGVha19mbGFncwVSeJxjZmBgYGSAACYgBgAAVAAH.48348fd9",
+      "token": "spectrl.v3.z.eJxbxMDC1rqUQYqB38WbEUQ6MTUxMbJGKMximGk8Ew0fZEicnyTAyebAwMDAzoCsy5mpiRGkiwEL6Mjy6fj84u5hByBA1eXK1MSA0BXnAKFDIHSDG5SvAdS1DKzLE6TLNQikiyUzszg_vjg5vyiVNcDjYZX94a8Z9ksKbO3PnuGxh6l3R1KfVZCamB2flpOYXswawAw0lhHqPCawZwC8kTM7.d6ae9d01",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -1091,15 +1091,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "48348fd9",
-        "format_version": 2
+        "checksum": "d6ae9d01",
+        "format_version": 3
       }
     },
     {
       "name": "user_params",
       "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level Thermo trailer extra",
       "mode": "lossy",
-      "token": "spectrl.v2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvlNIBgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVVeJxz-JHFAAICIYaMCiuSmAAfmQNlpQAaAA9ESwEaAA9EQwIaAA9M_AMZDhAFUnicc1ijwAAC6jN2zAIAEB4DHgeCo2FubE1hc2NvdCBzY29yZWF0aXhzZDpmbG9hdGF2-0BFWZmZmZmaomFub3JlYW5hbHlzaXMgbm90ZWF2dnJlcnVuIHdpdGggc2VtaXRyeXB0aWM.b985201f",
+      "token": "spectrl.v3.z.eJxbysDE1NgkxcDvYs_EvDCxuHERA5jrFND001dBQp6pcXFiXoV6dEhGalFuvkJIUWJmTmqRgmtFSVFirG9-Xn5mcX5JfkFmsoKvfpRVYklWRXGKVXFJUWZeemJZhomJqZ6hkYExW9NSBpAd3owg0ompmZlxSXJOfvrX1JTUnJLEr6nFyYk5qVIMPmvuppZnppRksLB6zLmy-ss0E0YGdkZkvc4gvYshesGaJPkEIFqYWF3Ud8yYxc7I3gR0co5vYnFyfokCkChKTSzJBDkrLSc_sSSx7LeDa-RMIJi1KDEPJJmXmFNZnFmskJdfkppYVlaUWlSap1CeWZKhUJyam1lSVFlQkpkMAAF2Z_Q.1d112e2a",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -1108,8 +1108,8 @@
         "default_array_length": 2,
         "id": null,
         "mz": [
-          200.1,
-          400.2
+          200.09999201652346,
+          400.20001255255943
         ],
         "intensity": [
           49996.19696916968,
@@ -1162,15 +1162,15 @@
             "unit_accession": null
           }
         ],
-        "checksum": "b985201f",
-        "format_version": 2
+        "checksum": "1d112e2a",
+        "format_version": 3
       }
     },
     {
       "name": "user_params__lossless",
       "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level Thermo trailer extra (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.pQACAqEaAA9EPwIDoWFzgaIAoRoAD0JQgvlNIBgfAoGjYW54J1tUaGVybW8gVHJhaWxlciBFeHRyYV1Nb25vaXNvdG9waWMgTS9aOmF0anhzZDpzdHJpbmdhdmg0NDUuMTIwMwaCpAAaAA9ESwEaAA9EQgIaAA9EfgVTeJwzNgYC5kwHYzBd6QAAG7IDZ6QAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgqwXDiCKweetAwAS7AMMB4KjYW5sTWFzY290IHNjb3JlYXRpeHNkOmZsb2F0YXb7QEVZmZmZmZqiYW5vcmVhbmFseXNpcyBub3RlYXZ2cmVydW4gd2l0aCBzZW1pdHJ5cHRpYw.664305a5",
+      "token": "spectrl.v3.z.eJxNTrFKA0EUfLdBr4yl2LidnUYTmzQe0VR6kCKNisXjXL0XLrvh7fO8lLd_oV0i-TcbP0BsvBMUZ2BgmIGZDShVhz3oXpypzgp9vYYfO5qEz1Tv7qv6DW11cDvNDc-dnjJSYViPK2G8S5115J24BWU6PboZoswqfz_0wmQfscwHg9PD45NefztsoN24jFodqaCirUkfftkB2kkghv-lcxWipgR_mF29fyRJDHFoHhUp-syJboQNCrWrD4VDwfIrGV-_NHhdo21Di8XSk9fWicGyZMNPVj-T5NqbOQkvF0LZN06JUO0.bfddf6b8",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -1233,15 +1233,15 @@
             "unit_accession": null
           }
         ],
-        "checksum": "664305a5",
-        "format_version": 2
+        "checksum": "bfddf6b8",
+        "format_version": 3
       }
     },
     {
       "name": "non_ms_ontology_param_key",
       "description": "a UO-ontology spectrum parameter, whose map key is the full accession string",
       "mode": "lossy",
-      "token": "spectrl.v2.owACAqIaAA9EPwFqVU86MDAwMDAxMPlDAAaCpQAaAA9ESwEaAA9EQgIaAA9M-gMaAAGGoAVWeJxz-JHFAAIN-3YzRLzYzgQAK4AFlaUAGgAPREsBGgAPREMCGgAPTPwDGQ4QBVF4nHNYo8AAAtkL2hoBEMkDHw.4b42cd66",
+      "token": "spectrl.v3.z.eJxbzMDE1NQkxcDvYs_YlBXqb2UAAoYGP50Z2JqWMoAkvBlBpBNTMzPjkuSc_PSvqSmpOSWJX1OLkxNzUqUYfF7-Sy3PTCnJYGH1WBFyNKAohZGBnRFZrzNI72KIXrAmST4BiBYmVpfstgWN7IwAYD8oUg.c9944c47",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -1250,8 +1250,8 @@
         "default_array_length": 2,
         "id": null,
         "mz": [
-          123.04,
-          456.07
+          123.03999556212888,
+          456.07001197333443
         ],
         "intensity": [
           89993.15475170835,
@@ -1277,15 +1277,15 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "4b42cd66",
-        "format_version": 2
+        "checksum": "c9944c47",
+        "format_version": 3
       }
     },
     {
       "name": "non_ms_ontology_param_key__lossless",
       "description": "a UO-ontology spectrum parameter, whose map key is the full accession string (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v2.owACAqIaAA9EPwFqVU86MDAwMDAxMPlDAAaCpAAaAA9ESwEaAA9EQgIaAA9EfgVYGHicO_xVI6b_UJxD6-vAHXKNNQ4ASbMIAKQAGgAPREsBGgAPREMCGgAPRH4FVHicY2AAgp9fHUAUQ8dhBwAZ8wO6.e9a330b1",
+      "token": "spectrl.v3.z.eJxbzMDE1NQkxcDvYs_YlBXqb2UAAoYGP50Z2JqWMoAkvBlBpBNTExMja8DhQ1-_amjExPT3H9oXJ-vAwM6ArMiZqYkRqIgBDn52fD3s4MDOAAAnkxih.323e8c5a",
       "tolerance": {
         "abs": 0.0,
         "rel": 0.0
@@ -1321,281 +1321,281 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "e9a330b1",
-        "format_version": 2
+        "checksum": "323e8c5a",
+        "format_version": 3
       }
     },
     {
-      "name": "zstd_codecs",
-      "description": "official PSI-MS Numpress + zstd and byte-shuffled zstd pipelines",
-      "mode": "lossy",
-      "token": "spectrl.v2.ogAYgAaDpQAaAA9ESwEaAA9EQgIaAA9RBwMaAAGGoAVYLii1L_0gcS0BAKhA-GoAgJaYAN7NpQD_cYiP9xiI_3EGAE45AIq5yQAoQ0c-AESlABoAD0RLARoAD0RDAhoAD1EJAxkOEAVZARIotS_9YAgAQQgAQKwgAAAAAAC4IeIiDiQ9JW0mnyfTKAgqPit2LK8t6i4lMGExnjLcMxo1WjaZN9o4GzpcO5484D0iP2VAqEHsQi9Ec0W3RvxHQEmFSspLD01UTplP3lAjUmlTrlT0VTpXf1jFWQtbUVyXXd1eI2BpYa9i9WM7ZYFmx2cNaVRqmmvgbCZubG-zcPlxP3OFdMx1EndYeJ555XorfHF9uH7-f0SBi4LRgxeFXoakh-qIMYp3i72MBI5Kj5CQ15Edk2OUqpXwljaYfZnDmgmcUJ2WntyfI6Fpoq-j9qQ8poKnyagPqlarnKzirSmvb7C1sfyyQrSItc-2FbhbuaK66LsuvXW-u78BwUjCpQAaAA9ESQEaAA9FUgIaAA9RBQRncXVhbGl0eQVZAZ0otS_9YAABnQwAhBgABAQGBIUGhwRFhcYGR4fIBCRFZYWlxuYGJkdnh6fI6AQUJDRFVWV1hZWltcbW5vYGFiY2R1dnd4eXp7fI2Oj4BAwUHCQsNDxFTVVdZW11fYWNlZ2lrbW9xs7W3ubu9v4GDhYeJi42PkdPV19nb3d_h4-Xn6evt7_I0Njg6PD4AAACAoMCQoPDAiJCYoOjw-MCEiIyQlJicoOTo7PD0-PzAgoSGiIqMjpCSlJaYmpyeoOLk5ujq7O7w8vT2-Pr8_sCBgoOEhYaHiImKi4yNjo-QkZKTlJWWl5iZmpucnZ6foOHi4-Tl5ufo6err7O3u7_Dx8vP09fb3-Pn6-_z9_sAAAGBwQEhQWGBkaGxwdHh8QEJERkhKTE5QUlRWWFpcXmBhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5_QEDBQcJCw0PERMVFxkbHR8hIyUnKSstLzEzNTc5Oz0_QUNFR0lLTU9RU1VXWVtdX2FjZWdpa21vcXN1d3l7fYAAPDw8PT0-PwMQAJSEeBluUw.580d1c11",
+      "name": "adaptive_lossless",
+      "description": "fixed lossless core policy",
+      "mode": "lossless",
+      "token": "spectrl.v3.z.eJy9lHs0lGkcx9-ZGBEpy6Qhl0pyjVLWZZ4fMtmh1GJMLuUS5d4VkUuuhayRkCKpnWRLKkk3yyS3lBok0o2iYiNJai3tU3v2nJxmnbY_-pznvPOe5z3z-Z7f94_fEUJ2JyWGS9AISXMr0senGTmaTBJ2ECIIK0urEu4x7mcn2tbW5j9PWkHBb__z_Pu2jGXH-uIQXC7X0WYcvIIJqLP7Zo6qC4DAgYXjI1wnkngIknwd_HQBEDjQfnyEzkSShYIkX4eXpQAIHHhifITsRJIsQZKvQ48rAAIHsmTGsSdxAvwY34zhbAE4kMlk0niI74nJd037EhHi87WwlBxN-mctBDM9OgLOOSW1BL6lhGWa-aoE1YqGld4DaarbL64JkXfrr17sExvQzlFty5d_5_Xr2fP15x9OtZ_vUxZV12V-OjyM_0qm7GXTZWWjEoP9tMNy5mqJEfobq0L12p2H5Sldrop-RI82h1I2yPYV_SmBtpfS5xzS3CCbF1ljmhbHiiSIiP1qN73ikxwvx_OaW-dzEnVvHWe7vcrwrhqw09GlRcXpxJ90iSoJZlCvKzveSNGY9uwQMdR0j_V0peKFbEbUjmud_c27e-U8ckVjIuVFM6PYmn7P_br4jdV2ctNO7XZ-caymKSPgbEdRsGn8vAB2RmvWwPaVBi1BPRsvJB1J9O8mCAu751E5_Yv72n1oHVWT6g9zZs1JsdEjpeaKZ8Tc6lOWEB0yTp7VdXGPdNTy3vZK003LUme3-Msp6fAnMf5aXT3zTcCYdcTrdPms6hupU7b5xOhZZN22YJeWT-aUkDiqrkFjmnzfGXli1MxgGTU283Gnd_a-1_3O5ZFSxbGW9ww6CeIBm1FpVj-5hU8TLcrjUZ0OuF_5UGubOdh74E2_VbZDpOygQZ_E2F5PxSApDSX1niOXxGkz27RjGn3Td93kh4tB8uuBtCHS1UEXBa-hvUqpFbSD-jVONyRtR5gdi0JT08wKfVQrs3JNlZwiaT6v22bGrweFfexnU2Rsj4_qmiOCaK7UaBH68dzTlDsGhdZ_0gzBz4fV6ZenJVM-Mq3zXGDfMoo6Z8sI76Rw2OJnF_yKsxKc1xa16-x4If7kjYTwNmZjjY2EmssG64ThP3LVZPQrmPdCGvRtZZqXF7Erwi0WVzQ8KM5VUb5ePlWpeO9aKbEpyysjrrGstTq6e41cjSb77yS63puUbTe8fyybJ1cIdaG2DpxRbvVaeWF5z26uzfC1K11mrfZP0jeHlqjwH243mIuSpjX6SnU-mOxN9h89y8luWzE6nGZv7nbG4EOsNjGmydGKozYU_T4WpCZZuNUj9u46ag5TQXFVqUOOTk_D47m59qq1nNj8sWSt857GJoGPYueqqKprLtBdqLfkRyO6ielShgXTynqVjZ39akdnFzd3j_Vevv6bNm8NDA4Ji9gZHRu_OzE5JTVtX0bWwUOH845y8wtOnjp99tz5C5fKynmVVdV19Q23G5vu3G27_6ij82n3856XrwYGh4bfj4wR5EnCImLiktOlpKmytFlKynNUVNU0tE2-F6aCESGOfVoLzI9rgWFDjiZIQhs2B7r5eW8LEXYgf1odQmSSsRA5ypgSw8O_JHqcmTKdEmNK31XpRsf3dMbsVHyXR692P4PveXSLo3z8rYNe-2QAfyehuVKiiDF7OvJcOBPh_yKujRqqdtdF3VsMEPageWlMZHH0Z7Sh2AFhJ8pv8ka1Tzaj54MhCPuRtFgcdiQgPVoy9qQilno6dmWhQMMc7MtD6ZZc7CxAJY6F2HsGtfiUYPdF9Da0DPt5iJpUhTPq0JKDN3EOH7FP3MFZbSj48gOc14Ey67tw5gtU2v4S5w6g1t4hnP0evRsZxfkkEKdMAmkxYZCfKgJ4FtCkTgE9mgQYK0gCngtWzPsBWOoysEZ7BuAZwX-JHAQazoJwpAh4XkheNgfSLVUgx1oV8OxQaK8BJY5aULZ2AeAeoGH9ImjxWQwPA_QBdwJ9QUbwNpQOYxEAuB-YumspUJMYoJBiAbgr0M60giUHVwDKXQm4N1iZbwvsEyxwKWID7hA2ljpB8OU1EFnuArhPSKlZB5n1npB7awPgbqHori-UtvtD-aONgHuG28-2QmtvIDzuDwbcObwa3gHvRsKBIHaCCPE3-WzZrQ.e1950e29",
       "tolerance": {
-        "abs": 1e-06,
-        "rel": 1e-06
+        "abs": 0.0,
+        "rel": 0.0
       },
       "decoded": {
         "default_array_length": 128,
         "id": null,
         "mz": [
           100.0,
-          108.66142,
-          117.32283,
-          125.98425,
-          134.64567,
-          143.30709,
-          151.9685,
-          160.62992,
-          169.29134,
-          177.95276,
-          186.61417,
-          195.27559,
-          203.93701,
-          212.59843,
-          221.25984,
-          229.92126,
-          238.58268,
-          247.24409,
-          255.90551,
-          264.56693,
-          273.22835,
-          281.88976,
-          290.55118,
-          299.2126,
-          307.87402,
-          316.53543,
-          325.19685,
-          333.85827,
-          342.51969,
-          351.1811,
-          359.84252,
-          368.50394,
-          377.16535,
-          385.82677,
-          394.48819,
-          403.14961,
-          411.81102,
-          420.47244,
-          429.13386,
-          437.79528,
-          446.45669,
-          455.11811,
-          463.77953,
-          472.44094,
-          481.10236,
-          489.76378,
-          498.4252,
-          507.08661,
-          515.74803,
-          524.40945,
-          533.07087,
-          541.73228,
-          550.3937,
-          559.05512,
-          567.71654,
-          576.37795,
-          585.03937,
-          593.70079,
-          602.3622,
-          611.02362,
-          619.68504,
-          628.34646,
-          637.00787,
-          645.66929,
-          654.33071,
-          662.99213,
-          671.65354,
-          680.31496,
-          688.97638,
-          697.6378,
-          706.29921,
-          714.96063,
-          723.62205,
-          732.28346,
-          740.94488,
-          749.6063,
-          758.26772,
-          766.92913,
-          775.59055,
-          784.25197,
-          792.91339,
-          801.5748,
-          810.23622,
-          818.89764,
-          827.55906,
-          836.22047,
-          844.88189,
-          853.54331,
-          862.20472,
-          870.86614,
-          879.52756,
-          888.18898,
-          896.85039,
-          905.51181,
-          914.17323,
-          922.83465,
-          931.49606,
-          940.15748,
-          948.8189,
-          957.48031,
-          966.14173,
-          974.80315,
-          983.46457,
-          992.12598,
-          1000.7874,
-          1009.44882,
-          1018.11024,
-          1026.77165,
-          1035.43307,
-          1044.09449,
-          1052.75591,
-          1061.41732,
-          1070.07874,
-          1078.74016,
-          1087.40157,
-          1096.06299,
-          1104.72441,
-          1113.38583,
-          1122.04724,
-          1130.70866,
-          1139.37008,
-          1148.0315,
-          1156.69291,
-          1165.35433,
-          1174.01575,
-          1182.67717,
-          1191.33858,
+          108.66141732283465,
+          117.32283464566929,
+          125.98425196850394,
+          134.64566929133858,
+          143.30708661417322,
+          151.96850393700788,
+          160.62992125984252,
+          169.29133858267716,
+          177.95275590551182,
+          186.61417322834646,
+          195.2755905511811,
+          203.93700787401576,
+          212.5984251968504,
+          221.25984251968504,
+          229.9212598425197,
+          238.58267716535434,
+          247.24409448818898,
+          255.90551181102364,
+          264.56692913385825,
+          273.2283464566929,
+          281.8897637795276,
+          290.5511811023622,
+          299.21259842519686,
+          307.8740157480315,
+          316.53543307086613,
+          325.1968503937008,
+          333.85826771653547,
+          342.5196850393701,
+          351.18110236220474,
+          359.8425196850394,
+          368.503937007874,
+          377.1653543307087,
+          385.82677165354335,
+          394.48818897637796,
+          403.1496062992126,
+          411.8110236220473,
+          420.4724409448819,
+          429.13385826771656,
+          437.7952755905512,
+          446.45669291338584,
+          455.1181102362205,
+          463.77952755905517,
+          472.4409448818898,
+          481.10236220472444,
+          489.7637795275591,
+          498.4251968503937,
+          507.0866141732284,
+          515.748031496063,
+          524.4094488188977,
+          533.0708661417323,
+          541.732283464567,
+          550.3937007874016,
+          559.0551181102362,
+          567.7165354330709,
+          576.3779527559055,
+          585.0393700787401,
+          593.7007874015749,
+          602.3622047244095,
+          611.0236220472441,
+          619.6850393700788,
+          628.3464566929134,
+          637.007874015748,
+          645.6692913385828,
+          654.3307086614174,
+          662.992125984252,
+          671.6535433070867,
+          680.3149606299213,
+          688.9763779527559,
+          697.6377952755906,
+          706.2992125984252,
+          714.9606299212599,
+          723.6220472440946,
+          732.2834645669292,
+          740.9448818897638,
+          749.6062992125985,
+          758.2677165354331,
+          766.9291338582677,
+          775.5905511811025,
+          784.2519685039371,
+          792.9133858267717,
+          801.5748031496064,
+          810.236220472441,
+          818.8976377952756,
+          827.5590551181103,
+          836.220472440945,
+          844.8818897637796,
+          853.5433070866143,
+          862.2047244094489,
+          870.8661417322835,
+          879.5275590551182,
+          888.1889763779528,
+          896.8503937007874,
+          905.5118110236222,
+          914.1732283464568,
+          922.8346456692914,
+          931.4960629921261,
+          940.1574803149607,
+          948.8188976377953,
+          957.4803149606299,
+          966.1417322834646,
+          974.8031496062993,
+          983.4645669291339,
+          992.1259842519686,
+          1000.7874015748032,
+          1009.4488188976378,
+          1018.1102362204725,
+          1026.7716535433071,
+          1035.4330708661419,
+          1044.0944881889764,
+          1052.755905511811,
+          1061.4173228346458,
+          1070.0787401574803,
+          1078.740157480315,
+          1087.4015748031497,
+          1096.0629921259842,
+          1104.724409448819,
+          1113.3858267716537,
+          1122.0472440944882,
+          1130.708661417323,
+          1139.3700787401576,
+          1148.0314960629921,
+          1156.6929133858268,
+          1165.3543307086616,
+          1174.015748031496,
+          1182.6771653543308,
+          1191.3385826771655,
           1200.0
         ],
         "intensity": [
-          9.998707630698446,
-          10.947900296765821,
-          11.986221215830666,
-          13.1265436434801,
-          14.371267192683261,
-          15.73496092945545,
-          17.229762407496946,
-          18.863599559363895,
-          20.649881911512058,
-          22.60991301075013,
-          24.75454486407127,
-          27.10959876613955,
-          29.680004129898148,
-          32.49475598742423,
-          35.57790773803921,
-          38.95595721145715,
-          42.64597691364222,
-          46.70327243268871,
-          51.123250244834516,
-          55.98441319827875,
-          61.298942070942175,
-          67.10911906127758,
-          73.48185625739194,
-          80.45086866496814,
-          88.07194771504463,
-          96.43316606164274,
-          105.57925522372075,
-          115.61628024224943,
-          126.56309578728374,
-          138.5762589602703,
-          151.7207531701067,
-          166.149544687828,
-          181.89073333045624,
-          199.16993217521974,
-          218.0816397167328,
-          238.78009254136208,
-          261.434099240279,
-          286.22841714716685,
-          313.3652591477128,
-          343.06594284984527,
-          375.6773136208692,
-          411.26513200752373,
-          450.34058063956064,
-          493.11969122903685,
-          539.8032614809686,
-          591.0618531574821,
-          647.1788534417115,
-          708.614753607947,
-          775.8736913651106,
-          849.5075877674003,
-          930.1206762309578,
-          1018.3744608212739,
-          1114.9931444986146,
-          1220.7695718651792,
-          1336.5717351796654,
-          1463.3498970270364,
-          1602.1443880915008,
-          1754.0941440205675,
-          1920.9798605839528,
-          2103.149584587406,
-          2302.58577897594,
-          2520.924999995054,
-          2759.958920499779,
-          3022.4887736244427,
-          3309.062075829263,
-          3622.797462528324,
-          3966.2694193013917,
-          4343.503086279183,
-          4755.2851992921505,
-          5206.096979272772,
-          5699.637748885795,
-          6241.691301301917,
-          6833.3881107843035,
-          7481.1673208618795,
-          8192.62024151759,
-          8969.230636141008,
-          9819.449971288797,
-          10753.24194821321,
-          11772.554027257122,
-          12888.478877288342,
-          14114.093996507643,
-          15451.955454038913,
-          16916.62253397628,
-          18525.25963686348,
-          20281.221639419706,
-          22203.617807039984,
-          24314.976657144216,
-          26619.70151266925,
-          29142.873553539564,
-          31914.061776111746,
-          34939.04560374717,
-          38250.74443828584,
-          41887.96800383148,
-          45858.30187493093,
-          50204.95323006477,
-          54978.86037863143,
-          60189.97949404225,
-          65895.02060648955,
-          72160.84096436368,
-          79000.50818546825,
-          86488.45498301205,
-          94712.43243698009,
-          103689.59197975602,
-          113517.62759557548,
-          124311.71381261542,
-          136094.3621274026,
-          148993.79726995723,
-          163161.18743038017,
-          178626.07926486654,
-          195611.09868522242,
-          214151.66862563603,
-          234449.5569324792,
-          256742.6341019639,
-          281077.393234033,
-          307718.65746831096,
-          336978.63518073014,
-          368918.34921967256,
-          403885.38368509203,
-          442289.5164668671,
-          484210.8409128131,
-          530105.5660487418,
-          580511.5311255429,
-          635533.8597900877,
-          695771.3328130139,
-          761929.8717848804,
-          834147.4529725368,
-          913209.9845693796,
-          1000043.9986036879
+          10.0,
+          10.94888965127687,
+          11.98781845958378,
+          13.125330147352265,
+          14.370779141993753,
+          15.734407502856097,
+          17.227429147699425,
+          18.862122071335175,
+          20.651929314796273,
+          22.611569515367442,
+          24.757157946593413,
+          27.10633904364837,
+          29.678431503900377,
+          32.494587155918424,
+          35.57796490339495,
+          38.953921174427265,
+          42.650218442334186,
+          46.697253532797085,
+          51.12830759482942,
+          55.97981979123284,
+          61.29168695925734,
+          67.10759170575142,
+          73.47536163492155,
+          80.44736266284181,
+          88.08092965317063,
+          96.4388379154446,
+          105.58981944335787,
+          115.6091281383574,
+          126.5791586667203,
+          138.59012403933866,
+          151.7407974863493,
+          166.13932472747908,
+          181.9041133178823,
+          199.16480638308562,
+          218.063348750633,
+          238.75515424585845,
+          261.4103837511492,
+          286.2153445389273,
+          313.37402238589044,
+          343.1097590679882,
+          375.6670890311596,
+          411.313750341857,
+          450.3428864545836,
+          493.07545690287446,
+          539.8628767382502,
+          591.0899064227988,
+          647.1778159406795,
+          708.5878491488879,
+          775.8250168566794,
+          849.44224982638,
+          930.0449458481393,
+          1018.2959482819049,
+          1114.9209970080915,
+          1220.7146966133182,
+          1336.5470508911144,
+          1463.3706173946357,
+          1602.228340877477,
+          1754.2621300415915,
+          1920.7222481239298,
+          2102.977594546134,
+          2302.526962179329,
+          2521.011362799125,
+          2760.227522090274,
+          3022.1426551783793,
+          3308.910644196496,
+          3622.8897509242893,
+          3966.662010161199,
+          4343.054463316706,
+          4755.162406834014,
+          5206.374846632575,
+          5700.4023678963595,
+          6241.307649397461,
+          6833.538873292303,
+          7481.96630513883,
+          8191.922344953685,
+          8969.245378672715,
+          9820.327790631258,
+          10752.168531898922,
+          11772.43067676929,
+          12889.504440725364,
+          14112.57617811452,
+          15451.703926941454,
+          16917.900122028346,
+          18523.222156741183,
+          20280.871538024596,
+          22205.30245015531,
+          24312.340619997838,
+          26619.313461261314,
+          29145.19256800991,
+          31910.749729235522,
+          34938.7277474913,
+          38254.02746632875,
+          41883.91254457479,
+          45858.23366142814,
+          50209.67399614471,
+          54974.01800103742,
+          60190.44567806669,
+          65901.8547790327,
+          72155.21357901022,
+          79001.94712408973,
+          86498.36012976684,
+          94706.10000772239,
+          103692.6638287344,
+          113531.95339077614,
+          124304.88295695167,
+          136100.04466105506,
+          149014.43705277456,
+          163154.26277379718,
+          178635.8019245735,
+          195586.36830395114,
+          214145.3563853957,
+          234465.38763970562,
+          256713.56563109922,
+          281072.8502080728,
+          307743.5620898062,
+          336945.030221216,
+          368917.39544382435,
+          403923.5853150905,
+          442251.4763163044,
+          484216.2612301503,
+          530163.041156277,
+          580469.6634805434,
+          635549.8291362302,
+          695856.4947100453,
+          761885.5973704612,
+          834180.1332506338,
+          913334.6228248625,
+          1000000.0
         ],
         "charge": null,
         "extra_arrays": {
@@ -1740,8 +1740,427 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "580d1c11",
-        "format_version": 2
+        "checksum": "e1950e29",
+        "format_version": 3
+      }
+    },
+    {
+      "name": "explicit_core_encodings",
+      "description": "core numeric encodings with whole-document compression",
+      "mode": "lossy",
+      "token": "spectrl.v3.z.eJy91Hs4E2ocB_B3a6a5RI4tRm65RAi5NOSyzM4o1ZjlklvkTpwQubRmhBzTQoqWnCWnpNJSyWEtQ0oNiaRCLnFySVLHoaN6zvPkacdTnefp8_ye93n_-n7_eN_ndwrI7IdTWQANJGzsIR9OLPQAFCLkAgPA3s6ezTrN-mwOODoS_3MYpaW_f-P8e7MlOZG-GMBisVyJC3BKF9Ho9N2KtQQA84VlCyu8FgvxFRTydfg5AoD5QueFFXqLhRgICvk6AXYCgPnCswsrZBYLyRcU8nUMWQKA-UIScoFD6YsIwX03UxUBXKBQKGQh8CNZ_dC2LwmDz9fCRugByKe1EEPw7Qm77JbRHvUGHp-HDVaLbkDEVz6ylEZ5_-qVlvSw6ea1UZEJ3UKNzhL5twG_XbrSdOXJMufVQdWUxn6bCwnx_HFk9cvWKmUzNuYo-qScjWZ6okl4XZxhl_u0PLzfSzEEDOvS4dWT5GDEz2now_BR99i2ZpmipHprBo2UBEDiUc27ASkZrlUpnLaO1fR0_XtnyN7juYF1E056-mgKTS_lnCeFHYND3VZ2vZO1RnLwBJhqfUR6vkXxagGOsu9W71jbwRE5XyaCmiSPyKOQtUOGQvr5LTwnOcnzB91fnK5vzQ271FMeY52iHkbO7cif2LsF0x49HH4141R66AAAeKchSuGY0WhXELqnbknTSfrKVVlEQ0g2UyyXem9UWRwxZZ65sv_aIWnKppEurvVu22yV9lA5JT3-Etzf23myr8PmHBJf5cjn8-5ki-4Johri8-_jyZU1S-lsCF3DK3pOmx-8okgElReD1CQTnvUGFhx5NeZekyRVkWz3CNMLQDcZx8U2LW3noxHlRRyU2zGfG-8bHPMmR469HrMvcEmSmcSMis8d9lOMllqjpDV86roYWrZTl9oSnJN6l58gYpn5aoIxBbk56akQMHVYKbsWfdyk3u2OhOMMoWddXDYDWxakwc1nWiu5JaGDXnXKpuyyVDhCHhRFOp6Z1bexAKCNu6Ydtv7y86wHmDKHv9CmliFBpN6QIh1kzYxk7-WoUVu4Fj1yhnNOKN5o8GpIRX6au0d5l96-F2J9r8WF9hBa6onimp7-DmnTfzI1kSa1hEexzSaOyLZN5eTaBLxRbXN3BVNN-XbNMqWKwx5SIqKbuIm3SA46PQMjZl5mS0P3g_53VtV7TR-fLuDIlVk2xjm60GdZPA95IXm_ARZx-taNfmyHc19ORBxbjf9kL0bVIkOyJViqt3tpIDR09hK9oHPz7DTD2cb7IuZ9si6Y06br0FDN5X_MRWtKlP3im_xwJ6qQoKC4tdKlUG-4-Zkq01mjgZ5cMpepc8XP3CrqabKqmoaW9lp9A0Pj9WYbrKw34vAEe4etRCfn7a7unt4-vrsCgkN3R_wSFRMbn7j_QHLKwfTMrGzGkdz84ydOFhWzSkrPnb9w6fKVq9erazjcOl5jU_P9ltYHDzsfP-3pfT4wNPxyfGJyavrdzByALhESFhGTWC4ljZJBr1RSXqWmoblG1-pHsRZMGJz-uBYIH9YCjvhhLcD8I6K8QwL3xAq5QAGAweAwGjwVhqPx4PjUBpgqzo_G4g3A1fH-qSUNQzBpVUMcyS-KlsNi89oH3sBR6sZ4sn9Mal5JZUPH0FuYmLS8qrahOW4zaYdfaFQCLTOnkFXGruY1tz8ZGH0zB1-GUlDXNbbAbyF7-ofHJKVm5TFLyitrGu53PBsafwsAFEqFYqlcqArWh1rM7YNKqRhgiT6RVEZxBbe1bxIqIoVW0TIwxdoRXX2CIuOoGYzjxWcrqrhNrV19I5MzULjIMikUWkFFXUvXwNjUAmtr50B0dvXw2RUUFhkdl0hNzchi5B1nFpecLa-orKrh1jfda33Y9bRvcGRscnoGAAiFA1G29qZkF13k8HsmIIjlssqa-hhrwjYX78CIWAotLTM7J7-wiFVadpF9rZpT13iX_6Czu6f_xcuJqXezkPlXR4iKSyz_CblCVm6l4qdn11mrv87IBGO2wfLTj9u8ZZsjiezitsPTe6eff2BwaPjHL7cvYT8wNzff8BmLb2T5PwmDfwBXvtmu.dd087268",
+      "tolerance": {
+        "abs": 1e-06,
+        "rel": 1e-06
+      },
+      "decoded": {
+        "default_array_length": 128,
+        "id": null,
+        "mz": [
+          100.0,
+          108.66141732283465,
+          117.32283464566929,
+          125.98425196850394,
+          134.64566929133858,
+          143.30708661417322,
+          151.96850393700788,
+          160.62992125984252,
+          169.29133858267716,
+          177.95275590551182,
+          186.61417322834646,
+          195.2755905511811,
+          203.93700787401576,
+          212.5984251968504,
+          221.25984251968504,
+          229.9212598425197,
+          238.58267716535434,
+          247.24409448818898,
+          255.90551181102364,
+          264.56692913385825,
+          273.2283464566929,
+          281.8897637795276,
+          290.5511811023622,
+          299.21259842519686,
+          307.8740157480315,
+          316.53543307086613,
+          325.1968503937008,
+          333.85826771653547,
+          342.5196850393701,
+          351.18110236220474,
+          359.8425196850394,
+          368.503937007874,
+          377.1653543307087,
+          385.82677165354335,
+          394.48818897637796,
+          403.1496062992126,
+          411.8110236220473,
+          420.4724409448819,
+          429.13385826771656,
+          437.7952755905512,
+          446.45669291338584,
+          455.1181102362205,
+          463.77952755905517,
+          472.4409448818898,
+          481.10236220472444,
+          489.7637795275591,
+          498.4251968503937,
+          507.0866141732284,
+          515.748031496063,
+          524.4094488188977,
+          533.0708661417323,
+          541.732283464567,
+          550.3937007874016,
+          559.0551181102362,
+          567.7165354330709,
+          576.3779527559055,
+          585.0393700787401,
+          593.7007874015749,
+          602.3622047244095,
+          611.0236220472441,
+          619.6850393700788,
+          628.3464566929134,
+          637.007874015748,
+          645.6692913385828,
+          654.3307086614174,
+          662.992125984252,
+          671.6535433070867,
+          680.3149606299213,
+          688.9763779527559,
+          697.6377952755906,
+          706.2992125984252,
+          714.9606299212599,
+          723.6220472440946,
+          732.2834645669292,
+          740.9448818897638,
+          749.6062992125985,
+          758.2677165354331,
+          766.9291338582677,
+          775.5905511811025,
+          784.2519685039371,
+          792.9133858267717,
+          801.5748031496064,
+          810.236220472441,
+          818.8976377952756,
+          827.5590551181103,
+          836.220472440945,
+          844.8818897637796,
+          853.5433070866143,
+          862.2047244094489,
+          870.8661417322835,
+          879.5275590551182,
+          888.1889763779528,
+          896.8503937007874,
+          905.5118110236222,
+          914.1732283464568,
+          922.8346456692914,
+          931.4960629921261,
+          940.1574803149607,
+          948.8188976377953,
+          957.4803149606299,
+          966.1417322834646,
+          974.8031496062993,
+          983.4645669291339,
+          992.1259842519686,
+          1000.7874015748032,
+          1009.4488188976378,
+          1018.1102362204725,
+          1026.7716535433071,
+          1035.4330708661419,
+          1044.0944881889764,
+          1052.755905511811,
+          1061.4173228346458,
+          1070.0787401574803,
+          1078.740157480315,
+          1087.4015748031497,
+          1096.0629921259842,
+          1104.724409448819,
+          1113.3858267716537,
+          1122.0472440944882,
+          1130.708661417323,
+          1139.3700787401576,
+          1148.0314960629921,
+          1156.6929133858268,
+          1165.3543307086616,
+          1174.015748031496,
+          1182.6771653543308,
+          1191.3385826771655,
+          1200.0
+        ],
+        "intensity": [
+          10.0,
+          10.94888965127687,
+          11.98781845958378,
+          13.125330147352265,
+          14.370779141993753,
+          15.734407502856097,
+          17.227429147699425,
+          18.862122071335175,
+          20.651929314796273,
+          22.611569515367442,
+          24.757157946593413,
+          27.10633904364837,
+          29.678431503900377,
+          32.494587155918424,
+          35.57796490339495,
+          38.953921174427265,
+          42.650218442334186,
+          46.697253532797085,
+          51.12830759482942,
+          55.97981979123284,
+          61.29168695925734,
+          67.10759170575142,
+          73.47536163492155,
+          80.44736266284181,
+          88.08092965317063,
+          96.4388379154446,
+          105.58981944335787,
+          115.6091281383574,
+          126.5791586667203,
+          138.59012403933866,
+          151.7407974863493,
+          166.13932472747908,
+          181.9041133178823,
+          199.16480638308562,
+          218.063348750633,
+          238.75515424585845,
+          261.4103837511492,
+          286.2153445389273,
+          313.37402238589044,
+          343.1097590679882,
+          375.6670890311596,
+          411.313750341857,
+          450.3428864545836,
+          493.07545690287446,
+          539.8628767382502,
+          591.0899064227988,
+          647.1778159406795,
+          708.5878491488879,
+          775.8250168566794,
+          849.44224982638,
+          930.0449458481393,
+          1018.2959482819049,
+          1114.9209970080915,
+          1220.7146966133182,
+          1336.5470508911144,
+          1463.3706173946357,
+          1602.228340877477,
+          1754.2621300415915,
+          1920.7222481239298,
+          2102.977594546134,
+          2302.526962179329,
+          2521.011362799125,
+          2760.227522090274,
+          3022.1426551783793,
+          3308.910644196496,
+          3622.8897509242893,
+          3966.662010161199,
+          4343.054463316706,
+          4755.162406834014,
+          5206.374846632575,
+          5700.4023678963595,
+          6241.307649397461,
+          6833.538873292303,
+          7481.96630513883,
+          8191.922344953685,
+          8969.245378672715,
+          9820.327790631258,
+          10752.168531898922,
+          11772.43067676929,
+          12889.504440725364,
+          14112.57617811452,
+          15451.703926941454,
+          16917.900122028346,
+          18523.222156741183,
+          20280.871538024596,
+          22205.30245015531,
+          24312.340619997838,
+          26619.313461261314,
+          29145.19256800991,
+          31910.749729235522,
+          34938.7277474913,
+          38254.02746632875,
+          41883.91254457479,
+          45858.23366142814,
+          50209.67399614471,
+          54974.01800103742,
+          60190.44567806669,
+          65901.8547790327,
+          72155.21357901022,
+          79001.94712408973,
+          86498.36012976684,
+          94706.10000772239,
+          103692.6638287344,
+          113531.95339077614,
+          124304.88295695167,
+          136100.04466105506,
+          149014.43705277456,
+          163154.26277379718,
+          178635.8019245735,
+          195586.36830395114,
+          214145.3563853957,
+          234465.38763970562,
+          256713.56563109922,
+          281072.8502080728,
+          307743.5620898062,
+          336945.030221216,
+          368917.39544382435,
+          403923.5853150905,
+          442251.4763163044,
+          484216.2612301503,
+          530163.041156277,
+          580469.6634805434,
+          635549.8291362302,
+          695856.4947100453,
+          761885.5973704612,
+          834180.1332506338,
+          913334.6228248625,
+          1000000.0
+        ],
+        "charge": null,
+        "extra_arrays": {
+          "quality": {
+            "dtype": "float32",
+            "values": [
+              0.0,
+              0.007874015718698502,
+              0.015748031437397003,
+              0.023622047156095505,
+              0.031496062874794006,
+              0.03937007859349251,
+              0.04724409431219101,
+              0.05511811003088951,
+              0.06299212574958801,
+              0.07086614519357681,
+              0.07874015718698502,
+              0.08661417663097382,
+              0.09448818862438202,
+              0.10236220806837082,
+              0.11023622006177902,
+              0.11811023950576782,
+              0.12598425149917603,
+              0.13385826349258423,
+              0.14173229038715363,
+              0.14960630238056183,
+              0.15748031437397003,
+              0.16535432636737823,
+              0.17322835326194763,
+              0.18110236525535583,
+              0.18897637724876404,
+              0.19685038924217224,
+              0.20472441613674164,
+              0.21259842813014984,
+              0.22047244012355804,
+              0.22834645211696625,
+              0.23622047901153564,
+              0.24409449100494385,
+              0.25196850299835205,
+              0.25984251499176025,
+              0.26771652698516846,
+              0.27559053897857666,
+              0.28346458077430725,
+              0.29133859276771545,
+              0.29921260476112366,
+              0.30708661675453186,
+              0.31496062874794006,
+              0.32283464074134827,
+              0.33070865273475647,
+              0.3385826647281647,
+              0.34645670652389526,
+              0.35433071851730347,
+              0.36220473051071167,
+              0.3700787425041199,
+              0.3779527544975281,
+              0.3858267664909363,
+              0.3937007784843445,
+              0.4015747904777527,
+              0.4094488322734833,
+              0.4173228442668915,
+              0.4251968562602997,
+              0.4330708682537079,
+              0.4409448802471161,
+              0.4488188922405243,
+              0.4566929042339325,
+              0.4645669162273407,
+              0.4724409580230713,
+              0.4803149700164795,
+              0.4881889820098877,
+              0.4960629940032959,
+              0.5039370059967041,
+              0.5118110179901123,
+              0.5196850299835205,
+              0.5275590419769287,
+              0.5354330539703369,
+              0.5433070659637451,
+              0.5511810779571533,
+              0.5590550899505615,
+              0.5669291615486145,
+              0.5748031735420227,
+              0.5826771855354309,
+              0.5905511975288391,
+              0.5984252095222473,
+              0.6062992215156555,
+              0.6141732335090637,
+              0.6220472455024719,
+              0.6299212574958801,
+              0.6377952694892883,
+              0.6456692814826965,
+              0.6535432934761047,
+              0.6614173054695129,
+              0.6692913174629211,
+              0.6771653294563293,
+              0.6850393414497375,
+              0.6929134130477905,
+              0.7007874250411987,
+              0.7086614370346069,
+              0.7165354490280151,
+              0.7244094610214233,
+              0.7322834730148315,
+              0.7401574850082397,
+              0.748031497001648,
+              0.7559055089950562,
+              0.7637795209884644,
+              0.7716535329818726,
+              0.7795275449752808,
+              0.787401556968689,
+              0.7952755689620972,
+              0.8031495809555054,
+              0.8110235929489136,
+              0.8188976645469666,
+              0.8267716765403748,
+              0.834645688533783,
+              0.8425197005271912,
+              0.8503937125205994,
+              0.8582677245140076,
+              0.8661417365074158,
+              0.874015748500824,
+              0.8818897604942322,
+              0.8897637724876404,
+              0.8976377844810486,
+              0.9055117964744568,
+              0.913385808467865,
+              0.9212598204612732,
+              0.9291338324546814,
+              0.9370078444480896,
+              0.9448819160461426,
+              0.9527559280395508,
+              0.960629940032959,
+              0.9685039520263672,
+              0.9763779640197754,
+              0.9842519760131836,
+              0.9921259880065918,
+              1.0
+            ]
+          }
+        },
+        "array_units": {},
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "user_params": [],
+        "checksum": "dd087268",
+        "format_version": 3
       }
     }
   ]

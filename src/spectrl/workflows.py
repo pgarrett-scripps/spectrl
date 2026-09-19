@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import dataclasses
-
 import numpy as np
 
 from .cbor_format import decode_cbor, encode_cbor
@@ -13,7 +11,14 @@ from .peaks import _validate_arrays, canonical_sort, top_n
 
 
 def _user_param_count(spec: InlineSpectrum) -> int:
-    return len(spec.user_params) + sum(len(scan.user_params) for scan in spec.scans)
+    from .cbor_format import _without_user_params
+
+    stripped = _without_user_params(spec)
+    return (
+        stripped.processing[-1]["parameters"]["userParamsRemoved"]
+        if len(stripped.processing) > len(spec.processing)
+        else 0
+    )
 
 
 def encoding_report(spec: InlineSpectrum, **options) -> dict:
@@ -123,9 +128,9 @@ def fit_to_budget(
                 high = mid
     selected, token, carrier, size = best
     if options.get("drop_user_params"):
-        selected = dataclasses.replace(
-            selected, user_params=[], scans=[dataclasses.replace(scan, user_params=[]) for scan in selected.scans]
-        )
+        from .cbor_format import _without_user_params
+
+        selected = _without_user_params(selected)
     return {
         "spectrum": selected,
         "token": token,

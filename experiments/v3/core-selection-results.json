@@ -1,0 +1,2629 @@
+{
+  "n": 237,
+  "seconds": 15.709120510844514,
+  "method": "Single coordinate pass in descriptor order, strict improvement only",
+  "registry_sha256": "40836e6f40eef786cdcbe94e402fe23ee8147799a6b6843d3f0fcadc383b8d8b",
+  "totals": {
+    "fixed": 7187540,
+    "proxy": 7157055,
+    "coordinate": 7156979
+  },
+  "spectra": [
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1054",
+      "fixed": 9740,
+      "proxy": 9740,
+      "coordinate": 9740,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1092",
+      "fixed": 8593,
+      "proxy": 8593,
+      "coordinate": 8593,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1269",
+      "fixed": 3362,
+      "proxy": 3362,
+      "coordinate": 3362,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1286",
+      "fixed": 7080,
+      "proxy": 7080,
+      "coordinate": 7080,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1353",
+      "fixed": 14104,
+      "proxy": 14104,
+      "coordinate": 14104,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1532",
+      "fixed": 18841,
+      "proxy": 18841,
+      "coordinate": 18841,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=2563",
+      "fixed": 2726,
+      "proxy": 2726,
+      "coordinate": 2725,
+      "choices": [
+        2,
+        2
+      ]
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=2862",
+      "fixed": 3016,
+      "proxy": 3016,
+      "coordinate": 3016,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=3064",
+      "fixed": 5262,
+      "proxy": 5262,
+      "coordinate": 5262,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=3271",
+      "fixed": 3329,
+      "proxy": 3329,
+      "coordinate": 3329,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=3381",
+      "fixed": 3590,
+      "proxy": 3590,
+      "coordinate": 3586,
+      "choices": [
+        2,
+        2
+      ]
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=3550",
+      "fixed": 2241,
+      "proxy": 2241,
+      "coordinate": 2241,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "fixed": 3169,
+      "proxy": 3169,
+      "coordinate": 3166,
+      "choices": [
+        2,
+        2
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=18",
+      "fixed": 1202,
+      "proxy": 1198,
+      "coordinate": 1200,
+      "choices": [
+        1,
+        1
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=115",
+      "fixed": 6402,
+      "proxy": 6402,
+      "coordinate": 6402,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=227",
+      "fixed": 1253,
+      "proxy": 1249,
+      "coordinate": 1249,
+      "choices": [
+        1,
+        1
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=509",
+      "fixed": 1340,
+      "proxy": 1341,
+      "coordinate": 1333,
+      "choices": [
+        2,
+        2
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=655",
+      "fixed": 8069,
+      "proxy": 8069,
+      "coordinate": 8069,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=963",
+      "fixed": 1897,
+      "proxy": 1882,
+      "coordinate": 1882,
+      "choices": [
+        2,
+        2
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1115",
+      "fixed": 1296,
+      "proxy": 1296,
+      "coordinate": 1288,
+      "choices": [
+        2,
+        2
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1327",
+      "fixed": 7608,
+      "proxy": 7608,
+      "coordinate": 7608,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1378",
+      "fixed": 7209,
+      "proxy": 7209,
+      "coordinate": 7209,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1434",
+      "fixed": 1444,
+      "proxy": 1449,
+      "coordinate": 1444,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1723",
+      "fixed": 10114,
+      "proxy": 10114,
+      "coordinate": 10114,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "index=500",
+      "fixed": 4572,
+      "proxy": 4572,
+      "coordinate": 4572,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=501",
+      "fixed": 2054,
+      "proxy": 2054,
+      "coordinate": 2054,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=502",
+      "fixed": 1212,
+      "proxy": 1212,
+      "coordinate": 1206,
+      "choices": [
+        1,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=503",
+      "fixed": 4920,
+      "proxy": 4920,
+      "coordinate": 4920,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=504",
+      "fixed": 1693,
+      "proxy": 1693,
+      "coordinate": 1693,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=505",
+      "fixed": 1337,
+      "proxy": 1337,
+      "coordinate": 1336,
+      "choices": [
+        2,
+        2
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=506",
+      "fixed": 5396,
+      "proxy": 5396,
+      "coordinate": 5396,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=507",
+      "fixed": 1556,
+      "proxy": 1556,
+      "coordinate": 1556,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=508",
+      "fixed": 1381,
+      "proxy": 1381,
+      "coordinate": 1377,
+      "choices": [
+        2,
+        2
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=509",
+      "fixed": 5166,
+      "proxy": 5166,
+      "coordinate": 5166,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=510",
+      "fixed": 1962,
+      "proxy": 1962,
+      "coordinate": 1962,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "profile_ms1",
+      "id": "spectrum=1",
+      "fixed": 41482,
+      "proxy": 41482,
+      "coordinate": 41482,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=3",
+      "fixed": 2825,
+      "proxy": 2774,
+      "coordinate": 2774,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=6",
+      "fixed": 16444,
+      "proxy": 15650,
+      "coordinate": 15650,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=20",
+      "fixed": 23305,
+      "proxy": 22328,
+      "coordinate": 22328,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=23",
+      "fixed": 82212,
+      "proxy": 82212,
+      "coordinate": 82212,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=27",
+      "fixed": 23412,
+      "proxy": 22602,
+      "coordinate": 22602,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=34",
+      "fixed": 21272,
+      "proxy": 20518,
+      "coordinate": 20518,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=45",
+      "fixed": 2209,
+      "proxy": 2141,
+      "coordinate": 2141,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=58",
+      "fixed": 81338,
+      "proxy": 81338,
+      "coordinate": 81338,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=69",
+      "fixed": 16780,
+      "proxy": 16086,
+      "coordinate": 16086,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=76",
+      "fixed": 26888,
+      "proxy": 26114,
+      "coordinate": 26114,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=80",
+      "fixed": 2656,
+      "proxy": 2549,
+      "coordinate": 2549,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=99",
+      "fixed": 79457,
+      "proxy": 79457,
+      "coordinate": 79457,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=1",
+      "fixed": 201189,
+      "proxy": 201189,
+      "coordinate": 201189,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=2",
+      "fixed": 5166,
+      "proxy": 5166,
+      "coordinate": 5166,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=3",
+      "fixed": 5648,
+      "proxy": 5648,
+      "coordinate": 5648,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=4",
+      "fixed": 16528,
+      "proxy": 16528,
+      "coordinate": 16528,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=5",
+      "fixed": 10526,
+      "proxy": 10526,
+      "coordinate": 10526,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=80",
+      "fixed": 2526,
+      "proxy": 2526,
+      "coordinate": 2524,
+      "choices": [
+        2,
+        2
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=213",
+      "fixed": 3758,
+      "proxy": 3758,
+      "coordinate": 3758,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=239",
+      "fixed": 1054,
+      "proxy": 1046,
+      "coordinate": 1046,
+      "choices": [
+        1,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=22884",
+      "fixed": 20800,
+      "proxy": 20800,
+      "coordinate": 20800,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=23751",
+      "fixed": 23592,
+      "proxy": 23592,
+      "coordinate": 23592,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=23860",
+      "fixed": 7265,
+      "proxy": 7265,
+      "coordinate": 7265,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=32651",
+      "fixed": 18888,
+      "proxy": 18888,
+      "coordinate": 18888,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=32780",
+      "fixed": 5397,
+      "proxy": 5397,
+      "coordinate": 5397,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=45248",
+      "fixed": 21905,
+      "proxy": 21905,
+      "coordinate": 21905,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=45554",
+      "fixed": 22514,
+      "proxy": 22514,
+      "coordinate": 22514,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=45695",
+      "fixed": 8512,
+      "proxy": 8512,
+      "coordinate": 8512,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=60446",
+      "fixed": 22474,
+      "proxy": 22474,
+      "coordinate": 22474,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=60559",
+      "fixed": 9896,
+      "proxy": 9896,
+      "coordinate": 9896,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=67076",
+      "fixed": 22832,
+      "proxy": 22832,
+      "coordinate": 22832,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=71972",
+      "fixed": 19912,
+      "proxy": 19912,
+      "coordinate": 19912,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=72096",
+      "fixed": 29105,
+      "proxy": 29105,
+      "coordinate": 29105,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=86609",
+      "fixed": 18645,
+      "proxy": 18645,
+      "coordinate": 18645,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=89755",
+      "fixed": 38513,
+      "proxy": 38513,
+      "coordinate": 38513,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=1882",
+      "fixed": 4898,
+      "proxy": 4898,
+      "coordinate": 4898,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=4556",
+      "fixed": 5206,
+      "proxy": 5206,
+      "coordinate": 5206,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=4674",
+      "fixed": 1124,
+      "proxy": 1124,
+      "coordinate": 1124,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=16636",
+      "fixed": 7426,
+      "proxy": 7426,
+      "coordinate": 7426,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=16705",
+      "fixed": 1922,
+      "proxy": 1922,
+      "coordinate": 1922,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=21625",
+      "fixed": 30861,
+      "proxy": 30861,
+      "coordinate": 30861,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=30547",
+      "fixed": 28061,
+      "proxy": 28061,
+      "coordinate": 28061,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=39752",
+      "fixed": 31216,
+      "proxy": 31216,
+      "coordinate": 31216,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=39777",
+      "fixed": 12242,
+      "proxy": 12242,
+      "coordinate": 12242,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=52846",
+      "fixed": 29796,
+      "proxy": 29796,
+      "coordinate": 29796,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=62809",
+      "fixed": 30560,
+      "proxy": 30560,
+      "coordinate": 30560,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=62839",
+      "fixed": 8566,
+      "proxy": 8566,
+      "coordinate": 8566,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=74714",
+      "fixed": 29989,
+      "proxy": 29989,
+      "coordinate": 29989,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=74788",
+      "fixed": 44376,
+      "proxy": 44376,
+      "coordinate": 44376,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=80642",
+      "fixed": 31768,
+      "proxy": 31768,
+      "coordinate": 31768,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=80748",
+      "fixed": 3908,
+      "proxy": 3908,
+      "coordinate": 3908,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=83466",
+      "fixed": 38444,
+      "proxy": 38444,
+      "coordinate": 38444,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=86799",
+      "fixed": 12838,
+      "proxy": 12838,
+      "coordinate": 12838,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "prm",
+      "id": "controllerType=0 controllerNumber=1 scan=15",
+      "fixed": 1056,
+      "proxy": 1054,
+      "coordinate": 1052,
+      "choices": [
+        1,
+        1
+      ]
+    },
+    {
+      "dataset": "prm",
+      "id": "controllerType=0 controllerNumber=1 scan=357",
+      "fixed": 1801,
+      "proxy": 1801,
+      "coordinate": 1801,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "prm",
+      "id": "controllerType=0 controllerNumber=1 scan=1215",
+      "fixed": 1270,
+      "proxy": 1270,
+      "coordinate": 1270,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "srm",
+      "id": "scan=1246",
+      "fixed": 824,
+      "proxy": 828,
+      "coordinate": 822,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "srm",
+      "id": "scan=1252",
+      "fixed": 832,
+      "proxy": 832,
+      "coordinate": 830,
+      "choices": [
+        1,
+        1
+      ]
+    },
+    {
+      "dataset": "srm",
+      "id": "scan=1261",
+      "fixed": 824,
+      "proxy": 824,
+      "coordinate": 821,
+      "choices": [
+        1,
+        1
+      ]
+    },
+    {
+      "dataset": "mrm",
+      "id": "merged=0 frame=1 scanStart=1 scanEnd=274",
+      "fixed": 2181,
+      "proxy": 2142,
+      "coordinate": 2142,
+      "choices": [
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "dataset": "mrm",
+      "id": "merged=1 frame=2 scanStart=1 scanEnd=274",
+      "fixed": 27634,
+      "proxy": 27634,
+      "coordinate": 27634,
+      "choices": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "dataset": "negative_rna",
+      "id": "controllerType=0 controllerNumber=1 scan=726",
+      "fixed": 132916,
+      "proxy": 126729,
+      "coordinate": 126729,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "negative_rna",
+      "id": "controllerType=0 controllerNumber=1 scan=727",
+      "fixed": 29126,
+      "proxy": 27837,
+      "coordinate": 27837,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=2",
+      "fixed": 35825,
+      "proxy": 35825,
+      "coordinate": 35825,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=4",
+      "fixed": 37684,
+      "proxy": 37684,
+      "coordinate": 37684,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=9",
+      "fixed": 39540,
+      "proxy": 39540,
+      "coordinate": 39540,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=11",
+      "fixed": 4446,
+      "proxy": 4446,
+      "coordinate": 4446,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=25",
+      "fixed": 4461,
+      "proxy": 4461,
+      "coordinate": 4461,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=26",
+      "fixed": 37530,
+      "proxy": 37530,
+      "coordinate": 37530,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=27",
+      "fixed": 3948,
+      "proxy": 3945,
+      "coordinate": 3945,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=30",
+      "fixed": 38089,
+      "proxy": 38089,
+      "coordinate": 38089,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=39",
+      "fixed": 4726,
+      "proxy": 4720,
+      "coordinate": 4720,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=45",
+      "fixed": 4324,
+      "proxy": 4324,
+      "coordinate": 4324,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=49",
+      "fixed": 4914,
+      "proxy": 4908,
+      "coordinate": 4908,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=50",
+      "fixed": 36736,
+      "proxy": 36736,
+      "coordinate": 36736,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=1 experiment=1",
+      "fixed": 2722,
+      "proxy": 2713,
+      "coordinate": 2713,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=2 experiment=1",
+      "fixed": 5101,
+      "proxy": 5017,
+      "coordinate": 5017,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=2 experiment=3",
+      "fixed": 3992,
+      "proxy": 3992,
+      "coordinate": 3992,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=3 experiment=1",
+      "fixed": 4298,
+      "proxy": 4205,
+      "coordinate": 4205,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=5 experiment=6",
+      "fixed": 2036,
+      "proxy": 2036,
+      "coordinate": 2036,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=5 experiment=9",
+      "fixed": 1712,
+      "proxy": 1721,
+      "coordinate": 1712,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=6 experiment=10",
+      "fixed": 1522,
+      "proxy": 1522,
+      "coordinate": 1522,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=9 experiment=1",
+      "fixed": 4829,
+      "proxy": 4768,
+      "coordinate": 4768,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=11 experiment=1",
+      "fixed": 4268,
+      "proxy": 4252,
+      "coordinate": 4252,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=11 experiment=11",
+      "fixed": 14788,
+      "proxy": 14788,
+      "coordinate": 14788,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=13 experiment=1",
+      "fixed": 4109,
+      "proxy": 4057,
+      "coordinate": 4057,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=14 experiment=12",
+      "fixed": 2409,
+      "proxy": 2409,
+      "coordinate": 2409,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=3 process=0 scan=1",
+      "fixed": 23496,
+      "proxy": 23496,
+      "coordinate": 23496,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=1 process=0 scan=1",
+      "fixed": 363385,
+      "proxy": 363385,
+      "coordinate": 363385,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=2 process=0 scan=1",
+      "fixed": 45413,
+      "proxy": 45413,
+      "coordinate": 45413,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=2 process=0 scan=2",
+      "fixed": 21633,
+      "proxy": 21633,
+      "coordinate": 21633,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=3 process=0 scan=2",
+      "fixed": 252269,
+      "proxy": 252269,
+      "coordinate": 252269,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=2 process=0 scan=3",
+      "fixed": 15945,
+      "proxy": 15945,
+      "coordinate": 15945,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=2 process=0 scan=4",
+      "fixed": 13545,
+      "proxy": 13545,
+      "coordinate": 13545,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=2 process=0 scan=5",
+      "fixed": 10960,
+      "proxy": 10960,
+      "coordinate": 10960,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "mse_profile",
+      "id": "function=3 process=0 scan=1",
+      "fixed": 175360,
+      "proxy": 175360,
+      "coordinate": 175360,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "mse_profile",
+      "id": "function=1 process=0 scan=1",
+      "fixed": 219646,
+      "proxy": 219646,
+      "coordinate": 219646,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "mse_profile",
+      "id": "function=2 process=0 scan=1",
+      "fixed": 191546,
+      "proxy": 191546,
+      "coordinate": 191546,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "etd",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "fixed": 2670,
+      "proxy": 2661,
+      "coordinate": 2661,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "ethcd",
+      "id": "controllerType=0 controllerNumber=1 scan=6",
+      "fixed": 5352,
+      "proxy": 5352,
+      "coordinate": 5352,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "uvpd_positive",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "fixed": 101369,
+      "proxy": 98300,
+      "coordinate": 98300,
+      "choices": [
+        2,
+        2
+      ]
+    },
+    {
+      "dataset": "uvpd_negative",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "fixed": 11024,
+      "proxy": 10949,
+      "coordinate": 10949,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "uvpd_orbitrap",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "fixed": 254074,
+      "proxy": 254074,
+      "coordinate": 254074,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "native_protein",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "fixed": 329944,
+      "proxy": 329944,
+      "coordinate": 329944,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=603",
+      "fixed": 6110,
+      "proxy": 6110,
+      "coordinate": 6110,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=1641",
+      "fixed": 5581,
+      "proxy": 5581,
+      "coordinate": 5581,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=3481",
+      "fixed": 7109,
+      "proxy": 7109,
+      "coordinate": 7109,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=3502",
+      "fixed": 1070,
+      "proxy": 1070,
+      "coordinate": 1068,
+      "choices": [
+        1,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=3902",
+      "fixed": 6905,
+      "proxy": 6905,
+      "coordinate": 6905,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=8264",
+      "fixed": 11776,
+      "proxy": 11776,
+      "coordinate": 11776,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=8294",
+      "fixed": 2081,
+      "proxy": 2081,
+      "coordinate": 2081,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=9650",
+      "fixed": 10010,
+      "proxy": 10010,
+      "coordinate": 10010,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=9685",
+      "fixed": 1754,
+      "proxy": 1754,
+      "coordinate": 1754,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=19798",
+      "fixed": 10510,
+      "proxy": 10510,
+      "coordinate": 10510,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=19821",
+      "fixed": 2764,
+      "proxy": 2764,
+      "coordinate": 2764,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=22073",
+      "fixed": 12905,
+      "proxy": 12905,
+      "coordinate": 12905,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=22098",
+      "fixed": 2360,
+      "proxy": 2360,
+      "coordinate": 2360,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=25516",
+      "fixed": 10200,
+      "proxy": 10200,
+      "coordinate": 10200,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=29723",
+      "fixed": 14610,
+      "proxy": 14610,
+      "coordinate": 14610,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=29747",
+      "fixed": 8288,
+      "proxy": 8288,
+      "coordinate": 8288,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=43794",
+      "fixed": 1290,
+      "proxy": 1290,
+      "coordinate": 1290,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=44704",
+      "fixed": 18208,
+      "proxy": 18208,
+      "coordinate": 18208,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "uvpd_mlac",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "fixed": 96469,
+      "proxy": 93008,
+      "coordinate": 93008,
+      "choices": [
+        2,
+        2
+      ]
+    },
+    {
+      "dataset": "native_aqpz_cdl",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "fixed": 531629,
+      "proxy": 531629,
+      "coordinate": 531629,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "native_aqpz_dopg",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "fixed": 530778,
+      "proxy": 530778,
+      "coordinate": 530778,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "uvpd_dope",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "fixed": 8869,
+      "proxy": 8869,
+      "coordinate": 8869,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "uvpd_dopg",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "fixed": 4770,
+      "proxy": 4770,
+      "coordinate": 4770,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "mse_mix",
+      "id": "scan=1",
+      "fixed": 290861,
+      "proxy": 290861,
+      "coordinate": 290861,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "mse_mix",
+      "id": "scan=2",
+      "fixed": 182742,
+      "proxy": 182742,
+      "coordinate": 182742,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "mse_clpb",
+      "id": "scan=1",
+      "fixed": 67958,
+      "proxy": 67958,
+      "coordinate": 67958,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "mse_clpb",
+      "id": "scan=2",
+      "fixed": 43838,
+      "proxy": 43838,
+      "coordinate": 43838,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "hela_pasef_ms1",
+      "id": "merged=14 frame=6 scanStart=1 scanEnd=100",
+      "fixed": 16048,
+      "proxy": 16048,
+      "coordinate": 16048,
+      "choices": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "dataset": "waters_hddda_ms1",
+      "id": "merged=1 function=1 block=1",
+      "fixed": 23914,
+      "proxy": 23914,
+      "coordinate": 23914,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ethcd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=7333",
+      "fixed": 10901,
+      "proxy": 10901,
+      "coordinate": 10901,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ethcd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=7335",
+      "fixed": 1076,
+      "proxy": 1076,
+      "coordinate": 1073,
+      "choices": [
+        2,
+        2
+      ]
+    },
+    {
+      "dataset": "ethcd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=36993",
+      "fixed": 25196,
+      "proxy": 25196,
+      "coordinate": 25196,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "ethcd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=37017",
+      "fixed": 8538,
+      "proxy": 8538,
+      "coordinate": 8538,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "etd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=17558",
+      "fixed": 18429,
+      "proxy": 18429,
+      "coordinate": 18429,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "etd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=17573",
+      "fixed": 6681,
+      "proxy": 6681,
+      "coordinate": 6681,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "etd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=35190",
+      "fixed": 27992,
+      "proxy": 27992,
+      "coordinate": 27992,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "etd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=35208",
+      "fixed": 1153,
+      "proxy": 1149,
+      "coordinate": 1149,
+      "choices": [
+        1,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=344",
+      "fixed": 18585,
+      "proxy": 18585,
+      "coordinate": 18585,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=345",
+      "fixed": 4002,
+      "proxy": 4002,
+      "coordinate": 4002,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=417",
+      "fixed": 10708,
+      "proxy": 10708,
+      "coordinate": 10708,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=418",
+      "fixed": 2916,
+      "proxy": 2916,
+      "coordinate": 2916,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=609",
+      "fixed": 11966,
+      "proxy": 11966,
+      "coordinate": 11966,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=610",
+      "fixed": 10984,
+      "proxy": 10984,
+      "coordinate": 10984,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=707",
+      "fixed": 4053,
+      "proxy": 4053,
+      "coordinate": 4053,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=708",
+      "fixed": 4477,
+      "proxy": 4477,
+      "coordinate": 4477,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=791",
+      "fixed": 45520,
+      "proxy": 45520,
+      "coordinate": 45520,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=792",
+      "fixed": 5153,
+      "proxy": 5153,
+      "coordinate": 5153,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=1487",
+      "fixed": 23678,
+      "proxy": 23678,
+      "coordinate": 23678,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=1488",
+      "fixed": 6058,
+      "proxy": 6058,
+      "coordinate": 6058,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=324",
+      "fixed": 3657,
+      "proxy": 3657,
+      "coordinate": 3657,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=325",
+      "fixed": 2940,
+      "proxy": 2940,
+      "coordinate": 2940,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=562",
+      "fixed": 50562,
+      "proxy": 50562,
+      "coordinate": 50562,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=563",
+      "fixed": 8496,
+      "proxy": 8496,
+      "coordinate": 8496,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=894",
+      "fixed": 15998,
+      "proxy": 15998,
+      "coordinate": 15998,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=895",
+      "fixed": 3810,
+      "proxy": 3810,
+      "coordinate": 3810,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=1594",
+      "fixed": 26568,
+      "proxy": 26568,
+      "coordinate": 26568,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=1595",
+      "fixed": 6178,
+      "proxy": 6178,
+      "coordinate": 6178,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=1710",
+      "fixed": 24144,
+      "proxy": 24144,
+      "coordinate": 24144,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=1711",
+      "fixed": 5206,
+      "proxy": 5206,
+      "coordinate": 5206,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=2064",
+      "fixed": 26604,
+      "proxy": 26604,
+      "coordinate": 26604,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=2065",
+      "fixed": 4452,
+      "proxy": 4452,
+      "coordinate": 4452,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=754",
+      "fixed": 54474,
+      "proxy": 53534,
+      "coordinate": 53534,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=755",
+      "fixed": 55445,
+      "proxy": 54341,
+      "coordinate": 54341,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=760",
+      "fixed": 48854,
+      "proxy": 47510,
+      "coordinate": 47510,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=763",
+      "fixed": 40984,
+      "proxy": 39305,
+      "coordinate": 39305,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=767",
+      "fixed": 34873,
+      "proxy": 33420,
+      "coordinate": 33420,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=773",
+      "fixed": 42464,
+      "proxy": 40350,
+      "coordinate": 40350,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "maldi_ms2",
+      "id": "scan=1",
+      "fixed": 28668,
+      "proxy": 28668,
+      "coordinate": 28668,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "maldi_ms2",
+      "id": "scan=2",
+      "fixed": 28932,
+      "proxy": 28932,
+      "coordinate": 28932,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "glycopeptide",
+      "id": "controllerType=0 controllerNumber=1 scan=147",
+      "fixed": 4261,
+      "proxy": 4261,
+      "coordinate": 4261,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "glycopeptide",
+      "id": "controllerType=0 controllerNumber=1 scan=161",
+      "fixed": 2732,
+      "proxy": 2732,
+      "coordinate": 2732,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_etd",
+      "id": "controllerType=0 controllerNumber=1 scan=2382",
+      "fixed": 3337,
+      "proxy": 3337,
+      "coordinate": 3337,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "topdown_etd",
+      "id": "controllerType=0 controllerNumber=1 scan=2385",
+      "fixed": 45522,
+      "proxy": 45522,
+      "coordinate": 45522,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=21945",
+      "fixed": 76192,
+      "proxy": 75782,
+      "coordinate": 75782,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=21947",
+      "fixed": 6432,
+      "proxy": 6432,
+      "coordinate": 6432,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=21951",
+      "fixed": 2481,
+      "proxy": 2481,
+      "coordinate": 2481,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22324",
+      "fixed": 57733,
+      "proxy": 57309,
+      "coordinate": 57309,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22325",
+      "fixed": 3660,
+      "proxy": 3660,
+      "coordinate": 3660,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22329",
+      "fixed": 2142,
+      "proxy": 2142,
+      "coordinate": 2142,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22477",
+      "fixed": 56932,
+      "proxy": 56598,
+      "coordinate": 56598,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22490",
+      "fixed": 6306,
+      "proxy": 6306,
+      "coordinate": 6306,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22498",
+      "fixed": 6264,
+      "proxy": 6264,
+      "coordinate": 6264,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22601",
+      "fixed": 85874,
+      "proxy": 85310,
+      "coordinate": 85310,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22613",
+      "fixed": 9354,
+      "proxy": 9354,
+      "coordinate": 9354,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22624",
+      "fixed": 3142,
+      "proxy": 3142,
+      "coordinate": 3142,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22774",
+      "fixed": 49145,
+      "proxy": 48884,
+      "coordinate": 48884,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22779",
+      "fixed": 5488,
+      "proxy": 5488,
+      "coordinate": 5488,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22789",
+      "fixed": 2761,
+      "proxy": 2761,
+      "coordinate": 2761,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22883",
+      "fixed": 36941,
+      "proxy": 36608,
+      "coordinate": 36608,
+      "choices": [
+        2,
+        0
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22899",
+      "fixed": 1618,
+      "proxy": 1618,
+      "coordinate": 1618,
+      "choices": [
+        2,
+        1
+      ]
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22911",
+      "fixed": 1380,
+      "proxy": 1380,
+      "coordinate": 1377,
+      "choices": [
+        2,
+        2
+      ]
+    },
+    {
+      "dataset": "hela_pasef_ms2",
+      "id": "merged=0 frame=1 scanStart=230 scanEnd=254",
+      "fixed": 2693,
+      "proxy": 2693,
+      "coordinate": 2693,
+      "choices": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "dataset": "hela_pasef_ms2",
+      "id": "merged=2 frame=2 scanStart=211 scanEnd=235",
+      "fixed": 1370,
+      "proxy": 1364,
+      "coordinate": 1364,
+      "choices": [
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "dataset": "hela_pasef_ms2",
+      "id": "merged=6 frame=3 scanStart=252 scanEnd=276",
+      "fixed": 1253,
+      "proxy": 1246,
+      "coordinate": 1240,
+      "choices": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "dataset": "hela_pasef_ms2",
+      "id": "merged=7 frame=3 scanStart=298 scanEnd=322",
+      "fixed": 2093,
+      "proxy": 2093,
+      "coordinate": 2093,
+      "choices": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "dataset": "hela_pasef_ms2",
+      "id": "merged=9 frame=4 scanStart=252 scanEnd=276",
+      "fixed": 1390,
+      "proxy": 1384,
+      "coordinate": 1384,
+      "choices": [
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "dataset": "hela_pasef_ms2",
+      "id": "merged=13 frame=5 scanStart=298 scanEnd=322",
+      "fixed": 1896,
+      "proxy": 1896,
+      "coordinate": 1896,
+      "choices": [
+        2,
+        1,
+        0
+      ]
+    }
+  ]
+}

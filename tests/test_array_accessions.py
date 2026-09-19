@@ -5,10 +5,10 @@ import numpy as np
 import pytest
 
 from spectrl import ArrayAccession, decode_token, encode_spectrum
-from spectrl.cv import COMP_NUMLIN_ZLIB, COMP_ZLIB, ION_MOBILITY_ARRAY_TAILS
-from spectrl.header import DESC_ARRAY, DESC_COMP
+from spectrl.cbor_format import read_token_payload
+from spectrl.cv import ION_MOBILITY_ARRAY_TAILS
+from spectrl.header import DESC_ARRAY
 from spectrl.model import InlineSpectrum
-from spectrl.token import b64url_decode
 
 
 def _spec(**kwargs) -> InlineSpectrum:
@@ -29,35 +29,35 @@ def test_every_mobility_accession_round_trips_without_collision():
         np.testing.assert_allclose(decoded.extra_arrays[accession], expected, rtol=1e-6)
 
 
-def test_mobility_arrays_receive_numpress_linear_default():
+def test_mobility_arrays_remain_exact_by_default():
     token = encode_spectrum(
         _spec(extra_arrays={ArrayAccession.RAW_INVERSE_REDUCED_ION_MOBILITY: np.array([0.8, 0.9, 1.0])})
     )
-    doc = cbor2.loads(b64url_decode(token.split(".")[2]))
+    doc = cbor2.loads(read_token_payload(token))
     desc = next(d for d in doc[6] if d[DESC_ARRAY] == 1003008)
-    assert desc[DESC_COMP] == COMP_NUMLIN_ZLIB
+    assert desc[2] == [0, 1] and 3 not in desc
 
 
 def test_mobility_enum_selects_its_encoding_override():
     token = encode_spectrum(
         _spec(extra_arrays={ArrayAccession.RAW_INVERSE_REDUCED_ION_MOBILITY: np.array([0.8, 0.9, 1.0])}),
-        array_encodings={ArrayAccession.RAW_INVERSE_REDUCED_ION_MOBILITY: "zlib"},
+        array_encodings={ArrayAccession.RAW_INVERSE_REDUCED_ION_MOBILITY: "raw"},
     )
-    doc = cbor2.loads(b64url_decode(token.split(".")[2]))
+    doc = cbor2.loads(read_token_payload(token))
     desc = next(d for d in doc[6] if d[DESC_ARRAY] == 1003008)
-    assert desc[DESC_COMP] == COMP_ZLIB
+    assert desc[2] == [0, 1] and 3 not in desc
 
 
 def test_core_accession_alias_matches_friendly_encoding_key():
     spec = _spec()
-    by_name = encode_spectrum(spec, array_encodings={"mz": "zlib"})
-    by_accession = encode_spectrum(spec, array_encodings={ArrayAccession.MZ: "zlib"})
+    by_name = encode_spectrum(spec, array_encodings={"mz": "raw"})
+    by_accession = encode_spectrum(spec, array_encodings={ArrayAccession.MZ: "raw"})
     assert by_accession == by_name
 
 
 def test_conflicting_core_aliases_are_rejected():
     with pytest.raises(ValueError, match="conflicting aliases"):
-        encode_spectrum(_spec(), array_encodings={"mz": "zlib", "MS:1000514": "numlin-zlib"})
+        encode_spectrum(_spec(), array_encodings={"mz": "raw", "MS:1000514": "numlin-zlib"})
 
 
 def test_core_accession_cannot_be_duplicated_as_extra_array():

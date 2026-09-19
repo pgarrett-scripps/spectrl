@@ -1,0 +1,2472 @@
+{
+  "scope": "Experimental mappings only. Production intensity encoding is unchanged.",
+  "size_scope": "Complete zlib token sizes with proposed core-encoding parameters. These prototype descriptors are not supported production encodings.",
+  "full_corpus": {
+    "current": {
+      "spectra": 4045,
+      "samples": 3922699,
+      "positive_samples": 2864591,
+      "zero_samples": 1058108,
+      "positive_to_zero": 69518,
+      "max_relative_error_pct": 100.0,
+      "max_base_peak_error_pct": 0.014448639652708296
+    },
+    "minimum_bucket": {
+      "spectra": 4045,
+      "samples": 3922699,
+      "positive_samples": 2864591,
+      "zero_samples": 1058108,
+      "positive_to_zero": 0,
+      "max_relative_error_pct": 100.0,
+      "max_base_peak_error_pct": 0.014448639652708296
+    },
+    "positive_log": {
+      "spectra": 4045,
+      "samples": 3922699,
+      "positive_samples": 2864591,
+      "zero_samples": 1058108,
+      "positive_to_zero": 0,
+      "max_relative_error_pct": 0.013889821788386112,
+      "max_base_peak_error_pct": 0.013888331672772381
+    },
+    "normalized_log1p": {
+      "spectra": 4045,
+      "samples": 3922699,
+      "positive_samples": 2864591,
+      "zero_samples": 1058108,
+      "positive_to_zero": 0,
+      "max_relative_error_pct": 0.027714482369108458,
+      "max_base_peak_error_pct": 0.025394714299163224
+    }
+  },
+  "selected": [
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1054",
+      "chars": {
+        "current": 5369,
+        "minimum_bucket": 5402,
+        "positive_log": 5412,
+        "normalized_log1p": 5418
+      }
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1092",
+      "chars": {
+        "current": 4933,
+        "minimum_bucket": 4968,
+        "positive_log": 4968,
+        "normalized_log1p": 4977
+      }
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1269",
+      "chars": {
+        "current": 2733,
+        "minimum_bucket": 2761,
+        "positive_log": 2741,
+        "normalized_log1p": 2756
+      }
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1286",
+      "chars": {
+        "current": 4313,
+        "minimum_bucket": 4348,
+        "positive_log": 4328,
+        "normalized_log1p": 4342
+      }
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1353",
+      "chars": {
+        "current": 7230,
+        "minimum_bucket": 7266,
+        "positive_log": 7221,
+        "normalized_log1p": 7205
+      }
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=1532",
+      "chars": {
+        "current": 9174,
+        "minimum_bucket": 9210,
+        "positive_log": 9140,
+        "normalized_log1p": 9136
+      }
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=2563",
+      "chars": {
+        "current": 2580,
+        "minimum_bucket": 2609,
+        "positive_log": 2608,
+        "normalized_log1p": 2612
+      }
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=2862",
+      "chars": {
+        "current": 2788,
+        "minimum_bucket": 2820,
+        "positive_log": 2816,
+        "normalized_log1p": 2828
+      }
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=3064",
+      "chars": {
+        "current": 4228,
+        "minimum_bucket": 4261,
+        "positive_log": 4257,
+        "normalized_log1p": 4270
+      }
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=3271",
+      "chars": {
+        "current": 2997,
+        "minimum_bucket": 3025,
+        "positive_log": 3030,
+        "normalized_log1p": 3034
+      }
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=3381",
+      "chars": {
+        "current": 3180,
+        "minimum_bucket": 3210,
+        "positive_log": 3225,
+        "normalized_log1p": 3228
+      }
+    },
+    {
+      "dataset": "bsa_dda",
+      "id": "spectrum=3550",
+      "chars": {
+        "current": 2237,
+        "minimum_bucket": 2265,
+        "positive_log": 2268,
+        "normalized_log1p": 2269
+      }
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "chars": {
+        "current": 2534,
+        "minimum_bucket": 2566,
+        "positive_log": 2541,
+        "normalized_log1p": 2542
+      }
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=18",
+      "chars": {
+        "current": 1241,
+        "minimum_bucket": 1276,
+        "positive_log": 1273,
+        "normalized_log1p": 1281
+      }
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=115",
+      "chars": {
+        "current": 4689,
+        "minimum_bucket": 4732,
+        "positive_log": 4662,
+        "normalized_log1p": 4668
+      }
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=227",
+      "chars": {
+        "current": 1274,
+        "minimum_bucket": 1312,
+        "positive_log": 1312,
+        "normalized_log1p": 1321
+      }
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=509",
+      "chars": {
+        "current": 1346,
+        "minimum_bucket": 1382,
+        "positive_log": 1372,
+        "normalized_log1p": 1377
+      }
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=655",
+      "chars": {
+        "current": 5809,
+        "minimum_bucket": 5842,
+        "positive_log": 5749,
+        "normalized_log1p": 5742
+      }
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=963",
+      "chars": {
+        "current": 1737,
+        "minimum_bucket": 1769,
+        "positive_log": 1752,
+        "normalized_log1p": 1764
+      }
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1115",
+      "chars": {
+        "current": 1316,
+        "minimum_bucket": 1352,
+        "positive_log": 1346,
+        "normalized_log1p": 1353
+      }
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1327",
+      "chars": {
+        "current": 5509,
+        "minimum_bucket": 5549,
+        "positive_log": 5453,
+        "normalized_log1p": 5441
+      }
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1378",
+      "chars": {
+        "current": 5300,
+        "minimum_bucket": 5337,
+        "positive_log": 5249,
+        "normalized_log1p": 5222
+      }
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1434",
+      "chars": {
+        "current": 1417,
+        "minimum_bucket": 1453,
+        "positive_log": 1449,
+        "normalized_log1p": 1457
+      }
+    },
+    {
+      "dataset": "slaw_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=1723",
+      "chars": {
+        "current": 7112,
+        "minimum_bucket": 7154,
+        "positive_log": 7038,
+        "normalized_log1p": 7020
+      }
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "index=500",
+      "chars": {
+        "current": 3306,
+        "minimum_bucket": 3340,
+        "positive_log": 3304,
+        "normalized_log1p": 3290
+      }
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=501",
+      "chars": {
+        "current": 1737,
+        "minimum_bucket": 1772,
+        "positive_log": 1788,
+        "normalized_log1p": 1793
+      }
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=502",
+      "chars": {
+        "current": 1170,
+        "minimum_bucket": 1205,
+        "positive_log": 1208,
+        "normalized_log1p": 1212
+      }
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=503",
+      "chars": {
+        "current": 3558,
+        "minimum_bucket": 3594,
+        "positive_log": 3533,
+        "normalized_log1p": 3520
+      }
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=504",
+      "chars": {
+        "current": 1512,
+        "minimum_bucket": 1542,
+        "positive_log": 1556,
+        "normalized_log1p": 1558
+      }
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=505",
+      "chars": {
+        "current": 1261,
+        "minimum_bucket": 1298,
+        "positive_log": 1290,
+        "normalized_log1p": 1300
+      }
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=506",
+      "chars": {
+        "current": 3873,
+        "minimum_bucket": 3906,
+        "positive_log": 3858,
+        "normalized_log1p": 3842
+      }
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=507",
+      "chars": {
+        "current": 1396,
+        "minimum_bucket": 1432,
+        "positive_log": 1434,
+        "normalized_log1p": 1438
+      }
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=508",
+      "chars": {
+        "current": 1274,
+        "minimum_bucket": 1308,
+        "positive_log": 1316,
+        "normalized_log1p": 1324
+      }
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=509",
+      "chars": {
+        "current": 3718,
+        "minimum_bucket": 3752,
+        "positive_log": 3697,
+        "normalized_log1p": 3673
+      }
+    },
+    {
+      "dataset": "tmt_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=510",
+      "chars": {
+        "current": 1681,
+        "minimum_bucket": 1714,
+        "positive_log": 1722,
+        "normalized_log1p": 1728
+      }
+    },
+    {
+      "dataset": "profile_ms1",
+      "id": "spectrum=1",
+      "chars": {
+        "current": 54657,
+        "minimum_bucket": 54700,
+        "positive_log": 54702,
+        "normalized_log1p": 54702
+      }
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=3",
+      "chars": {
+        "current": 1932,
+        "minimum_bucket": 1982,
+        "positive_log": 2352,
+        "normalized_log1p": 2360
+      }
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=6",
+      "chars": {
+        "current": 11609,
+        "minimum_bucket": 11841,
+        "positive_log": 17901,
+        "normalized_log1p": 17904
+      }
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=20",
+      "chars": {
+        "current": 13286,
+        "minimum_bucket": 13609,
+        "positive_log": 22958,
+        "normalized_log1p": 22990
+      }
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=23",
+      "chars": {
+        "current": 51166,
+        "minimum_bucket": 51468,
+        "positive_log": 62072,
+        "normalized_log1p": 62061
+      }
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=27",
+      "chars": {
+        "current": 14309,
+        "minimum_bucket": 14632,
+        "positive_log": 24354,
+        "normalized_log1p": 24389
+      }
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=34",
+      "chars": {
+        "current": 12560,
+        "minimum_bucket": 12838,
+        "positive_log": 21176,
+        "normalized_log1p": 21188
+      }
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=45",
+      "chars": {
+        "current": 1417,
+        "minimum_bucket": 1472,
+        "positive_log": 1993,
+        "normalized_log1p": 2005
+      }
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=58",
+      "chars": {
+        "current": 50052,
+        "minimum_bucket": 50374,
+        "positive_log": 61582,
+        "normalized_log1p": 61560
+      }
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=69",
+      "chars": {
+        "current": 11445,
+        "minimum_bucket": 11649,
+        "positive_log": 18141,
+        "normalized_log1p": 18146
+      }
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=76",
+      "chars": {
+        "current": 14236,
+        "minimum_bucket": 14582,
+        "positive_log": 25293,
+        "normalized_log1p": 25281
+      }
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=80",
+      "chars": {
+        "current": 1702,
+        "minimum_bucket": 1753,
+        "positive_log": 2216,
+        "normalized_log1p": 2228
+      }
+    },
+    {
+      "dataset": "velos_profile",
+      "id": "controllerType=0 controllerNumber=1 scan=99",
+      "chars": {
+        "current": 46398,
+        "minimum_bucket": 46772,
+        "positive_log": 59902,
+        "normalized_log1p": 59901
+      }
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=1",
+      "chars": {
+        "current": 93270,
+        "minimum_bucket": 93274,
+        "positive_log": 93177,
+        "normalized_log1p": 93036
+      }
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=2",
+      "chars": {
+        "current": 3040,
+        "minimum_bucket": 3073,
+        "positive_log": 3058,
+        "normalized_log1p": 3084
+      }
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=3",
+      "chars": {
+        "current": 3382,
+        "minimum_bucket": 3414,
+        "positive_log": 3390,
+        "normalized_log1p": 3410
+      }
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=4",
+      "chars": {
+        "current": 8921,
+        "minimum_bucket": 8950,
+        "positive_log": 8780,
+        "normalized_log1p": 8825
+      }
+    },
+    {
+      "dataset": "tims_dda",
+      "id": "index=5",
+      "chars": {
+        "current": 5888,
+        "minimum_bucket": 5930,
+        "positive_log": 5838,
+        "normalized_log1p": 5873
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=80",
+      "chars": {
+        "current": 1928,
+        "minimum_bucket": 1964,
+        "positive_log": 1941,
+        "normalized_log1p": 1945
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=213",
+      "chars": {
+        "current": 2708,
+        "minimum_bucket": 2738,
+        "positive_log": 2697,
+        "normalized_log1p": 2696
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=239",
+      "chars": {
+        "current": 1065,
+        "minimum_bucket": 1112,
+        "positive_log": 1114,
+        "normalized_log1p": 1121
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=22884",
+      "chars": {
+        "current": 13056,
+        "minimum_bucket": 13098,
+        "positive_log": 12832,
+        "normalized_log1p": 12802
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=23751",
+      "chars": {
+        "current": 14677,
+        "minimum_bucket": 14713,
+        "positive_log": 14553,
+        "normalized_log1p": 14533
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=23860",
+      "chars": {
+        "current": 5038,
+        "minimum_bucket": 5076,
+        "positive_log": 5050,
+        "normalized_log1p": 5053
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=32651",
+      "chars": {
+        "current": 11996,
+        "minimum_bucket": 12036,
+        "positive_log": 11792,
+        "normalized_log1p": 11772
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=32780",
+      "chars": {
+        "current": 3872,
+        "minimum_bucket": 3908,
+        "positive_log": 3902,
+        "normalized_log1p": 3905
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=45248",
+      "chars": {
+        "current": 13742,
+        "minimum_bucket": 13784,
+        "positive_log": 13564,
+        "normalized_log1p": 13522
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=45554",
+      "chars": {
+        "current": 14101,
+        "minimum_bucket": 14144,
+        "positive_log": 13925,
+        "normalized_log1p": 13894
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=45695",
+      "chars": {
+        "current": 5868,
+        "minimum_bucket": 5904,
+        "positive_log": 5862,
+        "normalized_log1p": 5848
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=60446",
+      "chars": {
+        "current": 14104,
+        "minimum_bucket": 14153,
+        "positive_log": 13926,
+        "normalized_log1p": 13888
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=60559",
+      "chars": {
+        "current": 6813,
+        "minimum_bucket": 6849,
+        "positive_log": 6758,
+        "normalized_log1p": 6776
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=67076",
+      "chars": {
+        "current": 14418,
+        "minimum_bucket": 14454,
+        "positive_log": 14256,
+        "normalized_log1p": 14212
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=71972",
+      "chars": {
+        "current": 12740,
+        "minimum_bucket": 12784,
+        "positive_log": 12596,
+        "normalized_log1p": 12568
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=72096",
+      "chars": {
+        "current": 19272,
+        "minimum_bucket": 19300,
+        "positive_log": 18976,
+        "normalized_log1p": 19036
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=86609",
+      "chars": {
+        "current": 11810,
+        "minimum_bucket": 11856,
+        "positive_log": 11634,
+        "normalized_log1p": 11630
+      }
+    },
+    {
+      "dataset": "astral_dda",
+      "id": "controllerType=0 controllerNumber=1 scan=89755",
+      "chars": {
+        "current": 24148,
+        "minimum_bucket": 24185,
+        "positive_log": 24094,
+        "normalized_log1p": 24053
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=1882",
+      "chars": {
+        "current": 3376,
+        "minimum_bucket": 3408,
+        "positive_log": 3364,
+        "normalized_log1p": 3346
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=4556",
+      "chars": {
+        "current": 3560,
+        "minimum_bucket": 3596,
+        "positive_log": 3536,
+        "normalized_log1p": 3524
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=4674",
+      "chars": {
+        "current": 1106,
+        "minimum_bucket": 1141,
+        "positive_log": 1146,
+        "normalized_log1p": 1153
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=16636",
+      "chars": {
+        "current": 4968,
+        "minimum_bucket": 5004,
+        "positive_log": 4902,
+        "normalized_log1p": 4892
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=16705",
+      "chars": {
+        "current": 1640,
+        "minimum_bucket": 1672,
+        "positive_log": 1662,
+        "normalized_log1p": 1676
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=21625",
+      "chars": {
+        "current": 19269,
+        "minimum_bucket": 19317,
+        "positive_log": 19074,
+        "normalized_log1p": 18957
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=30547",
+      "chars": {
+        "current": 17320,
+        "minimum_bucket": 17366,
+        "positive_log": 17176,
+        "normalized_log1p": 17130
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=39752",
+      "chars": {
+        "current": 19470,
+        "minimum_bucket": 19509,
+        "positive_log": 19318,
+        "normalized_log1p": 19245
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=39777",
+      "chars": {
+        "current": 8250,
+        "minimum_bucket": 8288,
+        "positive_log": 8166,
+        "normalized_log1p": 8156
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=52846",
+      "chars": {
+        "current": 18857,
+        "minimum_bucket": 18906,
+        "positive_log": 18669,
+        "normalized_log1p": 18574
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=62809",
+      "chars": {
+        "current": 19294,
+        "minimum_bucket": 19326,
+        "positive_log": 19174,
+        "normalized_log1p": 19096
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=62839",
+      "chars": {
+        "current": 5868,
+        "minimum_bucket": 5902,
+        "positive_log": 5841,
+        "normalized_log1p": 5829
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=74714",
+      "chars": {
+        "current": 19693,
+        "minimum_bucket": 19738,
+        "positive_log": 19414,
+        "normalized_log1p": 19318
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=74788",
+      "chars": {
+        "current": 28640,
+        "minimum_bucket": 28670,
+        "positive_log": 28578,
+        "normalized_log1p": 28424
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=80642",
+      "chars": {
+        "current": 20540,
+        "minimum_bucket": 20582,
+        "positive_log": 20245,
+        "normalized_log1p": 20104
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=80748",
+      "chars": {
+        "current": 2917,
+        "minimum_bucket": 2950,
+        "positive_log": 2940,
+        "normalized_log1p": 2932
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=83466",
+      "chars": {
+        "current": 24452,
+        "minimum_bucket": 24492,
+        "positive_log": 24137,
+        "normalized_log1p": 24016
+      }
+    },
+    {
+      "dataset": "astral_dia",
+      "id": "controllerType=0 controllerNumber=1 scan=86799",
+      "chars": {
+        "current": 8336,
+        "minimum_bucket": 8374,
+        "positive_log": 8225,
+        "normalized_log1p": 8184
+      }
+    },
+    {
+      "dataset": "prm",
+      "id": "controllerType=0 controllerNumber=1 scan=15",
+      "chars": {
+        "current": 1070,
+        "minimum_bucket": 1104,
+        "positive_log": 1106,
+        "normalized_log1p": 1109
+      }
+    },
+    {
+      "dataset": "prm",
+      "id": "controllerType=0 controllerNumber=1 scan=357",
+      "chars": {
+        "current": 1602,
+        "minimum_bucket": 1633,
+        "positive_log": 1634,
+        "normalized_log1p": 1634
+      }
+    },
+    {
+      "dataset": "prm",
+      "id": "controllerType=0 controllerNumber=1 scan=1215",
+      "chars": {
+        "current": 1236,
+        "minimum_bucket": 1272,
+        "positive_log": 1264,
+        "normalized_log1p": 1269
+      }
+    },
+    {
+      "dataset": "srm",
+      "id": "scan=1246",
+      "chars": {
+        "current": 877,
+        "minimum_bucket": 912,
+        "positive_log": 910,
+        "normalized_log1p": 917
+      }
+    },
+    {
+      "dataset": "srm",
+      "id": "scan=1252",
+      "chars": {
+        "current": 878,
+        "minimum_bucket": 913,
+        "positive_log": 910,
+        "normalized_log1p": 918
+      }
+    },
+    {
+      "dataset": "srm",
+      "id": "scan=1261",
+      "chars": {
+        "current": 874,
+        "minimum_bucket": 908,
+        "positive_log": 902,
+        "normalized_log1p": 913
+      }
+    },
+    {
+      "dataset": "mrm",
+      "id": "merged=0 frame=1 scanStart=1 scanEnd=274",
+      "chars": {
+        "current": 1900,
+        "minimum_bucket": 1930,
+        "positive_log": 1929,
+        "normalized_log1p": 1937
+      }
+    },
+    {
+      "dataset": "mrm",
+      "id": "merged=1 frame=2 scanStart=1 scanEnd=274",
+      "chars": {
+        "current": 19102,
+        "minimum_bucket": 19160,
+        "positive_log": 19121,
+        "normalized_log1p": 19096
+      }
+    },
+    {
+      "dataset": "negative_rna",
+      "id": "controllerType=0 controllerNumber=1 scan=726",
+      "chars": {
+        "current": 32273,
+        "minimum_bucket": 32293,
+        "positive_log": 31860,
+        "normalized_log1p": 31628
+      }
+    },
+    {
+      "dataset": "negative_rna",
+      "id": "controllerType=0 controllerNumber=1 scan=727",
+      "chars": {
+        "current": 8904,
+        "minimum_bucket": 8932,
+        "positive_log": 8874,
+        "normalized_log1p": 8837
+      }
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=2",
+      "chars": {
+        "current": 38918,
+        "minimum_bucket": 38881,
+        "positive_log": 39082,
+        "normalized_log1p": 38428
+      }
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=4",
+      "chars": {
+        "current": 41117,
+        "minimum_bucket": 41068,
+        "positive_log": 41266,
+        "normalized_log1p": 40557
+      }
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=9",
+      "chars": {
+        "current": 43340,
+        "minimum_bucket": 43254,
+        "positive_log": 43494,
+        "normalized_log1p": 42742
+      }
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=11",
+      "chars": {
+        "current": 4186,
+        "minimum_bucket": 4217,
+        "positive_log": 4220,
+        "normalized_log1p": 4228
+      }
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=25",
+      "chars": {
+        "current": 4200,
+        "minimum_bucket": 4228,
+        "positive_log": 4226,
+        "normalized_log1p": 4240
+      }
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=26",
+      "chars": {
+        "current": 40988,
+        "minimum_bucket": 40898,
+        "positive_log": 41133,
+        "normalized_log1p": 40454
+      }
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=27",
+      "chars": {
+        "current": 3738,
+        "minimum_bucket": 3770,
+        "positive_log": 3770,
+        "normalized_log1p": 3781
+      }
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=30",
+      "chars": {
+        "current": 41465,
+        "minimum_bucket": 41450,
+        "positive_log": 41624,
+        "normalized_log1p": 40945
+      }
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=39",
+      "chars": {
+        "current": 4462,
+        "minimum_bucket": 4496,
+        "positive_log": 4496,
+        "normalized_log1p": 4509
+      }
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=45",
+      "chars": {
+        "current": 4058,
+        "minimum_bucket": 4090,
+        "positive_log": 4093,
+        "normalized_log1p": 4101
+      }
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=49",
+      "chars": {
+        "current": 4578,
+        "minimum_bucket": 4610,
+        "positive_log": 4624,
+        "normalized_log1p": 4626
+      }
+    },
+    {
+      "dataset": "negative_tims",
+      "id": "frame=50",
+      "chars": {
+        "current": 40024,
+        "minimum_bucket": 40017,
+        "positive_log": 40176,
+        "normalized_log1p": 39552
+      }
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=1 experiment=1",
+      "chars": {
+        "current": 2812,
+        "minimum_bucket": 2836,
+        "positive_log": 2818,
+        "normalized_log1p": 2825
+      }
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=2 experiment=1",
+      "chars": {
+        "current": 5036,
+        "minimum_bucket": 5068,
+        "positive_log": 5050,
+        "normalized_log1p": 5049
+      }
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=2 experiment=3",
+      "chars": {
+        "current": 4173,
+        "minimum_bucket": 4208,
+        "positive_log": 4214,
+        "normalized_log1p": 4217
+      }
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=3 experiment=1",
+      "chars": {
+        "current": 4214,
+        "minimum_bucket": 4253,
+        "positive_log": 4242,
+        "normalized_log1p": 4240
+      }
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=5 experiment=6",
+      "chars": {
+        "current": 2124,
+        "minimum_bucket": 2169,
+        "positive_log": 2146,
+        "normalized_log1p": 2170
+      }
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=5 experiment=9",
+      "chars": {
+        "current": 1798,
+        "minimum_bucket": 1828,
+        "positive_log": 1826,
+        "normalized_log1p": 1836
+      }
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=6 experiment=10",
+      "chars": {
+        "current": 1601,
+        "minimum_bucket": 1629,
+        "positive_log": 1629,
+        "normalized_log1p": 1641
+      }
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=9 experiment=1",
+      "chars": {
+        "current": 4741,
+        "minimum_bucket": 4784,
+        "positive_log": 4784,
+        "normalized_log1p": 4749
+      }
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=11 experiment=1",
+      "chars": {
+        "current": 4405,
+        "minimum_bucket": 4441,
+        "positive_log": 4412,
+        "normalized_log1p": 4417
+      }
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=11 experiment=11",
+      "chars": {
+        "current": 14582,
+        "minimum_bucket": 14626,
+        "positive_log": 14570,
+        "normalized_log1p": 14582
+      }
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=13 experiment=1",
+      "chars": {
+        "current": 4108,
+        "minimum_bucket": 4150,
+        "positive_log": 4118,
+        "normalized_log1p": 4121
+      }
+    },
+    {
+      "dataset": "swath",
+      "id": "sample=1 period=1 cycle=14 experiment=12",
+      "chars": {
+        "current": 2544,
+        "minimum_bucket": 2577,
+        "positive_log": 2580,
+        "normalized_log1p": 2573
+      }
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=3 process=0 scan=1",
+      "chars": {
+        "current": 25453,
+        "minimum_bucket": 25438,
+        "positive_log": 25442,
+        "normalized_log1p": 25497
+      }
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=1 process=0 scan=1",
+      "chars": {
+        "current": 411402,
+        "minimum_bucket": 411441,
+        "positive_log": 411696,
+        "normalized_log1p": 411433
+      }
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=2 process=0 scan=1",
+      "chars": {
+        "current": 49370,
+        "minimum_bucket": 49289,
+        "positive_log": 49272,
+        "normalized_log1p": 49410
+      }
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=2 process=0 scan=2",
+      "chars": {
+        "current": 23958,
+        "minimum_bucket": 23961,
+        "positive_log": 23917,
+        "normalized_log1p": 24002
+      }
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=3 process=0 scan=2",
+      "chars": {
+        "current": 302592,
+        "minimum_bucket": 302040,
+        "positive_log": 301873,
+        "normalized_log1p": 302610
+      }
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=2 process=0 scan=3",
+      "chars": {
+        "current": 17509,
+        "minimum_bucket": 17512,
+        "positive_log": 17524,
+        "normalized_log1p": 17553
+      }
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=2 process=0 scan=4",
+      "chars": {
+        "current": 14828,
+        "minimum_bucket": 14846,
+        "positive_log": 14844,
+        "normalized_log1p": 14870
+      }
+    },
+    {
+      "dataset": "waters_profile",
+      "id": "function=2 process=0 scan=5",
+      "chars": {
+        "current": 11906,
+        "minimum_bucket": 11922,
+        "positive_log": 11928,
+        "normalized_log1p": 11949
+      }
+    },
+    {
+      "dataset": "mse_profile",
+      "id": "function=3 process=0 scan=1",
+      "chars": {
+        "current": 207185,
+        "minimum_bucket": 206836,
+        "positive_log": 206840,
+        "normalized_log1p": 207232
+      }
+    },
+    {
+      "dataset": "mse_profile",
+      "id": "function=1 process=0 scan=1",
+      "chars": {
+        "current": 281782,
+        "minimum_bucket": 281173,
+        "positive_log": 281108,
+        "normalized_log1p": 281833
+      }
+    },
+    {
+      "dataset": "mse_profile",
+      "id": "function=2 process=0 scan=1",
+      "chars": {
+        "current": 233688,
+        "minimum_bucket": 233262,
+        "positive_log": 233093,
+        "normalized_log1p": 233736
+      }
+    },
+    {
+      "dataset": "etd",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "chars": {
+        "current": 2194,
+        "minimum_bucket": 2229,
+        "positive_log": 2230,
+        "normalized_log1p": 2228
+      }
+    },
+    {
+      "dataset": "ethcd",
+      "id": "controllerType=0 controllerNumber=1 scan=6",
+      "chars": {
+        "current": 3853,
+        "minimum_bucket": 3881,
+        "positive_log": 3885,
+        "normalized_log1p": 3880
+      }
+    },
+    {
+      "dataset": "uvpd_positive",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "chars": {
+        "current": 23272,
+        "minimum_bucket": 24118,
+        "positive_log": 64542,
+        "normalized_log1p": 64565
+      }
+    },
+    {
+      "dataset": "uvpd_negative",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "chars": {
+        "current": 11576,
+        "minimum_bucket": 11754,
+        "positive_log": 15580,
+        "normalized_log1p": 15604
+      }
+    },
+    {
+      "dataset": "uvpd_orbitrap",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "chars": {
+        "current": 130617,
+        "minimum_bucket": 130693,
+        "positive_log": 130777,
+        "normalized_log1p": 129702
+      }
+    },
+    {
+      "dataset": "native_protein",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "chars": {
+        "current": 87414,
+        "minimum_bucket": 87449,
+        "positive_log": 88716,
+        "normalized_log1p": 88730
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=603",
+      "chars": {
+        "current": 4204,
+        "minimum_bucket": 4237,
+        "positive_log": 4201,
+        "normalized_log1p": 4174
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=1641",
+      "chars": {
+        "current": 3852,
+        "minimum_bucket": 3885,
+        "positive_log": 3860,
+        "normalized_log1p": 3846
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=3481",
+      "chars": {
+        "current": 4817,
+        "minimum_bucket": 4853,
+        "positive_log": 4781,
+        "normalized_log1p": 4770
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=3502",
+      "chars": {
+        "current": 1073,
+        "minimum_bucket": 1108,
+        "positive_log": 1110,
+        "normalized_log1p": 1114
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=3902",
+      "chars": {
+        "current": 4705,
+        "minimum_bucket": 4738,
+        "positive_log": 4654,
+        "normalized_log1p": 4662
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=8264",
+      "chars": {
+        "current": 7893,
+        "minimum_bucket": 7937,
+        "positive_log": 7768,
+        "normalized_log1p": 7778
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=8294",
+      "chars": {
+        "current": 1753,
+        "minimum_bucket": 1784,
+        "positive_log": 1778,
+        "normalized_log1p": 1784
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=9650",
+      "chars": {
+        "current": 6810,
+        "minimum_bucket": 6846,
+        "positive_log": 6689,
+        "normalized_log1p": 6694
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=9685",
+      "chars": {
+        "current": 1521,
+        "minimum_bucket": 1550,
+        "positive_log": 1538,
+        "normalized_log1p": 1552
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=19798",
+      "chars": {
+        "current": 7186,
+        "minimum_bucket": 7220,
+        "positive_log": 7010,
+        "normalized_log1p": 7009
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=19821",
+      "chars": {
+        "current": 2204,
+        "minimum_bucket": 2240,
+        "positive_log": 2234,
+        "normalized_log1p": 2230
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=22073",
+      "chars": {
+        "current": 8664,
+        "minimum_bucket": 8708,
+        "positive_log": 8508,
+        "normalized_log1p": 8506
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=22098",
+      "chars": {
+        "current": 1912,
+        "minimum_bucket": 1945,
+        "positive_log": 1937,
+        "normalized_log1p": 1940
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=25516",
+      "chars": {
+        "current": 6981,
+        "minimum_bucket": 7013,
+        "positive_log": 6834,
+        "normalized_log1p": 6821
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=29723",
+      "chars": {
+        "current": 9661,
+        "minimum_bucket": 9701,
+        "positive_log": 9516,
+        "normalized_log1p": 9518
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=29747",
+      "chars": {
+        "current": 5686,
+        "minimum_bucket": 5725,
+        "positive_log": 5609,
+        "normalized_log1p": 5621
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=43794",
+      "chars": {
+        "current": 1144,
+        "minimum_bucket": 1180,
+        "positive_log": 1178,
+        "normalized_log1p": 1182
+      }
+    },
+    {
+      "dataset": "ecd",
+      "id": "controllerType=0 controllerNumber=1 scan=44704",
+      "chars": {
+        "current": 11598,
+        "minimum_bucket": 11638,
+        "positive_log": 11478,
+        "normalized_log1p": 11482
+      }
+    },
+    {
+      "dataset": "uvpd_mlac",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "chars": {
+        "current": 25624,
+        "minimum_bucket": 26313,
+        "positive_log": 61948,
+        "normalized_log1p": 61992
+      }
+    },
+    {
+      "dataset": "native_aqpz_cdl",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "chars": {
+        "current": 139780,
+        "minimum_bucket": 139810,
+        "positive_log": 141293,
+        "normalized_log1p": 141314
+      }
+    },
+    {
+      "dataset": "native_aqpz_dopg",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "chars": {
+        "current": 138457,
+        "minimum_bucket": 138532,
+        "positive_log": 139606,
+        "normalized_log1p": 139614
+      }
+    },
+    {
+      "dataset": "uvpd_dope",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "chars": {
+        "current": 3945,
+        "minimum_bucket": 3978,
+        "positive_log": 3973,
+        "normalized_log1p": 3992
+      }
+    },
+    {
+      "dataset": "uvpd_dopg",
+      "id": "controllerType=0 controllerNumber=1 scan=1",
+      "chars": {
+        "current": 2453,
+        "minimum_bucket": 2492,
+        "positive_log": 2496,
+        "normalized_log1p": 2497
+      }
+    },
+    {
+      "dataset": "mse_mix",
+      "id": "scan=1",
+      "chars": {
+        "current": 344488,
+        "minimum_bucket": 344944,
+        "positive_log": 335762,
+        "normalized_log1p": 344542
+      }
+    },
+    {
+      "dataset": "mse_mix",
+      "id": "scan=2",
+      "chars": {
+        "current": 203452,
+        "minimum_bucket": 203686,
+        "positive_log": 199053,
+        "normalized_log1p": 203505
+      }
+    },
+    {
+      "dataset": "mse_clpb",
+      "id": "scan=1",
+      "chars": {
+        "current": 75728,
+        "minimum_bucket": 75738,
+        "positive_log": 74684,
+        "normalized_log1p": 75788
+      }
+    },
+    {
+      "dataset": "mse_clpb",
+      "id": "scan=2",
+      "chars": {
+        "current": 47684,
+        "minimum_bucket": 47701,
+        "positive_log": 47066,
+        "normalized_log1p": 47730
+      }
+    },
+    {
+      "dataset": "hela_pasef_ms1",
+      "id": "merged=14 frame=6 scanStart=1 scanEnd=100",
+      "chars": {
+        "current": 10297,
+        "minimum_bucket": 10356,
+        "positive_log": 10281,
+        "normalized_log1p": 10288
+      }
+    },
+    {
+      "dataset": "waters_hddda_ms1",
+      "id": "merged=1 function=1 block=1",
+      "chars": {
+        "current": 26652,
+        "minimum_bucket": 26674,
+        "positive_log": 26597,
+        "normalized_log1p": 26472
+      }
+    },
+    {
+      "dataset": "ethcd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=7333",
+      "chars": {
+        "current": 7145,
+        "minimum_bucket": 7181,
+        "positive_log": 6980,
+        "normalized_log1p": 6924
+      }
+    },
+    {
+      "dataset": "ethcd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=7335",
+      "chars": {
+        "current": 1074,
+        "minimum_bucket": 1117,
+        "positive_log": 1105,
+        "normalized_log1p": 1121
+      }
+    },
+    {
+      "dataset": "ethcd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=36993",
+      "chars": {
+        "current": 15653,
+        "minimum_bucket": 15688,
+        "positive_log": 15562,
+        "normalized_log1p": 15421
+      }
+    },
+    {
+      "dataset": "ethcd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=37017",
+      "chars": {
+        "current": 5834,
+        "minimum_bucket": 5870,
+        "positive_log": 5824,
+        "normalized_log1p": 5822
+      }
+    },
+    {
+      "dataset": "etd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=17558",
+      "chars": {
+        "current": 11661,
+        "minimum_bucket": 11712,
+        "positive_log": 11504,
+        "normalized_log1p": 11448
+      }
+    },
+    {
+      "dataset": "etd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=17573",
+      "chars": {
+        "current": 4548,
+        "minimum_bucket": 4578,
+        "positive_log": 4574,
+        "normalized_log1p": 4564
+      }
+    },
+    {
+      "dataset": "etd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=35190",
+      "chars": {
+        "current": 17565,
+        "minimum_bucket": 17609,
+        "positive_log": 17493,
+        "normalized_log1p": 17340
+      }
+    },
+    {
+      "dataset": "etd_ck",
+      "id": "controllerType=0 controllerNumber=1 scan=35208",
+      "chars": {
+        "current": 1124,
+        "minimum_bucket": 1154,
+        "positive_log": 1157,
+        "normalized_log1p": 1168
+      }
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=344",
+      "chars": {
+        "current": 11814,
+        "minimum_bucket": 11857,
+        "positive_log": 11688,
+        "normalized_log1p": 11602
+      }
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=345",
+      "chars": {
+        "current": 3013,
+        "minimum_bucket": 3046,
+        "positive_log": 3009,
+        "normalized_log1p": 3010
+      }
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=417",
+      "chars": {
+        "current": 7073,
+        "minimum_bucket": 7108,
+        "positive_log": 6964,
+        "normalized_log1p": 6914
+      }
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=418",
+      "chars": {
+        "current": 2328,
+        "minimum_bucket": 2357,
+        "positive_log": 2354,
+        "normalized_log1p": 2353
+      }
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=609",
+      "chars": {
+        "current": 7730,
+        "minimum_bucket": 7768,
+        "positive_log": 7598,
+        "normalized_log1p": 7554
+      }
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=610",
+      "chars": {
+        "current": 7470,
+        "minimum_bucket": 7512,
+        "positive_log": 7410,
+        "normalized_log1p": 7386
+      }
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=707",
+      "chars": {
+        "current": 2916,
+        "minimum_bucket": 2949,
+        "positive_log": 2908,
+        "normalized_log1p": 2890
+      }
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=708",
+      "chars": {
+        "current": 3276,
+        "minimum_bucket": 3306,
+        "positive_log": 3296,
+        "normalized_log1p": 3298
+      }
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=791",
+      "chars": {
+        "current": 28393,
+        "minimum_bucket": 28429,
+        "positive_log": 28325,
+        "normalized_log1p": 28078
+      }
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=792",
+      "chars": {
+        "current": 3696,
+        "minimum_bucket": 3728,
+        "positive_log": 3710,
+        "normalized_log1p": 3700
+      }
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=1487",
+      "chars": {
+        "current": 15284,
+        "minimum_bucket": 15328,
+        "positive_log": 15086,
+        "normalized_log1p": 14933
+      }
+    },
+    {
+      "dataset": "topdown_st_1",
+      "id": "controllerType=0 controllerNumber=1 scan=1488",
+      "chars": {
+        "current": 4280,
+        "minimum_bucket": 4309,
+        "positive_log": 4272,
+        "normalized_log1p": 4286
+      }
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=324",
+      "chars": {
+        "current": 2681,
+        "minimum_bucket": 2716,
+        "positive_log": 2674,
+        "normalized_log1p": 2674
+      }
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=325",
+      "chars": {
+        "current": 2362,
+        "minimum_bucket": 2392,
+        "positive_log": 2358,
+        "normalized_log1p": 2384
+      }
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=562",
+      "chars": {
+        "current": 31317,
+        "minimum_bucket": 31368,
+        "positive_log": 31381,
+        "normalized_log1p": 30989
+      }
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=563",
+      "chars": {
+        "current": 5761,
+        "minimum_bucket": 5796,
+        "positive_log": 5752,
+        "normalized_log1p": 5744
+      }
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=894",
+      "chars": {
+        "current": 10294,
+        "minimum_bucket": 10340,
+        "positive_log": 10133,
+        "normalized_log1p": 10049
+      }
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=895",
+      "chars": {
+        "current": 2852,
+        "minimum_bucket": 2885,
+        "positive_log": 2885,
+        "normalized_log1p": 2889
+      }
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=1594",
+      "chars": {
+        "current": 17125,
+        "minimum_bucket": 17160,
+        "positive_log": 16936,
+        "normalized_log1p": 16734
+      }
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=1595",
+      "chars": {
+        "current": 4362,
+        "minimum_bucket": 4394,
+        "positive_log": 4305,
+        "normalized_log1p": 4313
+      }
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=1710",
+      "chars": {
+        "current": 15541,
+        "minimum_bucket": 15580,
+        "positive_log": 15352,
+        "normalized_log1p": 15181
+      }
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=1711",
+      "chars": {
+        "current": 3729,
+        "minimum_bucket": 3764,
+        "positive_log": 3700,
+        "normalized_log1p": 3710
+      }
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=2064",
+      "chars": {
+        "current": 17148,
+        "minimum_bucket": 17181,
+        "positive_log": 16990,
+        "normalized_log1p": 16796
+      }
+    },
+    {
+      "dataset": "topdown_st_2",
+      "id": "controllerType=0 controllerNumber=1 scan=2065",
+      "chars": {
+        "current": 3234,
+        "minimum_bucket": 3260,
+        "positive_log": 3269,
+        "normalized_log1p": 3272
+      }
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=754",
+      "chars": {
+        "current": 24480,
+        "minimum_bucket": 24494,
+        "positive_log": 24561,
+        "normalized_log1p": 24560
+      }
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=755",
+      "chars": {
+        "current": 24869,
+        "minimum_bucket": 24878,
+        "positive_log": 24985,
+        "normalized_log1p": 24970
+      }
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=760",
+      "chars": {
+        "current": 22517,
+        "minimum_bucket": 22552,
+        "positive_log": 22533,
+        "normalized_log1p": 22548
+      }
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=763",
+      "chars": {
+        "current": 19006,
+        "minimum_bucket": 19033,
+        "positive_log": 19080,
+        "normalized_log1p": 19036
+      }
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=767",
+      "chars": {
+        "current": 16404,
+        "minimum_bucket": 16425,
+        "positive_log": 16441,
+        "normalized_log1p": 16434
+      }
+    },
+    {
+      "dataset": "gc_ei",
+      "id": "scanId=773",
+      "chars": {
+        "current": 19426,
+        "minimum_bucket": 19453,
+        "positive_log": 19462,
+        "normalized_log1p": 19424
+      }
+    },
+    {
+      "dataset": "maldi_ms2",
+      "id": "scan=1",
+      "chars": {
+        "current": 15597,
+        "minimum_bucket": 15624,
+        "positive_log": 15277,
+        "normalized_log1p": 15169
+      }
+    },
+    {
+      "dataset": "maldi_ms2",
+      "id": "scan=2",
+      "chars": {
+        "current": 15693,
+        "minimum_bucket": 15728,
+        "positive_log": 15365,
+        "normalized_log1p": 15277
+      }
+    },
+    {
+      "dataset": "glycopeptide",
+      "id": "controllerType=0 controllerNumber=1 scan=147",
+      "chars": {
+        "current": 3030,
+        "minimum_bucket": 3069,
+        "positive_log": 2993,
+        "normalized_log1p": 2980
+      }
+    },
+    {
+      "dataset": "glycopeptide",
+      "id": "controllerType=0 controllerNumber=1 scan=161",
+      "chars": {
+        "current": 2125,
+        "minimum_bucket": 2156,
+        "positive_log": 2129,
+        "normalized_log1p": 2129
+      }
+    },
+    {
+      "dataset": "topdown_etd",
+      "id": "controllerType=0 controllerNumber=1 scan=2382",
+      "chars": {
+        "current": 2382,
+        "minimum_bucket": 2417,
+        "positive_log": 2414,
+        "normalized_log1p": 2418
+      }
+    },
+    {
+      "dataset": "topdown_etd",
+      "id": "controllerType=0 controllerNumber=1 scan=2385",
+      "chars": {
+        "current": 28629,
+        "minimum_bucket": 28658,
+        "positive_log": 28684,
+        "normalized_log1p": 28484
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=21945",
+      "chars": {
+        "current": 23288,
+        "minimum_bucket": 23330,
+        "positive_log": 22965,
+        "normalized_log1p": 22946
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=21947",
+      "chars": {
+        "current": 4637,
+        "minimum_bucket": 4672,
+        "positive_log": 4642,
+        "normalized_log1p": 4648
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=21951",
+      "chars": {
+        "current": 2077,
+        "minimum_bucket": 2110,
+        "positive_log": 2100,
+        "normalized_log1p": 2117
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22324",
+      "chars": {
+        "current": 17866,
+        "minimum_bucket": 17892,
+        "positive_log": 17550,
+        "normalized_log1p": 17505
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22325",
+      "chars": {
+        "current": 2816,
+        "minimum_bucket": 2840,
+        "positive_log": 2865,
+        "normalized_log1p": 2857
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22329",
+      "chars": {
+        "current": 1845,
+        "minimum_bucket": 1878,
+        "positive_log": 1892,
+        "normalized_log1p": 1908
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22477",
+      "chars": {
+        "current": 17584,
+        "minimum_bucket": 17618,
+        "positive_log": 17309,
+        "normalized_log1p": 17350
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22490",
+      "chars": {
+        "current": 4517,
+        "minimum_bucket": 4552,
+        "positive_log": 4550,
+        "normalized_log1p": 4553
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22498",
+      "chars": {
+        "current": 4590,
+        "minimum_bucket": 4622,
+        "positive_log": 4658,
+        "normalized_log1p": 4661
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22601",
+      "chars": {
+        "current": 26157,
+        "minimum_bucket": 26189,
+        "positive_log": 25869,
+        "normalized_log1p": 25889
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22613",
+      "chars": {
+        "current": 6578,
+        "minimum_bucket": 6616,
+        "positive_log": 6558,
+        "normalized_log1p": 6562
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22624",
+      "chars": {
+        "current": 2528,
+        "minimum_bucket": 2564,
+        "positive_log": 2564,
+        "normalized_log1p": 2572
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22774",
+      "chars": {
+        "current": 15310,
+        "minimum_bucket": 15330,
+        "positive_log": 15014,
+        "normalized_log1p": 15022
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22779",
+      "chars": {
+        "current": 4041,
+        "minimum_bucket": 4072,
+        "positive_log": 4046,
+        "normalized_log1p": 4045
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22789",
+      "chars": {
+        "current": 2296,
+        "minimum_bucket": 2329,
+        "positive_log": 2322,
+        "normalized_log1p": 2337
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22883",
+      "chars": {
+        "current": 11697,
+        "minimum_bucket": 11725,
+        "positive_log": 11444,
+        "normalized_log1p": 11477
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22899",
+      "chars": {
+        "current": 1494,
+        "minimum_bucket": 1526,
+        "positive_log": 1520,
+        "normalized_log1p": 1537
+      }
+    },
+    {
+      "dataset": "tmt11_ms3",
+      "id": "controllerType=0 controllerNumber=1 scan=22911",
+      "chars": {
+        "current": 1326,
+        "minimum_bucket": 1360,
+        "positive_log": 1369,
+        "normalized_log1p": 1377
+      }
+    },
+    {
+      "dataset": "hela_pasef_ms2",
+      "id": "merged=0 frame=1 scanStart=230 scanEnd=254",
+      "chars": {
+        "current": 2278,
+        "minimum_bucket": 2314,
+        "positive_log": 2325,
+        "normalized_log1p": 2321
+      }
+    },
+    {
+      "dataset": "hela_pasef_ms2",
+      "id": "merged=2 frame=2 scanStart=211 scanEnd=235",
+      "chars": {
+        "current": 1337,
+        "minimum_bucket": 1368,
+        "positive_log": 1369,
+        "normalized_log1p": 1376
+      }
+    },
+    {
+      "dataset": "hela_pasef_ms2",
+      "id": "merged=6 frame=3 scanStart=252 scanEnd=276",
+      "chars": {
+        "current": 1268,
+        "minimum_bucket": 1297,
+        "positive_log": 1296,
+        "normalized_log1p": 1301
+      }
+    },
+    {
+      "dataset": "hela_pasef_ms2",
+      "id": "merged=7 frame=3 scanStart=298 scanEnd=322",
+      "chars": {
+        "current": 1876,
+        "minimum_bucket": 1908,
+        "positive_log": 1914,
+        "normalized_log1p": 1918
+      }
+    },
+    {
+      "dataset": "hela_pasef_ms2",
+      "id": "merged=9 frame=4 scanStart=252 scanEnd=276",
+      "chars": {
+        "current": 1376,
+        "minimum_bucket": 1408,
+        "positive_log": 1410,
+        "normalized_log1p": 1416
+      }
+    },
+    {
+      "dataset": "hela_pasef_ms2",
+      "id": "merged=13 frame=5 scanStart=298 scanEnd=322",
+      "chars": {
+        "current": 1742,
+        "minimum_bucket": 1772,
+        "positive_log": 1780,
+        "normalized_log1p": 1784
+      }
+    }
+  ],
+  "source_hashes": {
+    "bsa_dda": "dc9ed61d595328d4ef2f1de47d21f41b83e2eae7c9145e1d9b88e910c8cec2f7",
+    "slaw_dda": "aca0d8db27984d3592f68dd609fc9104c839411e27702a2ff92a28cc4f48b47b",
+    "tmt_ms3": "7ed6cff515a4e35db5fd470a2bec4ec7d21f557e4c6b4f2e904f16bf98cbcc39",
+    "profile_ms1": "62f63c0d93f3bb9c6203737f30b74c1080b9ad6e521cba82fe49a48f3fbc5640",
+    "velos_profile": "e2575d0d70a2f519c207ad64cccde24a5b6587cacf4bbe1610d2227004261861",
+    "tims_dda": "5dcd3b41b90bdf16c9d43a95464b28811ba3cc8b7b9321183cfbb68d6931bf47",
+    "astral_dda": "5dca5e6c5abe7b49565cbb3c91acf80cab5ce84c03b788df4a261fd24beb6ed6",
+    "astral_dia": "0cce29c37954d0c9eb8c9a7e929dcddfde439adeb4dbdac48b1f8e3a4495ce28",
+    "prm": "6e5122d8acd9738cdec60319fb2826fb956d47a13d14d1ef3972423c5d697007",
+    "srm": "9e4815d20cf769f370bd710ad97bdfb5280495966f0f7789835b4bd28cbcb692",
+    "mrm": "d7de039dd5f68e7a64be922d1d0fa196bd73f8b3eee232135abc97340c39c73f",
+    "negative_rna": "4ec63931c46b9ea010f7d7e53dff3b6ed207e59ec7035a6545c7abf056957c86",
+    "negative_tims": "ca297f1430fbc5bf7d3a186e96aab055c9f492809a855ea2a9a38fd1f4c82d22",
+    "swath": "f93d773ca0570d602100c928438fc0c9c610d297bc292ee12c6d4173393dd611",
+    "waters_profile": "397bfd3cd63a093e55eef791119a47ddff200becb59f7cd9a5256f608e2b2103",
+    "mse_profile": "fd9506808bf4c10a8480f754153305977175a710a40554c20ca0be9149c28bf3",
+    "etd": "031805a5e837f407b84162b1576202e01d7855d6375a677a294ae90ea15f829f",
+    "ethcd": "28f9fb0747baccf42a4d33f319df61a03caa337d20a0660f52454186c46cb2d2",
+    "uvpd_positive": "5242c516b62c846bf99842d778674071d7d0fd2c875a5d845e3c9b31a6a6dbb9",
+    "uvpd_negative": "2abbbb14359af19f614b38337022ed95c837b30b97d77c4cae662f0ad51a0413",
+    "uvpd_orbitrap": "545de3cbc3f95c2ceb0e6d17bfefee33377e92e724ac4c73ae8d73d36decdc32",
+    "native_protein": "3a41a3cb0ddc843e6a599f626219378cf6ec8a18ece155e2cd622f68723941f4",
+    "ecd": "19226ac44bb74512615e1d1a5462273388b893f40592a6224cb24f8a31100fb1",
+    "uvpd_mlac": "3ea7c7112d28cf1581be332edcd25d816796040693e043eea11effd166010222",
+    "native_aqpz_cdl": "4f5f6ae8ddbffc71d355ae5f756fe611a22aa13d5b652746cf3d34a9de719c76",
+    "native_aqpz_dopg": "2a5d1c231c76d0a47d67a3ea14125bd41de80fdd5c681ab2533a8e4c8e139069",
+    "uvpd_dope": "9efcd94a6387dac7ea96a946cad98e8e705eec3030e4b3f48dc65d2fe9211ca5",
+    "uvpd_dopg": "bb2ab88b30c7d159cd30cbfb3a3ed656067c60a5bd0bca6265e379b023374716",
+    "mse_mix": "3dd88d0fcd09545b8f3fd6493148ce37d56480d7f288e9f8705c37ab52d7abf1",
+    "mse_clpb": "4612bd5b12f74b0f1a6e53ad7e00acde1d7e9d5bd4d834161cca7dfabd9f7c72",
+    "hela_pasef_ms1": "e8d20870977609e9eca0e0082ff05d677d3570eba0cf374fd26478436c3d80f4",
+    "waters_hddda_ms1": "8b661407a2ae37e759b6c5493d4dabae0dfc5d2fbf2411a5d41d13637882bc8e",
+    "ethcd_ck": "81abaf7d8541a2e2a52ce6382687e42d0c33d0d6a5708a8fdc65d5cd99361a19",
+    "etd_ck": "df286d6eb127b98e3446d258ebc21f8bb34b4e8b08347118edac3e656117d435",
+    "topdown_st_1": "ad374d9288a6e48819f173871a3ee659eae6dccc39eeb7b3e1887b37d0d049ed",
+    "topdown_st_2": "11b1e49d35de2064f10adec683a40ac897b6c975a024cbbb047aeedaf6d272c4",
+    "gc_ei": "70373053f2317c255cbe047ef443afe5ab201e57a36c975e2914de22da77f8af",
+    "maldi_ms2": "24c537a496be5c5d9a0bd11eff6159c7cf8860a0a439f0dc44e9223cfd10d9c2",
+    "glycopeptide": "09414fae85a5e1f808c34836d97a4a2edaf00008938f82f476be5f93062e286b",
+    "topdown_etd": "3a53a35bfd9cb114648324c50e079eb5c6d615725160140025a4dd30b5cf7b01",
+    "tmt11_ms3": "7a766cb6a7a4af82f034b61801b4173b781424ee4b15192c3581945cddd92d37",
+    "hela_pasef_ms2": "4db8b171f11e2824afe8e2f9bac7821ffd6a5a600335e32774894f5b133618af"
+  },
+  "total_chars": {
+    "current": 4907430,
+    "minimum_bucket": 4917546,
+    "positive_log": 5059461,
+    "normalized_log1p": 5068241
+  },
+  "size_change_pct": {
+    "current": 0.0,
+    "minimum_bucket": 0.2061364094852136,
+    "positive_log": 3.097975926299501,
+    "normalized_log1p": 3.276888310174564
+  },
+  "theoretical_positive_log_relative_error_pct": 0.013889853439716342,
+  "script_sha256": "3fcb1797f8b28bca1a2b9249cfad2a3e45ac7b150b03a76be2bc387c6ab2b34b"
+}

@@ -145,7 +145,7 @@ def test_with_charge_array():
 
 def test_token_starts_with_magic(simple_spectrum):
     token = encode_spectrum(simple_spectrum)
-    assert token.startswith("spectrl.v2.")
+    assert token.startswith("spectrl.v3.")
 
 
 def test_charge_array_with_negative_values_lossy_roundtrips():
@@ -159,14 +159,6 @@ def test_charge_array_with_negative_values_lossy_roundtrips():
     spec = InlineSpectrum(default_array_length=n, mz=mz, intensity=intensity, charge=charge)
     decoded = decode_token(encode_spectrum(spec))  # default: lossy
     np.testing.assert_array_equal(decoded.charge, charge)
-
-
-def test_encode_numpic_zlib_rejects_negatives_without_aborting():
-    """The PIC codec raises a catchable ValueError rather than a native abort."""
-    from spectrl.codecs.numpress import encode_numpic_zlib
-
-    with pytest.raises(ValueError):
-        encode_numpic_zlib(np.array([1.0, -2.0, 3.0]))
 
 
 def test_negative_intensity_lossy_roundtrips_exactly():
@@ -203,14 +195,3 @@ def test_negative_mz_rejected():
         encode_spectrum(spec)
     with pytest.raises(ValueError, match="mz"):
         encode_spectrum(spec, lossless=True)
-
-
-def test_numpress_lossy_codecs_reject_negatives():
-    """slof and linear raise a catchable ValueError on negative input (slof's
-    log(v+1) breaks; linear rounding diverges between backends)."""
-    from spectrl.codecs.numpress import encode_numlin_zlib, encode_numslof_zlib
-
-    with pytest.raises(ValueError):
-        encode_numslof_zlib(np.array([1.0, -0.5]))
-    with pytest.raises(ValueError):
-        encode_numlin_zlib(np.array([-2.0, 100.0]))

@@ -42,11 +42,10 @@ test("non-seven-digit unit accession round-trips", () => {
   assert.equal(d.params[0]!.unitAccession, "MOD:00046");
 });
 
-test("duplicate CV accessions are rejected", () => {
-  assert.throws(
-    () => encodeSpectrum(spec({ params: [{ accession: "MS:1000511", value: 1 }, { accession: "MS:1000511", value: 2 }] }), { quiet: true }),
-    /duplicate CV accession/,
-  );
+test("duplicate CV accessions are preserved", () => {
+  const source = spec({ params: [{ accession: "MS:1000511", value: 1 }, { accession: "MS:1000511", value: 2 }] })
+  assert.deepEqual(decodeToken(encodeSpectrum(source)).params, source.params)
+
 });
 
 test("toQuery preserves existing query params and replaces its own", () => {

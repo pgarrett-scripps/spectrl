@@ -1,8 +1,6 @@
 /** Run with: node consumer.mjs http://127.0.0.1:8000/spectra/example */
 import { decodeToken, SpectrlDecodeError } from "@spectrl-ms/spectrl"
-import { installZstd } from "@spectrl-ms/spectrl/zstd"
 
-installZstd()
 
 const limits = Object.freeze({
   maxTokenBytes: 256 * 1024,

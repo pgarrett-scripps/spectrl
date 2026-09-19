@@ -5,8 +5,8 @@ application. The producer maps its data to a spectrum object and encodes a
 token. The consumer decodes it into arrays and modeled metadata. The service
 owns authentication, storage, search, identification results, and rendering.
 
-The optional decoder budgets described here were added in version 2.1.0.
-Python requires 3.12+. JavaScript 2.1.0 requires Node 22+ and ships ESM
+This example uses the local v3 source packages.
+Python requires 3.12+. JavaScript requires Node 22+ and ships ESM
 JavaScript with TypeScript declarations. CI verifies Node 22 and 24.
 
 ## Run a Python producer and Node consumer
@@ -14,14 +14,15 @@ JavaScript with TypeScript declarations. CI verifies Node 22 and 24.
 The complete [Python producer](../examples/services/producer.py) exposes
 `GET /spectra/example`. It returns a token with an explicit lossless policy.
 The [Node consumer](../examples/services/consumer.mjs) bounds the HTTP response,
-enables zstd, validates the token against application budgets, and prints the
+validates the token against application budgets, and prints the
 decoded spectrum. Neither example needs mzML files or an mzML parser.
 
 From the repository root:
 
 ```bash
 python -m venv /tmp/spectrl-service-example
-/tmp/spectrl-service-example/bin/pip install 'spectrl==2.1.0' fastapi uvicorn
+/tmp/spectrl-service-example/bin/pip install . fastapi uvicorn
+npm --prefix js run build
 cd examples/services
 npm install
 /tmp/spectrl-service-example/bin/uvicorn producer:app --host 127.0.0.1 --port 8000
@@ -38,8 +39,8 @@ return HTTP 404. The producer refuses a token above its byte budget with HTTP
 422. The consumer exits unsuccessfully for HTTP errors, excessive response
 size, malformed JSON, invalid tokens, or exceeded decoding budgets.
 
-The example pins both packages to 2.1.0 so the producer and consumer use the
-same release. The token format remains `spectrl.v2`.
+Both examples use the local 3.0.0 source packages and the `spectrl.v3` format.
+The Node dependency links to `../../js`, so no unpublished package is fetched.
 FastAPI and Uvicorn are example dependencies only. The same encoder call works
 inside other service frameworks. Keep authentication and deployment policy in
 your existing service.
@@ -103,7 +104,7 @@ configuration is a programming error: Python rejects it when constructing
 All four budgets are inclusive and accept nonnegative safe integers. The token
 budget is checked before base64 decoding. Array count and total output bytes
 are checked across all validated descriptors before decompressing any array.
-A 32-bit array consumes four bytes per element, and a float64 or Numpress
+A 32-bit array consumes four bytes per element, and a float64 or quantized
 array consumes eight. Existing per-blob decompression checks still apply.
 
 Omitting `limits` preserves the existing format ceilings. Passing
@@ -121,7 +122,7 @@ The consumer example bounds the response body before parsing it.
 
 ## Choose precision deliberately
 
-Both encoders default to lossy Numpress compression for suitable arrays. This
+Both encoders default to bounded quantization for suitable arrays. This
 is useful for compact sharing. For a service handoff that must preserve array
 values, explicitly pass `lossless=True` in Python or `{ lossless: true }` in
 JavaScript. Encoding sorts peaks by m/z and carries every parallel array through
@@ -131,26 +132,11 @@ unmodeled mzML XML.
 Use `encoding_report` or `encodingReport` to measure error against the source
 when choosing a lossy policy. Use `conversion_report(..., strict=True)` for
 the Python mzML bridge when warning-level omissions must fail conversion.
-Pass the mzML run's referenceable parameter groups to the bridge.
+Pass `run=mzml` to resolve the selected spectrum context.
 
 The producer's `precision` field describes its chosen policy. A receiver cannot
 measure error relative to an original spectrum that it does not possess. The
 CRC checksum detects accidental corruption and does not authenticate a sender.
-
-## Enable zstd once in each JavaScript execution context
-
-```javascript
-import { installZstd } from "@spectrl-ms/spectrl/zstd"
-
-installZstd()
-```
-
-The zstd package is an intentional installed dependency. Its WASM backend is
-loaded through the separate `/zstd` entry point and registered explicitly.
-The core entry point does not initialize it. Calling `installZstd()` repeatedly
-is safe. Initialize it before accepting tokens from producers that may choose
-zstd. Without registration, zstd tokens fail with `SpectrlDecodeError`.
-Python includes zstd support without a setup call.
 
 ## Keep larger decodes off the JavaScript main thread
 
@@ -158,16 +144,14 @@ Encoding and decoding are synchronous. A JavaScript timeout cannot interrupt a
 decode running on that same thread. The consumer's timeout bounds network I/O,
 not codec execution. For a busy Node service, execute codec work in a bounded
 worker pool and cap its queue. A parent can terminate a worker that exceeds a
-deadline. Register zstd separately inside each worker.
+deadline.
 
 For a browser application, this module worker keeps decoding off the UI thread:
 
 ```javascript
 // spectrum-worker.js, bundled by the consuming application
 import { decodeToken, SpectrlDecodeError } from "@spectrl-ms/spectrl"
-import { installZstd } from "@spectrl-ms/spectrl/zstd"
 
-installZstd()
 self.onmessage = ({ data }) => {
   try {
     const spectrum = decodeToken(data, {

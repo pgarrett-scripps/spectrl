@@ -19,7 +19,7 @@ def check_file(path: Path, limit: int) -> int:
         if element.tag.rsplit("}", 1)[-1] != "spectrum":
             continue
         source = Spectrum(element)
-        inline = from_mzmlpy(source)
+        inline = from_mzmlpy(source, run=path)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
             decoded = decode_token(encode_spectrum(inline, lossless=checked == 0))

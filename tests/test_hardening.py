@@ -1,9 +1,6 @@
 """Regressions for numeric boundaries, malformed streams and API fidelity."""
 
 import json
-import os
-import subprocess
-import sys
 import zlib
 
 import cbor2
@@ -22,59 +19,28 @@ from spectrl import (
     spectrum_to_dict,
     to_fragment,
 )
-from spectrl.cbor_format import token_checksum
-from spectrl.codecs.numpress import encode_numlin_raw, encode_numpic_raw
+from spectrl.cbor_format import read_token_payload, token_checksum
 from spectrl.header import DESC_DATA
-from spectrl.token import b64url_decode, b64url_encode
+from spectrl.token import b64url_encode
 
 
 def token_for(doc):
-    body = "spectrl.v2." + b64url_encode(cbor2.dumps(doc, canonical=True))
+    body = "spectrl.v3.r." + b64url_encode(cbor2.dumps(doc, canonical=True))
     return body + "." + token_checksum(body)
 
 
 @pytest.mark.parametrize("values", [[50000.0], [0, 1, 50000], [1e300]])
-def test_automatic_linear_fallback_is_exact(values):
+def test_large_mz_values_respect_default_ppm_bound(values):
     spec = InlineSpectrum(len(values), mz=values)
-    np.testing.assert_array_equal(decode_token(encode_spectrum(spec)).mz, values)
-    assert encoding_plan(spec)[0]["compression_accession"] == "MS:1000574"
-    with pytest.raises(ValueError, match="Numpress linear"):
-        encode_spectrum(spec, array_encodings={"mz": "numlin-zlib"})
+    recovered = decode_token(encode_spectrum(spec)).mz
+    source = np.asarray(values, dtype=np.float64)
+    assert np.all(np.abs(recovered - source) <= source * 1e-7)
+    assert encoding_plan(spec)[0]["encoding"][0] == 3
 
 
 @pytest.mark.parametrize("values", [[4294967296.0], [1.5]])
 def test_pic_domain_guard_and_exact_fallback(values):
     np.testing.assert_array_equal(decode_token(encode_spectrum(InlineSpectrum(1, charge=values))).charge, values)
-    with pytest.raises(ValueError, match="uint32"):
-        encode_numpic_raw(np.array(values))
-
-
-def test_native_boundary_is_catchable_in_subprocess():
-    pytest.importorskip("pynumpress")
-    code = """
-from spectrl.codecs.numpress import encode_numpic_raw
-import numpy as np
-try:
-    encode_numpic_raw(np.array([4294967296.0]))
-except ValueError:
-    print('guarded')
-"""
-    run = subprocess.run(
-        [sys.executable, "-c", code],
-        env={**os.environ, "SPECTRL_NUMPRESS_BACKEND": "pynumpress"},
-        text=True,
-        capture_output=True,
-        timeout=10,
-    )
-    assert run.returncode == 0
-    assert run.stdout.strip() == "guarded"
-
-
-def test_linear_residual_boundary():
-    with pytest.raises(ValueError, match="residual"):
-        encode_numlin_raw(np.array([0, 0, 2147483648.0]), 1)
-    result = decode_token(encode_spectrum(InlineSpectrum(1, mz=[42949.67295])))
-    np.testing.assert_allclose(result.mz, [42949.67295], rtol=0, atol=1e-10)
 
 
 @pytest.mark.parametrize("dtype", ["int32", "float32", "float64"])
@@ -101,20 +67,10 @@ def test_json_plain_integer_lists_remain_usable():
 @pytest.mark.parametrize("change", [lambda b: b[:-4], lambda b: b + b"junk", lambda b: b + zlib.compress(b"")])
 def test_incomplete_or_trailing_zlib_rejected(change):
     token = encode_spectrum(InlineSpectrum(2, mz=[1, 2]), lossless=True)
-    doc = cbor2.loads(b64url_decode(token.split(".")[2]))
+    doc = cbor2.loads(read_token_payload(token))
     doc[6][0][DESC_DATA] = change(doc[6][0][DESC_DATA])
     with pytest.raises(SpectrlDecodeError):
         decode_token(token_for(doc))
-
-
-def test_auto_fixed_point_honored_and_validated():
-    spec = InlineSpectrum(1, mz=[1.23456])
-    assert encoding_plan(spec, array_encodings={"mz": {"fixed_point": 1000}})[0]["fixed_point"] == 1000
-    for fp in [0, -1, True, 1.5]:
-        with pytest.raises(ValueError):
-            encode_spectrum(spec, array_encodings={"mz": {"fixed_point": fp}})
-    with pytest.raises(ValueError):
-        encode_spectrum(spec, lossless=True, array_encodings={"mz": {"fixed_point": 1000}})
 
 
 def test_fragment_replaces_existing_fragment():

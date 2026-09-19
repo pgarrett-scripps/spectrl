@@ -9,6 +9,6 @@ export const UnitAccession = {
   MILLISECOND: "UO:0000028",
   MINUTE: "UO:0000031",
   VOLT_SECOND_PER_SQUARE_CENTIMETER: "MS:1002814",
-} as const;
+} as const
 
-export type UnitAccession = (typeof UnitAccession)[keyof typeof UnitAccession];
+export type UnitAccession = (typeof UnitAccession)[keyof typeof UnitAccession]

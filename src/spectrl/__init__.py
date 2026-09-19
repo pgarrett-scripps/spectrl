@@ -1,13 +1,13 @@
 """spectrl: Inline Spectrum URL Encoder.
 
-Encodes a single mass spectrum into a compact, URL-safe token (spectrl.v2.…) so it can be
+Encodes a single mass spectrum into a compact, URL-safe token (spectrl.v3.…) so it can be
 shared with no backend. The entire spectrum lives in the token.
 
 Public API::
 
     encode_spectrum(spec, *, lossless=False, max_len=None) -> str
     decode_token(token, *, limits=None) -> DecodedSpectrum
-    from_mzmlpy(spec, ref_groups=None) -> InlineSpectrum
+    from_mzmlpy(spec, ref_groups=None, run=None) -> InlineSpectrum
     top_n(spec, n) -> InlineSpectrum
     to_fragment(token, base) -> str
     to_query(token, base, param="d") -> str
@@ -22,13 +22,14 @@ from urllib.parse import parse_qs, parse_qsl, urlencode, urlparse, urlunparse
 
 from .array_accession import ArrayAccession
 from .cbor_format import decode_cbor, encode_cbor
-from .compression_accession import CompressionAccession
+from .context import register_extension
 from .errors import SpectrlDecodeError, SpectrlError
 from .introspection import encoding_plan, inspect_token
 from .limits import DecodeLimits
 from .model import ArrayEncoding, DecodedSpectrum, InlineSpectrum, SpectrlCvParam, SpectrlUserParam
 from .peaklist import format_peak_list, parse_peak_list
 from .peaks import top_n
+from .pipeline import Encoding, register_encoding
 from .serialization import spectrum_from_dict, spectrum_to_dict
 from .unit_accession import UnitAccession
 from .workflows import encoding_report, fit_to_budget
@@ -49,7 +50,6 @@ __all__ = [
     "SpectrlUserParam",
     "ArrayEncoding",
     "ArrayAccession",
-    "CompressionAccession",
     "UnitAccession",
     "encoding_report",
     "fit_to_budget",
@@ -62,11 +62,14 @@ __all__ = [
     "spectrum_to_dict",
     "SpectrlError",
     "SpectrlDecodeError",
+    "Encoding",
+    "register_encoding",
+    "register_extension",
 ]
 
 _SIZE_WARN = 8192  # bytes; warn past this
-_MAGIC_PREFIX = "spectrl.v2."
-_DATA_URI_PREFIX = "data:application/vnd.spectrl;v=2,"
+_MAGIC_PREFIX = "spectrl.v3."
+_DATA_URI_PREFIX = "data:application/vnd.spectrl;v=3,"
 
 
 def encode_spectrum(
@@ -77,16 +80,19 @@ def encode_spectrum(
     drop_user_params: bool = False,
     array_encodings: dict[str, ArrayEncoding | str | int | dict] | None = None,
     allow_unsafe_lossy_custom: bool = False,
+    compression: str = "zlib",
 ) -> str:
-    """Encode an InlineSpectrum to a spectrl.v2 token string.
+    """Encode an InlineSpectrum to a spectrl.v3 token string.
 
-    The token is a single CBOR document (header + array blobs embedded as byte
-    strings), base64url-encoded after the ``spectrl.v2.`` magic.
+    The token carries zlib-compressed CBOR by default. Select raw,
+    brotli, or auto with the compression option.
 
     Args:
         spec: The spectrum to encode.
-        lossless: If True, use raw IEEE-754 + zlib (bit-exact). Default is lossy
-            MS-Numpress (recommended for URL sharing).
+        lossless: Preserve native bits using the fixed delta/shuffle profile.
+            Default floating m/z and intensity use quantized words.
+        compression: Whole-document raw, zlib, brotli, or auto.
+            Zlib is the default. Auto searches available payload compressors.
         max_len: Raise OverflowError if the encoded token exceeds this byte length.
             Use top_n() to reduce peak count before encoding.
         drop_user_params: If True, omit free-text user params at both spectrum and
@@ -97,14 +103,14 @@ def encode_spectrum(
         array_encodings: Optional per-array codec overrides. Keys are a core
             friendly name (``"mz"``, ``"intensity"``, ``"charge"``), its
             ArrayAccession alias, or an exact ``extra_arrays`` key. Values may
-            be an ArrayEncoding, codec name, compression accession tail, or
-            ``{"codec": ..., "fixed_point": ...}``.
+            be an ArrayEncoding, encoding name, numeric ID, or versioned
+            operation descriptor with parameters.
         allow_unsafe_lossy_custom: Permit an explicitly selected lossy codec
             for an unknown or non-standard array. Its semantic suitability is
             the caller's responsibility. Known incompatible arrays still fail.
 
     Returns:
-        A ``spectrl.v2.`` token string.
+        A ``spectrl.v3.`` token string.
 
     Raises:
         OverflowError: If max_len is set and the encoded length exceeds it.
@@ -116,6 +122,7 @@ def encode_spectrum(
         drop_user_params=drop_user_params,
         array_encodings=array_encodings,
         allow_unsafe_lossy_custom=allow_unsafe_lossy_custom,
+        compression=compression,
     )
 
     if len(token) > _SIZE_WARN:
@@ -136,7 +143,7 @@ def encode_spectrum(
 
 
 def decode_token(token: str, *, limits: DecodeLimits | None = None) -> DecodedSpectrum:
-    """Decode a spectrl.v2 token string into a DecodedSpectrum.
+    """Decode a spectrl.v3 token string into a DecodedSpectrum.
 
     Verifies the mandatory trailing CRC-32 checksum. Optional limits reject
     oversized input before array decompression. Without limits, only the
@@ -151,16 +158,17 @@ def decode_token(token: str, *, limits: DecodeLimits | None = None) -> DecodedSp
     return decode_cbor(token, limits=limits)
 
 
-def from_mzmlpy(spec, ref_groups: dict | None = None, *, strict: bool = False) -> InlineSpectrum:
+def from_mzmlpy(spec, ref_groups: dict | None = None, *, strict: bool = False, run=None) -> InlineSpectrum:
     """Convert a mzmlpy Spectrum to InlineSpectrum.
 
     Args:
         spec: A mzmlpy.spectra.Spectrum.
         ref_groups: Optional dict mapping group id → mzmlpy _ParamGroup, for
-            expanding referenceableParamGroupRef elements. Pass
-            ``mzml.referenceable_param_groups``.
+            expanding referenceableParamGroupRef elements.
+        run: Optional mzmlpy run, path, or MzMLContext used to resolve source,
+            instrument, software, processing, and parameter-group references.
         strict: Raise rather than silently omit unresolved referenceable
-            parameter groups or userParams in mzML locations spectrl.v2 cannot
+            parameter groups or userParams in mzML locations spectrl.v3 cannot
             represent.
 
     Returns:
@@ -175,7 +183,7 @@ def from_mzmlpy(spec, ref_groups: dict | None = None, *, strict: bool = False) -
             ) from exc
         raise
 
-    return _bridge(spec, ref_groups=ref_groups, strict=strict)
+    return _bridge(spec, ref_groups=ref_groups, strict=strict, run=run)
 
 
 # ─── URL binding helpers ─────────────────────────────────────────────────────
@@ -202,12 +210,12 @@ def to_query(token: str, base: str, param: str = "d") -> str:
 
 
 def to_data_uri(token: str) -> str:
-    """Wrap a token in a ``data:application/vnd.spectrl;v=2,`` URI."""
+    """Wrap a token in a ``data:application/vnd.spectrl;v=3,`` URI."""
     return f"{_DATA_URI_PREFIX}{token}"
 
 
 def extract_token(url_or_uri: str) -> str:
-    """Extract a spectrl.v2 token from a URL fragment, query string, or data: URI.
+    """Extract a spectrl.v3 token from a URL fragment, query string, or data: URI.
 
     Raises ValueError if no token is found.
     """
@@ -219,17 +227,17 @@ def extract_token(url_or_uri: str) -> str:
     if parsed.fragment.startswith(_MAGIC_PREFIX):
         return parsed.fragment
 
-    # Check query params for any value starting with spectrl.v2.
+    # Check query params for any value starting with spectrl.v3.
     qs = parse_qs(parsed.query)
     for vals in qs.values():
         for v in vals:
             if v.startswith(_MAGIC_PREFIX):
                 return v
 
-    raise ValueError(f"No spectrl.v2 token found in: {url_or_uri!r}")
+    raise ValueError(f"No spectrl.v3 token found in: {url_or_uri!r}")
 
 
-def conversion_report(spec, ref_groups: dict | None = None, *, strict: bool = False) -> dict:
+def conversion_report(spec, ref_groups: dict | None = None, *, strict: bool = False, run=None) -> dict:
     """Convert an mzML spectrum with a structured fidelity report. Requires the mzml extra."""
     try:
         from .mzml import conversion_report as report
@@ -237,4 +245,4 @@ def conversion_report(spec, ref_groups: dict | None = None, *, strict: bool = Fa
         if exc.name and exc.name.startswith("mzmlpy"):
             raise ModuleNotFoundError('conversion_report requires pip install "spectrl[mzml]"') from exc
         raise
-    return report(spec, ref_groups, strict=strict)
+    return report(spec, ref_groups, strict=strict, run=run)

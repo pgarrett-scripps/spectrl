@@ -5,15 +5,6 @@ import {
   ARRAY_INTENSITY,
   ARRAY_MZ,
   ARRAY_NON_STANDARD,
-  COMP_NUMLIN_ZLIB,
-  COMP_NUMPIC_ZLIB,
-  COMP_NUMSLOF_ZLIB,
-  COMP_ZLIB,
-  COMP_ZSTD,
-  COMP_BYTE_SHUFFLED_ZSTD,
-  COMP_NUMLIN_ZSTD,
-  COMP_NUMPIC_ZSTD,
-  COMP_NUMSLOF_ZSTD,
   ION_MOBILITY_ARRAY_TAILS,
   TYPE_FLOAT32,
   TYPE_FLOAT64,
@@ -25,15 +16,6 @@ export {
   ARRAY_INTENSITY,
   ARRAY_MZ,
   ARRAY_NON_STANDARD,
-  COMP_NUMLIN_ZLIB,
-  COMP_NUMPIC_ZLIB,
-  COMP_NUMSLOF_ZLIB,
-  COMP_ZLIB,
-  COMP_ZSTD,
-  COMP_BYTE_SHUFFLED_ZSTD,
-  COMP_NUMLIN_ZSTD,
-  COMP_NUMPIC_ZSTD,
-  COMP_NUMSLOF_ZSTD,
   ION_MOBILITY_ARRAY_TAILS,
   TYPE_FLOAT32,
   TYPE_FLOAT64,
@@ -92,7 +74,9 @@ export function encodeUnit(unitAccession: string): number | [string, number] | s
 }
 
 export function decodeUnitTail(t: number | [string, number] | string): string {
-  if (typeof t === "string") return t;
-  if (Array.isArray(t)) return `${t[0]}:${pad7(t[1])}`;
-  return `${DEFAULT_UNIT_ONTOLOGY}:${pad7(t)}`;
+  const tail = (v: unknown) => typeof v === "number" && Number.isSafeInteger(v) && v >= 0 && v <= 9999999
+  if (typeof t === "string" && /^[A-Za-z][A-Za-z0-9]*:[A-Za-z0-9]+$/.test(t)) return t
+  if (Array.isArray(t) && t.length === 2 && typeof t[0] === "string" && /^[A-Za-z][A-Za-z0-9]*$/.test(t[0]) && tail(t[1])) return `${t[0]}:${pad7(t[1])}`
+  if (tail(t)) return `${DEFAULT_UNIT_ONTOLOGY}:${pad7(t as number)}`
+  throw Error("invalid CV unit accession")
 }

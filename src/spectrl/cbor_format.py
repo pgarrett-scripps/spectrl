@@ -1,19 +1,15 @@
-"""spectrl.v2 token format: a single CBOR document plus a CRC-32 checksum.
+"""V3 whole-document payload compression with a CRC-32 checksum.
 
-A token is ``spectrl.v2.<base64url(cbor)>.<checksum>``: one CBOR document
-(RFC 8949) holding the integer-keyed header map *and* each array's compressed
-blob inline as a CBOR byte string (descriptor key ``"d"``), encoded
-deterministically (cbor2 canonical, RFC 8949 §4.2). The required fourth part is
-CRC-32/ISO-HDLC over the ASCII text before the checksum, encoded as eight
-lowercase hexadecimal characters. No CBOR parsing is needed to verify it.
+The five parts are identifier, version, payload mode, base64url payload, and
+checksum. Array blobs remain independently encoded inside the CBOR document.
 """
 
 from __future__ import annotations
 
 import binascii
 import dataclasses
+import math
 import re
-import struct
 
 import cbor2
 import numpy as np
@@ -21,14 +17,11 @@ import numpy as np
 from ._format import (
     CHECKSUM_HEX_CHARS,
     MAX_ARRAY_LENGTH,
-    MAX_BLOB_BYTES,
     MAX_CBOR_DEPTH,
     MAX_CBOR_ITEMS,
     MAX_SAFE_INTEGER,
     MAX_TOKEN_BYTES,
 )
-from .codecs import get_codec
-from .codecs._zlibutil import bounded_decompress
 from .cv import (
     ARRAY_CHARGE,
     ARRAY_INTENSITY,
@@ -41,9 +34,7 @@ from .cv import (
 from .errors import SpectrlDecodeError
 from .header import (
     DESC_ARRAY,
-    DESC_COMP,
     DESC_DATA,
-    DESC_FP,
     DESC_NAME,
     DESC_TYPE,
     DESC_UNIT,
@@ -66,16 +57,50 @@ def token_checksum(body: str) -> str:
     return f"{binascii.crc32(body.encode('ascii')) & 0xFFFFFFFF:0{CHECKSUM_HEX_CHARS}x}"
 
 
-def _without_user_params(spec: InlineSpectrum) -> InlineSpectrum:
-    """Drop free-text user params at spectrum and scan level.
+def frame_payload(raw: bytes, compression: str = "zlib") -> str:
+    """Frame the selected payload encoding, defaulting to zlib."""
+    from .payload import compress_payload
 
-    Header key 7 and scan-map key 2 are OPTIONAL and omitted when empty, so the
-    result is a conforming token that simply carries no vendor free-text.
-    """
-    if not spec.user_params and not any(s.user_params for s in spec.scans):
-        return spec
-    scans = [dataclasses.replace(s, user_params=[]) if s.user_params else s for s in spec.scans]
-    return dataclasses.replace(spec, user_params=[], scans=scans)
+    mode, payload = compress_payload(raw, compression, MAX_TOKEN_BYTES)
+    body = f"{MAGIC}.{mode}.{b64url_encode(payload)}"
+    return f"{body}.{token_checksum(body)}"
+
+
+def _without_user_params(spec):
+    import copy
+
+    result = copy.deepcopy(spec)
+    removed = 0
+
+    def visit(value):
+        nonlocal removed
+        if dataclasses.is_dataclass(value):
+            for field in dataclasses.fields(value):
+                if field.name == "user_params":
+                    removed += len(getattr(value, field.name))
+                    setattr(value, field.name, [])
+                elif field.name == "array_user_params":
+                    removed += sum(len(x) for x in getattr(value, field.name).values())
+                    setattr(value, field.name, {})
+                elif field.name not in {"extensions", "array_extensions"}:
+                    visit(getattr(value, field.name))
+        elif isinstance(value, dict):
+            if "user_params" in value:
+                removed += len(value["user_params"])
+                del value["user_params"]
+            for key, child in value.items():
+                if key not in {"parameters", "extensions", "array_extensions"}:
+                    visit(child)
+        elif isinstance(value, list):
+            for child in value:
+                visit(child)
+
+    visit(result)
+    if removed:
+        result.processing.append(
+            {"operation": "spectrl:metadata-omission", "revision": 1, "parameters": {"userParamsRemoved": removed}}
+        )
+    return result
 
 
 def encode_cbor(
@@ -85,8 +110,9 @@ def encode_cbor(
     drop_user_params: bool = False,
     array_encodings: dict[str, ArrayEncoding | str | int | dict] | None = None,
     allow_unsafe_lossy_custom: bool = False,
+    compression: str = "zlib",
 ) -> str:
-    """Encode an InlineSpectrum to a spectrl.v2 (CBOR) token string."""
+    """Encode an InlineSpectrum to a spectrl.v3 (CBOR) token string."""
     _validate_arrays(spec)
     if drop_user_params:
         spec = _without_user_params(spec)
@@ -98,16 +124,16 @@ def encode_cbor(
         array_encodings=array_encodings,
         allow_unsafe_lossy_custom=allow_unsafe_lossy_custom,
     )
-    # Embed each compressed blob inline as a CBOR byte string; there are no
-    # separate token segments, so there is no `seg` index.
+    # Embed each numerically encoded blob as a CBOR byte string.
     for desc, blob in zip(descriptors, blobs, strict=True):
         desc[DESC_DATA] = blob
 
     doc = build_header_dict(spec, descriptors)
     raw = _canonical(doc)
     validate_cbor_document(raw)
-    body = f"{MAGIC}.{b64url_encode(raw)}"
-    return f"{body}.{token_checksum(body)}"
+    token = frame_payload(raw, compression)
+    read_token_document(token)
+    return token
 
 
 # Hard ceiling on any single array blob's decompressed size (bytes); the
@@ -141,15 +167,20 @@ def _validate_cbor_item(buf: bytes, pos: int, depth: int, budget: list[int]) -> 
     if budget[0] > MAX_CBOR_ITEMS:
         raise ValueError(f"CBOR item count exceeds {MAX_CBOR_ITEMS}")
 
+    start = pos
     ib = buf[pos]
     mt, ai = ib >> 5, ib & 0x1F
     arg, pos = _read_arg(buf, pos + 1, ai)
     if mt in (0, 1):
+        if arg + (mt == 1) > MAX_SAFE_INTEGER:
+            raise ValueError("CBOR integer exceeds the safe integer range")
         return pos
     if mt in (2, 3):
         end = pos + arg
         if end > len(buf):
             raise ValueError("truncated CBOR string")
+        if mt == 3:
+            buf[pos:end].decode("utf-8", errors="strict")
         return end
     if mt == 4:
         if arg > MAX_CBOR_ITEMS:
@@ -163,6 +194,8 @@ def _validate_cbor_item(buf: bytes, pos: int, depth: int, budget: list[int]) -> 
         seen: set[tuple[type, str]] = set()
         for _ in range(arg):
             key_start = pos
+            if pos >= len(buf) or buf[pos] >> 5 not in (0, 1, 3):
+                raise ValueError("CBOR map keys must be integers or text")
             pos = _validate_cbor_item(buf, pos, depth + 1, budget)
             try:
                 key = cbor2.loads(buf[key_start:pos])
@@ -175,8 +208,12 @@ def _validate_cbor_item(buf: bytes, pos: int, depth: int, budget: list[int]) -> 
             pos = _validate_cbor_item(buf, pos, depth + 1, budget)
         return pos
     if mt == 6:
-        return _validate_cbor_item(buf, pos, depth + 1, budget)
+        raise ValueError("CBOR tags are not supported")
     if mt == 7:
+        if ai not in (20, 21, 22, 25, 26, 27):
+            raise ValueError("unsupported CBOR simple value")
+        if ai in (25, 26, 27) and not math.isfinite(cbor2.loads(buf[start:pos])):
+            raise ValueError("CBOR numbers must be finite")
         return pos
     raise ValueError(f"invalid CBOR major type {mt}")
 
@@ -195,18 +232,22 @@ def _is_wire_int(value: object) -> bool:
 
 def _validate_header_shape(doc: dict) -> None:
     for key in doc:
-        if not _is_wire_int(key) or key not in range(8):
+        if not _is_wire_int(key) or key not in range(12):
             raise SpectrlDecodeError(f"unsupported spectrl header key: {key!r}")
     if 0 not in doc:
         raise SpectrlDecodeError("spectrl header is missing defaultArrayLength (key 0)")
     expected = {
         1: str,
-        2: dict,
+        2: list,
         3: dict,
         4: list,
         5: list,
         6: list,
         7: list,
+        8: dict,
+        9: dict,
+        10: list,
+        11: dict,
     }
     for key, cls in expected.items():
         if key in doc and not isinstance(doc[key], cls):
@@ -216,59 +257,68 @@ def _validate_header_shape(doc: dict) -> None:
 def _validate_descriptor(desc: object, seen_arrays: set[tuple[int, str | None]]) -> None:
     if not isinstance(desc, dict):
         raise SpectrlDecodeError("array descriptor must be a map")
-    for key in (DESC_TYPE, DESC_ARRAY, DESC_COMP, DESC_DATA):
+    from .context import decode_record, validate_extensions
+    from .cv import TYPE_FLOAT32, TYPE_INT32
+    from .header import _decode_param_map, _decode_user_params
+    from .pipeline import ENCODINGS, descriptor, operation
+
+    if any(type(key) is not int or key not in (0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11) for key in desc):
+        raise SpectrlDecodeError("unsupported array descriptor key")
+    for key in (0, 1, 2, 5, 7):
         if key not in desc:
             raise SpectrlDecodeError(f"array descriptor is missing required key {key}")
-    type_tail, array_tail, comp_tail = desc[DESC_TYPE], desc[DESC_ARRAY], desc[DESC_COMP]
-    if not all(_is_wire_int(v) for v in (type_tail, array_tail, comp_tail)):
-        raise SpectrlDecodeError("array descriptor type, array, and comp must be integers")
-    from .cv import (
-        COMP_BYTE_SHUFFLED_ZSTD,
-        COMP_NUMLIN_ZLIB,
-        COMP_NUMLIN_ZSTD,
-        COMP_NUMPIC_ZLIB,
-        COMP_NUMPIC_ZSTD,
-        COMP_NUMSLOF_ZLIB,
-        COMP_NUMSLOF_ZSTD,
-        COMP_ZLIB,
-        COMP_ZSTD,
-        TYPE_FLOAT32,
-        TYPE_INT32,
-    )
-
-    if type_tail not in (TYPE_FLOAT64, TYPE_FLOAT32, TYPE_INT32):
-        raise SpectrlDecodeError(f"unsupported array data type {type_tail}")
-    supported = {
-        COMP_NUMLIN_ZLIB,
-        COMP_NUMLIN_ZSTD,
-        COMP_NUMSLOF_ZLIB,
-        COMP_NUMSLOF_ZSTD,
-        COMP_NUMPIC_ZLIB,
-        COMP_NUMPIC_ZSTD,
-        COMP_ZLIB,
-        COMP_ZSTD,
-        COMP_BYTE_SHUFFLED_ZSTD,
-    }
-    if comp_tail not in supported:
-        raise SpectrlDecodeError(f"unsupported compression codec {comp_tail}")
-    raw_codecs = {COMP_ZLIB, COMP_ZSTD, COMP_BYTE_SHUFFLED_ZSTD}
-    if comp_tail not in raw_codecs and type_tail != TYPE_FLOAT64:
-        raise SpectrlDecodeError("Numpress descriptors must declare float64")
-    fp_codecs = {COMP_NUMLIN_ZLIB, COMP_NUMLIN_ZSTD, COMP_NUMSLOF_ZLIB, COMP_NUMSLOF_ZSTD}
-    if DESC_FP in desc and (not _is_wire_int(desc[DESC_FP]) or desc[DESC_FP] <= 0 or desc[DESC_FP] > MAX_SAFE_INTEGER):
-        raise SpectrlDecodeError("array descriptor fp must be a positive integer")
-    if comp_tail in fp_codecs and DESC_FP not in desc:
-        raise SpectrlDecodeError("Numpress linear and slof descriptors require fp")
-    if comp_tail in {COMP_NUMPIC_ZLIB, COMP_NUMPIC_ZSTD, *raw_codecs} and DESC_FP in desc:
-        raise SpectrlDecodeError("array descriptor fp is not valid for this codec")
-    if not isinstance(desc[DESC_DATA], bytes):
+    type_tail, array_tail = desc[0], desc[1]
+    if type(type_tail) is not int or type_tail not in (TYPE_FLOAT64, TYPE_FLOAT32, TYPE_INT32):
+        raise SpectrlDecodeError("unsupported array data type")
+    if type(array_tail) is not int or not 0 <= array_tail <= 9999999:
+        raise SpectrlDecodeError("invalid array accession")
+    if type(desc[7]) is not int or desc[7] not in (0, 1):
+        raise SpectrlDecodeError("invalid fidelity declaration")
+    try:
+        for key, registry in ((2, ENCODINGS),):
+            d = descriptor(desc[key])
+            if d != desc[key]:
+                raise ValueError("noncanonical operation descriptor")
+            if tuple(d[:2]) in registry:
+                impl, _ = operation(registry, d)
+                if key == 2 and (type_tail not in impl.types or desc[7] != (0 if impl.lossless else 1)):
+                    raise ValueError("encoding dtype or fidelity declaration mismatch")
+        if 8 in desc:
+            params = _decode_param_map(desc[8])
+            representation = {
+                1000519,
+                1000521,
+                1000522,
+                1000523,
+                1000576,
+                1000574,
+                *range(1002312, 1002315),
+                *range(1002746, 1002749),
+                *range(1003780, 1003786),
+                array_tail,
+            }
+            if any(
+                p.accession.startswith("MS:") and p.accession[3:].isdigit() and int(p.accession[3:]) in representation
+                for p in params
+            ):
+                raise ValueError("array scientific parameters conflict with representation declarations")
+        if 9 in desc:
+            _decode_user_params(desc[9])
+        if 10 in desc:
+            for step in desc[10]:
+                decode_record(step, "processing")
+        if 11 in desc:
+            validate_extensions(desc[11], require_supported=False)
+    except (TypeError, ValueError) as exc:
+        raise SpectrlDecodeError(str(exc)) from exc
+    if not isinstance(desc[5], bytes):
         raise SpectrlDecodeError("array descriptor data must be a byte string")
     name = desc.get(DESC_NAME)
+    if DESC_NAME in desc and (not isinstance(name, str) or not name):
+        raise SpectrlDecodeError("array name must be a non-empty string")
     if array_tail == ARRAY_NON_STANDARD:
-        if not isinstance(name, str) or not name:
+        if not isinstance(name, str) or not name or name in {"mz", "intensity", "charge"}:
             raise SpectrlDecodeError("a non-standard array requires a non-empty name")
-    elif name is not None:
-        raise SpectrlDecodeError("a standard array descriptor must not carry a name")
     if DESC_UNIT in desc:
         try:
             raw_unit = desc[DESC_UNIT]
@@ -289,36 +339,14 @@ def _validate_descriptor(desc: object, seen_arrays: set[tuple[int, str | None]])
             decode_unit_tail(raw_unit)
         except (TypeError, ValueError) as exc:
             raise SpectrlDecodeError("array descriptor unit must be a valid CV unit accession") from exc
-    identity = (array_tail, name)
+    identity = (array_tail, name if array_tail == ARRAY_NON_STANDARD else None)
     if identity in seen_arrays:
         raise SpectrlDecodeError(f"duplicate array descriptor {identity!r}")
     seen_arrays.add(identity)
 
 
-def _validate_numpress_fp(desc: dict, max_bytes: int) -> None:
-    from .codecs.zstd import bounded_zstd_decompress
-    from .cv import COMP_NUMLIN_ZLIB, COMP_NUMLIN_ZSTD, COMP_NUMSLOF_ZLIB, COMP_NUMSLOF_ZSTD
-
-    comp = desc[DESC_COMP]
-    if comp not in (COMP_NUMLIN_ZLIB, COMP_NUMLIN_ZSTD, COMP_NUMSLOF_ZLIB, COMP_NUMSLOF_ZSTD):
-        return
-    raw = (
-        bounded_decompress(desc[DESC_DATA], max_bytes)
-        if comp in (COMP_NUMLIN_ZLIB, COMP_NUMSLOF_ZLIB)
-        else bounded_zstd_decompress(desc[DESC_DATA], max_bytes)
-    )
-    if len(raw) < 8:
-        raise SpectrlDecodeError("Numpress stream is missing its fixed point")
-    embedded = struct.unpack(">d", raw[:8])[0]
-    declared = desc[DESC_FP]
-    if not np.isfinite(embedded) or embedded <= 0 or embedded != declared:
-        raise SpectrlDecodeError(
-            f"Numpress fixed point mismatch: descriptor declares {declared!r}, stream contains {embedded!r}"
-        )
-
-
-def read_token_document(token: str, *, limits: DecodeLimits | None = None) -> tuple[dict, DecodedSpectrum]:
-    """Decode a spectrl.v2 token, verifying the trailing CRC-32 checksum.
+def read_token_payload(token: str, *, limits: DecodeLimits | None = None) -> bytes:
+    """Verify framing and return bounded, decompressed CBOR bytes.
 
     Raises SpectrlDecodeError (a ValueError subclass) on any malformed,
     corrupted, or unsupported input.
@@ -329,7 +357,7 @@ def read_token_document(token: str, *, limits: DecodeLimits | None = None) -> tu
         raise SpectrlDecodeError("a spectrl token must be a string")
     if limits is not None and len(token) > limits.max_token_bytes:
         raise SpectrlDecodeError("token exceeds max_token_bytes")
-    if len(token) > (MAX_TOKEN_BYTES * 4 + 2) // 3 + len(MAGIC) + 10:
+    if len(token) > (MAX_TOKEN_BYTES * 4 + 2) // 3 + len(MAGIC) + 12:
         raise SpectrlDecodeError("spectrl token exceeds the payload size limit")
     if not token.isascii():
         raise SpectrlDecodeError("a spectrl token must contain only ASCII characters")
@@ -339,18 +367,35 @@ def read_token_document(token: str, *, limits: DecodeLimits | None = None) -> tu
     if not token.startswith(prefix):
         raise SpectrlDecodeError(f"Not a {magic} token: {token[:16]!r}")
     parts = token[len(prefix) :].split(".")
-    if len(parts) != 2:
-        raise SpectrlDecodeError("a spectrl token has exactly four '.'-separated parts")
-    payload, stored = parts
+    if len(parts) != 3:
+        raise SpectrlDecodeError("a spectrl token has exactly five '.'-separated parts")
+    mode, payload, stored = parts
+    if mode not in ("r", "z", "b"):
+        raise SpectrlDecodeError(f"unsupported payload mode: {mode!r}")
     if not re.fullmatch(r"[0-9a-f]{8}", stored):
         raise SpectrlDecodeError("spectrl token checksum must be eight lowercase hexadecimal characters")
-    expected = token_checksum(f"{magic}.{payload}")
+    expected = token_checksum(f"{magic}.{mode}.{payload}")
     if expected != stored:
         raise SpectrlDecodeError(
             f"spectrl token checksum mismatch: stored={stored!r}, computed={expected!r}. Token may be corrupted."
         )
 
     raw = b64url_decode(payload)
+    if len(raw) > MAX_TOKEN_BYTES:
+        raise SpectrlDecodeError(f"encoded payload exceeds {MAX_TOKEN_BYTES} bytes")
+    if mode != "r":
+        try:
+            from .payload import decompress_payload
+
+            raw = decompress_payload(raw, mode, MAX_TOKEN_BYTES)
+        except Exception as exc:
+            raise SpectrlDecodeError(f"invalid compressed CBOR payload: {exc}") from exc
+    return raw
+
+
+def read_token_document(token: str, *, limits: DecodeLimits | None = None) -> tuple[dict, DecodedSpectrum]:
+    """Read the CBOR document after framing and bounded payload decompression."""
+    raw = read_token_payload(token, limits=limits)
     try:
         validate_cbor_document(raw)
         doc = cbor2.loads(raw)
@@ -361,6 +406,9 @@ def read_token_document(token: str, *, limits: DecodeLimits | None = None) -> tu
     _validate_header_shape(doc)
 
     try:
+        from .context import validate_extensions
+
+        validate_extensions(doc.get(11, {}), require_supported=False)
         decoded = parse_header_dict(doc)
         n = decoded.default_array_length
     except SpectrlDecodeError:
@@ -373,7 +421,7 @@ def read_token_document(token: str, *, limits: DecodeLimits | None = None) -> tu
     if limits is not None and n > limits.max_peaks:
         raise SpectrlDecodeError("declared peak count exceeds max_peaks")
 
-    decoded.checksum = stored
+    decoded.checksum = token.rsplit(".", 1)[1]
     decoded.format_version = FORMAT_VERSION
 
     descriptors = doc.get(6, [])
@@ -396,17 +444,22 @@ def decode_cbor(token: str, *, limits: DecodeLimits | None = None) -> DecodedSpe
     """Decode a token after shared framing and metadata validation."""
     doc, decoded = read_token_document(token, limits=limits)
     n = decoded.default_array_length
+    from .context import validate_extensions
+    from .pipeline import decode_pipeline
+
+    try:
+        validate_extensions(decoded.extensions)
+    except ValueError as exc:
+        raise SpectrlDecodeError(str(exc)) from exc
     descriptors = doc.get(6, [])
 
-    # Bound decompression by the declared array length (float64 worst case plus
-    # numpress framing slack) so a small token cannot expand without limit.
-    max_bytes = min(64 + 16 * max(n, 0), MAX_BLOB_BYTES)
+    # Bound numeric decoding by the declared array length.
 
     for desc in descriptors:
         try:
-            _validate_numpress_fp(desc, max_bytes)
-            type_tail = desc.get(DESC_TYPE, TYPE_FLOAT64)
-            arr = get_codec(desc[DESC_COMP]).decode(desc[DESC_DATA], type_tail, max_bytes)
+            validate_extensions(desc.get(11, {}))
+            type_tail = desc[0]
+            arr = decode_pipeline(desc[5], type_tail, n, desc[2], desc[7])
             tail, name = desc[DESC_ARRAY], desc.get(DESC_NAME)
             unit = decode_unit_tail(desc[DESC_UNIT]) if DESC_UNIT in desc else None
         except SpectrlDecodeError:
@@ -438,5 +491,21 @@ def decode_cbor(token: str, *, limits: DecodeLimits | None = None) -> DecodedSpe
             decoded.extra_arrays[unit_key] = arr
         if unit is not None:
             decoded.array_units[unit_key] = unit
+        if name is not None:
+            decoded.array_names[unit_key] = name
+        from .context import decode_record
+        from .header import _decode_param_map, _decode_user_params
+
+        if 8 in desc:
+            decoded.array_params[unit_key] = _decode_param_map(desc[8])
+        if 9 in desc:
+            decoded.array_user_params[unit_key] = _decode_user_params(desc[9])
+        if 10 in desc:
+            decoded.array_processing[unit_key] = [decode_record(x, "processing") for x in desc[10]]
+        if 11 in desc:
+            decoded.array_extensions[unit_key] = desc[11]
+        if desc[7] == 1:
+            history = decoded.array_processing.setdefault(unit_key, [])
+            history.append({"operation": "spectrl:lossy-encoding", "revision": 1, "parameters": {"encoding": desc[2]}})
 
     return decoded

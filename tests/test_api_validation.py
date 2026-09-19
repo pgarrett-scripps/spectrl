@@ -84,15 +84,14 @@ def test_non_seven_digit_unit_roundtrips():
     assert decoded.params[0].unit_accession == "MOD:00046"
 
 
-def test_duplicate_accession_rejected():
+def test_duplicate_accession_preserved():
     spec = _spec(
         params=[
             SpectrlCvParam(accession="MS:1000511", value=1),
             SpectrlCvParam(accession="MS:1000511", value=2),
         ]
     )
-    with pytest.raises(ValueError, match="duplicate"):
-        encode_spectrum(spec)
+    assert decode_token(encode_spectrum(spec)).params == spec.params
 
 
 # ── dtype preservation ───────────────────────────────────────────────────────

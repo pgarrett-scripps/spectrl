@@ -37,8 +37,7 @@ def test_aggregate_budget_is_checked_before_any_codec(token, monkeypatch):
     def forbidden(*args, **kwargs):
         pytest.fail("a codec was called before checking all descriptors")
 
-    monkeypatch.setattr("spectrl.cbor_format.get_codec", forbidden)
-    monkeypatch.setattr("spectrl.cbor_format._validate_numpress_fp", forbidden)
+    monkeypatch.setattr("spectrl.pipeline.decode_pipeline", forbidden)
     with pytest.raises(SpectrlDecodeError, match="max_decoded_bytes"):
         decode_token(token, limits=DecodeLimits(max_decoded_bytes=47))
 
@@ -82,6 +81,6 @@ def test_limits_do_not_replace_wire_validation(token):
 
     doc, _ = read_token_document(token)
     doc[0] = 4_000_001
-    body = "spectrl.v2." + b64url_encode(_canonical(doc))
+    body = "spectrl.v3.r." + b64url_encode(_canonical(doc))
     with pytest.raises(SpectrlDecodeError, match="invalid declared array length"):
         decode_token(body + "." + token_checksum(body), limits=DecodeLimits(max_peaks=10_000_000))

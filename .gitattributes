@@ -2,3 +2,6 @@
 # (Windows default) shifts every offset and breaks parsing. Pin them to LF.
 *.mzML text eol=lf
 *.gz binary
+
+# Unified patch context lines retain their required leading space.
+docs/psi-ms-submission/psi-ms-CV.patch whitespace=-blank-at-eol

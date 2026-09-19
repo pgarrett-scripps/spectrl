@@ -1,5 +1,5 @@
 /**
- * CBOR for spectrl.v2: standard encode/decode via the cbor-x library, plus a raw
+ * CBOR for spectrl.v3: standard encode/decode via the cbor-x library, plus a raw
  * validation pass that rejects duplicate map keys, over-deep nesting, and
  * trailing bytes before the library ever parses the document.
  */
@@ -16,6 +16,7 @@ const codec = new Encoder({
   tagUint8Array: false,
   variableMapSize: true,
 });
+const utf8 = new TextDecoder("utf-8", { fatal: true })
 
 export function cborEncode(value: unknown): Uint8Array {
   return new Uint8Array(codec.encode(value));
@@ -83,10 +84,19 @@ function validateItem(buf: Uint8Array, start: number, depth: number, budget: { v
   }
   pos += width;
 
-  if (mt === 0 || mt === 1 || mt === 7) return pos;
+  if (mt === 0 || mt === 1) {
+    if (!Number.isSafeInteger(mt === 1 ? -1 - arg : arg)) throw new Error("CBOR integer exceeds the safe integer range")
+    return pos
+  }
+  if (mt === 7) {
+    if (![20, 21, 22, 25, 26, 27].includes(ai)) throw new Error("unsupported CBOR simple value")
+    if (ai >= 25 && !Number.isFinite(cborDecode(buf.subarray(start, pos)))) throw new Error("CBOR numbers must be finite")
+    return pos
+  }
   if (mt === 2 || mt === 3) {
     const end = pos + arg;
     if (end > buf.length) throw new Error("truncated CBOR string");
+    if (mt === 3) utf8.decode(buf.subarray(pos, end))
     return end;
   }
   if (mt === 4) {
@@ -99,6 +109,7 @@ function validateItem(buf: Uint8Array, start: number, depth: number, budget: { v
     const seen = new Set<string>();
     for (let i = 0; i < arg; i++) {
       const keyStart = pos;
+      if (pos >= buf.length || ![0, 1, 3].includes(buf[pos]! >> 5)) throw new Error("CBOR map keys must be integers or text")
       pos = validateItem(buf, pos, depth + 1, budget);
       const identity = keyIdentity(cborDecode(buf.subarray(keyStart, pos)));
       if (seen.has(identity)) throw new Error(`duplicate CBOR map key ${identity}`);
@@ -107,7 +118,7 @@ function validateItem(buf: Uint8Array, start: number, depth: number, budget: { v
     }
     return pos;
   }
-  if (mt === 6) return validateItem(buf, pos, depth + 1, budget);
+  if (mt === 6) throw new Error("CBOR tags are not supported")
   throw new Error(`invalid CBOR major type ${mt}`);
 }
 

@@ -35,7 +35,7 @@ def test_quality_matches_actual_token_sorted_and_zero_safe():
     )
     report = encoding_report(source, drop_user_params=True)
     mz, intensity, score = report["arrays"]
-    assert 0 < mz["max_absolute_error"] < 1e-5
+    assert 0 < mz["max_error_ppm"] <= 0.1
     assert mz["zero_reference_values"] == 1
     assert mz["changed_zero_values"] == 0
     assert intensity["max_relative_error"] == 0
@@ -62,9 +62,9 @@ def test_fit_budget_explicit_and_includes_unicode_carrier():
         extra_arrays={"score": np.arange(100, dtype=np.int32)},
     )
     with pytest.raises(OverflowError):
-        fit_to_budget(source, 250)
-    result = fit_to_budget(source, 250, base_url="https://example.org/é#old", allow_peak_trimming=True)
-    assert result["carrier_bytes"] == len(result["carrier"].encode()) <= 250
+        fit_to_budget(source, 500)
+    result = fit_to_budget(source, 500, base_url="https://example.org/é#old", allow_peak_trimming=True)
+    assert result["carrier_bytes"] == len(result["carrier"].encode()) <= 500
     assert 0 < result["kept_peaks"] < 100
     d = decode_token(result["token"])
     np.testing.assert_array_equal(d.extra_arrays["score"], np.arange(100 - result["kept_peaks"], 100))
@@ -72,7 +72,7 @@ def test_fit_budget_explicit_and_includes_unicode_carrier():
     with pytest.raises(OverflowError):
         fit_to_budget(source, 1, allow_peak_trimming=True)
     with pytest.raises(ValueError):
-        fit_to_budget(source, 250, min_peaks=-1)
+        fit_to_budget(source, 500, min_peaks=-1)
 
 
 def test_fit_metadata_omissions_and_exact_noop():
@@ -147,8 +147,8 @@ def test_conversion_report_lists_omissions_and_strict_rejects():
     source = Spectrum(xml)
     report = conversion_report(source)
     codes = {item["code"] for item in report["issues"]}
-    assert {"omitted_attribute", "unresolved_reference", "omitted_user_param"} <= codes
-    assert report["preserved"]["user_params"] == 1
+    assert {"omitted_attribute", "unresolved_reference"} <= codes
+    assert report["preserved"]["user_params"] == 2
     assert report["preserved"]["cv_params"] == 1
     with pytest.raises(ValueError, match="omit data"):
         conversion_report(source, strict=True)
@@ -158,5 +158,8 @@ def test_mzml_cli_reports_real_fixture():
     result = cli("convert-mzml", "tests/data/example.mzML")
     assert result.returncode == 0, result.stderr
     report = json.loads(result.stdout)
-    assert report["encoding"]["token"].startswith("spectrl.v2.")
+    assert report["encoding"]["token"].startswith("spectrl.v3.")
     assert "preserved" in report and "issues" in report
+    assert report["spectrum"]["source"]["name"]
+    assert report["spectrum"]["acquisition"]["instrument"]["components"]
+    assert report["spectrum"]["processing"]
