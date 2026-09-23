@@ -131,7 +131,7 @@ The consumer example bounds the response body before parsing it.
 
 ## Choose precision deliberately
 
-Both encoders default to bounded quantization for suitable arrays. This
+Both encoders default to a bounded lossy profile for suitable arrays. This
 is useful for compact sharing. For a service handoff that must preserve array
 values, explicitly pass `lossless=True` in Python or `{ lossless: true }` in
 JavaScript. Encoding sorts peaks by m/z and carries every parallel array through

@@ -17,12 +17,15 @@ accession prefix. It is optional and informational, and v3 was not yet released
 when it landed. See `SPECIFICATION.md` section 2 and the changelog.
 
 - Package version 3.0.0 and spectrl.v3 framing.
-- Four core numeric encodings and PSI-MS scientific identities.
+- Five core numeric encodings and PSI-MS scientific identities.
 - Whole-document zlib by default, with raw and optional Brotli alternatives.
 - Fixed lossless policy, pointwise 0.1 ppm default m/z bound, and log1p
   intensity quantization at scale 3600, refined from the smallest positive
   intensity only when it is below 1 (2026-09-22) so normalized spectra keep
   their small peaks. Spectra with intensities of 0 or at least 1 are unchanged.
+- Encoding 4 (rounded floating-point words) and a size-chosen default lossy
+  profile (2026-09-22): each floating m/z and intensity array keeps the smallest
+  of its exact encoding and bounded candidates, with ties going to the exact one.
 - Other minimum-based intensity alternatives are unsupported historical
   experiments. They are absent from the paper and Supporting Information.
 

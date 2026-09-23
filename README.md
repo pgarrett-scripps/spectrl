@@ -174,9 +174,10 @@ decoded.mobility_arrays["MS:1003008"]  # accession-keyed filtered view
 ```
 
 Auxiliary arrays retain their native numeric types and exact values in both
-profiles. Default lossy encoding quantizes floating m/z to a maximum error of 0.1 ppm and
-nonnegative floating intensity on a log1p grid. Unsupported domains use exact
-encoding. JavaScript exposes the same arrays through `extraArrays`.
+profiles. Default lossy encoding picks, per array, the smallest of an exact
+encoding and bounded candidates: a 0.1 ppm grid for floating m/z, and for
+nonnegative floating intensity exact integer words for counts, 12-bit rounded
+floats, or a log1p grid. Ties and unsupported domains keep the exact encoding. JavaScript exposes the same arrays through `extraArrays`.
 
 Override any array independently when needed:
 
@@ -188,8 +189,8 @@ token = encode_spectrum(spec, lossless=True, array_encodings={
 })
 ```
 
-Supported names are `raw`, `byte-shuffle`, `modular-delta-shuffle`, and
-`quantized`. Namespaced custom encodings can be registered explicitly.
+Supported names are `raw`, `byte-shuffle`, `modular-delta-shuffle`,
+`quantized`, and `rounded-float`. Namespaced custom encodings can be registered explicitly.
 With `lossless=True`, every array remains exact and lossy overrides are rejected.
 The fixed lossless defaults are modular delta plus shuffle for m/z, byte shuffle
 for intensity, and raw words for other arrays. Both profiles compress the complete
@@ -215,7 +216,7 @@ with ties preferring zlib, raw, then Brotli. The token stores the
 selected method. Explicitly requesting an unavailable backend raises an error.
 
 The core array encodings are raw words (0), byte shuffle (1), modular delta plus
-shuffle (2), and quantized words (3). Encoding 3 shares one unsigned integer
+shuffle (2), quantized words (3), and rounded floating-point words (4). Encoding 3 shares one unsigned integer
 layout for linear and log1p quantization, with optional first-order delta.
 Its parameters record `scale`, byte `width`, and optional `log` and `delta` flags.
 For example, an explicit linear intensity grid can be requested with:
@@ -228,7 +229,7 @@ token = encode_spectrum(spec, array_encodings={
 
 This rounds to increments of 0.01, with a checked absolute error bound of 0.005.
 Choose a width that fits the indices. A tighter tolerance requires a larger
-scale. The default intensity mapping instead uses log1p with scale 3600, whose
+scale. The default log1p intensity candidate uses scale 3600, whose
 bound is `(x + 1) * expm1(0.5 / 3600)`. It is not a strict relative bound near
 zero. When the smallest positive intensity `m` is below 1, as in normalized spectra,
 the scale grows to `ceil(1800 * (m + 1) / m)`, so every positive intensity stays
@@ -237,7 +238,22 @@ of 0.1 ppm relative to each source value. Its scale is derived from the smallest
 positive m/z, with a numerical margin and a check of the reconstructed values.
 Zero remains exactly zero. For example, the allowed error is 0.00001 at m/z 100
 and 0.0001 at m/z 1000.
-All peaks remain present. See the specification for domains and fallback rules.
+All peaks remain present.
+
+Encoding 4 keeps each float's sign, exponent and leading `bits` mantissa bits,
+so a normal value stays within a relative 2^-(bits+1) of itself and keeps its
+declared float32 or float64 type. Its parameters are `bits` and byte `width`:
+
+```python
+token = encode_spectrum(spec, array_encodings={
+    "intensity": {"encoding": [4, 1, {"bits": 12, "width": 4}]},
+})
+```
+
+The default profile measures each candidate as encoded array bytes for `raw`
+payloads and as zlib level 6 output otherwise, so pass the same `compression`
+to `encoding_plan` that the token will use. See the specification for domains
+and tie order.
 
 ### User params (free-text metadata)
 
@@ -390,7 +406,7 @@ See [`demo/`](https://github.com/pgarrett-scripps/spectrl/tree/main/demo) for de
 
 - URL lengths vary by browser and receiving system. Encoding warns above 8 KiB.
   Use `top_n()` or a repository identifier for spectra that are too large.
-- Lossy quantization is the default. Pass `lossless=True` when bit-exact arrays
+- A bounded lossy profile is the default. Pass `lossless=True` when bit-exact arrays
   are required.
 - The trailing checksum detects accidental corruption. It does not authenticate the
   sender or make untrusted content safe.
@@ -461,7 +477,8 @@ token = encode_spectrum(spectrum, lossless=True, array_encodings={
 ```
 
 float32, float64, and int32 inputs retain their declared representation when
-encoded exactly. Quantization reconstructs float64 and records its error settings.
+encoded exactly, and encoding 4 keeps float32 or float64. Encoding 3 reconstructs
+float64. Lossy arrays record their error settings.
 
 Use `from_mzmlpy(spectrum, run=mzml)` to include resolved source, instrument,
 software, and processing context. Repeated CV terms and nested user parameters are

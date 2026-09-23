@@ -30,6 +30,15 @@ compares live complete tokens on Linux, macOS, and Windows, covering Node 22/24
 and Python 3.12–3.14. Those CI environments were configured here; the reported
 measurements were run locally on Linux with Python 3.13 and Node 22.
 
+The default lossy profile chooses each array's encoding by size. For `raw`
+payloads the measure is the encoded array length, so the choice depends only on
+the candidate bytes. For zlib and Brotli payloads, and `auto`, it is the length
+of each array's bytes after zlib level 6, so writers on different zlib
+implementations can choose different candidates for the same array. Python's
+zlib and the JavaScript writer's pako produced the same lengths, and therefore
+the same choices, on every input compared here. Encoding 4 uses integer
+operations only, so its words are identical wherever it is chosen.
+
 For a portable deterministic representation, use the existing lossless profile
 and raw payload mode with identical metadata, array dtypes, and codec settings.
 Compressed and lossy outputs matched in this study, but arbitrary compressor

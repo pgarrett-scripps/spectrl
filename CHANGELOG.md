@@ -12,6 +12,22 @@ See [SPECIFICATION.md](SPECIFICATION.md).
 
 ## [3.0.0] - 2026-09-22
 
+- Add core encoding 4, `rounded-float`: float32 or float64 values keep their
+  sign, exponent and leading `bits` mantissa bits, rounded half away from zero
+  on the integer bit pattern and stored as byte-shuffled words of `width` bytes.
+  The relative error of a normal value is at most 2^-(bits+1). The declared
+  type is kept, and readers reject words too wide for the shift and nonfinite
+  results.
+
+- Make the default lossy profile a per-array size choice. Nonnegative floating
+  intensity tries, in tie order, exact byte shuffle, scale-1 words when every
+  value is an integer (exact for counts), encoding 4 with 12 bits (relative
+  bound 2^-13, about 0.012%) and the log1p grid; floating m/z tries exact
+  modular delta, then the 0.1 ppm grid. The smallest wins and ties keep the
+  earlier candidate, so a default array is never larger than its exact
+  encoding. Size is the encoded array length for raw payloads and its zlib
+  level 6 length otherwise, so the choice can depend on `compression`.
+
 - Refine the default lossy intensity grid for values below 1. The fixed log1p
   scale of 3600 is nearly linear there, so normalized spectra lost every peak
   below about 1.4e-4 to zero. When the smallest positive intensity `m` is below

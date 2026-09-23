@@ -57,18 +57,21 @@ extractToken(url) === token; // true
 ### Lossless encoding
 
 ```ts
-// Default is lossy quantization. Use lossless for bit-exact native arrays:
+// Default is a bounded lossy profile. Use lossless for bit-exact native arrays:
 const token = encodeSpectrum(spec, { lossless: true })
 ```
 
 Lossless encoding uses modular delta plus byte shuffle for m/z, byte shuffle
 for intensity, and raw typed words for auxiliary arrays. Default lossy encoding
-uses one quantized-word layout with a logarithmic m/z grid calibrated to a
-maximum error of 0.1 ppm per source value, and a log1p intensity grid with
-scale 3600, refined when the smallest positive intensity is below 1 so none
-rounds to zero. Zero m/z
-remains exact. Unsupported quantization falls back to
-exact encoding.
+keeps, per array, the smallest of the exact encoding and bounded candidates.
+m/z tries a logarithmic grid calibrated to a maximum error of 0.1 ppm per source
+value. Nonnegative intensity tries exact integer words for counts, floats
+rounded to 12 mantissa bits (encoding 4, relative error at most 2^-13), and a
+log1p grid with scale 3600, refined when the smallest positive intensity is
+below 1 so none rounds to zero. Ties and unsupported domains keep the exact
+encoding. Size is measured as encoded array bytes for `raw` payloads and as
+zlib level 6 output otherwise, so pass the token's `compression` to
+`encodingPlan`.
 Integer and auxiliary arrays remain exact. Both profiles default to one zlib
 compression pass over the complete CBOR document.
 
@@ -99,8 +102,9 @@ const token = encodeSpectrum(spec, {
 })
 ```
 
-The four core encodings are raw (0), byte shuffle (1), modular delta plus shuffle
-(2), and quantized words (3). Compression applies once to the complete document.
+The five core encodings are raw (0), byte shuffle (1), modular delta plus shuffle
+(2), quantized words (3), and rounded floating-point words (4, `rounded-float`,
+parameters `bits` and `width`). Compression applies once to the complete document.
 Auxiliary arrays stay exact by default. Custom namespaced encodings use trusted
 callbacks registered explicitly. Unknown custom array semantics require
 `allowUnsafeLossyCustom: true` before applying an explicit lossy encoding.
