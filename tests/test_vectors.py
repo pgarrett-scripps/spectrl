@@ -78,6 +78,8 @@ def _check(vec: dict) -> None:
             assert attr is None, name
             continue
         assert attr is not None and len(attr) == len(expected), name
+        if "array_dtypes" in exp:
+            assert str(attr.dtype) == exp["array_dtypes"][name], f"{name}.dtype {attr.dtype}"
         for a, e in zip(attr, expected, strict=True):
             assert _close(float(a), float(e), tol), f"{name}: {a} vs {e}"
             assert math.isfinite(float(a))

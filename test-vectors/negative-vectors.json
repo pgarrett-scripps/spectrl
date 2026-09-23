@@ -58,6 +58,11 @@
       "error": "key|fields"
     },
     {
+      "name": "quantized_float32_overflow",
+      "cbor_hex": "a200010681a5001a000f4449011a000f444202830301a3636c6f67f5657363616c6501657769647468010541640701",
+      "error": "finite"
+    },
+    {
       "name": "rounded_word_too_large_for_shift",
       "cbor_hex": "a200010682a5001a000f444b011a000f444202820001054800000000000059400700a5001a000f444b011a000f444302830401a264626974730c657769647468040544000000010701",
       "error": "rounded word exceeds the declared type"

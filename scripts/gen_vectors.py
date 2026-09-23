@@ -69,6 +69,10 @@ def _decoded_json(token: str) -> dict:
         "mz": arr(d.mz),
         "intensity": arr(d.intensity),
         "charge": arr(d.charge),
+        # Every encoding reconstructs the declared type, so core dtypes are pinned too.
+        "array_dtypes": {
+            name: str(a.dtype) for name, a in (("mz", d.mz), ("intensity", d.intensity), ("charge", d.charge)) if a is not None
+        },
         "extra_arrays": extra(d.extra_arrays),
         "array_units": d.array_units,
         "params": _params_json(d.params),
@@ -432,6 +436,27 @@ def main() -> None:
                 "mz": "modular-delta-shuffle",
                 "intensity": "byte-shuffle",
                 "quality": "byte-shuffle",
+            },
+        )
+    )
+
+    # A float32 array quantized with encoding 3 decodes to float32: the binary64
+    # reconstruction is rounded to nearest, ties to even. Values are pinned exactly.
+    float32_spec = InlineSpectrum(
+        default_array_length=5,
+        mz=np.array([100.12345, 250.5, 999.99994, 1500.3333, 1999.0001], dtype=np.float32),
+        intensity=np.array([0.0, 0.5, 12.25, 3.1e4, 2.5e7], dtype=np.float32),
+    )
+    vectors.append(
+        _vector(
+            "float32_quantized",
+            "float32 m/z (linear, delta) and intensity (log) quantized with encoding 3 decode to float32",
+            float32_spec,
+            lossless=False,
+            tol={"abs": 0.0, "rel": 0.0},
+            array_encodings={
+                "mz": [3, 1, {"scale": 100000, "width": 4, "delta": True}],
+                "intensity": [3, 1, {"scale": 3600, "width": 2, "log": True}],
             },
         )
     )

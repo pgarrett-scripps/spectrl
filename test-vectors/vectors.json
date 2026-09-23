@@ -26,6 +26,10 @@
           32002.837968673844
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [],
@@ -61,6 +65,10 @@
           32000.0
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [],
@@ -98,6 +106,10 @@
           12000.39026862074
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [
@@ -156,6 +168,10 @@
           12000.0
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [
@@ -216,6 +232,11 @@
           1.0,
           1.0
         ],
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64",
+          "charge": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [],
@@ -255,6 +276,11 @@
           1.0,
           1.0
         ],
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64",
+          "charge": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [],
@@ -294,6 +320,11 @@
           -1.0,
           1.0
         ],
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64",
+          "charge": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [],
@@ -333,6 +364,11 @@
           -1.0,
           1.0
         ],
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64",
+          "charge": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [],
@@ -368,6 +404,10 @@
           -3.0
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [],
@@ -403,6 +443,10 @@
           -3.0
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [],
@@ -436,6 +480,10 @@
           60000.0
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [
@@ -502,6 +550,10 @@
           60000.0
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [
@@ -570,6 +622,10 @@
           20001.471324173166
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [
@@ -675,6 +731,10 @@
           20000.0
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [
@@ -780,6 +840,10 @@
           20000.0
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {
           "MS:1003008": {
             "dtype": "float64",
@@ -835,6 +899,10 @@
           20000.0
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {
           "MS:1003008": {
             "dtype": "float64",
@@ -888,6 +956,10 @@
           10001.152067330191
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [
@@ -937,6 +1009,10 @@
           10000.0
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [
@@ -990,6 +1066,10 @@
           10001.152067330191
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {
           "MS:1000517": {
             "dtype": "float64",
@@ -1055,6 +1135,10 @@
           10000.0
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {
           "MS:1000517": {
             "dtype": "float64",
@@ -1116,6 +1200,10 @@
           60000.0
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [
@@ -1189,6 +1277,10 @@
           60000.0
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [
@@ -1262,6 +1354,10 @@
           10001.152067330191
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [
@@ -1306,6 +1402,10 @@
           10000.0
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {},
         "array_units": {},
         "params": [
@@ -1602,6 +1702,10 @@
           1000000.0
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {
           "quality": {
             "dtype": "float32",
@@ -2021,6 +2125,10 @@
           1000000.0
         ],
         "charge": null,
+        "array_dtypes": {
+          "mz": "float64",
+          "intensity": "float64"
+        },
         "extra_arrays": {
           "quality": {
             "dtype": "float32",
@@ -2164,6 +2272,49 @@
         "products": [],
         "user_params": [],
         "checksum": "dd087268",
+        "format_version": 3
+      }
+    },
+    {
+      "name": "float32_quantized",
+      "description": "float32 m/z (linear, delta) and intensity (log) quantized with encoding 3 decode to float32",
+      "mode": "lossy",
+      "token": "spectrl.v3.z.eJxbxMDK1rSUQYqB38WTEUQ6MTUzMy5OTUnNKUn8mlqcnJiTKsXA2LYgtTwzpSSDhTVk5_WszfuPlSwtej7jafnvHwwMLExM7IzIRjiDjUjOyU-HGiDJJwDRzsTqxbAlLK-HgVVl4nt2RgC9Fyf3.b3e7b0c9",
+      "tolerance": {
+        "abs": 0.0,
+        "rel": 0.0
+      },
+      "decoded": {
+        "default_array_length": 5,
+        "id": null,
+        "mz": [
+          100.12345123291016,
+          250.5,
+          999.9999389648438,
+          1500.333251953125,
+          1999.0001220703125
+        ],
+        "intensity": [
+          0.0,
+          0.5001356601715088,
+          12.248559951782227,
+          30996.650390625,
+          25001450.0
+        ],
+        "charge": null,
+        "array_dtypes": {
+          "mz": "float32",
+          "intensity": "float32"
+        },
+        "extra_arrays": {},
+        "array_units": {},
+        "params": [],
+        "scans": [],
+        "scan_combination": null,
+        "precursors": [],
+        "products": [],
+        "user_params": [],
+        "checksum": "b3e7b0c9",
         "format_version": 3
       }
     }

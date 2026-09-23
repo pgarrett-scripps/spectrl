@@ -83,6 +83,10 @@ for (const v of doc.vectors) {
     closeArray(d.mz, exp.mz, tol, "mz");
     closeArray(d.intensity, exp.intensity, tol, "intensity");
     closeArray(d.charge, exp.charge, tol, "charge");
+    const coreCtor: Record<string, string> = { float64: "Float64Array", float32: "Float32Array", int32: "Int32Array" };
+    for (const [name, dtype] of Object.entries(exp.array_dtypes ?? {})) {
+      assert.equal((d as any)[name].constructor.name, coreCtor[dtype as string], `${name} dtype`);
+    }
 
     cmpParams(d.params, exp.params, "params");
 

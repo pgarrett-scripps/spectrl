@@ -2,17 +2,39 @@
 
 Reconstruction goes through _deterministic.expm1 rather than the platform's,
 so the same token decodes to the same bits in every implementation. See that
-module for why the platform routine is not enough.
+module for why the platform routine is not enough. Values are reconstructed in
+binary64 and then rounded to nearest, ties to even, into the declared type.
 """
 
 import math
 
 import numpy as np
 
-from .._format import DEFAULT_INTENSITY_SCALE, DEFAULT_MZ_PPM
+from .._format import DEFAULT_INTENSITY_SCALE, DEFAULT_MZ_PPM, TYPE_FLOAT32, TYPE_FLOAT64
 from ._deterministic import expm1 as deterministic_expm1
 from ._deterministic import log1p as deterministic_log1p
 from .shuffle import shuffle
+
+# Half the binary32 spacing is at most 2**-24 of the rounded value when it is
+# normal and exactly 2**-150 below that.
+_FLOAT32_RELATIVE_ROUNDING = 2.0**-24
+_FLOAT32_SUBNORMAL_ROUNDING = 2.0**-150
+
+
+def declared(values, tail):
+    """Round binary64 reconstructions into the declared type, back as float64 values."""
+    if tail == TYPE_FLOAT32:
+        with np.errstate(over="ignore"):
+            return np.asarray(values, dtype=np.float64).astype(np.float32).astype(np.float64)
+    return np.asarray(values, dtype=np.float64)
+
+
+def _reconstruct(q, params):
+    with np.errstate(over="ignore", invalid="ignore"):
+        result = q.astype(np.float64) / params["scale"]
+        if params.get("log", False):
+            result = deterministic_expm1(result)
+    return result
 
 
 def validate(params):
@@ -52,28 +74,34 @@ def parameters(data, scale, *, log=False, delta=False):
     return params
 
 
-def intensity_parameters(data, scale=DEFAULT_INTENSITY_SCALE):
+def intensity_parameters(data, scale=DEFAULT_INTENSITY_SCALE, tail=TYPE_FLOAT64):
     """Choose the default log1p intensity grid, refined for values below 1.
 
     log1p is nearly linear below 1, so a fixed scale gives an absolute floor
     there and zeroes small peaks of normalized spectra. When the smallest
     positive value m is below 1, the scale grows to scale * (m + 1) / (2 * m),
     which bounds every positive value by the relative error the fixed scale
-    already allows at 1.
+    already allows at 1. That bound, 2 * expm1(0.5 / scale), is checked on the
+    values reconstructed in the declared type.
     """
     source = np.asarray(data, dtype=np.float64)
     positive = source[source > 0]
     minimum = float(positive.min()) if len(positive) else 1.0
+    relative = 2 * float(deterministic_expm1(np.float64(0.5 / scale)))
     if minimum < 1:
         refined = scale / 2 * (minimum + 1) / minimum
         if not math.isfinite(refined) or refined > 2**53 - 1:
             raise ValueError("intensity scale is outside the supported range")
         scale = max(scale, math.ceil(refined))
-    return parameters(source, scale, log=True)
+    params = parameters(source, scale, log=True)
+    recovered = declared(_reconstruct(indices(source, params), params), tail)
+    if np.any(np.abs(source - recovered) > source * relative):
+        raise ValueError("quantized reconstruction exceeds the intensity bound")
+    return params
 
 
-def ppm_parameters(data, ppm=DEFAULT_MZ_PPM):
-    """Choose a log1p grid with a checked pointwise relative error bound."""
+def ppm_parameters(data, ppm=DEFAULT_MZ_PPM, tail=TYPE_FLOAT64):
+    """Choose a log1p grid with a pointwise relative error bound checked in the declared type."""
     if type(ppm) not in (int, float) or not math.isfinite(ppm) or ppm <= 0:
         raise ValueError("ppm must be finite and positive")
     source = np.asarray(data, dtype=np.float64)
@@ -91,13 +119,13 @@ def ppm_parameters(data, ppm=DEFAULT_MZ_PPM):
     if not math.isfinite(scale) or scale > 2**53 - 1:
         raise ValueError("ppm scale is outside the supported range")
     params = parameters(source, math.ceil(scale), log=True, delta=True)
-    recovered = deterministic_expm1(indices(source, params).astype(np.float64) / params["scale"])
+    recovered = declared(_reconstruct(indices(source, params), params), tail)
     if np.any(np.abs(source - recovered) > source * relative):
         raise ValueError("quantized reconstruction exceeds the ppm bound")
     return params
 
 
-def encode(data, _type, params):
+def encode(data, tail, params):
     q = indices(data, params)
     width = params["width"]
     if np.any(q > min(2**53 - 1, 2 ** (8 * width) - 1)):
@@ -106,17 +134,19 @@ def encode(data, _type, params):
     if params.get("delta", False):
         words[1:] = words[1:] - words[:-1]
     blob = shuffle(words.tobytes(), width)
-    recovered = decode(blob, _type, len(q), params)
+    recovered = decode(blob, tail, len(q), params).astype(np.float64)
     source = np.asarray(data, dtype=np.float64)
     half_step = 0.5 / params["scale"]
     with np.errstate(over="ignore"):
         bound = (source + 1) * deterministic_expm1(half_step) if params.get("log", False) else half_step
+        if tail == TYPE_FLOAT32:
+            bound = bound + np.maximum(recovered * _FLOAT32_RELATIVE_ROUNDING, _FLOAT32_SUBNORMAL_ROUNDING)
     if np.any(np.abs(source - recovered) > bound):
         raise ValueError("quantized reconstruction exceeds the rounding bound")
     return blob
 
 
-def decode(blob, _type, count, params):
+def decode(blob, tail, count, params):
     width = params["width"]
     if len(blob) != count * width:
         raise ValueError("quantized byte count mismatch")
@@ -125,10 +155,10 @@ def decode(blob, _type, count, params):
         words = np.cumsum(words, dtype=words.dtype)
     if np.any(words > 2**53 - 1):
         raise ValueError("quantized index exceeds the safe integer range")
-    with np.errstate(over="ignore", invalid="ignore"):
-        result = words.astype(np.float64) / params["scale"]
-        if params.get("log", False):
-            result = deterministic_expm1(result)
+    result = _reconstruct(words, params)
+    if tail == TYPE_FLOAT32:
+        with np.errstate(over="ignore"):
+            result = result.astype(np.float32)
     if not np.isfinite(result).all():
         raise ValueError("quantized reconstruction is not finite")
     return result
