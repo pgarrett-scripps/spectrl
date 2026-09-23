@@ -1,0 +1,38 @@
+[package]
+name = "spectrl"
+version = "3.0.0"
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "Independent Rust implementation of the spectrl.v3 single-spectrum token format"
+repository = "https://github.com/pgarrett-scripps/spectrl"
+homepage = "https://github.com/pgarrett-scripps/spectrl"
+readme = "README.md"
+keywords = ["mass-spectrometry", "proteomics", "cbor", "mzml", "spectrum"]
+categories = ["encoding", "science"]
+# tests/vectors.rs reads ../test-vectors, which lives outside the package.
+include = ["src/**", "tests/fdlibm.rs", "tests/properties.rs", "tests/data/**", "Cargo.toml", "README.md", "SPEC-NOTES.md", "LICENSE"]
+
+[features]
+default = ["brotli"]
+# Brotli (`b`) payloads. Readers must support `r` and `z`; `b` is optional.
+brotli = ["dep:brotlic"]
+
+[dependencies]
+# Stock zlib, built from the bundled source so every platform deflates alike.
+flate2 = { version = "1.1", default-features = false, features = ["zlib"] }
+libz-sys = { version = "1.1", default-features = false, features = ["libc", "stock-zlib", "static"] }
+# The reference C Brotli library, as Python and Node use: byte-identical `b` tokens.
+brotlic = { version = "0.8.2", optional = true }
+crc32fast = "1.5"
+serde_json = { version = "1", features = ["float_roundtrip"] }
+
+[dev-dependencies]
+libm = "0.2.16"
+
+[[bin]]
+name = "spectrl"
+path = "src/bin/spectrl.rs"
+
+[profile.release]
+debug = false
