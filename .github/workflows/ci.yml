@@ -50,7 +50,7 @@ jobs:
         run: uv run --locked --extra brotli python scripts/fuzz_decode.py
 
       - name: Named adversarial cases reach their required verdict
-        run: uv run --locked --extra brotli python scripts/adversarial_corpus.py --out /dev/null --mutations 0
+        run: uv run --locked --extra brotli python scripts/adversarial_corpus.py --out "${{ runner.temp }}/adversarial.json" --mutations 0
 
   lint:
     name: lint
