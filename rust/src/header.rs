@@ -304,6 +304,9 @@ fn read_groups(value: &Value) -> Result<Vec<Group>> {
 fn read_source(value: &Value) -> Result<Source> {
     let mut s = Source::default();
     for (k, v) in int_fields(value, "source record", &[0, 1, 2, 3, 5, 6, 7])? {
+        if matches!(v, Value::Null) && matches!(k, 2 | 3 | 5 | 6 | 7) {
+            continue; // a null leaf field reads as absent
+        }
         match k {
             0 => s.params = read_params(v)?,
             1 => s.user_params = read_user_params(v)?,
@@ -325,6 +328,9 @@ fn read_source(value: &Value) -> Result<Source> {
 fn read_software(value: &Value) -> Result<Software> {
     let mut s = Software::default();
     for (k, v) in int_fields(value, "software record", &[0, 1, 2, 3, 4])? {
+        if matches!(v, Value::Null) && matches!(k, 2..=4) {
+            continue; // a null leaf field reads as absent
+        }
         match k {
             0 => s.params = read_params(v)?,
             1 => s.user_params = read_user_params(v)?,
@@ -339,6 +345,9 @@ fn read_software(value: &Value) -> Result<Software> {
 fn read_component(value: &Value) -> Result<Component> {
     let mut c = Component::default();
     for (k, v) in int_fields(value, "component record", &[0, 1, 10, 11])? {
+        if matches!(v, Value::Null) && matches!(k, 10 | 11) {
+            continue; // a null leaf field reads as absent
+        }
         match k {
             0 => c.params = read_params(v)?,
             1 => c.user_params = read_user_params(v)?,
@@ -363,6 +372,9 @@ fn read_component(value: &Value) -> Result<Component> {
 fn read_instrument(value: &Value) -> Result<Instrument> {
     let mut s = Instrument::default();
     for (k, v) in int_fields(value, "instrument record", &[0, 1, 2, 3, 9, 12])? {
+        if matches!(v, Value::Null) && matches!(k, 2 | 3) {
+            continue; // a null leaf field reads as absent
+        }
         match k {
             0 => s.params = read_params(v)?,
             1 => s.user_params = read_user_params(v)?,
@@ -407,6 +419,9 @@ fn read_string_map(value: &Value, what: &str) -> Result<Vec<(String, Value)>> {
 fn read_processing_record(value: &Value) -> Result<Processing> {
     let mut p = Processing::default();
     for (k, v) in int_fields(value, "processing record", &[0, 1, 12, 13, 14, 15, 16])? {
+        if matches!(v, Value::Null) && matches!(k, 13..=15) {
+            continue; // a null leaf field reads as absent
+        }
         match k {
             0 => p.params = read_params(v)?,
             1 => p.user_params = read_user_params(v)?,

@@ -151,3 +151,15 @@ Each is a candidate for a new vector or a sentence in the specification.
 - **Evidence:** `tests/test_declared_type.py` (allowed reading) and the
   `float32-mz-ppm-fails` and `typed-arrays/lossy` entries in `token-parity.json`,
   which the Rust writer matches byte for byte.
+
+## Null leaf fields in context records (section 7)
+
+- **Unclear:** "Record text fields are strings" and optional fields may be
+  omitted, but the specification does not say whether an explicit null in an
+  optional record field is an error or an absent field.
+- **Resolution:** a null in a leaf field (source 2, 3, 5, 6, 7; software 2, 3,
+  4; instrument 2, 3; component 10, 11; processing 13, 14, 15) reads as absent.
+  Parameter lists and nested records keep their type checks.
+- **Evidence:** black-box probe (last resort): the adversarial parity run found
+  102 mutations that Python and TypeScript accept and Rust rejected, every one a
+  null in one of these fields. With this rule Rust agrees on all 120,158 tokens.
