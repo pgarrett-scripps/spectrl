@@ -184,14 +184,14 @@ wheels = [
 
 [[package]]
 name = "mzmlpy"
-version = "0.4.0"
+version = "0.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/83/3d/cb7760ca49c40ad031346567b9ce6ba6b9321108108b1c88aec430e58a70/mzmlpy-0.4.0.tar.gz", hash = "sha256:12ce07fe4b5e43aa55c1c8fd2ee9fd320bbb3e1c4092e2762aa8982dffe6a9e4", size = 13050075, upload-time = "2026-04-07T23:34:21.892Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e0/99/6f653cd282d5a3af805769a9279e90f7c3647b2a0885dee0c36fa6bf06fd/mzmlpy-0.9.0.tar.gz", hash = "sha256:67026ff9817e000ed1b4ad18e611af1fc3b6ee78e79b415c341f130040268d04", size = 89241, upload-time = "2026-09-05T00:51:39.895Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/01/87/eeac1022c8ce72aa6db97a3440fcb1347754be25e243369eeb7e28dd5f7c/mzmlpy-0.4.0-py3-none-any.whl", hash = "sha256:e74629b05b0dc440665fd99cf3cd5e85b8b3904dd6a262bb62df75392d52e35a", size = 44280, upload-time = "2026-04-07T23:34:20.075Z" },
+    { url = "https://files.pythonhosted.org/packages/44/ad/9ac11b745e7aae7d3c683246aebdbdd3a0eee449b16770ecaa1b545eb3bc/mzmlpy-0.9.0-py3-none-any.whl", hash = "sha256:c7462d2648ee186556f04253279c48fb9a6681c0e9f4494e30506d303631f18e", size = 99566, upload-time = "2026-09-05T00:51:38.709Z" },
 ]
 
 [[package]]
