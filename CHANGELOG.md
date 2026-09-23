@@ -10,7 +10,7 @@ Python and JavaScript packages share a version. The current 3.x series uses
 the token format. Runtime support changes are called out in the release notes.
 See [SPECIFICATION.md](SPECIFICATION.md).
 
-## [3.0.0] - 2026-09-21
+## [3.0.0] - 2026-09-22
 
 - Refine the default lossy intensity grid for values below 1. The fixed log1p
   scale of 3600 is nearly linear there, so normalized spectra lost every peak
