@@ -104,8 +104,8 @@ configuration is a programming error: Python rejects it when constructing
 All four budgets are inclusive and accept nonnegative safe integers. The token
 budget is checked before base64 decoding. Array count and total output bytes
 are checked across all validated descriptors before decompressing any array.
-A 32-bit array consumes four bytes per element, and a float64 or quantized
-array consumes eight. Existing per-blob decompression checks still apply.
+Each array consumes the size of its declared type per element: four bytes for
+float32 and int32, eight for float64, including quantized and rounded arrays. Existing per-blob decompression checks still apply.
 
 Budgets are applied by default. Omitting `limits`, passing `DecodeLimits()` in
 Python, or passing `{}` in JavaScript all give 4 MiB of token, 1,000,000 peaks,

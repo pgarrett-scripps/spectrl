@@ -194,14 +194,16 @@ def _default_candidates(key, array, lossless, mz_ppm, int_fp):
     yield native, lambda: [2 if key == "mz" else 1 if key == "intensity" else 0, 1]
     if lossless or key not in {"mz", "intensity"} or array.dtype.kind != "f" or _has_negative(array):
         return
+    # Every candidate declares the native floating type, so lossy arrays decode
+    # to the dtype they were encoded from.
     if key == "mz":
-        yield TYPE_FLOAT64, lambda: [3, 1, quantized.ppm_parameters(array, mz_ppm)]
+        yield native, lambda: [3, 1, quantized.ppm_parameters(array, mz_ppm, native)]
         return
     a = np.asarray(array)
     if bool(np.all(np.floor(a) == a)) and float(a.max(initial=0)) <= 2**53 - 1:
-        yield TYPE_FLOAT64, lambda: [3, 1, quantized.parameters(a, 1)]
+        yield native, lambda: [3, 1, quantized.parameters(a, 1)]
     yield native, lambda: [4, 1, rounded.parameters(a, native, DEFAULT_ROUNDED_BITS)]
-    yield TYPE_FLOAT64, lambda: [3, 1, quantized.intensity_parameters(a, int_fp)]
+    yield native, lambda: [3, 1, quantized.intensity_parameters(a, int_fp, native)]
 
 
 def _default_array(key, array, lossless, mz_ppm, int_fp, compression):

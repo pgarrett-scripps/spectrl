@@ -119,8 +119,8 @@ Numeric types are float32 (`MS:1000521`), float64 (`MS:1000523`), and int32
 m/z values must be nonnegative. Writers stably sort peaks by ascending m/z and
 apply the same permutation to every array. Native supported widths are preserved
 by lossless encoding. Plain language-level number lists default to float64.
-The descriptor always declares the reconstructed type, including float64 for
-quantized-word output.
+The descriptor always declares the reconstructed type. Every encoding, exact or
+lossy, reconstructs the declared type, so a float32 array decodes to float32.
 
 ## 3. Scientific parameters
 
@@ -218,8 +218,9 @@ A reader must not substitute another codec or treat unknown bytes as raw data.
 | 3 | Quantized unsigned words plus byte shuffle | `scale`, `width`, optional `log`, `delta` | Potentially lossy |
 | 4 | Rounded floating-point words plus byte shuffle | `bits`, `width` | Potentially lossy |
 
-Encodings 0..2 support all three numeric types. Encoding 3 reconstructs float64.
-Encoding 4 supports float32 and float64 and reconstructs the declared type.
+Encodings 0..2 support all three numeric types. Encodings 3 and 4 support
+float32 and float64. Decoders reconstruct values of the declared type for every
+encoding. A writer that applies encoding 3 or 4 to an int32 array declares float64.
 All five encodings form the mandatory core. No other parameters are accepted by
 these revisions. Scientific PSI-MS terms identify arrays and metadata, not codecs.
 
@@ -271,7 +272,9 @@ word with its difference from the preceding word modulo 2^(8*width), with zero
 as the preceding word for the first index. Finally byte-shuffle the words.
 Decoding reverses shuffle and modular differences, checks the index domain,
 and divides each index by scale. With `log`, apply expm1 to that quotient.
-Reject nonfinite reconstructed values and incorrect byte counts.
+This binary64 value is the reconstruction for float64. For float32 the decoder
+rounds it to the nearest binary32 value, ties to even. Reject values that are
+nonfinite after this rounding, and reject incorrect byte counts.
 
 Writers and readers evaluate ln(1+x) and expm1 with the fdlibm 5.3 `log1p` and
 `expm1` algorithms in binary64 arithmetic, not the platform math library.
@@ -280,9 +283,12 @@ implementation computes the same indices and reconstructed bits.
 
 The linear rounding bound is 0.5/scale in source units. The logarithmic bound
 is (x+1)*expm1(0.5/scale), so it is approximately proportional to x for larger
-values but is not a strict relative bound near zero. Reference writers decode
-and check these bounds against their inputs, rejecting an explicit invalid
-choice and using an exact fallback for an automatic choice. Bounds refer to
+values but is not a strict relative bound near zero. For float32 each bound
+grows by max(2^-24 * y, 2^-150), where y is the reconstructed float32 value, to
+cover the final rounding. Writers evaluate every bound check on the reconstructed
+value in the declared type. Reference writers decode and check these bounds
+against their inputs, rejecting an explicit invalid choice and using an exact
+fallback for an automatic choice. Bounds refer to
 numeric reconstruction, not downstream scientific performance.
 
 ## 6. Writer profiles
@@ -297,7 +303,9 @@ m/z uses `log: true` and `delta: true` with a maximum pointwise error of
 `r = 0.1e-6 * (1 - 1e-7)`. The writer chooses
 `scale = ceil(0.5 / log1p(r * m / (m + 1)))`. The small margin accommodates
 floating-point rounding. Empty and all-zero arrays use `m = 1`. Zero is exact.
-The writer checks reconstructed values against the requested 0.1 ppm bound.
+The writer checks each reconstructed value in the declared type against the
+requested 0.1 ppm bound. For a float32 array that value is the rounded float32
+value, so the check often fails and the exact encoding is used.
 Unsupported scales or failed checks use exact encoding. This scale selection
 uses the existing logarithmic representation without changing decoding.
 The logarithmic intensity candidate uses `log: true` and scale 3600 when its
@@ -307,6 +315,8 @@ evaluated in that order in binary64. Every positive intensity then keeps a
 relative error of at most `2 * expm1(0.5 / 3600)`, about 0.028%, the bound the
 fixed scale gives at 1, instead of rounding to zero below about 1.4e-4 source
 units. A scale that is not finite or exceeds 2^53 - 1 removes that candidate.
+The writer checks each reconstructed value in the declared type against this
+relative bound and removes the candidate when any value fails.
 Every quantized or rounded candidate uses the smallest width that fits its words.
 
 Nonnegative floating intensity chooses per array among these candidates, in

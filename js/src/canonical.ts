@@ -189,15 +189,17 @@ export function defaultCandidates(key: string, array: Float64Array | Float32Arra
   const native = typeTailOf(array)
   const candidates: [number, () => Operation][] = [[native, () => [key === "mz" ? 2 : key === "intensity" ? 1 : 0, 1]]]
   if (lossless || !["mz", "intensity"].includes(key) || array instanceof Int32Array || hasNegative(array)) return candidates
+  // Every candidate declares the native floating type, so lossy arrays decode
+  // to the type they were encoded from.
   if (key === "mz") {
-    candidates.push([TYPE_FLOAT64, () => [3, 1, ppmParameters(array, mzPpm)]])
+    candidates.push([native, () => [3, 1, ppmParameters(array, mzPpm, native)]])
     return candidates
   }
   let counts = true
   for (const value of array) if (!Number.isInteger(value) || value > MAX_SAFE_INTEGER) { counts = false; break }
-  if (counts) candidates.push([TYPE_FLOAT64, () => [3, 1, quantizedParameters(array, 1)]])
+  if (counts) candidates.push([native, () => [3, 1, quantizedParameters(array, 1)]])
   candidates.push([native, () => [4, 1, roundedParameters(array, native, DEFAULT_ROUNDED_BITS)]])
-  candidates.push([TYPE_FLOAT64, () => [3, 1, intensityParameters(array, intFp)]])
+  candidates.push([native, () => [3, 1, intensityParameters(array, intFp, native)]])
   return candidates
 }
 

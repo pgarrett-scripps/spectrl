@@ -23,6 +23,12 @@ See [SPECIFICATION.md](SPECIFICATION.md).
   type is kept, and readers reject words too wide for the shift and nonfinite
   results.
 
+- Every encoding now reconstructs the array's declared type. A float32 array
+  quantized with encoding 3 decodes to float32, rounded to nearest, ties to
+  even, from the binary64 reconstruction. Default candidates declare the native
+  type, and writer bound checks use the declared-type value. When the float32
+  0.1 ppm m/z check fails, the writer keeps the exact encoding.
+
 - Make the default lossy profile a per-array size choice. Nonnegative floating
   intensity tries, in tie order, exact byte shuffle, scale-1 words when every
   value is an integer (exact for counts), encoding 4 with 12 bits (relative
@@ -103,6 +109,8 @@ See [SPECIFICATION.md](SPECIFICATION.md).
 - Remove separate user-parameter type annotations. Values carry their native CBOR
   type; mzML import converts declared numeric user values and rejects invalid or
   out-of-range numbers. Earlier draft v3 tokens with the `t` field are rejected.
+  Scalars are text, integer, or float. Booleans are rejected, so encode a former
+  `xsd:boolean` value as 0 or 1.
 
 - Preserve unsupported shared links in the viewer and show a version error instead
   of substituting the demo spectrum.

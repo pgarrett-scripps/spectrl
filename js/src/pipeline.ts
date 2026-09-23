@@ -63,7 +63,7 @@ for (const id of [0, 1, 2]) encodings.set(operationKey([id, 1]), {
   },
   decode: (b, t, n) => decodeRaw(id === 0 ? b : id === 1 ? byteUnshuffle(b, width(t)) : deltaUnshuffle(b, width(t)), t),
 })
-encodings.set(operationKey([3, 1]), { encode: encodeQuantized, decode: decodeQuantized, validate: validateQuantized, lossless: false, types: [1000523] })
+encodings.set(operationKey([3, 1]), { encode: encodeQuantized, decode: decodeQuantized, validate: validateQuantized, lossless: false, types: [1000521, 1000523] })
 encodings.set(operationKey([4, 1]), { encode: encodeRounded, decode: decodeRounded, validate: validateRounded, lossless: false, types: [1000521, 1000523] })
 export function encodePipeline(data: NumArray, type: number, enc: Operation) {
   const [e, params] = operation(encodings, enc)

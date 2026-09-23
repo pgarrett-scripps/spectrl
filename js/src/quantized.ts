@@ -1,9 +1,26 @@
-/** A shared quantized-word representation for linear and log1p mappings. */
+/**
+ * A shared quantized-word representation for linear and log1p mappings.
+ * Values are reconstructed in binary64 and then rounded to nearest, ties to
+ * even, into the declared type (Math.fround for float32, as numpy astype).
+ */
 import { expm1 as deterministicExpm1, log1p as deterministicLog1p } from "./deterministic.js"
 import { byteShuffle, byteUnshuffle, type NumArray } from "./codecs.js"
 import type { Parameters } from "./pipeline.js"
 import { deltaShuffleWords, deltaUnshuffleWords } from "./delta.js"
-import { DEFAULT_INTENSITY_SCALE, DEFAULT_MZ_PPM } from "./format.js"
+import { DEFAULT_INTENSITY_SCALE, DEFAULT_MZ_PPM, TYPE_FLOAT32, TYPE_FLOAT64 } from "./format.js"
+
+// Half the binary32 spacing is at most 2^-24 of the rounded value when it is
+// normal and exactly 2^-150 below that.
+const FLOAT32_RELATIVE_ROUNDING = 2 ** -24
+const FLOAT32_SUBNORMAL_ROUNDING = 2 ** -150
+/** Round a binary64 reconstruction into the declared type, returned as a Number. */
+export const declared = (value: number, type: number) => type === TYPE_FLOAT32 ? Math.fround(value) : value
+const reconstruct = (q: number, p: Parameters) => {
+  const scaled = q / (p.scale as number)
+  // The shared expm1, not the platform's, so the same token decodes to the
+  // same bits everywhere. See src/deterministic.ts.
+  return p.log ? deterministicExpm1(scaled) : scaled
+}
 
 export function validateQuantized(p: Parameters): void {
   if (Object.keys(p).some(k => !["scale", "width", "log", "delta"].includes(k)) || !("scale" in p) || !("width" in p)) throw Error("quantized encoding requires scale and width")
@@ -30,17 +47,25 @@ export function quantizedParameters(a: NumArray, scale: number, log = false, del
 // normalized spectra. When the smallest positive value m is below 1, the scale
 // grows to scale * (m + 1) / (2 * m), which bounds every positive value by the
 // relative error the fixed scale already allows at 1.
-export function intensityParameters(a: NumArray, scale = DEFAULT_INTENSITY_SCALE): Parameters {
+// That bound, 2 * expm1(0.5 / scale), is checked on the values reconstructed
+// in the declared type.
+export function intensityParameters(a: NumArray, scale = DEFAULT_INTENSITY_SCALE, type = TYPE_FLOAT64): Parameters {
   let minimum = Infinity
   for (const value of a) if (value > 0) minimum = Math.min(minimum, value)
+  const relative = 2 * deterministicExpm1(0.5 / scale)
   if (minimum < 1) {
     const refined = scale / 2 * (minimum + 1) / minimum
     if (!Number.isFinite(refined) || refined > 2 ** 53 - 1) throw Error("intensity scale is outside the supported range")
     scale = Math.max(scale, Math.ceil(refined))
   }
-  return quantizedParameters(a, scale, true)
+  const p = quantizedParameters(a, scale, true)
+  const q = indices(a, p)
+  for (const [i, value] of a.entries()) {
+    if (Math.abs(value - declared(reconstruct(q[i]!, p), type)) > value * relative) throw Error("quantized reconstruction exceeds the intensity bound")
+  }
+  return p
 }
-export function ppmParameters(a: NumArray, ppm = DEFAULT_MZ_PPM): Parameters {
+export function ppmParameters(a: NumArray, ppm = DEFAULT_MZ_PPM, type = TYPE_FLOAT64): Parameters {
   if (typeof ppm !== "number" || !Number.isFinite(ppm) || ppm <= 0) throw Error("ppm must be finite and positive")
   let minimum = Infinity
   for (const value of a) {
@@ -56,12 +81,12 @@ export function ppmParameters(a: NumArray, ppm = DEFAULT_MZ_PPM): Parameters {
   const p = quantizedParameters(a, scale, true, true)
   const q = indices(a, p)
   for (const [i, value] of a.entries()) {
-    const recovered = deterministicExpm1(q[i]! / scale)
+    const recovered = declared(reconstruct(q[i]!, p), type)
     if (Math.abs(value - recovered) > value * relative) throw Error("quantized reconstruction exceeds the ppm bound")
   }
   return p
 }
-export function encodeQuantized(a: NumArray, _type: number, p: Parameters): Uint8Array {
+export function encodeQuantized(a: NumArray, type: number, p: Parameters): Uint8Array {
   const q = indices(a, p)
   const width = p.width as number
   const raw = new Uint8Array(q.length * width)
@@ -74,28 +99,28 @@ export function encodeQuantized(a: NumArray, _type: number, p: Parameters): Uint
     else view.setBigUint64(i * 8, BigInt(value), true)
   }
   const blob = p.delta ? deltaShuffleWords(raw, width) : byteShuffle(raw, width)
-  const recovered = decodeQuantized(blob, _type, q.length, p)
+  const recovered = decodeQuantized(blob, type, q.length, p)
   const halfStep = 0.5 / (p.scale as number)
   for (const [i, value] of a.entries()) {
-    const bound = p.log ? (value + 1) * deterministicExpm1(halfStep) : halfStep
+    let bound = p.log ? (value + 1) * deterministicExpm1(halfStep) : halfStep
+    if (type === TYPE_FLOAT32) bound += Math.max(recovered[i]! * FLOAT32_RELATIVE_ROUNDING, FLOAT32_SUBNORMAL_ROUNDING)
     if (Math.abs(value - recovered[i]!) > bound) throw Error("quantized reconstruction exceeds the rounding bound")
   }
   return blob
 }
-export function decodeQuantized(blob: Uint8Array, _type: number, count: number, p: Parameters): Float64Array {
+export function decodeQuantized(blob: Uint8Array, type: number, count: number, p: Parameters): Float64Array | Float32Array {
   const width = p.width as number
   if (blob.length !== count * width) throw Error("quantized byte count mismatch")
   const raw = p.delta ? deltaUnshuffleWords(blob, width) : byteUnshuffle(blob, width)
   const view = new DataView(raw.buffer, raw.byteOffset, raw.byteLength)
-  return Float64Array.from({ length: count }, (_, i) => {
+  const out = type === TYPE_FLOAT32 ? new Float32Array(count) : new Float64Array(count)
+  for (let i = 0; i < count; i++) {
     const q = width === 1 ? view.getUint8(i) : width === 2 ? view.getUint16(i * 2, true)
       : width === 4 ? view.getUint32(i * 4, true) : Number(view.getBigUint64(i * 8, true))
     if (!Number.isSafeInteger(q)) throw Error("quantized index exceeds the safe integer range")
-    const scaled = q / (p.scale as number)
-    // The shared expm1, not the platform's, so the same token decodes to the
-    // same bits everywhere. See src/deterministic.ts.
-    const value = p.log ? deterministicExpm1(scaled) : scaled
+    const value = declared(reconstruct(q, p), type)
     if (!Number.isFinite(value)) throw Error("quantized reconstruction is not finite")
-    return value
-  })
+    out[i] = value
+  }
+  return out
 }

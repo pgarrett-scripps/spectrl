@@ -122,7 +122,7 @@ ENCODINGS.update(
         (0, 1): Encoding(_raw, _from_raw, _empty),
         (1, 1): _transform(shuffle, lambda b, w: shuffle(b, w, inverse=True)),
         (2, 1): _transform(delta_shuffle, delta_unshuffle),
-        (3, 1): Encoding(quantized.encode, quantized.decode, quantized.validate, False, (TYPE_FLOAT64,)),
+        (3, 1): Encoding(quantized.encode, quantized.decode, quantized.validate, False, (TYPE_FLOAT32, TYPE_FLOAT64)),
         (4, 1): Encoding(rounded.encode, rounded.decode, rounded.validate, False, (TYPE_FLOAT32, TYPE_FLOAT64)),
     }
 )

@@ -408,6 +408,8 @@ def _scalar(value):
 
     if value is None or isinstance(value, str):
         return
+    if isinstance(value, bool):
+        raise ValueError("invalid parameter scalar: booleans are not supported, use 0 or 1")
     if (
         type(value) in (int, float)
         and math.isfinite(value)
