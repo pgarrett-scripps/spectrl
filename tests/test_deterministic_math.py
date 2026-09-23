@@ -6,6 +6,7 @@ those would show up as a spectrum that decodes differently depending on which
 language opened it.
 """
 
+import sys
 from decimal import Decimal, getcontext
 
 import numpy as np
@@ -27,6 +28,10 @@ def _ulp_error(values, computed, exact):
     return float(worst)
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="the MSVC runtime's expm1 is up to 2 ulp off; accuracy is checked against exact arithmetic below",
+)
 def test_expm1_matches_the_platform_within_one_ulp():
     values = np.concatenate([np.arange(0, 20000) / 3600.0, np.linspace(-40, 40, 20000)])
     difference = np.abs(

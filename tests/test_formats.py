@@ -69,7 +69,7 @@ def test_mzml_round_trip_preserves_arrays_and_parameters():
 
     with tempfile.TemporaryDirectory() as directory:
         path = Path(directory) / "one.mzML"
-        path.write_text(result.text)
+        path.write_text(result.text, encoding="utf-8", newline="\n")
         back = decode_token(encode_spectrum(read_mzml(path, index=0)[0], lossless=True))
     assert np.array_equal(back.mz, decoded.mz)
     assert np.array_equal(back.intensity, decoded.intensity)

@@ -68,7 +68,7 @@ def _write_spectrum_file(decoded, path: str) -> None:
     except ValueError as e:
         raise SystemExit(f"spectrl decode: {e}") from None
     result = write(decoded, format)
-    Path(path).write_text(result.text, encoding="utf-8")
+    Path(path).write_text(result.text, encoding="utf-8", newline="\n")
     print(f"Written {path}", file=sys.stderr)
     if result.omitted:
         print("", file=sys.stderr)

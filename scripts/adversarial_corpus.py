@@ -51,6 +51,12 @@ ROOT = Path(__file__).resolve().parents[1]
 ACCEPT, REJECT = "accept", "reject"
 
 
+def _gzip(raw: bytes) -> bytes:
+    """gzip with the header fixed: mtime 0 and OS byte 255, which Python < 3.13 writes as 3."""
+    blob = gzip.compress(raw, mtime=0)
+    return blob[:9] + b"\xff" + blob[10:]
+
+
 def frame(raw: bytes, mode: str = "r") -> str:
     """Wrap payload bytes in valid framing with a correct checksum."""
     packed = {"r": lambda b: b, "z": lambda b: zlib.compress(b, 6)}[mode](raw)
@@ -194,7 +200,7 @@ def named_cases() -> list[dict]:
         "1 concatenated streams",
     )
     case("compression/bare_deflate", frame_text(b64url_encode(zlib.compress(raw, 6)[2:-4]), "z"), REJECT, "1 zlib only")
-    case("compression/gzip_as_zlib", frame_text(b64url_encode(gzip.compress(raw, mtime=0)), "z"), REJECT, "1 zlib only")
+    case("compression/gzip_as_zlib", frame_text(b64url_encode(_gzip(raw)), "z"), REJECT, "1 zlib only")
     case(
         "compression/zlib_truncated",
         frame_text(b64url_encode(zlib.compress(raw, 6)[:-3]), "z"),
