@@ -8,10 +8,12 @@ in GitHub. Zenodo archives the release when the repository is connected there.
 
 ### PyPI
 
-The `spectrl` project already has a working Trusted Publisher. Confirm its
-settings under PyPI project **Manage → Publishing**:
+The repository moved from `pgarrett-scripps` to the `tacular-omics`
+organization before 3.0.0. Trusted Publishers record the owner, so add one
+with these settings under PyPI project **Manage → Publishing** (the old
+`pgarrett-scripps` publisher can be removed after the first release):
 
-- owner: `pgarrett-scripps`
+- owner: `tacular-omics`
 - repository: `spectrl`
 - workflow: `publish.yml`
 - environment: `pypi`
@@ -21,10 +23,10 @@ No `PYPI_TOKEN` secret is needed.
 ### npm
 
 The public package is `@spectrl-ms/spectrl`. Version 0.4.1 was published once
-to bootstrap the package, and its Trusted Publisher is configured as:
+to bootstrap the package. Its Trusted Publisher must name the new owner:
 
 - provider: GitHub Actions
-- organization/user: `pgarrett-scripps`
+- organization/user: `tacular-omics`
 - repository: `spectrl`
 - workflow filename: `publish.yml`
 - environment: `npm`

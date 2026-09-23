@@ -128,7 +128,7 @@ def _binary_array_dict() -> dict:
 
 registry = {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://github.com/pgarrett-scripps/spectrl/schema/registry.json",
+    "$id": "https://github.com/tacular-omics/spectrl/schema/registry.json",
     "title": "spectrl registry",
     "description": (
         "Machine-readable registry of all integer keys, CV accession tails, "

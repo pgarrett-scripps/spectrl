@@ -2,7 +2,7 @@
 
 The original release candidates were merged into `main` in both repositories:
 
-- [Software merge snapshot](https://github.com/pgarrett-scripps/spectrl/commit/a461435831962782016d3d62fd7970e71c883c8c)
+- [Software merge snapshot](https://github.com/tacular-omics/spectrl/commit/a461435831962782016d3d62fd7970e71c883c8c)
 - [Paper merge snapshot](https://github.com/pgarrett-scripps/spectrl-paper/commit/bfae40bd9c1c22bd9f7c41a6e39f95c3f6440acf)
 
 These snapshots do not create a release. Pushes run CI. Package publication is

@@ -6,8 +6,8 @@ URL-safe string and back, with no backend required. Runs in the browser and in
 Node.
 
 This package is a separate implementation of the format specified in
-[`SPECIFICATION.md`](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md) and is validated against the shared
-conformance vectors in [`test-vectors/`](https://github.com/pgarrett-scripps/spectrl/tree/main/test-vectors).
+[`SPECIFICATION.md`](https://github.com/tacular-omics/spectrl/blob/main/SPECIFICATION.md) and is validated against the shared
+conformance vectors in [`test-vectors/`](https://github.com/tacular-omics/spectrl/tree/main/test-vectors).
 It also produces the same complete tokens as Python for the tested inputs and
 settings: all 1,788 comparisons matched, including both encoding profiles and
 raw, zlib, and Brotli payloads. Matching metadata, array dtypes, and exact core
@@ -125,7 +125,7 @@ callbacks registered explicitly. Unknown custom array semantics require
 - `parsePeakList(text)`, `formatPeakList(spec, delimiter?)`, and `topN(spec, n)`
 - `toFragment(token, base)`, `toQuery(token, base, param?)`, `toDataUri(token)`, `extractToken(urlOrUri)`
 
-See the [service integration guide](https://github.com/pgarrett-scripps/spectrl/blob/main/docs/services.md)
+See the [service integration guide](https://github.com/tacular-omics/spectrl/blob/main/docs/services.md)
 for runnable Python-to-Node examples, budget defaults, precision policy, and
 worker guidance. Decoding is synchronous. Set ingress and concurrency limits
 in the consuming service as well as per-token decoder budgets.
@@ -145,12 +145,12 @@ npm run typecheck
 
 ## License
 
-Apache-2.0. See [LICENSE](https://github.com/pgarrett-scripps/spectrl/blob/main/LICENSE).
+Apache-2.0. See [LICENSE](https://github.com/tacular-omics/spectrl/blob/main/LICENSE).
 
 **Quality and sharing workflows**
 
 `encodingReport`, `fitToBudget`, `parsePeakList`, `formatPeakList`, and `topN`
-are exported from the main package. The [workflow guide](https://github.com/pgarrett-scripps/spectrl/blob/main/docs/workflows.md)
+are exported from the main package. The [workflow guide](https://github.com/tacular-omics/spectrl/blob/main/docs/workflows.md)
 includes examples and documents zero-reference error metrics, explicit
 omission permissions, complete URL budgets, and peak-list limitations.
 
