@@ -1,7 +1,7 @@
 {
  "description": "Python/TypeScript decoder agreement over the adversarial token corpus.",
  "generated_by": "scripts/check_adversarial_parity.py",
- "python": "3.14.0",
+ "python": "3.13.7",
  "node": "v22.22.0",
  "seeds": [
   31337,
