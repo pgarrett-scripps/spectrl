@@ -193,7 +193,7 @@
       "name": "with_charge_array",
       "description": "deconvoluted spectrum carrying a per-peak charge array",
       "mode": "lossy",
-      "token": "spectrl.v3.z.eJxbxMDM1ryUQYqB38WbEUQ6MTUzMy5JzslP_5qakppTkvg1tTg5MSdVisGnyCe1PDOlJIOF1Wf61hS3T1y35cQYGRjYGZH1O4P0L4boB2uU5BOAaGNidWNxbZva3YiqwYWpiYGRNUKCAQIcINQHexjNzgAAuTAoTA.7954e9a6",
+      "token": "spectrl.v3.z.eJxbxMDM1ryUQYqB38WbEUQ6MTUzMy5JzslP_5qakppTkvg1tTg5MSdVisGnyCe1PDOlJIOF1Wf61hS3T1y35cQYGRjYGZH1O4P0L4LoYYSoZ2J1c1AQmOOnjqrShamJgZE1QoIBAhwg1Ad7GM3OAAAM7ySM.cf5361d9",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -207,9 +207,9 @@
           1001.5000647349817
         ],
         "intensity": [
-          40000.27736321897,
-          20001.471324173166,
-          10001.152067330191
+          40000.0,
+          20000.0,
+          10000.0
         ],
         "charge": [
           2.0,
@@ -224,7 +224,7 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "7954e9a6",
+        "checksum": "cf5361d9",
         "format_version": 3
       }
     },
@@ -271,7 +271,7 @@
       "name": "negative_charge_sentinel",
       "description": "charge array with a negative (unassigned/singleton) sentinel; lossy encode falls back to lossless zlib for the charge array and round-trips exactly",
       "mode": "lossy",
-      "token": "spectrl.v3.z.eJxbxMDM1ryUQYqB38WbEUQ6MTUzMy5JzslP_5qakppTkvg1tTg5MSdVisGnyCe1PDOlJIOF1Wf61hS3T1y35cQYGRjYGZH1O4P0L4boB2uU5BOAaGNidWNxbZva3YiqwYWpiYGRNUKCAQIcINSH_VDanp0BAL6wKMw.1dca2f46",
+      "token": "spectrl.v3.z.eJxbxMDM1ryUQYqB38WbEUQ6MTUzMy5JzslP_5qakppTkvg1tTg5MSdVisGnyCe1PDOlJIOF1Wf61hS3T1y35cQYGRjYGZH1O4P0L4LoYYSoZ2J1c1AQmOOnjqrShamJgZE1QoIBAhwg1If9UNqenQEAEm8lDA.e7b8ae77",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -285,9 +285,9 @@
           1001.5000647349817
         ],
         "intensity": [
-          40000.27736321897,
-          20001.471324173166,
-          10001.152067330191
+          40000.0,
+          20000.0,
+          10000.0
         ],
         "charge": [
           2.0,
@@ -302,7 +302,7 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "1dca2f46",
+        "checksum": "e7b8ae77",
         "format_version": 3
       }
     },
@@ -349,7 +349,7 @@
       "name": "negative_intensity_fallback",
       "description": "baseline-subtracted intensities with negative values; lossy encode falls back to lossless zlib for the intensity array and round-trips exactly",
       "mode": "lossy",
-      "token": "spectrl.v3.z.eJxbxMDM1rSUQYqB38WbEUQ6MTUzMy5JzslP_5qakppTkvg1tTg5MSdVisGXb2JqeWZKSQYLq091y6YF7LLJpvKMDAzsjMj6nZmaGBlZIyQY0EAHw4PDHPsdDrAzAADQ0Brq.6095903d",
+      "token": "spectrl.v3.z.eJxbxMDM1rSUQYqB38WbEUQ6MTUxMbJGSDCggwORApwODAzsDMiqnZmaGLGp7mB4cJhjv8MBdgYARhEMsg.835b424e",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -358,9 +358,9 @@
         "default_array_length": 3,
         "id": null,
         "mz": [
-          99.99999549662343,
-          199.9999964574955,
-          300.0000271739131
+          100.0,
+          200.0,
+          300.0
         ],
         "intensity": [
           -0.5,
@@ -376,7 +376,7 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "6095903d",
+        "checksum": "835b424e",
         "format_version": 3
       }
     },
@@ -419,7 +419,7 @@
       "name": "scan_list_with_window",
       "description": "scan list with scan-start-time (minute unit) and a scan window m/z range",
       "mode": "lossy",
-      "token": "spectrl.v3.z.eJxbwsDE1NgkxcDvYs_IvDCxuHERA5jrFND020FvnUjVQ_d1EvKMjQsZmsCqTJskUpqSfINBSjLAIiZNkuwX4EJsTUsZQKLejCDSiamZmXFJck5--tfUlNScksSvqcXJiTmpUgw-a-6mlmemlGSwsHrMubL6yzQTRgZ2RmS9ziC9iyF6wZok-QQgWphYXdR3zJjFzggAv885JQ.3e330c0f",
+      "token": "spectrl.v3.z.eJxbwsDE1NgkxcDvYs_IvDCxuHERA5jrFND020FvnUjVQ_d1EvKMjQsZmsCqTJskUpqSfINBSjLAIiZNkuwX4EJsTUsZQKLejCDSiamZmXFJck5--tfUlNScksSvqcXJiTmpUgw-a-6mlmemlGSwsHrMubL6yzQTRgZ2RmS9ziC9iyDqGSFqmVhdAhIOv2JnBAAp-Dag.8581d50f",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -432,8 +432,8 @@
           400.20001255255943
         ],
         "intensity": [
-          49996.19696916968,
-          60006.343310410826
+          50000.0,
+          60000.0
         ],
         "charge": null,
         "extra_arrays": {},
@@ -477,7 +477,7 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "3e330c0f",
+        "checksum": "8581d50f",
         "format_version": 3
       }
     },
@@ -761,7 +761,7 @@
       "name": "ion_mobility",
       "description": "spectrum with two distinct per-peak ion-mobility arrays",
       "mode": "lossy",
-      "token": "spectrl.v3.z.eJxbxMDM1rKUQYqB38WbEUQ6MTUzMy5JzslP_5qakppTkvg1tTg5MSdVisGnJyy1PDOlJIOF1efb5MNP3v3bYiLHyMDAzois3xmkfzFEP1ijJJ8ARBsTqxvLD9epE7rZGZchNPgxMDUxMLJGSNhyXV9cYPvKXr71deAOubf2Z8-AwAd7tqYk32CgQl87dgZkfROh-ozBQMMBol7LIQ0M9BzYJGTYGQBhr0Us.6234ce53",
+      "token": "spectrl.v3.z.eJxbxMDM1rKUQYqB38WbEUQ6MTUzMy5JzslP_5qakppTkvg1tTg5MSdVisGnJyy1PDOlJIOF1efb5MNP3v3bYiLHyMDAzois3xmkfxFEDyNEPROrm4OBwpxSP3bGZQiVfgxMTQyMrBEStlzXFxfYvrKXb30duEPurf3ZMyDwwZ6tKck3GKjQ146dAVnfRKg-YzDQcICo13JIAwM9BzYJGXYGAL6rQVk.1077ef20",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -775,9 +775,9 @@
           900.2999318497257
         ],
         "intensity": [
-          40000.27736321897,
-          29997.08690833916,
-          20001.471324173166
+          40000.0,
+          30000.0,
+          20000.0
         ],
         "charge": null,
         "extra_arrays": {
@@ -808,7 +808,7 @@
         "precursors": [],
         "products": [],
         "user_params": [],
-        "checksum": "6234ce53",
+        "checksum": "1077ef20",
         "format_version": 3
       }
     },
@@ -1099,7 +1099,7 @@
       "name": "user_params",
       "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level Thermo trailer extra",
       "mode": "lossy",
-      "token": "spectrl.v3.z.eJxbysDE1NgkxcDvYs_EvDCxuHERA5jrFND001dBQp6pcVFiXoV6dEhGalFuvkJIUWJmTmqRgmtFSVFirG9-Xn5mcX5JfkFmsoKvfpRVYlmGiYmpnqGRgTFb01IGkLHejCDSiamZmXFJck5--tfUlNScksSvqcXJiTmpUgw-a-6mlmemlGSwsHrMubL6yzQTRgZ2RmS9ziC9iyF6wZok-QQgWphYXdR3zJjFzsjeDHRljm9icXJ-iQKQKEpNLPvt4Bo5EwhmAaWKcxKL0lMV0jLzMktSFfJKc5NSi4AqXETXy1Zs7XEAqgBpyUvMqSzOLFbIyy8B6i8rSi0qzVMozyzJUChOzc0sKaosKMlMBgA5eGve.e4e599cd",
+      "token": "spectrl.v3.z.eJxbysDE1NgkxcDvYs_EvDCxuHERA5jrFND001dBQp6pcVFiXoV6dEhGalFuvkJIUWJmTmqRgmtFSVFirG9-Xn5mcX5JfkFmsoKvfpRVYlmGiYmpnqGRgTFb01IGkLHejCDSiamZmXFJck5--tfUlNScksSvqcXJiTmpUgw-a-6mlmemlGSwsHrMubL6yzQTRgZ2RmS9ziC9iyDqGSFqmVhdAhIOv2JnZG8GOi_HN7E4Ob9EAUgUpSaW_XZwjZwJBLOAUsU5iUXpqQppmXmZJakKeaW5SalFQBUuoutlK7b2OABVgLTkJeZUFmcWK-TllwD1lxWlFpXmKZRnlmQoFKfmZpYUVRaUZCYDAG3raVk.f42d2e5f",
       "tolerance": {
         "abs": 1e-06,
         "rel": 1e-06
@@ -1112,8 +1112,8 @@
           400.20001255255943
         ],
         "intensity": [
-          49996.19696916968,
-          60006.343310410826
+          50000.0,
+          60000.0
         ],
         "charge": null,
         "extra_arrays": {},
@@ -1164,7 +1164,7 @@
             "unit_accession": null
           }
         ],
-        "checksum": "e4e599cd",
+        "checksum": "f42d2e5f",
         "format_version": 3
       }
     },

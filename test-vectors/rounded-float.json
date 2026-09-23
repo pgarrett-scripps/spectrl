@@ -1,0 +1,162 @@
+{
+  "format": "spectrl-v3-rounded-float",
+  "description": "Encoding 4 decode vectors computed with integer arithmetic. decoded_hex holds the little-endian IEEE 754 values a reader must reconstruct from blob_hex; token carries the same blob as a raw-mode intensity array.",
+  "vectors": [
+    {
+      "name": "f64-bits0-width2",
+      "type": 1000523,
+      "parameters": {
+        "bits": 0,
+        "width": 2
+      },
+      "count": 6,
+      "source_hex": "000000000000f03f000000000000f83f0000000000000840000000000000e8bf00000000000000000000000000000080",
+      "blob_hex": "ff0001ff00000304040b0008",
+      "decoded_hex": "000000000000f03f00000000000000400000000000001040000000000000f0bf00000000000000000000000000000080",
+      "token": "spectrl.v3.r.ogAGBoKlABoAD0RLARoAD0RCAoIAAQVYMAAAAAAAAFlAAAAAAABAWUAAAAAAAIBZQAAAAAAAwFlAAAAAAAAAWkAAAAAAAEBaQAcApQAaAA9ESwEaAA9EQwKDBAGiZGJpdHMAZXdpZHRoAgVM_wAB_wAAAwQECwAIBwE.9cb7db6c"
+    },
+    {
+      "name": "f64-bits12-width4",
+      "type": 1000523,
+      "parameters": {
+        "bits": 12,
+        "width": 4
+      },
+      "count": 5,
+      "source_hex": "000000000000f03f77be9f1a2fdd5e40fca9f1d24d62503f00000000000010000000000000001d40",
+      "blob_hex": "00dd620000f05e50101d3f403f00400000000000",
+      "decoded_hex": "000000000000f03f0000000000dd5e40000000000062503f00000000000010000000000000001d40",
+      "token": "spectrl.v3.r.ogAFBoKlABoAD0RLARoAD0RCAoIAAQVYKAAAAAAAAFlAAAAAAABAWUAAAAAAAIBZQAAAAAAAwFlAAAAAAAAAWkAHAKUAGgAPREsBGgAPREMCgwQBomRiaXRzDGV3aWR0aAQFVADdYgAA8F5QEB0_QD8AQAAAAAAABwE.a22dcfe3"
+    },
+    {
+      "name": "f64-bits30-width8-negative",
+      "type": 1000523,
+      "parameters": {
+        "bits": 30,
+        "width": 8
+      },
+      "count": 4,
+      "source_hex": "000000000000f0bf77be9f1a2fdd5ec09c7500883ce4377e0000000000000080",
+      "blob_hex": "006a200000bcf20000749000c07bdf00ff01f800020301020000000000000000",
+      "decoded_hex": "000000000000f0bf0000801a2fdd5ec0000000883ce4377e0000000000000080",
+      "token": "spectrl.v3.r.ogAEBoKlABoAD0RLARoAD0RCAoIAAQVYIAAAAAAAAFlAAAAAAABAWUAAAAAAAIBZQAAAAAAAwFlABwClABoAD0RLARoAD0RDAoMEAaJkYml0cxgeZXdpZHRoCAVYIABqIAAAvPIAAHSQAMB73wD_AfgAAgMBAgAAAAAAAAAABwE.ef35ef13"
+    },
+    {
+      "name": "f64-bits52-width8-exact",
+      "type": 1000523,
+      "parameters": {
+        "bits": 52,
+        "width": 8
+      },
+      "count": 3,
+      "source_hex": "182d4454fb2109406957148b0abf05c00100000000000000",
+      "blob_hex": "1869012d5700441400548b00fb0a0021bf0009050040c000",
+      "decoded_hex": "182d4454fb2109406957148b0abf05c00100000000000000",
+      "token": "spectrl.v3.r.ogADBoKlABoAD0RLARoAD0RCAoIAAQVYGAAAAAAAAFlAAAAAAABAWUAAAAAAAIBZQAcApQAaAA9ESwEaAA9EQwKDBAGiZGJpdHMYNGV3aWR0aAgFWBgYaQEtVwBEFABUiwD7CgAhvwAJBQBAwAAHAQ.27578d84"
+    },
+    {
+      "name": "f64-carry-into-exponent",
+      "type": 1000523,
+      "parameters": {
+        "bits": 12,
+        "width": 4
+      },
+      "count": 3,
+      "source_hex": "ffffffffffffff3fffffffffffffffbf000000008000f03f",
+      "blob_hex": "0000010000f040c03f000000",
+      "decoded_hex": "000000000000004000000000000000c0000000000001f03f",
+      "token": "spectrl.v3.r.ogADBoKlABoAD0RLARoAD0RCAoIAAQVYGAAAAAAAAFlAAAAAAABAWUAAAAAAAIBZQAcApQAaAA9ESwEaAA9EQwKDBAGiZGJpdHMMZXdpZHRoBAVMAAABAADwQMA_AAAABwE.9ead2f53"
+    },
+    {
+      "name": "f64-subnormals",
+      "type": 1000523,
+      "parameters": {
+        "bits": 12,
+        "width": 4
+      },
+      "count": 4,
+      "source_hex": "ffffffffffff0f0001000000000000001000000000000000ffffffffffff0f80",
+      "blob_hex": "00000000100000100000008000000000",
+      "decoded_hex": "0000000000001000000000000000000000000000000000000000000000001080",
+      "token": "spectrl.v3.r.ogAEBoKlABoAD0RLARoAD0RCAoIAAQVYIAAAAAAAAFlAAAAAAABAWUAAAAAAAIBZQAAAAAAAwFlABwClABoAD0RLARoAD0RDAoMEAaJkYml0cwxld2lkdGgEBVAAAAAAEAAAEAAAAIAAAAAABwE.a28f4104"
+    },
+    {
+      "name": "f64-zeros-width1",
+      "type": 1000523,
+      "parameters": {
+        "bits": 30,
+        "width": 1
+      },
+      "count": 2,
+      "source_hex": "00000000000000000000000000000000",
+      "blob_hex": "0000",
+      "decoded_hex": "00000000000000000000000000000000",
+      "token": "spectrl.v3.r.ogACBoKlABoAD0RLARoAD0RCAoIAAQVQAAAAAAAAWUAAAAAAAEBZQAcApQAaAA9ESwEaAA9EQwKDBAGiZGJpdHMYHmV3aWR0aAEFQgAABwE.146f3896"
+    },
+    {
+      "name": "f32-bits0-width1",
+      "type": 1000521,
+      "parameters": {
+        "bits": 0,
+        "width": 1
+      },
+      "count": 3,
+      "source_hex": "000000000000803f00008021",
+      "blob_hex": "007f43",
+      "decoded_hex": "000000000000803f00008021",
+      "token": "spectrl.v3.r.ogADBoKlABoAD0RLARoAD0RCAoIAAQVYGAAAAAAAAFlAAAAAAABAWUAAAAAAAIBZQAcApQAaAA9ESQEaAA9EQwKDBAGiZGJpdHMAZXdpZHRoAQVDAH9DBwE.176e13cc"
+    },
+    {
+      "name": "f32-bits0-width2-negative",
+      "type": 1000521,
+      "parameters": {
+        "bits": 0,
+        "width": 2
+      },
+      "count": 3,
+      "source_hex": "000080bf9976967e00000080",
+      "blob_hex": "7ffd00010001",
+      "decoded_hex": "000080bf0000807e00000080",
+      "token": "spectrl.v3.r.ogADBoKlABoAD0RLARoAD0RCAoIAAQVYGAAAAAAAAFlAAAAAAABAWUAAAAAAAIBZQAcApQAaAA9ESQEaAA9EQwKDBAGiZGJpdHMAZXdpZHRoAgVGf_0AAQABBwE.e058fc2d"
+    },
+    {
+      "name": "f32-bits12-width4",
+      "type": 1000521,
+      "parameters": {
+        "bits": 12,
+        "width": 4
+      },
+      "count": 3,
+      "source_hex": "0000c03f2b529a446042a20d",
+      "blob_hex": "004a48f893b4070801000000",
+      "decoded_hex": "0000c03f00509a440040a20d",
+      "token": "spectrl.v3.r.ogADBoKlABoAD0RLARoAD0RCAoIAAQVYGAAAAAAAAFlAAAAAAABAWUAAAAAAAIBZQAcApQAaAA9ESQEaAA9EQwKDBAGiZGJpdHMMZXdpZHRoBAVMAEpI-JO0BwgBAAAABwE.f5b32986"
+    },
+    {
+      "name": "f32-bits23-width4-exact",
+      "type": 1000521,
+      "parameters": {
+        "bits": 23,
+        "width": 4
+      },
+      "count": 3,
+      "source_hex": "db0f494054f82dc001000000",
+      "blob_hex": "db54010ff800492d0040c000",
+      "decoded_hex": "db0f494054f82dc001000000",
+      "token": "spectrl.v3.r.ogADBoKlABoAD0RLARoAD0RCAoIAAQVYGAAAAAAAAFlAAAAAAABAWUAAAAAAAIBZQAcApQAaAA9ESQEaAA9EQwKDBAGiZGJpdHMXZXdpZHRoBAVM21QBD_gASS0AQMAABwE.a39d74fc"
+    },
+    {
+      "name": "f32-carry-and-subnormals",
+      "type": 1000521,
+      "parameters": {
+        "bits": 12,
+        "width": 4
+      },
+      "count": 4,
+      "source_hex": "ffffff3fffff7f0001000000ffff7f80",
+      "blob_hex": "00000000001000100800001000000000",
+      "decoded_hex": "00000040000080000000000000008080",
+      "token": "spectrl.v3.r.ogAEBoKlABoAD0RLARoAD0RCAoIAAQVYIAAAAAAAAFlAAAAAAABAWUAAAAAAAIBZQAAAAAAAwFlABwClABoAD0RJARoAD0RDAoMEAaJkYml0cwxld2lkdGgEBVAAAAAAABAAEAgAABAAAAAABwE.9960d3ba"
+    }
+  ]
+}

@@ -11,7 +11,10 @@ implementation and decoded by the Python reference implementation
 
 `token-parity-inputs.json` supplies identical source spectra to both writers.
 `token-parity.json` pins their complete raw tokens, including checksums, for both
-default profiles. These test writer equality in addition to decoder agreement.
+default profiles. These test writer equality in addition to decoder agreement. The inputs
+include cases that steer the size-chosen default profile (integer counts, a
+tiny float32 minimum that ties under `raw` and differs under zlib, and
+rounding carries).
 `scripts/check_token_parity.py` compares live Python and JavaScript output for
 these inputs and seeded generated spectra, with raw, zlib, and Brotli payloads.
 Run it with `uv run --extra brotli python scripts/check_token_parity.py` after
@@ -20,6 +23,16 @@ JSON list of `{name, spec}` entries using `spectrum_to_dict` source models.
 
 `negative-vectors.json` is the shared rejection contract. Each entry contains
 a raw CBOR payload that every implementation must reject for the stated reason.
+Entries named `rounded_*` are written by `scripts/gen_rounded_vectors.py`; the
+rest are maintained by hand.
+
+`rounded-float.json` pins encoding 4 (rounded floating-point words) for float32
+and float64: bits 0, 12 and M, every word width, carries into the exponent,
+subnormals, negatives, signed zero and zeros. Each entry records the source
+IEEE 754 bits, the shuffled blob a writer must produce, the bits a reader must
+reconstruct, and a raw-mode token carrying that blob. The generator computes
+all of these with Python integers, `struct`, `cbor2` and `zlib.crc32`, not the
+spectrl codec.
 
 `cbor-hardening.json` adds handcrafted malformed CBOR bytes, including ambiguous
 map keys, tags, invalid UTF-8, unsupported simple values, and invalid extension
@@ -45,6 +58,8 @@ The files are generated with:
 
 ```bash
 uv run python scripts/gen_vectors.py                    # vectors.json
+uv run python scripts/gen_token_parity.py               # token-parity.json
+uv run python scripts/gen_rounded_vectors.py            # rounded-float.json, rounded_* negatives
 cd js && node --import tsx scripts/gen_reverse_vectors.ts  # reverse-vectors.json
 ```
 

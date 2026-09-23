@@ -178,3 +178,40 @@ def test_shared_negative_vector_rejected(vec: dict):
     token = f"{body}.{token_checksum(body)}"
     with pytest.raises(ValueError, match=vec["error"]):
         decode_token(token)
+
+
+ROUNDED = ROOT / "test-vectors" / "rounded-float.json"
+
+
+@pytest.mark.parametrize("vec", _load(ROUNDED)["vectors"], ids=lambda v: f"rounded-{v['name']}")
+def test_rounded_float_vector(vec: dict):
+    """Encoding 4: the writer reproduces the pinned blob and readers the pinned bits."""
+    import numpy as np
+
+    from spectrl.pipeline import decode_pipeline, encode_pipeline
+
+    dtype = "<f4" if vec["type"] == 1000521 else "<f8"
+    operation = [4, 1, vec["parameters"]]
+    source = np.frombuffer(bytes.fromhex(vec["source_hex"]), dtype=dtype)
+    blob, fidelity = encode_pipeline(source, vec["type"], operation)
+    assert (blob.hex(), fidelity) == (vec["blob_hex"], 1)
+    decoded = decode_pipeline(bytes.fromhex(vec["blob_hex"]), vec["type"], vec["count"], operation, 1)
+    assert decoded.astype(dtype).tobytes().hex() == vec["decoded_hex"]
+    spectrum = decode_token(vec["token"])
+    assert np.asarray(spectrum.intensity).dtype == np.dtype(dtype)
+    assert np.asarray(spectrum.intensity).tobytes().hex() == vec["decoded_hex"]
+
+
+def test_rounded_float_vectors_in_sync_with_generator(tmp_path):
+    import shutil
+
+    script = ROOT / "scripts" / "gen_rounded_vectors.py"
+    copy = tmp_path / "scripts" / script.name
+    copy.parent.mkdir()
+    shutil.copy(script, copy)
+    (tmp_path / "test-vectors").mkdir()
+    shutil.copy(NEGATIVE, tmp_path / "test-vectors" / NEGATIVE.name)
+    result = subprocess.run([sys.executable, str(copy)], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    for name in ("rounded-float.json", "negative-vectors.json"):
+        assert (tmp_path / "test-vectors" / name).read_text() == (ROOT / "test-vectors" / name).read_text(), name

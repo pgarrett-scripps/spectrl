@@ -151,3 +151,22 @@ for (const v of negativeDoc.vectors) {
     assert.throws(() => decodeToken(token), new RegExp(v.error));
   });
 }
+
+const roundedDoc = JSON.parse(readFileSync(resolve(here, "../../test-vectors/rounded-float.json"), "utf-8"));
+for (const v of roundedDoc.vectors) {
+  test(`rounded-float vector: ${v.name}`, async () => {
+    const { decodePipeline, encodePipeline } = await import("../src/pipeline.ts");
+    const f32 = v.type === 1000521;
+    const bytes = Uint8Array.from(Buffer.from(v.source_hex, "hex"));
+    const source = f32 ? new Float32Array(bytes.buffer) : new Float64Array(bytes.buffer);
+    const operation = [4, 1, v.parameters] as [number, number, Record<string, unknown>];
+    const { blob, fidelity } = encodePipeline(source, v.type, operation);
+    assert.equal(Buffer.from(blob).toString("hex"), v.blob_hex);
+    assert.equal(fidelity, 1);
+    const decoded = decodePipeline(Uint8Array.from(Buffer.from(v.blob_hex, "hex")), v.type, v.count, operation, 1);
+    assert.equal(Buffer.from(decoded.buffer, decoded.byteOffset, decoded.byteLength).toString("hex"), v.decoded_hex);
+    const intensity = decodeToken(v.token).intensity!;
+    assert.ok(f32 ? intensity instanceof Float32Array : intensity instanceof Float64Array);
+    assert.equal(Buffer.from(intensity.buffer, intensity.byteOffset, intensity.byteLength).toString("hex"), v.decoded_hex);
+  });
+}

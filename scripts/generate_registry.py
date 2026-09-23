@@ -483,10 +483,13 @@ registry = {
             "CRC-32/ISO-HDLC checksum (required fifth token part) is computed over the ASCII text before "
             "the checksum, 'spectrl.version.mode.payload' (blobs are inline and therefore covered).",
             "Checksum encoding: eight lowercase hexadecimal characters, zero-padded.",
-            "Default lossy arrays use quantized words with a pointwise 0.1 ppm bound for m/z and log1p scale 3600 for intensity, "
-            "raised to ceil(3600 / 2 * (m + 1) / m) when the smallest positive intensity m is below 1.",
+            "Default lossy arrays keep the smallest candidate, the earlier on a tie. Intensity candidates in order: "
+            "exact shuffle (1); scale-1 words when every value is an integer <= 2^53 - 1 (3); 12 mantissa bits (4); "
+            "log1p scale 3600, raised to ceil(3600 / 2 * (m + 1) / m) when the smallest positive intensity m is below 1 (3). "
+            "m/z candidates: exact delta and shuffle (2), then a pointwise 0.1 ppm log grid (3).",
+            "Default-profile size is the encoded array length for r payloads and its zlib level 6 length otherwise.",
             "Default lossless m/z uses delta and shuffle, intensity uses shuffle, and other arrays use raw words.",
-            "Integer and auxiliary arrays remain exact in both profiles. Invalid automatic quantization falls back to exact.",
+            "Integer and auxiliary arrays remain exact in both profiles. Candidates that fail their checks are skipped.",
             "Array blobs have no individual compression. Whole-document zlib level 6 is the default payload compression.",
         ],
     },
@@ -495,14 +498,23 @@ registry = {
 # Versioned operation and context registries are independent of PSI-MS aliases.
 from spectrl.pipeline import ENCODING_NAMES
 from spectrl.context import FIELDS, ALLOWED
-registry["encodings"] = {str(v): {"name": k, "revision": 1, "lossless": v < 3,
-    "parameters": {"scale": "finite positive number", "width": "1, 2, 4, or 8", "log": "optional boolean", "delta": "optional boolean"} if v == 3 else {}}
+_PARAMETERS = {
+    3: {"scale": "finite positive number", "width": "1, 2, 4, or 8", "log": "optional boolean", "delta": "optional boolean"},
+    4: {"bits": "integer 0..M (23 for float32, 52 for float64)", "width": "1, 2, 4, or 8, at most the declared type size"},
+}
+registry["encodings"] = {str(v): {"name": k, "revision": 1, "lossless": v < 3, "parameters": _PARAMETERS.get(v, {})}
     for k, v in ENCODING_NAMES.items()}
-registry["core_encodings"] = [0, 1, 2, 3]
+registry["core_encodings"] = sorted(ENCODING_NAMES.values())
 registry["default_profiles"] = {"lossless": {"mz": 2, "intensity": 1, "other": 0},
-    "lossy": {"mz": {"encoding": 3, "max_error_ppm": 0.1, "log": True, "delta": True},
-              "intensity": {"encoding": 3, "scale": 3600, "log": True,
-                            "scale_rule": "max(3600, ceil(3600 / 2 * (m + 1) / m)) when the smallest positive intensity m < 1"},
+    "lossy": {"choice": "per array, fewest bytes; earlier candidate wins a tie; failed candidates skipped",
+              "size_metric": {"r": "encoded array bytes", "other": "zlib level 6 of encoded array bytes"},
+              "mz": [{"encoding": 2},
+                     {"encoding": 3, "max_error_ppm": 0.1, "log": True, "delta": True}],
+              "intensity": [{"encoding": 1},
+                            {"encoding": 3, "scale": 1, "when": "every value is an integer <= 2^53 - 1"},
+                            {"encoding": 4, "bits": 12},
+                            {"encoding": 3, "scale": 3600, "log": True,
+                             "scale_rule": "max(3600, ceil(3600 / 2 * (m + 1) / m)) when the smallest positive intensity m < 1"}],
               "other": 0},
     "integer_arrays": "exact", "outer_compression": "zlib"}
 registry["operation_descriptor"] = {
