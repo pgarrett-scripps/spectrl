@@ -216,9 +216,11 @@ A reader must not substitute another codec or treat unknown bytes as raw data.
 | 1 | Byte shuffle | None | Exact |
 | 2 | Unsigned modular delta plus byte shuffle | None | Exact |
 | 3 | Quantized unsigned words plus byte shuffle | `scale`, `width`, optional `log`, `delta` | Potentially lossy |
+| 4 | Rounded floating-point words plus byte shuffle | `bits`, `width` | Potentially lossy |
 
 Encodings 0..2 support all three numeric types. Encoding 3 reconstructs float64.
-All four encodings form the mandatory core. No other parameters are accepted by
+Encoding 4 supports float32 and float64 and reconstructs the declared type.
+All five encodings form the mandatory core. No other parameters are accepted by
 these revisions. Scientific PSI-MS terms identify arrays and metadata, not codecs.
 
 For a word width W bytes, byte shuffle concatenates byte lane 0 for all words,
@@ -233,6 +235,28 @@ at zero. Finally reinterpret the reconstructed bits in the declared numeric type
 There is no floating-point subtraction, quantization, or mantissa truncation.
 Signed zero and every permitted finite bit pattern are preserved. This is a
 composition of established compression transforms, not a claim of a novel predictor.
+
+### Rounded floating-point words
+
+Encoding 4 keeps the sign, the exponent and the leading `bits` mantissa bits of
+each value. It uses integer operations only, so every conforming writer produces
+the same words. Let M be 23 for float32 and 52 for float64, and let W be 4 or 8
+bytes, the size of the declared type. `bits` is an integer from 0 to M, and
+`width` is 1, 2, 4, or 8 and at most W. Inputs are finite.
+
+Reinterpret each value as an unsigned W-byte integer u and let d = M - bits.
+When d is 0 the stored word is u. Otherwise the stored word is
+(u + 2^(d-1)) >> d, computed without overflow, which rounds the magnitude to the
+nearest retained mantissa with ties away from zero. A carry into the exponent is
+the correct rounding. A writer rejects a word whose reconstruction is not finite.
+Each stored word must fit `width` bytes. Store words little-endian and
+byte-shuffle them. Decoding reverses the shuffle, rejects a word of 2^(8W-d) or
+more, shifts each word left by d, and reinterprets the bits in the declared type.
+Reject nonfinite reconstructed values and incorrect byte counts.
+
+For a normal value x the rounding bound is 2^-(bits+1) * |x|, a strict relative
+bound at every magnitude. Subnormal values keep an absolute bound of 2^(d-1)
+times the smallest subnormal. Zero and the sign are exact.
 
 ### Quantized words
 
@@ -271,15 +295,27 @@ floating-point rounding. Empty and all-zero arrays use `m = 1`. Zero is exact.
 The writer checks reconstructed values against the requested 0.1 ppm bound.
 Unsupported scales or failed checks use exact encoding. This scale selection
 uses the existing logarithmic representation without changing decoding.
-Nonnegative intensity uses `log: true` and scale 3600 when its
+The logarithmic intensity candidate uses `log: true` and scale 3600 when its
 smallest positive value `m` is at least 1 or it has no positive value. When
 `m < 1` the writer chooses `scale = max(3600, ceil(3600 / 2 * (m + 1) / m))`,
 evaluated in that order in binary64. Every positive intensity then keeps a
 relative error of at most `2 * expm1(0.5 / 3600)`, about 0.028%, the bound the
 fixed scale gives at 1, instead of rounding to zero below about 1.4e-4 source
-units. A scale that is not finite or exceeds 2^53 - 1 uses exact encoding.
-The writer chooses the smallest integer width that fits the
-indices. Unsupported domains or failed measured bounds use the exact profile
+units. A scale that is not finite or exceeds 2^53 - 1 removes that candidate.
+Every quantized or rounded candidate uses the smallest width that fits its words.
+
+Nonnegative floating intensity chooses per array among these candidates, in
+this tie order: exact byte shuffle (encoding 1); encoding 3 with scale 1 and no
+`log`, only when every value is an integer no greater than 2^53 - 1, which
+reconstructs such counts exactly; encoding 4 with `bits: 12`, a relative bound
+of 2^-13, about 0.012%; and the logarithmic candidate above. Floating m/z
+chooses between exact modular delta plus byte shuffle (encoding 2) and the ppm
+candidate above, in that order. The writer keeps the candidate with the fewest
+bytes, and the earlier candidate on a tie, so a default array is never larger
+than its exact encoding. Size is the length of the encoded array bytes for `r`
+payloads and the length of those bytes after zlib level 6 otherwise, measured
+per array. Candidates that fail their checks are skipped. The default profile
+is therefore a size choice within stated bounds, not a fixed codec. Unsupported domains or failed measured bounds use the exact profile
 for that array. All auxiliary arrays remain exact by default. Explicit lossy
 settings fail on invalid domains. Unknown array semantics require explicit
 caller permission before applying a lossy encoding. Callers may select any core encoding explicitly, or register a namespaced custom
@@ -300,7 +336,10 @@ provides this reproducible representation without an additional codec or framing
 mode. Different codec choices need not produce identical tokens.
 
 Fixed compression levels alone do not specify unique compressed bytes across
-compressor versions. Logarithmic quantization and its bound checks also depend
+compressor versions. The default profile's size choice for `z` and `b` payloads
+measures zlib output, so writers built on different zlib implementations may
+choose different candidates. For `r` payloads the choice depends only on the
+encoded array bytes. Logarithmic quantization and its bound checks also depend
 on runtime mathematical functions near rounding boundaries. The reference
 implementations test full-token equality for both profiles and all fixed outer
 compression presets, but those comparisons do not establish universal identity
