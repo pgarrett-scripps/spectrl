@@ -1,10 +1,10 @@
 # spectrl
 
-[![CI](https://github.com/pgarrett-scripps/spectrl/actions/workflows/ci.yml/badge.svg)](https://github.com/pgarrett-scripps/spectrl/actions/workflows/ci.yml)
+[![CI](https://github.com/tacular-omics/spectrl/actions/workflows/ci.yml/badge.svg)](https://github.com/tacular-omics/spectrl/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/spectrl.svg)](https://pypi.org/project/spectrl/)
 [![Python](https://img.shields.io/pypi/pyversions/spectrl.svg)](https://pypi.org/project/spectrl/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21960544.svg)](https://doi.org/10.5281/zenodo.21960544)
-[![License](https://img.shields.io/github/license/pgarrett-scripps/spectrl.svg)](https://github.com/pgarrett-scripps/spectrl/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/tacular-omics/spectrl.svg)](https://github.com/tacular-omics/spectrl/blob/main/LICENSE)
 
 **Put a mass spectrum directly in a URL.**
 
@@ -15,11 +15,11 @@ URL-safe token. The encoded payload lives in the string. No backend is required.
 spectrl.v3.<mode>.<base64url(payload)>.<checksum>
 ```
 
-[Try the browser demo](https://pgarrett-scripps.github.io/spectrl/) ·
-[Read the format specification](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md) ·
-[See the changelog](https://github.com/pgarrett-scripps/spectrl/blob/main/CHANGELOG.md)
+[Try the browser demo](https://tacular-omics.github.io/spectrl/) ·
+[Read the format specification](https://github.com/tacular-omics/spectrl/blob/main/SPECIFICATION.md) ·
+[See the changelog](https://github.com/tacular-omics/spectrl/blob/main/CHANGELOG.md)
 
-[![A spectrl token embedded in a URL and decoded into a mass spectrum, with portable text, Python and JavaScript implementations, and local decoding.](https://raw.githubusercontent.com/pgarrett-scripps/spectrl/main/docs/spectrl-overview.png)](https://pgarrett-scripps.github.io/spectrl/)
+[![A spectrl token embedded in a URL and decoded into a mass spectrum, with portable text, Python and JavaScript implementations, and local decoding.](https://raw.githubusercontent.com/tacular-omics/spectrl/main/docs/spectrl-overview.png)](https://tacular-omics.github.io/spectrl/)
 
 *A spectrum travels as ordinary URL-safe text and decodes entirely client-side.*
 
@@ -37,10 +37,10 @@ self-contained handoff is more useful.
 | Component | Purpose |
 | --- | --- |
 | `spectrl` Python package | Reference encoder/decoder, mzML bridge, URL helpers, and CLI |
-| [`js/`](https://github.com/pgarrett-scripps/spectrl/tree/main/js) | Independent TypeScript implementation for browsers and Node |
-| [`rust/`](https://github.com/pgarrett-scripps/spectrl/tree/main/rust) | Independent Rust implementation (library and `spectrl` CLI), written from the specification and vectors |
-| [`SPECIFICATION.md`](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md) | Normative `spectrl.v3` wire-format specification |
-| [`test-vectors/`](https://github.com/pgarrett-scripps/spectrl/tree/main/test-vectors) | Shared positive, negative, and cross-language conformance vectors |
+| [`js/`](https://github.com/tacular-omics/spectrl/tree/main/js) | Independent TypeScript implementation for browsers and Node |
+| [`rust/`](https://github.com/tacular-omics/spectrl/tree/main/rust) | Independent Rust implementation (library and `spectrl` CLI), written from the specification and vectors |
+| [`SPECIFICATION.md`](https://github.com/tacular-omics/spectrl/blob/main/SPECIFICATION.md) | Normative `spectrl.v3` wire-format specification |
+| [`test-vectors/`](https://github.com/tacular-omics/spectrl/tree/main/test-vectors) | Shared positive, negative, and cross-language conformance vectors |
 
 ## Install
 
@@ -53,7 +53,7 @@ Requires Python 3.12+. All core numeric encodings work in Python and Pyodide.
 To install the unreleased development version:
 
 ```bash
-pip install "spectrl @ git+https://github.com/pgarrett-scripps/spectrl.git"
+pip install "spectrl @ git+https://github.com/tacular-omics/spectrl.git"
 ```
 
 The TypeScript implementation is published as `@spectrl-ms/spectrl`:
@@ -390,13 +390,13 @@ echo "spectrl.v3.z.…" | spectrl inspect
 
 A browser demo encodes example spectra live, shows the shareable URL + QR, and
 decodes + plots them entirely client-side (no server). Use the
-[hosted demo](https://pgarrett-scripps.github.io/spectrl/) or launch it locally:
+[hosted demo](https://tacular-omics.github.io/spectrl/) or launch it locally:
 
 ```bash
 just demo   # → http://127.0.0.1:8000
 ```
 
-See [`demo/`](https://github.com/pgarrett-scripps/spectrl/tree/main/demo) for details.
+See [`demo/`](https://github.com/tacular-omics/spectrl/tree/main/demo) for details.
 
 ## Design
 
@@ -436,15 +436,15 @@ See [`demo/`](https://github.com/pgarrett-scripps/spectrl/tree/main/demo) for de
 - The trailing checksum detects accidental corruption. It does not authenticate the
   sender or make untrusted content safe.
 - spectrl preserves modeled spectrum-level metadata, not an entire mzML file or
-  its run-level provenance. See the [specification](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md) for the
+  its run-level provenance. See the [specification](https://github.com/tacular-omics/spectrl/blob/main/SPECIFICATION.md) for the
   exact data model and decoder limits.
 
 ## Specification
 
-The normative token format is specified in [SPECIFICATION.md](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md)
+The normative token format is specified in [SPECIFICATION.md](https://github.com/tacular-omics/spectrl/blob/main/SPECIFICATION.md)
 (an open specification governed in this repository). This README is a tutorial. The
 specification is the contract. A machine-readable CV/codec/key registry lives in
-[schema/registry.json](https://github.com/pgarrett-scripps/spectrl/blob/main/schema/registry.json).
+[schema/registry.json](https://github.com/tacular-omics/spectrl/blob/main/schema/registry.json).
 
 Spectra convert both ways. `spectrl.formats` writes a decoded spectrum as
 mzML, MGF or MS2 and reads spectra back from any of them, reporting what a
@@ -463,24 +463,24 @@ Molecular identifications belong in the surrounding application.
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/pgarrett-scripps/spectrl/blob/main/CONTRIBUTING.md) and the [Code of Conduct](https://github.com/pgarrett-scripps/spectrl/blob/main/CODE_OF_CONDUCT.md).
+See [CONTRIBUTING.md](https://github.com/tacular-omics/spectrl/blob/main/CONTRIBUTING.md) and the [Code of Conduct](https://github.com/tacular-omics/spectrl/blob/main/CODE_OF_CONDUCT.md).
 Changes to the on-the-wire token format are governed more strictly. See the
 *Format changes* section of the contributing guide.
 
 Bug reports and focused pull requests are welcome. Please report security
-problems privately as described in [SECURITY.md](https://github.com/pgarrett-scripps/spectrl/blob/main/SECURITY.md).
+problems privately as described in [SECURITY.md](https://github.com/tacular-omics/spectrl/blob/main/SECURITY.md).
 
 ## Citation
 
 If spectrl supports published work, cite the archived software release rather
 than the moving `main` branch. GitHub exposes the current metadata through
-[`CITATION.cff`](https://github.com/pgarrett-scripps/spectrl/blob/main/CITATION.cff).
+[`CITATION.cff`](https://github.com/tacular-omics/spectrl/blob/main/CITATION.cff).
 
 ## License
 
-Licensed under the [Apache License 2.0](https://github.com/pgarrett-scripps/spectrl/blob/main/LICENSE). If you use spectrl in
-research, please cite it via [CITATION.cff](https://github.com/pgarrett-scripps/spectrl/blob/main/CITATION.cff). Third-party test-data
-attribution is recorded in [NOTICE](https://github.com/pgarrett-scripps/spectrl/blob/main/NOTICE).
+Licensed under the [Apache License 2.0](https://github.com/tacular-omics/spectrl/blob/main/LICENSE). If you use spectrl in
+research, please cite it via [CITATION.cff](https://github.com/tacular-omics/spectrl/blob/main/CITATION.cff). Third-party test-data
+attribution is recorded in [NOTICE](https://github.com/tacular-omics/spectrl/blob/main/NOTICE).
 
 ## Related
 

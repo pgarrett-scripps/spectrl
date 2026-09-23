@@ -31,9 +31,9 @@ authors:
     orcid: https://orcid.org/0000-0001-5267-1672
     affiliation: Scripps Research Institute
 license: Apache-2.0
-repository-code: "https://github.com/pgarrett-scripps/spectrl"
-repository-artifact: "https://github.com/pgarrett-scripps/spectrl/releases"
-url: "https://pgarrett-scripps.github.io/spectrl/"
+repository-code: "https://github.com/tacular-omics/spectrl"
+repository-artifact: "https://github.com/tacular-omics/spectrl/releases"
+url: "https://tacular-omics.github.io/spectrl/"
 keywords:
   - Python
   - Proteomics

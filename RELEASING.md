@@ -8,10 +8,12 @@ Zenodo archives the release when the repository is connected there.
 
 ### PyPI
 
-The `spectrl` project already has a working Trusted Publisher. Confirm its
-settings under PyPI project **Manage → Publishing**:
+The repository moved from `pgarrett-scripps` to the `tacular-omics`
+organization before 3.0.0. Trusted Publishers record the owner, so add one
+with these settings under PyPI project **Manage → Publishing** (the old
+`pgarrett-scripps` publisher can be removed after the first release):
 
-- owner: `pgarrett-scripps`
+- owner: `tacular-omics`
 - repository: `spectrl`
 - workflow: `publish.yml`
 - environment: `pypi`
@@ -21,10 +23,10 @@ No `PYPI_TOKEN` secret is needed.
 ### npm
 
 The public package is `@spectrl-ms/spectrl`. Version 0.4.1 was published once
-to bootstrap the package, and its Trusted Publisher is configured as:
+to bootstrap the package. Its Trusted Publisher must name the new owner:
 
 - provider: GitHub Actions
-- organization/user: `pgarrett-scripps`
+- organization/user: `tacular-omics`
 - repository: `spectrl`
 - workflow filename: `publish.yml`
 - environment: `npm`
@@ -49,7 +51,7 @@ first release (3.0.0) uses an API token:
    to `cargo publish`.
 2. After 3.0.0 is on crates.io, configure its Trusted Publisher under the crate's
    **Settings → Trusted Publishing**:
-   - repository owner: `pgarrett-scripps`
+   - repository owner: `tacular-omics`
    - repository name: `spectrl`
    - workflow filename: `publish.yml`
    - environment: `crates-io`

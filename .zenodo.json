@@ -28,7 +28,7 @@
   ],
   "related_identifiers": [
     {
-      "identifier": "https://pgarrett-scripps.github.io/spectrl/",
+      "identifier": "https://tacular-omics.github.io/spectrl/",
       "relation": "isDocumentedBy",
       "scheme": "url"
     },

@@ -31,12 +31,12 @@ maintainers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/pgarrett-scripps/spectrl"
-Documentation = "https://pgarrett-scripps.github.io/spectrl/"
-Repository = "https://github.com/pgarrett-scripps/spectrl"
-Issues = "https://github.com/pgarrett-scripps/spectrl/issues"
-Specification = "https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md"
-Changelog = "https://github.com/pgarrett-scripps/spectrl/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/tacular-omics/spectrl"
+Documentation = "https://tacular-omics.github.io/spectrl/"
+Repository = "https://github.com/tacular-omics/spectrl"
+Issues = "https://github.com/tacular-omics/spectrl/issues"
+Specification = "https://github.com/tacular-omics/spectrl/blob/main/SPECIFICATION.md"
+Changelog = "https://github.com/tacular-omics/spectrl/blob/main/CHANGELOG.md"
 DOI = "https://doi.org/10.5281/zenodo.21960544"
 
 [project.optional-dependencies]
