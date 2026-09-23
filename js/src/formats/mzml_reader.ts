@@ -25,6 +25,8 @@ const INT32 = "MS:1000519"
 const INT64 = "MS:1000522"
 const ZLIB = "MS:1000574"
 const NO_COMPRESSION = "MS:1000576"
+// MS-Numpress linear, pic and slof, alone or followed by zlib.
+const NUMPRESS = new Set(["MS:1002312", "MS:1002313", "MS:1002314", "MS:1002746", "MS:1002747", "MS:1002748"])
 const NON_STANDARD = "MS:1000786"
 
 function parseDocument(text: string): Document {
@@ -132,6 +134,8 @@ function decodeBinary(node: Element, groups: Map<string, Element>): { accession:
     values = new Float64Array(aligned.buffer, aligned.byteOffset, Math.floor(aligned.byteLength / 8)).slice()
   }
 
+  const other = params.find(p => NUMPRESS.has(p.accession))
+  if (other) throw new Error(`numpress-compressed arrays (${other.accession}) are not supported; convert the file without numpress first`)
   const identity = params.find(p =>
     p.accession !== FLOAT32 && p.accession !== FLOAT64 && p.accession !== INT32 && p.accession !== INT64 &&
     p.accession !== ZLIB && p.accession !== NO_COMPRESSION)

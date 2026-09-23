@@ -125,7 +125,7 @@ export function writeMgf(spectrum: DecodedSpectrum, opts: { title?: string } = {
   const result = new ConversionResult("mgf")
   inventory(spectrum, result)
   const precursor = precursorOf(spectrum)
-  const lines = ["BEGIN IONS", `TITLE=${opts.title ?? spectrum.id ?? "spectrl"}`]
+  const lines = ["BEGIN IONS", `TITLE=${opts.title || spectrum.id || "spectrl"}`]
   if (precursor === null) {
     result.add("no_precursor", "precursors",
       "no precursor ion, so no PEPMASS was written; most MGF readers expect one")
@@ -229,7 +229,7 @@ export function readMgf(text: string): InlineSpectrum[] {
   let mz: number[] = [], intensity: number[] = []
   let inside = false
   let number = 0
-  for (const raw of text.split(/\r?\n/)) {
+  for (const raw of text.split(/\r\n|\r|\n/)) {
     number++
     const line = raw.trim()
     if (!line || "#;!".includes(line[0]!)) continue
@@ -287,7 +287,7 @@ export function readMs2(text: string): InlineSpectrum[] {
       }))
     }
   }
-  for (const raw of text.split(/\r?\n/)) {
+  for (const raw of text.split(/\r\n|\r|\n/)) {
     number++
     const line = raw.replace(/\s+$/, "")
     if (!line) continue
@@ -298,6 +298,7 @@ export function readMs2(text: string): InlineSpectrum[] {
       const parts = line.split(/\s+/).filter(Boolean)
       if (parts.length < 4) throw Error(`MS2 line ${number}: S line needs scan, scan and precursor m/z`)
       const precursorMz = Number(parts[3])
+      if (Number.isNaN(precursorMz)) throw Error(`MS2 line ${number}: precursor m/z is not a number: ${JSON.stringify(parts[3])}`)
       current = { scan: parts[1]!, precursor: precursorMz ? { mz: precursorMz, charge: null, intensity: null } : null, rtime: null }
       mz = []; intensity = []
       continue

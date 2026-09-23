@@ -146,3 +146,20 @@ test("a scan-level instrument alone still sets the run's required default", () =
   const text = writeMzml(decodeToken(encodeSpectrum(spectrum, { lossless: true }))).text
   assert.match(text, /<run [^>]*defaultInstrumentConfigurationRef="IC1"/)
 })
+
+test("peak lists with old Mac line endings split into lines", () => {
+  const [mgf] = readMgf("BEGIN IONS\rTITLE=x\r100 1\r200 2\rEND IONS\r")
+  assert.deepEqual(Array.from(mgf!.mz!), [100, 200])
+  const [ms2] = readMs2("S\t1\t1\t445.25\r100 1\r200 2\r")
+  assert.deepEqual(Array.from(ms2!.mz!), [100, 200])
+})
+
+test("an MS2 precursor that is not a number is rejected", () => {
+  assert.throws(() => readMs2("S\t1\t1\tabc\n100 1\n"), /line 1/)
+})
+
+test("line breaks in mzML attribute values are escaped", () => {
+  const spectrum = { ...ms2Spectrum(), id: "scan=1\nnext\tcol\r" } as InlineSpectrum
+  const { text } = writeMzml(decodeToken(encodeSpectrum(spectrum, { lossless: true })))
+  assert.match(text, /id="scan=1&#10;next&#09;col&#13;"/)
+})

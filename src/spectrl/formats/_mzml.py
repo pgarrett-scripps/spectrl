@@ -19,6 +19,7 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
 from ..model import DecodedSpectrum, SpectrlCvParam, SpectrlUserParam
+from ..peaks import _ANY_ACCESSION_RE
 from ._names import term_name
 from ._report import ConversionResult
 
@@ -317,8 +318,9 @@ def _binary_arrays(parent, spectrum: DecodedSpectrum, names, result, scaffold) -
         if values is not None:
             arrays.append((accession, values, spectrum.array_names.get(key), key))
     for key, values in (spectrum.extra_arrays or {}).items():
-        accession = key if ":" in key else "MS:1000786"
-        arrays.append((accession, values, key if ":" not in key else spectrum.array_names.get(key), key))
+        # Only a well-formed accession names a CV term; "ratio: light/heavy" is a name.
+        cv = _ANY_ACCESSION_RE.fullmatch(key) is not None
+        arrays.append((key if cv else "MS:1000786", values, spectrum.array_names.get(key) if cv else key, key))
 
     collection = ET.SubElement(parent, "binaryDataArrayList", {"count": str(len(arrays))})
     for accession, values, name, key in arrays:

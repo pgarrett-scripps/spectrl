@@ -29,7 +29,7 @@ type ExtraArray = Float64Array | Float32Array | Int32Array | number[];
 
 // Require the actual end of input; JS `$` also matches before a final newline.
 const MS_ACCESSION_RE = /^MS:\d{7}(?![\s\S])/;
-const ANY_ACCESSION_RE = /^[A-Za-z][A-Za-z0-9]*:[A-Za-z0-9]+(?![\s\S])/;
+export const ANY_ACCESSION_RE = /^[A-Za-z][A-Za-z0-9]*:[A-Za-z0-9]+(?![\s\S])/;
 const CORE_ARRAY_ALIASES = new Map([
   ["MS:1000514", "mz"],
   ["MS:1000515", "intensity"],
@@ -166,7 +166,7 @@ function own<T>(map: Record<string, T> | undefined, key: string): T | undefined 
 
 // Python sorts Unicode scalar values; JavaScript's default comparison sorts
 // UTF-16 code units, which disagrees for supplementary-plane array names.
-function compareArrayNames(a: string, b: string): number {
+export function compareArrayNames(a: string, b: string): number {
   const left = Array.from(a), right = Array.from(b)
   for (let i = 0; i < Math.min(left.length, right.length); i++) {
     const difference = left[i]!.codePointAt(0)! - right[i]!.codePointAt(0)!

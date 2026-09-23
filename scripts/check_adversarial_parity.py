@@ -135,7 +135,7 @@ def main() -> int:
             + "\n",
             encoding="utf-8",
         )
-        print(f"wrote {args.report.relative_to(ROOT)}")
+        print(f"wrote {args.report}")
     if problems:
         print(f"{len(problems)} disagreements:")
         for problem in problems[:60]:

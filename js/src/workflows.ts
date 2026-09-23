@@ -1,6 +1,6 @@
 /** Quality measurement and explicit share-budget selection for v3 tokens. */
 import { checkArrayMutation, recordChange, withoutUserParams } from "./context.js"
-import { canonicalSort, validateArrays } from "./canonical.js"
+import { canonicalSort, compareArrayNames, validateArrays } from "./canonical.js"
 import { decodeCbor, encodeCbor } from "./cbor_format.js"
 import { tokenBreakdown } from "./inspect.js"
 import { UNLIMITED_DECODE_LIMITS } from "./limits.js"
@@ -27,7 +27,7 @@ export function encodingReport(spec: InlineSpectrum, options: Options = {}) {
   // custom names ahead of core arrays and mispairs their descriptor metadata.
   const sourceArrays: [string, ArrayLike<number>][] = [
     ...(["mz", "intensity", "charge"] as const).filter(k => source[k] != null).map(k => [k, source[k]!] as [string, ArrayLike<number>]),
-    ...Object.entries(source.extraArrays ?? {}).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0),
+    ...Object.entries(source.extraArrays ?? {}).sort(([a], [b]) => compareArrayNames(a, b)),
   ]
   const decodedArrays = { ...decoded.extraArrays, mz: decoded.mz, intensity: decoded.intensity, charge: decoded.charge }
   const parts = tokenBreakdown(token, UNLIMITED_DECODE_LIMITS).filter(p => p.accession !== undefined)

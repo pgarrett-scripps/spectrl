@@ -12,6 +12,7 @@
  * a valid URI. */
 
 import type { ContextRecord, CvParam, DecodedSpectrum, UserParam } from "../model.js"
+import { ANY_ACCESSION_RE } from "../canonical.js"
 import { bytesToBase64 as base64 } from "./base64_bytes.js"
 import { termName } from "./names.js"
 import { num } from "./peaklist_formats.js"
@@ -22,6 +23,9 @@ const WINDOWS_FILE_URI = /^(file:\/\/)(?=[A-Za-z]:)/
 
 function escapeXml(value: string): string {
   return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+    // Attribute-value normalization would turn these into spaces on re-read;
+    // Python's ElementTree writes the same character references.
+    .replace(/\n/g, "&#10;").replace(/\r/g, "&#13;").replace(/\t/g, "&#09;")
 }
 
 function attrs(pairs: Record<string, string | undefined>): string {
@@ -36,7 +40,7 @@ function attrs(pairs: Record<string, string | undefined>): string {
  * A whole-valued number is always an integer here, because canonical CBOR
  * encodes integral metadata as integers, so str() gives "2" and not "2.0". */
 function scalar(value: unknown): string {
-  if (typeof value === "number") return Number.isInteger(value) ? String(value) : num(value)
+  if (typeof value === "number") return Number.isSafeInteger(value) ? String(value) : num(value)
   return String(value)
 }
 
@@ -60,7 +64,7 @@ function userXml(param: UserParam, names?: Record<string, string>): string {
   const pairs: Record<string, string | undefined> = { name: param.name }
   // mzML has no native numeric type, so annotate to let a reader recover it.
   if (typeof param.value === "number") {
-    pairs.type = Number.isInteger(param.value) ? "xsd:integer" : "xsd:double"
+    pairs.type = Number.isSafeInteger(param.value) ? "xsd:integer" : "xsd:double"
   }
   if (param.value != null) pairs.value = scalar(param.value)
   if (param.unitAccession) {
@@ -236,8 +240,9 @@ function binaryArrays(spectrum: DecodedSpectrum, scaffold: Scaffold, names: Reco
     if (values != null) arrays.push({ accession, values, name: spectrum.arrayNames?.[key], key })
   }
   for (const [key, values] of Object.entries(spectrum.extraArrays ?? {})) {
-    const accession = key.includes(":") ? key : "MS:1000786"
-    arrays.push({ accession, values, name: key.includes(":") ? spectrum.arrayNames?.[key] : key, key })
+    // Only a well-formed accession names a CV term; "ratio: light/heavy" is a name.
+    const cv = ANY_ACCESSION_RE.test(key)
+    arrays.push({ accession: cv ? key : "MS:1000786", values, name: cv ? spectrum.arrayNames?.[key] : key, key })
   }
 
   const parts = arrays.map(({ accession, values, name, key }) => {
