@@ -222,6 +222,9 @@ fn read_scalar(value: &Value) -> Result<Scalar> {
         Value::Int(i) => Ok(Scalar::Number(*i as f64)),
         Value::Float(f) => Ok(Scalar::Number(*f)),
         Value::Text(s) => Ok(Scalar::Text(s.clone())),
+        Value::Bool(_) => {
+            err("parameter value must be null, a number or text, not a boolean (use 0 or 1)")
+        }
         other => err(format!(
             "parameter value must be null, a number or text, not {}",
             other.type_name()
@@ -630,8 +633,8 @@ fn resolve(op: &Operation, dtype: DType, fidelity: i64) -> Result<Option<Encodin
             if !valid_width(width) {
                 return err("quantized width must be 1, 2, 4 or 8");
             }
-            if dtype != DType::F64 {
-                return err("quantized encoding reconstructs float64; dtype must be float64");
+            if !dtype.is_float() {
+                return err("quantized encoding supports float32 and float64 only");
             }
             Encoding::Quantized(Quantized {
                 scale,

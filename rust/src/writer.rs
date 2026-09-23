@@ -220,7 +220,7 @@ fn choose(
     } else {
         let values = array.to_f64();
         match key {
-            "mz" => mz_candidate(&values).into_iter().collect(),
+            "mz" => mz_candidate(&values, array.dtype()).into_iter().collect(),
             "intensity" if values.iter().all(|&v| v >= 0.0) => intensity_candidates(array, &values),
             _ => vec![],
         }
@@ -266,17 +266,24 @@ fn quantized(values: &[f64], scale: f64, log: bool, delta: bool) -> Option<Quant
     })
 }
 
-/// The 0.1 ppm logarithmic m/z candidate, if it passes its bound check.
-fn mz_candidate(values: &[f64]) -> Option<Encoding> {
+/// A quantized index's reconstruction in the declared type (section 5).
+fn reconstructed(index: f64, scale: f64, log: bool, dtype: DType) -> f64 {
+    codecs::in_declared(codecs::dequantize(index as u64, scale, log), dtype)
+}
+
+/// The 0.1 ppm logarithmic m/z candidate, if every value in the declared type
+/// passes its bound check.
+fn mz_candidate(values: &[f64], dtype: DType) -> Option<Encoding> {
     let m = smallest_positive(values).unwrap_or(1.0);
     let r = 0.1e-6 * (1.0 - 1e-7);
     let scale = (0.5 / fdlibm::log1p(r * m / (m + 1.0))).ceil();
     let q = quantized(values, scale, true, true)?;
     let ok = values.iter().all(|&x| {
-        let back = codecs::dequantize(
-            codecs::round_half_up(fdlibm::log1p(x) * scale) as u64,
+        let back = reconstructed(
+            codecs::round_half_up(fdlibm::log1p(x) * scale),
             scale,
             true,
+            dtype,
         );
         (back - x).abs() <= 0.1e-6 * x
     });
@@ -305,13 +312,25 @@ fn intensity_candidates(array: &Array, values: &[f64]) -> Vec<Encoding> {
         _ => 3600.0,
     };
     if let Some(q) = quantized(values, scale, true, false) {
+        let dtype = array.dtype();
+        let grid = fdlibm::expm1(0.5 / scale);
+        let relative = 2.0 * fdlibm::expm1(0.5 / 3600.0);
         let bound_ok = values.iter().all(|&x| {
-            let back = codecs::dequantize(
-                codecs::round_half_up(fdlibm::log1p(x) * scale) as u64,
+            let y = reconstructed(
+                codecs::round_half_up(fdlibm::log1p(x) * scale),
                 scale,
                 true,
+                dtype,
             );
-            (back - x).abs() <= (x + 1.0) * fdlibm::expm1(0.5 / scale)
+            // The grid bound, grown for the final float32 rounding (section 5),
+            // and the profile's relative bound (section 6), both in the declared type.
+            let slack = if dtype == DType::F32 {
+                (y * 2f64.powi(-24)).max(2f64.powi(-150))
+            } else {
+                0.0
+            };
+            let err = (y - x).abs();
+            err <= (x + 1.0) * grid + slack && err <= x * relative
         });
         if bound_ok {
             out.push(Encoding::Quantized(q));

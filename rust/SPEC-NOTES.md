@@ -137,3 +137,17 @@ Each is a candidate for a new vector or a sentence in the specification.
   format, not part of the token format.
 - **Evidence:** every vector file decodes and compares; field names for records
   no vector exercises were confirmed by a black-box probe (last resort).
+
+## Declared-type bound checks for float32 (sections 5 and 6)
+
+- **Unclear:** the float32 growth `max(2^-24·y, 2^-150)` is stated for each
+  bound, but it is not clear whether the default profile's ppm m/z check takes
+  it too, or whether the intensity candidate keeps the grid bound alongside the
+  new relative bound `2·expm1(0.5/3600)`.
+- **Resolution:** both checks compare the value reconstructed in the declared
+  type. The ppm check (`|y−x| <= x·1e-7`) takes no growth, so float32 m/z that
+  the extra rounding pushes out falls back to a lossless mode. The intensity
+  candidate must pass both the grown grid bound and the relative bound.
+- **Evidence:** `tests/test_declared_type.py` (allowed reading) and the
+  `float32-mz-ppm-fails` and `typed-arrays/lossy` entries in `token-parity.json`,
+  which the Rust writer matches byte for byte.

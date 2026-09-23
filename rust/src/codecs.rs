@@ -200,7 +200,8 @@ impl Encoding {
     pub fn output_dtype(&self, input: DType) -> Option<DType> {
         match self {
             Encoding::Raw | Encoding::Shuffle | Encoding::DeltaShuffle => Some(input),
-            Encoding::Quantized(_) => Some(DType::F64),
+            // An int32 input is declared float64 (section 5).
+            Encoding::Quantized(_) => Some(if input.is_float() { input } else { DType::F64 }),
             Encoding::Rounded(_) => input.is_float().then_some(input),
         }
     }
@@ -335,6 +336,14 @@ pub fn quantize_indices(values: &[f64], scale: f64, log: bool) -> Result<Vec<u64
         out.push(idx as u64);
     }
     Ok(out)
+}
+
+/// A binary64 reconstruction as a value of the declared type, widened back.
+pub fn in_declared(value: f64, dtype: DType) -> f64 {
+    match dtype {
+        DType::F32 => value as f32 as f64,
+        _ => value,
+    }
 }
 
 pub fn dequantize(index: u64, scale: f64, log: bool) -> f64 {
@@ -482,7 +491,8 @@ pub fn encode(array: &Array, encoding: &Encoding) -> Result<(Vec<u8>, DType)> {
             if !valid_width(p.width as i64) {
                 return Err(Error::encode("quantized width must be 1, 2, 4 or 8"));
             }
-            (encode_quantized(&array.to_f64(), p)?, DType::F64)
+            let declared = if dtype.is_float() { dtype } else { DType::F64 };
+            (encode_quantized(&array.to_f64(), p)?, declared)
         }
         Encoding::Rounded(p) => {
             if !valid_width(p.width as i64) || p.width > w {
@@ -524,7 +534,20 @@ pub fn decode(blob: &[u8], n: usize, dtype: DType, encoding: &Encoding) -> Resul
         Encoding::Raw => Array::from_le_bytes(dtype, blob),
         Encoding::Shuffle => Array::from_le_bytes(dtype, &unshuffle(blob, w)),
         Encoding::DeltaShuffle => Array::from_le_bytes(dtype, &undelta_unshuffle(blob, w)),
-        Encoding::Quantized(p) => Array::F64(decode_quantized(blob, p)?),
+        Encoding::Quantized(p) => {
+            let wide = decode_quantized(blob, p)?;
+            match dtype {
+                // Round the binary64 reconstruction to nearest binary32, ties to even.
+                DType::F32 => {
+                    let narrow: Vec<f32> = wide.iter().map(|&v| v as f32).collect();
+                    if !narrow.iter().all(|v| v.is_finite()) {
+                        bail!("quantized value reconstructs to a non-finite float32");
+                    }
+                    Array::F32(narrow)
+                }
+                _ => Array::F64(wide),
+            }
+        }
         Encoding::Rounded(p) => decode_rounded(blob, dtype, p)?,
     };
     if !array.all_finite() {
