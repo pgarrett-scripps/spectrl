@@ -12,6 +12,10 @@ See [SPECIFICATION.md](SPECIFICATION.md).
 
 ## [3.0.0] - 2026-09-22
 
+- Add `rust/`, an independent Rust implementation (crate `spectrl` 3.0.0,
+  published to crates.io) written from the specification, registry and vectors.
+  It decodes every shared vector, writes the pinned token-parity tokens
+  byte for byte, and joins Python and TypeScript in both parity checks.
 - Add core encoding 4, `rounded-float`: float32 or float64 values keep their
   sign, exponent and leading `bits` mantissa bits, rounded half away from zero
   on the integer bit pattern and stored as byte-shuffled words of `width` bytes.

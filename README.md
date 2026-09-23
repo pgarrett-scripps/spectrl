@@ -38,6 +38,7 @@ self-contained handoff is more useful.
 | --- | --- |
 | `spectrl` Python package | Reference encoder/decoder, mzML bridge, URL helpers, and CLI |
 | [`js/`](https://github.com/pgarrett-scripps/spectrl/tree/main/js) | Independent TypeScript implementation for browsers and Node |
+| [`rust/`](https://github.com/pgarrett-scripps/spectrl/tree/main/rust) | Independent Rust implementation (library and `spectrl` CLI), written from the specification and vectors |
 | [`SPECIFICATION.md`](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md) | Normative `spectrl.v3` wire-format specification |
 | [`test-vectors/`](https://github.com/pgarrett-scripps/spectrl/tree/main/test-vectors) | Shared positive, negative, and cross-language conformance vectors |
 
@@ -60,6 +61,22 @@ The TypeScript implementation is published as `@spectrl-ms/spectrl`:
 ```bash
 npm install @spectrl-ms/spectrl
 ```
+
+### Rust
+
+The Rust crate is published as `spectrl` on crates.io. It was written from
+`SPECIFICATION.md`, the registry and the shared vectors only, and writes the
+same tokens as Python and TypeScript byte for byte:
+
+```bash
+cargo add spectrl            # library
+cargo install spectrl        # `spectrl encode|decode|inspect` CLI
+```
+
+It requires Rust 1.85+ and a C compiler. The crate forbids `unsafe`; zlib and
+Brotli come from the bundled reference C libraries, which is what makes `z` and
+`b` tokens byte-identical. Brotli is a default feature. See
+[`rust/README.md`](rust/README.md).
 
 For service integration, see the [producer and consumer examples](docs/services.md),
 including precision policies, optional decoder budgets,
@@ -330,7 +347,9 @@ spectrl.v3.<mode>.<base64url(payload)>.<checksum>
 ## Validation
 
 The shared conformance vectors test field-level Python/TypeScript
-interoperability in both directions. The test suites also cover malformed and
+interoperability in both directions, and the Rust crate passes every vector file.
+`scripts/check_token_parity.py` and `scripts/check_adversarial_parity.py` compare
+all three implementations (Rust is skipped with a message when cargo is absent). The test suites also cover malformed and
 adversarial inputs, canonicalization, URL bindings, mzML conversion, and all core numeric encodings.
 
 ```bash
@@ -343,6 +362,12 @@ npm ci
 npm run typecheck
 npm test
 npm run build
+
+# Rust: format, lint, and tests
+cd rust
+cargo fmt --check
+cargo clippy --all-targets -- -D warnings
+cargo test
 ```
 
 Run `just release-check` from the repository root for the full Python,
