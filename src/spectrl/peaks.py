@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import dataclasses
 import re
+import zlib
 
 import numpy as np
 
@@ -20,6 +21,9 @@ from .cv import (
     encode_unit,
 )
 from .model import ArrayEncoding, InlineSpectrum
+
+# Mantissa bits the default intensity profile keeps with encoding 4 (relative bound 2**-13).
+DEFAULT_ROUNDED_BITS = 12
 
 # A dict key that looks like a CV accession (e.g. "MS:1000517") names a standard
 # array by its accession; any other key is a non-standard array (MS:1000786).
@@ -177,6 +181,56 @@ def _validate_arrays(spec: InlineSpectrum) -> None:
             raise ValueError(f"invalid unit accession for array {key!r}: {unit!r}") from exc
 
 
+def _array_size(blob: bytes, compression: str) -> int:
+    """Default-profile size metric: encoded bytes for raw payloads, zlib level 6 otherwise."""
+    return len(blob) if compression in ("raw", "r") else len(zlib.compress(blob, 6))
+
+
+def _default_candidates(key, array, lossless, mz_ppm, int_fp):
+    """Yield (type, parameter thunk) default candidates for one array in tie order."""
+    from .codecs import quantized, rounded
+
+    native = _type_tail_for_dtype(array.dtype)
+    yield native, lambda: [2 if key == "mz" else 1 if key == "intensity" else 0, 1]
+    if lossless or key not in {"mz", "intensity"} or array.dtype.kind != "f" or _has_negative(array):
+        return
+    if key == "mz":
+        yield TYPE_FLOAT64, lambda: [3, 1, quantized.ppm_parameters(array, mz_ppm)]
+        return
+    a = np.asarray(array)
+    if bool(np.all(np.floor(a) == a)) and float(a.max(initial=0)) <= 2**53 - 1:
+        yield TYPE_FLOAT64, lambda: [3, 1, quantized.parameters(a, 1)]
+    yield native, lambda: [4, 1, rounded.parameters(a, native, DEFAULT_ROUNDED_BITS)]
+    yield TYPE_FLOAT64, lambda: [3, 1, quantized.intensity_parameters(a, int_fp)]
+
+
+def _default_array(key, array, lossless, mz_ppm, int_fp, compression):
+    """Encode one array with the profile default: the smallest candidate that passes its checks.
+
+    The first candidate is always the exact encoding. Later candidates replace it
+    only when strictly smaller under the payload's size metric, so ties keep the
+    earlier, more exact choice.
+    """
+    from .pipeline import encode_pipeline
+
+    best = None
+    candidates = list(_default_candidates(key, array, lossless, mz_ppm, int_fp))
+    for dtype, make in candidates:
+        try:
+            enc = make()
+            blob, fidelity = encode_pipeline(array, dtype, enc)
+        except ValueError:
+            if best is None:
+                raise
+            continue
+        if len(candidates) == 1:
+            return dtype, enc, blob, fidelity
+        size = _array_size(blob, compression)
+        if best is None or size < best[0]:
+            best = (size, dtype, enc, blob, fidelity)
+    return best[1:]
+
+
 def build_array_blobs(
     spec: InlineSpectrum,
     lossless: bool,
@@ -184,16 +238,11 @@ def build_array_blobs(
     int_fp: float = DEFAULT_INTENSITY_SCALE,
     array_encodings: dict[str, ArrayEncoding | str | int | dict] | None = None,
     allow_unsafe_lossy_custom: bool = False,
+    compression: str = "zlib",
 ) -> tuple[list[bytes], list[dict]]:
     from .context import encode_record, validate_extensions
     from .header import _encode_param_map, _encode_user_params
-    from .pipeline import (
-        ENCODING_NAMES,
-        ENCODINGS,
-        descriptor,
-        encode_pipeline,
-        operation,
-    )
+    from .pipeline import ENCODING_NAMES, ENCODINGS, descriptor, encode_pipeline, operation
 
     for key in spec.extra_arrays:
         _extra_key_to_array(key)
@@ -241,36 +290,18 @@ def build_array_blobs(
             key
         ) or _extra_key_to_array(key)
         setting = _parse_encoding(settings.get(key))
-        dtype = _type_tail_for_dtype(array.dtype)
-        automatic = setting.encoding is None
-        default_enc = 2 if key == "mz" else 1 if key == "intensity" else 0
-        default_params = None
-        if not lossless and key in {"mz", "intensity"} and array.dtype.kind == "f" and not _has_negative(array):
-            from .codecs.quantized import intensity_parameters, ppm_parameters
-
-            try:
-                default_params = ppm_parameters(array, mz_ppm) if key == "mz" else intensity_parameters(array, int_fp)
-                default_enc = 3
-            except ValueError:
-                pass
-        enc = descriptor(
-            setting.encoding if not automatic else [3, 1, default_params] if default_enc == 3 else default_enc,
-            ENCODING_NAMES,
-        )
-        implementation, params = operation(ENCODINGS, enc)
-        if not implementation.lossless:
-            if lossless:
-                raise ValueError("lossy encoding requested while lossless=True")
-            if key not in {"mz", "intensity"} and not allow_unsafe_lossy_custom:
-                raise ValueError(f"array {key!r} needs explicit permission for custom lossy encoding")
-            dtype = TYPE_FLOAT64 if dtype not in implementation.types else dtype
-        try:
-            blob, fidelity = encode_pipeline(array, dtype, enc)
-        except ValueError:
-            if not automatic:
-                raise
+        if setting.encoding is None:
+            dtype, enc, blob, fidelity = _default_array(key, array, lossless, mz_ppm, int_fp, compression)
+        else:
             dtype = _type_tail_for_dtype(array.dtype)
-            enc = [2 if key == "mz" else 1 if key == "intensity" else 0, 1]
+            enc = descriptor(setting.encoding, ENCODING_NAMES)
+            implementation, _ = operation(ENCODINGS, enc)
+            if not implementation.lossless:
+                if lossless:
+                    raise ValueError("lossy encoding requested while lossless=True")
+                if key not in {"mz", "intensity"} and not allow_unsafe_lossy_custom:
+                    raise ValueError(f"array {key!r} needs explicit permission for custom lossy encoding")
+                dtype = TYPE_FLOAT64 if dtype not in implementation.types else dtype
             blob, fidelity = encode_pipeline(array, dtype, enc)
         desc = {0: dtype, 1: tail, 2: enc, 7: fidelity}
         name = spec.array_names.get(key, name)

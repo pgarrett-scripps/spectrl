@@ -138,6 +138,7 @@ def encode_cbor(
         lossless=lossless,
         array_encodings=array_encodings,
         allow_unsafe_lossy_custom=allow_unsafe_lossy_custom,
+        compression=compression,
     )
     # Embed each numerically encoded blob as a CBOR byte string.
     for desc, blob in zip(descriptors, blobs, strict=True):

@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from spectrl import InlineSpectrum, decode_token, encode_spectrum
+from spectrl import InlineSpectrum, decode_token, encode_spectrum, encoding_plan
 from spectrl.cbor_format import read_token_payload
 from spectrl.codecs import quantized
 
@@ -66,15 +66,16 @@ def test_default_uses_only_core_encodings_and_omits_inner_compression():
     )
     token = encode_spectrum(spec)
     doc = cbor2.loads(read_token_payload(token))
-    assert [d[2][0] for d in doc[6]] == [3, 3, 0]
+    # Twelve rounded mantissa bits beat the refined log grid on this span.
+    assert [d[2][0] for d in doc[6]] == [3, 4, 0]
     assert all(3 not in d for d in doc[6])
-    # The smallest intensity is below 1, so the grid is refined to keep it.
-    assert doc[6][1][2][2]["scale"] == quantized.intensity_parameters(spec.intensity)["scale"] > 3600
-    assert doc[6][1][2][2]["width"] == 8
+    assert doc[6][1][2][2] == {"bits": 12, "width": 4}
+    # The smallest intensity is below 1, so the log candidate's grid is refined to keep it.
+    assert quantized.intensity_parameters(spec.intensity)["scale"] > 3600
     decoded = decode_token(token)
     assert doc[6][0][2][2]["log"] is True
     assert np.all(np.abs(decoded.mz - spec.mz) <= spec.mz * 1e-7)
-    assert np.all(np.abs(decoded.intensity - spec.intensity) <= spec.intensity * 2 * np.expm1(0.5 / 3600))
+    assert np.all(np.abs(decoded.intensity - spec.intensity) <= spec.intensity * 2.0**-13)
     assert decoded.charge.dtype == np.int32
 
 
@@ -86,8 +87,14 @@ def test_default_mz_checks_pointwise_ppm_across_masses(dtype):
     assert np.all(np.abs(decoded.mz - source.astype(np.float64)) <= source.astype(np.float64) * 1e-7)
     assert np.array_equal(decoded.mz[:2], [0, 0])
     assert np.all(np.diff(decoded.mz) >= 0)
-    # High masses can use their relative allowance instead of the old absolute cap.
-    assert np.max(np.abs(decoded.mz - source)) > 5e-6
+    if dtype is np.float32:
+        # Exact float32 words are smaller than the float64 ppm grid, so the default keeps them.
+        assert encoding_plan(spec)[0]["encoding"] == [2, 1]
+        np.testing.assert_array_equal(decoded.mz, source)
+    else:
+        # High masses can use their relative allowance instead of the old absolute cap.
+        assert encoding_plan(spec)[0]["encoding"][0] == 3
+        assert np.max(np.abs(decoded.mz - source)) > 5e-6
 
 
 @pytest.mark.parametrize("source", [[], [0, 0], [0, 1e-300, 100], [0, np.nextafter(0.0, 1.0), 100]])
@@ -128,11 +135,14 @@ def test_default_intensity_scale_refines_below_one():
     assert np.all(np.abs(recovered - normalized) <= normalized * 2 * np.expm1(0.5 / 3600))
 
 
-def test_default_intensity_scale_falls_back_to_exact_when_unbounded():
+def test_default_intensity_drops_the_log_candidate_when_its_scale_is_unbounded():
     with pytest.raises(ValueError, match="outside the supported range"):
         quantized.intensity_parameters(np.array([1.0e-300, 1.0]))
     spec = InlineSpectrum(2, mz=[100.0, 200.0], intensity=[1.0e-300, 1.0])
-    np.testing.assert_array_equal(decode_token(encode_spectrum(spec)).intensity, spec.intensity)
+    # The rounded candidate keeps a strict relative bound at any normal magnitude.
+    assert encoding_plan(spec)[1]["encoding"][0] in (1, 4)
+    decoded = decode_token(encode_spectrum(spec)).intensity
+    assert np.all(np.abs(decoded - spec.intensity) <= spec.intensity * 2.0**-13)
 
 
 def test_default_lossy_token_keeps_small_normalized_peaks():

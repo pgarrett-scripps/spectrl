@@ -91,7 +91,8 @@ def encode_spectrum(
     Args:
         spec: The spectrum to encode.
         lossless: Preserve native bits using the fixed delta/shuffle profile.
-            Default floating m/z and intensity use quantized words.
+            By default each floating m/z and intensity array keeps the smallest
+            of its exact encoding and bounded lossy candidates.
         compression: Whole-document raw, zlib, brotli, or auto.
             Zlib is the default. Auto searches available payload compressors.
         max_len: Raise OverflowError if the encoded token exceeds this byte length.

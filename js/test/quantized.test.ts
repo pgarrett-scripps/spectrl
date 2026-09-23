@@ -1,7 +1,7 @@
 import test from "node:test"
 import assert from "node:assert/strict"
 import { encodeQuantized, decodeQuantized, validateQuantized, ppmParameters, intensityParameters } from "../src/quantized.ts"
-import { encodeSpectrum, decodeToken } from "../src/index.ts"
+import { encodeSpectrum, decodeToken, encodingPlan } from "../src/index.ts"
 
 test("hand-calculated quantized word layouts", () => {
   assert.equal(Buffer.from(encodeQuantized(Float64Array.from([1, 2, 2.5]), 1000523,
@@ -47,7 +47,14 @@ for (const Dtype of [Float32Array, Float64Array]) {
     }
     assert.equal(decoded.mz![0], 0)
     assert.equal(decoded.mz![1], 0)
-    assert.ok(maxAbsoluteError > 5e-6)
+    if (Dtype === Float32Array) {
+      // Exact float32 words are smaller than the float64 ppm grid, so the default keeps them.
+      assert.deepEqual(encodingPlan({ defaultArrayLength: source.length, mz: source })[0]!.encoding, [2, 1])
+      assert.equal(maxAbsoluteError, 0)
+    } else {
+      assert.equal(encodingPlan({ defaultArrayLength: source.length, mz: source })[0]!.encoding![0], 3)
+      assert.ok(maxAbsoluteError > 5e-6)
+    }
   })
 }
 test("default m/z preserves zero and unsupported domains", () => {

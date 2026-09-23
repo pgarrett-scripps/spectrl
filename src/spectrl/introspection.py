@@ -36,12 +36,18 @@ def encoding_plan(
     lossless: bool = False,
     array_encodings: dict[str, ArrayEncoding | str | int | dict] | None = None,
     allow_unsafe_lossy_custom: bool = False,
+    compression: str = "zlib",
 ) -> list[dict[str, object]]:
-    """Resolve automatic codecs, fixed points, types, and units for a spectrum."""
+    """Resolve automatic codecs, fixed points, types, and units for a spectrum.
+
+    The default profile's choice depends on the payload compression, so pass
+    the same ``compression`` the token will use.
+    """
     token = encode_cbor(
         spec,
         lossless=lossless,
         array_encodings=array_encodings,
         allow_unsafe_lossy_custom=allow_unsafe_lossy_custom,
+        compression=compression,
     )
     return inspect_token(token)

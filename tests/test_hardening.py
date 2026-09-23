@@ -35,7 +35,8 @@ def test_large_mz_values_respect_default_ppm_bound(values):
     recovered = decode_token(encode_spectrum(spec)).mz
     source = np.asarray(values, dtype=np.float64)
     assert np.all(np.abs(recovered - source) <= source * 1e-7)
-    assert encoding_plan(spec)[0]["encoding"][0] == 3
+    # The default keeps the ppm grid only when it is smaller than exact delta.
+    assert encoding_plan(spec)[0]["encoding"][0] in (2, 3)
 
 
 @pytest.mark.parametrize("values", [[4294967296.0], [1.5]])

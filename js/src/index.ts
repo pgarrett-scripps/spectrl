@@ -82,10 +82,11 @@ export function decodeToken(token: string, limits?: DecodeLimits): DecodedSpectr
 /** Resolve automatic codecs, fixed points, types, and units for a spectrum. */
 export function encodingPlan(
   spec: InlineSpectrum,
-  opts: Pick<EncodeOptions, "lossless" | "arrayEncodings" | "allowUnsafeLossyCustom"> = {},
+  opts: Pick<EncodeOptions, "lossless" | "arrayEncodings" | "allowUnsafeLossyCustom" | "compression"> = {},
 ) {
+  // The default profile's choice depends on the payload compression.
   const token = encodeCbor(
-    spec, opts.lossless ?? false, false, opts.arrayEncodings, opts.allowUnsafeLossyCustom ?? false,
+    spec, opts.lossless ?? false, false, opts.arrayEncodings, opts.allowUnsafeLossyCustom ?? false, opts.compression,
   );
   return tokenBreakdown(token).filter((part) => part.accession !== undefined);
 }

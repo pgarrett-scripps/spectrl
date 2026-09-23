@@ -13,7 +13,10 @@ import {
   TYPE_INT32,
   accessionTail,
 } from "./cv.js";
-import { intensityParameters, ppmParameters } from "./quantized.js"
+import { intensityParameters, ppmParameters, quantizedParameters } from "./quantized.js"
+import { roundedParameters } from "./rounded.js"
+import type { PayloadCompression } from "./payload.js"
+import { zlibCompress } from "./zlibp.js"
 import { DEFAULT_INTENSITY_SCALE, DEFAULT_MZ_PPM } from "./format.js"
 import type { Descriptor } from "./header.js";
 import type { ArrayEncoding, ArrayEncodingOption, InlineSpectrum } from "./model.js";
@@ -172,10 +175,62 @@ function compareArrayNames(a: string, b: string): number {
   return left.length - right.length
 }
 
+/** Mantissa bits the default intensity profile keeps with encoding 4 (relative bound 2^-13). */
+export const DEFAULT_ROUNDED_BITS = 12
+
+/** Default-profile size metric: encoded bytes for raw payloads, zlib level 6 otherwise. */
+export function arraySize(blob: Uint8Array, compression: PayloadCompression): number {
+  return compression === "raw" || compression === "r" ? blob.length : zlibCompress(blob, 6).length
+}
+
+/** Default candidates for one array in tie order; the first is always the exact encoding. */
+export function defaultCandidates(key: string, array: Float64Array | Float32Array | Int32Array, lossless: boolean,
+  mzPpm: number, intFp: number): [number, () => Operation][] {
+  const native = typeTailOf(array)
+  const candidates: [number, () => Operation][] = [[native, () => [key === "mz" ? 2 : key === "intensity" ? 1 : 0, 1]]]
+  if (lossless || !["mz", "intensity"].includes(key) || array instanceof Int32Array || hasNegative(array)) return candidates
+  if (key === "mz") {
+    candidates.push([TYPE_FLOAT64, () => [3, 1, ppmParameters(array, mzPpm)]])
+    return candidates
+  }
+  let counts = true
+  for (const value of array) if (!Number.isInteger(value) || value > MAX_SAFE_INTEGER) { counts = false; break }
+  if (counts) candidates.push([TYPE_FLOAT64, () => [3, 1, quantizedParameters(array, 1)]])
+  candidates.push([native, () => [4, 1, roundedParameters(array, native, DEFAULT_ROUNDED_BITS)]])
+  candidates.push([TYPE_FLOAT64, () => [3, 1, intensityParameters(array, intFp)]])
+  return candidates
+}
+
+/**
+ * Encode one array with the profile default: the smallest candidate that passes
+ * its checks. A later candidate replaces the current one only when strictly
+ * smaller, so ties keep the earlier, more exact choice.
+ */
+export function defaultArray(key: string, array: Float64Array | Float32Array | Int32Array, lossless: boolean,
+  mzPpm: number, intFp: number, compression: PayloadCompression) {
+  const candidates = defaultCandidates(key, array, lossless, mzPpm, intFp)
+  let best: { size: number, type: number, encoding: Operation, result: { blob: Uint8Array, fidelity: number } } | undefined
+  for (const [type, make] of candidates) {
+    let encoding: Operation, result: { blob: Uint8Array, fidelity: number }
+    try {
+      encoding = make()
+      result = encodePipeline(array, type, encoding)
+    } catch (e) {
+      if (!best) throw e
+      continue
+    }
+    if (candidates.length === 1) return { type, encoding, result }
+    const size = arraySize(result.blob, compression)
+    if (!best || size < best.size) best = { size, type, encoding, result }
+  }
+  return best!
+}
+
 /** Encode all peak arrays. Returns blobs and matching descriptors (without `seg`). */
 export function buildArrayBlobs(
   spec: InlineSpectrum, lossless: boolean, mzPpm = DEFAULT_MZ_PPM, intFp = DEFAULT_INTENSITY_SCALE,
   arrayEncodings?: Record<string, ArrayEncodingOption>, allowUnsafeLossyCustom = false,
+  compression: PayloadCompression = "zlib",
 ): { blobs: Uint8Array[], descriptors: Descriptor[] } {
   for (const key of Object.keys(spec.extraArrays ?? {})) extraKeyToArray(key)
   const settings = normalizeEncodingKeys(arrayEncodings ?? {})
@@ -207,26 +262,20 @@ export function buildArrayBlobs(
     const identity = key === "mz" ? { arrayTail: ARRAY_MZ } : key === "intensity" ? { arrayTail: ARRAY_INTENSITY } : key === "charge" ? { arrayTail: ARRAY_CHARGE } : extraKeyToArray(key)
     const tail = identity.arrayTail
     const setting = parseEncoding(settings[key])
-    const automatic = setting.encoding === undefined
-    let type = typeTailOf(array)
-    let defaultEncoding: Operation = [key === "mz" ? 2 : key === "intensity" ? 1 : 0, 1]
-    if (!lossless && ["mz", "intensity"].includes(key) && !(array instanceof Int32Array) && !hasNegative(array)) {
-      try { defaultEncoding = [3, 1, key === "mz" ? ppmParameters(array, mzPpm) : intensityParameters(array, intFp)] }
-      catch { /* Unsupported numeric domains use the exact default. */ }
-    }
-    let encoding = descriptor(setting.encoding ?? defaultEncoding, encodingNames)
-    const [implementation] = operation(encodings, encoding)
-    if (!implementation.lossless) {
-      if (lossless) throw Error("lossy encoding requested with lossless true")
-      if (!["mz", "intensity"].includes(key) && !allowUnsafeLossyCustom) throw Error("custom lossy array requires explicit permission")
-      if (!implementation.types.includes(type)) type = TYPE_FLOAT64
-    }
+    let type: number
+    let encoding: Operation
     let result: { blob: Uint8Array, fidelity: number }
-    try { result = encodePipeline(array, type, encoding) }
-    catch (e) {
-      if (!automatic) throw e
+    if (setting.encoding === undefined) {
+      ({ type, encoding, result } = defaultArray(key, array, lossless, mzPpm, intFp, compression))
+    } else {
       type = typeTailOf(array)
-      encoding = [key === "mz" ? 2 : key === "intensity" ? 1 : 0, 1]
+      encoding = descriptor(setting.encoding, encodingNames)
+      const [implementation] = operation(encodings, encoding)
+      if (!implementation.lossless) {
+        if (lossless) throw Error("lossy encoding requested with lossless true")
+        if (!["mz", "intensity"].includes(key) && !allowUnsafeLossyCustom) throw Error("custom lossy array requires explicit permission")
+        if (!implementation.types.includes(type)) type = TYPE_FLOAT64
+      }
       result = encodePipeline(array, type, encoding)
     }
     blobs.push(result.blob)

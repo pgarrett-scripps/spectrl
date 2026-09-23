@@ -19,7 +19,7 @@ export function encodeCbor(spec: InlineSpectrum, lossless = false, dropUserParam
   if ("interp" in spec || "interpretation" in spec) throw Error("v3 does not accept identification fields")
   validateArrays(spec)
   const sorted = canonicalSort(dropUserParams ? withoutUserParams(spec) : spec)
-  const { blobs, descriptors } = buildArrayBlobs(sorted, lossless, undefined, undefined, arrayEncodings, allowUnsafeLossyCustom)
+  const { blobs, descriptors } = buildArrayBlobs(sorted, lossless, undefined, undefined, arrayEncodings, allowUnsafeLossyCustom, compression)
   const raw = cborEncode(canonicalize(buildHeaderMap(sorted, descriptors.map((d, i) => ({ ...d, data: blobs[i]! })))))
   if (raw.length > MAX_TOKEN_BYTES) throw Error("CBOR payload exceeds the size limit")
   validateCborDocument(raw)

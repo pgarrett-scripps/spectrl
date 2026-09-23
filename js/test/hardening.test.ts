@@ -12,7 +12,8 @@ for (const mz of [[50000], [0, 1, 50000], [1e300]]) test(`large m/z values respe
   const spec = { defaultArrayLength: mz.length, mz }
   const decoded = decodeToken(encodeSpectrum(spec)).mz!
   for (const [i, value] of mz.entries()) assert.ok(Math.abs(decoded[i]! - value) <= value * 1e-7)
-  assert.equal(encodingPlan(spec)[0]!.encoding![0], 3)
+  // The default keeps the ppm grid only when it is smaller than exact delta.
+  assert.ok([2, 3].includes(encodingPlan(spec)[0]!.encoding![0] as number))
 })
 for (const charge of [[4294967296], [1.5]]) test(`PIC boundary ${charge}`, () => {
   assert.deepEqual(Array.from(decodeToken(encodeSpectrum({ defaultArrayLength: 1, charge })).charge!), charge)

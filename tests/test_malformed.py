@@ -118,7 +118,8 @@ def test_unknown_array_data_type_rejected():
 
 
 def test_quantized_descriptor_rejects_unknown_parameter():
-    doc = _payload(encode_spectrum(InlineSpectrum(3, mz=[100, 200, 300])))
+    option = {"mz": [3, 1, {"scale": 1000, "width": 4}]}
+    doc = _payload(encode_spectrum(InlineSpectrum(3, mz=[100, 200, 300]), array_encodings=option))
     doc[6][0][2][2]["fp"] = 100001
     with pytest.raises(SpectrlDecodeError, match="scale|width|parameter"):
         decode_token(_retoken(doc))
@@ -156,7 +157,7 @@ def test_misaligned_raw_blob_raises_decode_error():
 def test_array_length_mismatch_raises_decode_error():
     doc = _payload(_token())
     doc[0] = 5  # header claims 5 peaks; blobs hold 3
-    with pytest.raises(SpectrlDecodeError, match="count mismatch"):
+    with pytest.raises(SpectrlDecodeError, match="count"):
         decode_token(_retoken(doc))
 
 

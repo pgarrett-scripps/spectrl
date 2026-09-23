@@ -128,7 +128,9 @@ def test_trimming_scopes_source_summaries_and_lossy_history_survives_reencoding(
     assert selected.params == []
     assert selected.processing[-1]["source_params"] == s.params
     d = decode_token(encode_spectrum(s))
-    assert d.array_processing["mz"][-1]["operation"] == "spectrl:lossy-encoding"
+    # Integer counts choose the scale-1 linear grid, a lossy-class encoding.
+    assert d.array_processing["intensity"][-1]["operation"] == "spectrl:lossy-encoding"
+    assert "mz" not in d.array_processing
     again = decode_token(encode_spectrum(d, lossless=True))
     assert again.array_processing == d.array_processing
 

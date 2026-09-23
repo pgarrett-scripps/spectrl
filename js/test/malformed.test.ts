@@ -81,7 +81,7 @@ test("unknown array data types are rejected", () => {
 });
 
 test("Quantized descriptor rejects unknown parameters", () => {
-  const doc = payload(encodeSpectrum({ defaultArrayLength: 3, mz: [100, 200, 300] }))
+  const doc = payload(encodeSpectrum({ defaultArrayLength: 3, mz: [100, 200, 300] }, { arrayEncodings: { mz: [3, 1, { scale: 1000, width: 4 }] } }))
   const descs = doc.get(6) as Array<Map<number, unknown>>
   (descs[0]!.get(2) as any[])[2].set("fp", 100001)
   assert.throws(() => decodeToken(retoken(doc)), /scale|width|parameter/);
