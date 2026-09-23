@@ -18,8 +18,8 @@ test("three exact representations preserve native bits and enforce counts", () =
   }
 })
 
-test("only four builtins and no development codec aliases", () => {
-  assert.equal(encodings.size, 4)
+test("only five builtins and no development codec aliases", () => {
+  assert.equal(encodings.size, 5)
   const s = { defaultArrayLength: 1, mz: [1], intensity: [2] }
   assert.deepEqual(encodingPlan(s, { lossless: true }).map(p => p.encoding), [[2, 1], [1, 1]])
   for (const option of ["numlin-zlib", "numpic-zstd", "numslof-zlib", "dictionary-zstd", "zlib", "MS:1002746", 1002746, { compression: "zlib" }, { encoding: 0, compression: 0 }, { codec: "raw" }, { fixedPoint: 1000 }]) {

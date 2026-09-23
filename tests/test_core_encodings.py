@@ -1,4 +1,4 @@
-"""The four numeric encodings and the removed development interfaces."""
+"""The five numeric encodings and the removed development interfaces."""
 
 import numpy as np
 import pytest
@@ -22,7 +22,7 @@ def test_each_exact_encoding_preserves_native_bits(dtype, tail, encoding, n):
 
 
 def test_registry_and_fixed_default():
-    assert {key for key in ENCODINGS if isinstance(key[0], int)} == {(i, 1) for i in range(4)}
+    assert {key for key in ENCODINGS if isinstance(key[0], int)} == {(i, 1) for i in range(5)}
     s = InlineSpectrum(2, mz=[100, 200], intensity=[1, 2], extra_arrays={"custom": [3.0, 4.0]})
     assert [p["encoding"] for p in encoding_plan(s, lossless=True)] == [[2, 1], [1, 1], [0, 1]]
     assert encoding_plan(s, lossless=True, array_encodings={"mz": ArrayEncoding("raw")})[0]["encoding"] == [0, 1]

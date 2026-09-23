@@ -3,6 +3,7 @@ import { byteShuffle, byteUnshuffle, decodeRaw, encodeRaw, type NumArray } from 
 import { deltaShuffle, deltaUnshuffle } from "./delta.js"
 import { MAX_BLOB_BYTES } from "./format.js"
 import { encodeQuantized, decodeQuantized, validateQuantized } from "./quantized.js"
+import { encodeRounded, decodeRounded, validateRounded } from "./rounded.js"
 
 export type Parameters = Record<string, unknown>
 export type Operation = [number | string, number, Parameters?]
@@ -14,7 +15,7 @@ export interface Encoding {
   lossless: boolean
   types: readonly number[]
 }
-export const encodingNames: Record<string, number> = { raw: 0, "byte-shuffle": 1, "modular-delta-shuffle": 2, quantized: 3 }
+export const encodingNames: Record<string, number> = { raw: 0, "byte-shuffle": 1, "modular-delta-shuffle": 2, quantized: 3, "rounded-float": 4 }
 const namespace = /^[A-Za-z][A-Za-z0-9._-]*:[A-Za-z0-9._/-]+$/
 export function descriptor(value: OperationOption, names?: Record<string, number>): Operation {
   let tuple: unknown[]
@@ -63,6 +64,7 @@ for (const id of [0, 1, 2]) encodings.set(operationKey([id, 1]), {
   decode: (b, t, n) => decodeRaw(id === 0 ? b : id === 1 ? byteUnshuffle(b, width(t)) : deltaUnshuffle(b, width(t)), t),
 })
 encodings.set(operationKey([3, 1]), { encode: encodeQuantized, decode: decodeQuantized, validate: validateQuantized, lossless: false, types: [1000523] })
+encodings.set(operationKey([4, 1]), { encode: encodeRounded, decode: decodeRounded, validate: validateRounded, lossless: false, types: [1000521, 1000523] })
 export function encodePipeline(data: NumArray, type: number, enc: Operation) {
   const [e, params] = operation(encodings, enc)
   if (!e.types.includes(type)) throw Error("encoding does not support dtype")

@@ -9,11 +9,11 @@ from dataclasses import dataclass
 import numpy as np
 
 from ._format import MAX_BLOB_BYTES, MAX_SAFE_INTEGER
-from .codecs import quantized
+from .codecs import quantized, rounded
 from .codecs._delta import delta_shuffle, delta_unshuffle
 from .codecs.raw import _np_dtype
 from .codecs.shuffle import shuffle
-from .cv import TYPE_FLOAT64
+from .cv import TYPE_FLOAT32, TYPE_FLOAT64
 
 DESC_ENCODING = 2
 DESC_FIDELITY = 7
@@ -22,7 +22,7 @@ DESC_USER_PARAMS = 9
 DESC_PROCESSING = 10
 DESC_EXTENSIONS = 11
 
-ENCODING_NAMES = {"raw": 0, "byte-shuffle": 1, "modular-delta-shuffle": 2, "quantized": 3}
+ENCODING_NAMES = {"raw": 0, "byte-shuffle": 1, "modular-delta-shuffle": 2, "quantized": 3, "rounded-float": 4}
 _ID = re.compile(r"^[A-Za-z][A-Za-z0-9._-]*:[A-Za-z0-9._/-]+$")
 
 
@@ -123,6 +123,7 @@ ENCODINGS.update(
         (1, 1): _transform(shuffle, lambda b, w: shuffle(b, w, inverse=True)),
         (2, 1): _transform(delta_shuffle, delta_unshuffle),
         (3, 1): Encoding(quantized.encode, quantized.decode, quantized.validate, False, (TYPE_FLOAT64,)),
+        (4, 1): Encoding(rounded.encode, rounded.decode, rounded.validate, False, (TYPE_FLOAT32, TYPE_FLOAT64)),
     }
 )
 
