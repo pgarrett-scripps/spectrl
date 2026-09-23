@@ -347,7 +347,8 @@ export function writeMzml(spectrum: DecodedSpectrum, opts: WriteMzmlOptions = {}
 
   body += binaryArrays(spectrum, scaffold, names, version)
 
-  const instrument = scaffold.acquisition(spectrum.acquisition, version)
+  // A scan-level instrument alone still needs the run's required default reference.
+  const instrument = scaffold.acquisition(spectrum.acquisition, version) ?? scaffold.instruments.keys().next().value ?? null
   const processing = scaffold.processingRef(spectrum.processing, version)
   const spectrumXml =
     `<spectrum${attrs({ id: spectrumId, index: "0", defaultArrayLength: String(spectrum.defaultArrayLength), ...spectrumSource })}>` +

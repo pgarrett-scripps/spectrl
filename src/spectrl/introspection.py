@@ -5,13 +5,14 @@ from __future__ import annotations
 from .cbor_format import encode_cbor, read_token_document
 from .cv import decode_tail, decode_unit_tail
 from .header import DESC_ARRAY, DESC_DATA, DESC_NAME, DESC_TYPE, DESC_UNIT
+from .limits import DecodeLimits
 from .model import ArrayEncoding, InlineSpectrum
 from .pipeline import ENCODINGS
 
 
-def inspect_token(token: str) -> list[dict[str, object]]:
+def inspect_token(token: str, *, limits: DecodeLimits | None = None) -> list[dict[str, object]]:
     """Return resolved metadata for every array in a verified token."""
-    doc, _ = read_token_document(token)
+    doc, _ = read_token_document(token, limits=limits)
     out: list[dict[str, object]] = []
     for desc in doc.get(6, []):
         tail = desc[DESC_ARRAY]
@@ -50,4 +51,5 @@ def encoding_plan(
         allow_unsafe_lossy_custom=allow_unsafe_lossy_custom,
         compression=compression,
     )
-    return inspect_token(token)
+    # A token this call just wrote is trusted; see encode_cbor's self-check.
+    return inspect_token(token, limits=DecodeLimits.unlimited())

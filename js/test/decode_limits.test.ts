@@ -1,7 +1,8 @@
 import { readTokenPayload } from "../src/cbor_format.ts"
 import assert from "node:assert/strict"
 import test from "node:test"
-import { DEFAULT_DECODE_LIMITS, UNLIMITED_DECODE_LIMITS, decodeToken, encodeSpectrum, SpectrlDecodeError } from "../src/index.ts"
+import { DEFAULT_DECODE_LIMITS, UNLIMITED_DECODE_LIMITS, decodeToken, encodeSpectrum, encodingPlan, encodingReport, SpectrlDecodeError } from "../src/index.ts"
+import type { InlineSpectrum } from "../src/model.ts"
 import { b64urlDecode, b64urlEncode } from "../src/base64url.ts"
 import { cborDecode, cborEncode } from "../src/cbor.ts"
 import { tokenChecksum } from "../src/checksum.ts"
@@ -76,4 +77,12 @@ test("caller budgets cannot relax wire format ceilings", () => {
   const doc = cborDecode(readTokenPayload(token)) as Map<number, unknown>
   doc.set(0, 4_000_001)
   assert.throws(() => decodeToken(frame(doc), { maxPeaks: 10_000_000 }), /invalid declared array length/)
+})
+
+test("reading back a token just written ignores the untrusted defaults", () => {
+  const n = DEFAULT_DECODE_LIMITS.maxPeaks + 1
+  const mz = new Float64Array(n).map((_, i) => i + 1)
+  const spec = { defaultArrayLength: n, mz, intensity: new Float64Array(n).fill(1) } as unknown as InlineSpectrum
+  assert.ok(encodingReport(spec, { lossless: true, compression: "raw" }).token)
+  assert.equal(encodingPlan(spec, { lossless: true, compression: "raw" }).length, 2)
 })

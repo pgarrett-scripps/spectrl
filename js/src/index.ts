@@ -9,7 +9,7 @@
 import { decodeCbor, encodeCbor } from "./cbor_format.js";
 import { tokenBreakdown } from "./inspect.js";
 import type { ArrayEncodingOption, DecodedSpectrum, InlineSpectrum } from "./model.js";
-import type { DecodeLimits } from "./limits.js"
+import { UNLIMITED_DECODE_LIMITS, type DecodeLimits } from "./limits.js"
 import type { PayloadCompression } from "./payload.js"
 export type { PayloadCompression } from "./payload.js"
 export { DEFAULT_DECODE_LIMITS, UNLIMITED_DECODE_LIMITS, type DecodeLimits } from "./limits.js"
@@ -88,7 +88,7 @@ export function encodingPlan(
   const token = encodeCbor(
     spec, opts.lossless ?? false, false, opts.arrayEncodings, opts.allowUnsafeLossyCustom ?? false, opts.compression,
   );
-  return tokenBreakdown(token).filter((part) => part.accession !== undefined);
+  return tokenBreakdown(token, UNLIMITED_DECODE_LIMITS).filter((part) => part.accession !== undefined);
 }
 
 export { encodingReport, fitToBudget, topN, type BudgetOptions } from "./workflows.js"

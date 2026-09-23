@@ -3,6 +3,7 @@ import { checkArrayMutation, recordChange, withoutUserParams } from "./context.j
 import { canonicalSort, validateArrays } from "./canonical.js"
 import { decodeCbor, encodeCbor } from "./cbor_format.js"
 import { tokenBreakdown } from "./inspect.js"
+import { UNLIMITED_DECODE_LIMITS } from "./limits.js"
 import type { EncodeOptions } from "./index.js"
 import type { InlineSpectrum } from "./model.js"
 import { toFragment } from "./url.js"
@@ -19,7 +20,8 @@ const finite = (n: number) => Number.isFinite(n) ? n : null
 /** Encode once and report errors against sorted source arrays. Zero references are counted separately. */
 export function encodingReport(spec: InlineSpectrum, options: Options = {}) {
   const token = encode(spec, options)
-  const decoded = decodeCbor(token)
+  // The token was just written here, so the untrusted-input budgets do not apply.
+  const decoded = decodeCbor(token, UNLIMITED_DECODE_LIMITS)
   const source = canonicalSort(spec)
   // Keep the encoder's ordered entries: object enumeration moves integer-like
   // custom names ahead of core arrays and mispairs their descriptor metadata.
@@ -28,7 +30,7 @@ export function encodingReport(spec: InlineSpectrum, options: Options = {}) {
     ...Object.entries(source.extraArrays ?? {}).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0),
   ]
   const decodedArrays = { ...decoded.extraArrays, mz: decoded.mz, intensity: decoded.intensity, charge: decoded.charge }
-  const parts = tokenBreakdown(token).filter(p => p.accession !== undefined)
+  const parts = tokenBreakdown(token, UNLIMITED_DECODE_LIMITS).filter(p => p.accession !== undefined)
   const arrays = sourceArrays.map(([key, a], index) => {
     const b = decodedArrays[key as keyof typeof decodedArrays] as ArrayLike<number>
     let maxAbsolute = 0

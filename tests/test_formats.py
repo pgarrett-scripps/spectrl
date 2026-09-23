@@ -221,3 +221,18 @@ def test_malformed_mgf_is_rejected(text):
 def test_mgf_peak_lines_must_be_numeric():
     with pytest.raises(ValueError, match="line 3"):
         read_mgf("BEGIN IONS\nTITLE=x\nnot a peak\nEND IONS\n")
+
+
+def test_scan_level_instrument_alone_sets_the_run_default():
+    """defaultInstrumentConfigurationRef is required even when only a scan names an instrument."""
+    import xml.etree.ElementTree as ET
+
+    spectrum = InlineSpectrum(
+        default_array_length=1,
+        mz=np.array([100.0]),
+        intensity=np.array([1.0]),
+        scans=[SpectrlScan(acquisition={"instrument": {"id": "IC1"}})],
+    )
+    root = ET.fromstring(write_mzml(decode_token(encode_spectrum(spectrum, lossless=True))).text)
+    run = next(node for node in root.iter() if node.tag.endswith("run"))
+    assert run.get("defaultInstrumentConfigurationRef") == "IC1"

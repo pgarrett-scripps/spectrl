@@ -86,3 +86,14 @@ def test_limits_do_not_replace_wire_validation(token):
     body = "spectrl.v3.r." + b64url_encode(_canonical(doc))
     with pytest.raises(SpectrlDecodeError, match="invalid declared array length"):
         decode_token(body + "." + token_checksum(body), limits=DecodeLimits(max_peaks=10_000_000))
+
+
+def test_reading_back_a_token_just_written_ignores_the_untrusted_defaults():
+    """A spectrum over the default max_peaks still encodes, reports and plans."""
+    from spectrl import encoding_plan, encoding_report
+    from spectrl.limits import DEFAULT_DECODE_LIMITS
+
+    n = DEFAULT_DECODE_LIMITS.max_peaks + 1
+    spec = InlineSpectrum(default_array_length=n, mz=np.arange(1, n + 1, dtype=np.float64), intensity=np.ones(n))
+    assert encoding_report(spec, lossless=True, compression="raw")["token"]
+    assert len(encoding_plan(spec, lossless=True, compression="raw")) == 2

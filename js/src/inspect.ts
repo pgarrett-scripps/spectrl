@@ -2,6 +2,7 @@
 
 import { descriptor, type Operation } from "./pipeline.js"
 import { readTokenDocument, readTokenPayload } from "./cbor_format.js"
+import type { DecodeLimits } from "./limits.js"
 import { ARRAY_CHARGE, ARRAY_INTENSITY, ARRAY_MZ, ARRAY_NON_STANDARD, ION_MOBILITY_ARRAY_TAILS, decodeTail, decodeUnitTail } from "./cv.js";
 import { DESC_ARRAY, DESC_DATA, DESC_NAME, DESC_TYPE, DESC_UNIT } from "./header.js";
 
@@ -30,9 +31,9 @@ function arrayLabel(tail: number, name: string | undefined): string {
  * Break a token's payload into header bytes vs each array's encoded blob.
  * Sizes are expanded CBOR bytes, before outer compression and base64url encoding.
  */
-export function tokenBreakdown(token: string): TokenPart[] {
-  const { doc } = readTokenDocument(token)
-  const raw = readTokenPayload(token)
+export function tokenBreakdown(token: string, limits?: DecodeLimits): TokenPart[] {
+  const { doc } = readTokenDocument(token, limits)
+  const raw = readTokenPayload(token, limits)
 
   const parts: TokenPart[] = [];
   let blobTotal = 0;

@@ -425,7 +425,8 @@ def write_mzml(
 
     _binary_arrays(node, spectrum, names, result, scaffold)
 
-    instrument = scaffold.acquisition(spectrum.acquisition)
+    # A scan-level instrument alone still needs the run's required default reference.
+    instrument = scaffold.acquisition(spectrum.acquisition) or next(iter(scaffold.instruments), None)
     processing = scaffold.processing_ref(spectrum.processing)
     result.text = _document(node, spectrum, scaffold, instrument, processing, indent)
     return result

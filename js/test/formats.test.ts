@@ -139,3 +139,10 @@ test("reading mzML without a DOM says what to use instead", async () => {
   const { readMzml } = await import("../src/formats/mzml_reader.ts")
   assert.throws(() => readMzml("<mzML/>"), /DOMParser|spectrl CLI/)
 })
+
+test("a scan-level instrument alone still sets the run's required default", () => {
+  const spectrum = ms2Spectrum()
+  ;(spectrum.scans![0] as { acquisition?: unknown }).acquisition = { instrument: { id: "IC1" } }
+  const text = writeMzml(decodeToken(encodeSpectrum(spectrum, { lossless: true }))).text
+  assert.match(text, /<run [^>]*defaultInstrumentConfigurationRef="IC1"/)
+})

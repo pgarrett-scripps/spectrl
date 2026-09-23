@@ -6,6 +6,7 @@ import numpy as np
 
 from .cbor_format import decode_cbor, encode_cbor
 from .introspection import inspect_token
+from .limits import DecodeLimits
 from .model import InlineSpectrum
 from .peaks import _validate_arrays, canonical_sort, top_n
 
@@ -29,10 +30,11 @@ def encoding_report(spec: InlineSpectrum, **options) -> dict:
     No peak selection is performed. The returned token is the one measured.
     """
     token = encode_cbor(spec, **options)
-    decoded = decode_cbor(token)
+    # The token was just written here, so the untrusted-input budgets do not apply.
+    decoded = decode_cbor(token, limits=DecodeLimits.unlimited())
     source = canonical_sort(spec)
     arrays = []
-    descriptors = inspect_token(token)
+    descriptors = inspect_token(token, limits=DecodeLimits.unlimited())
     keys = [key for key in ("mz", "intensity", "charge") if getattr(source, key) is not None]
     keys += sorted(source.extra_arrays)
     for key, desc in zip(keys, descriptors, strict=True):
