@@ -195,6 +195,9 @@ fn outer_payload_json() {
         let name = v["name"].as_str().unwrap();
         let token = v["token"].as_str().unwrap();
         let frame = framing::split(token).unwrap_or_else(|e| panic!("{name}: {e}"));
+        if cfg!(not(feature = "brotli")) && frame.mode == framing::Mode::Brotli {
+            continue; // this build reports Brotli as unsupported
+        }
         let bytes = framing::expand(&frame).unwrap_or_else(|e| panic!("{name}: {e}"));
         assert_eq!(to_hex(&bytes), v["cbor_hex"].as_str().unwrap(), "{name}");
         let d = decode_token(token).unwrap_or_else(|e| panic!("{name}: {e}"));
@@ -206,6 +209,11 @@ fn outer_payload_json() {
         let name = v["name"].as_str().unwrap();
         let token = v["token"].as_str().unwrap();
         let wanted = v["error"].as_str().unwrap();
+        let skip_brotli = cfg!(not(feature = "brotli"))
+            && framing::split(token).is_ok_and(|f| f.mode == framing::Mode::Brotli);
+        if skip_brotli {
+            continue; // this build rejects every Brotli token as unsupported
+        }
         for (reader, result) in [
             ("decode", decode_token(token).map(|_| ())),
             ("inspect", inspect_token(token).map(|_| ())),

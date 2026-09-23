@@ -49,6 +49,8 @@ pub fn log1p(x: f64) -> f64 {
             if x == -1.0 {
                 return -TWO54 / zero; // log1p(-1) = -inf
             }
+            // 0/0 as fdlibm does: the NaN bit pattern is part of the reference table.
+            #[allow(clippy::eq_op)]
             return (x - x) / (x - x); // log1p(x < -1) = NaN
         }
         if ax < 0x3e200000 {
@@ -126,7 +128,7 @@ pub fn expm1(x: f64) -> f64 {
     const HUGE: f64 = 1.0e+300;
     const TINY: f64 = 1.0e-300;
     const O_THRESHOLD: f64 = 7.09782712893383973096e+02;
-    const INVLN2: f64 = 1.44269504088896338700e+00;
+    const INVLN2: f64 = std::f64::consts::LOG2_E; // 1.44269504088896338700e+00
     const Q1: f64 = -3.33333333333331316428e-02;
     const Q2: f64 = 1.58730158725481460165e-03;
     const Q3: f64 = -7.93650757867487942473e-05;
@@ -218,12 +220,11 @@ pub fn expm1(x: f64) -> f64 {
         let y = add_exponent(ONE - (e - x));
         return y - ONE;
     }
-    let y = if k < 20 {
+    if k < 20 {
         let t = with_hi(ONE, 0x3ff00000 - (0x200000 >> k)); // t = 1 - 2^-k
         add_exponent(t - (e - x))
     } else {
         let t = with_hi(ONE, (0x3ff - k) << 20); // 2^-k
         add_exponent(x - (e + t) + ONE)
-    };
-    y
+    }
 }

@@ -330,7 +330,7 @@ pub fn quantize_indices(values: &[f64], scale: f64, log: bool) -> Result<Vec<u64
         }
         let y = if log { fdlibm::log1p(x) } else { x } * scale;
         let idx = round_half_up(y);
-        if !(idx <= MAX_SAFE as f64) {
+        if idx.is_nan() || idx > MAX_SAFE as f64 {
             return Err(Error::encode("quantized index exceeds 2^53 - 1"));
         }
         out.push(idx as u64);

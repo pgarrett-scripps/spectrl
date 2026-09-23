@@ -69,6 +69,7 @@ fn round_trips_within_profile_bounds() {
     let modes = [
         Compression::Raw,
         Compression::Zlib,
+        #[cfg(feature = "brotli")]
         Compression::Brotli,
         Compression::Auto,
     ];
