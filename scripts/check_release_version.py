@@ -25,6 +25,9 @@ npm_lock_version = json.loads((ROOT / "js/package-lock.json").read_text())["vers
 uv_packages = tomllib.loads((ROOT / "uv.lock").read_text())["package"]
 uv_version = next(package["version"] for package in uv_packages if package["name"] == "spectrl")
 zenodo_version = json.loads((ROOT / ".zenodo.json").read_text())["version"]
+cargo_version = tomllib.loads((ROOT / "rust/Cargo.toml").read_text())["package"]["version"]
+cargo_packages = tomllib.loads((ROOT / "rust/Cargo.lock").read_text())["package"]
+cargo_lock_version = next(package["version"] for package in cargo_packages if package["name"] == "spectrl")
 versions = {
     "pyproject.toml": python_version,
     "js/package.json": npm_version,
@@ -32,6 +35,8 @@ versions = {
     "uv.lock": uv_version,
     "CITATION.cff": _citation_version(),
     ".zenodo.json": zenodo_version,
+    "rust/Cargo.toml": cargo_version,
+    "rust/Cargo.lock": cargo_lock_version,
 }
 
 if len(set(versions.values())) != 1:
