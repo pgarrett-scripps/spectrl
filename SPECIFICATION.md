@@ -273,6 +273,11 @@ Decoding reverses shuffle and modular differences, checks the index domain,
 and divides each index by scale. With `log`, apply expm1 to that quotient.
 Reject nonfinite reconstructed values and incorrect byte counts.
 
+Writers and readers evaluate ln(1+x) and expm1 with the fdlibm 5.3 `log1p` and
+`expm1` algorithms in binary64 arithmetic, not the platform math library.
+Those algorithms use only IEEE 754 basic operations, so every conforming
+implementation computes the same indices and reconstructed bits.
+
 The linear rounding bound is 0.5/scale in source units. The logarithmic bound
 is (x+1)*expm1(0.5/scale), so it is approximately proportional to x for larger
 values but is not a strict relative bound near zero. Reference writers decode
