@@ -31,6 +31,7 @@ function validateAccession(value: unknown): asserts value is string {
 function scalar(value: unknown) {
   if (value == null || typeof value === "string") return
   if (typeof value === "number" && Number.isFinite(value)) return
+  if (typeof value === "boolean") throw Error("invalid parameter scalar: booleans are not supported, use 0 or 1")
   throw Error("invalid parameter scalar")
 }
 export function encodeParamMap(params: CvParam[]): unknown[][] {

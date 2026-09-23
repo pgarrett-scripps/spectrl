@@ -105,6 +105,8 @@ See [SPECIFICATION.md](SPECIFICATION.md).
 - Remove separate user-parameter type annotations. Values carry their native CBOR
   type; mzML import converts declared numeric user values and rejects invalid or
   out-of-range numbers. Earlier draft v3 tokens with the `t` field are rejected.
+  Scalars are text, integer, or float. Booleans are rejected, so encode a former
+  `xsd:boolean` value as 0 or 1.
 
 - Preserve unsupported shared links in the viewer and show a version error instead
   of substituting the demo spectrum.

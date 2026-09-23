@@ -162,3 +162,12 @@ def test_default_lossy_profile_preserves_dtypes(dtype, compression):
     )
     decoded = decode_token(encode_spectrum(spec, compression=compression))
     assert (decoded.mz.dtype, decoded.intensity.dtype, decoded.charge.dtype) == (dtype, dtype, np.int32)
+
+
+def test_boolean_user_param_rejected_with_hint():
+    import pytest
+
+    from spectrl.header import _scalar
+
+    with pytest.raises(ValueError, match="use 0 or 1"):
+        _scalar(True)
