@@ -365,6 +365,8 @@ is not a codec-independent spectrum hash, and its CRC remains a corruption check
 
 Records use the following shared keys. Only fields allowed for the record type
 are valid. Original XML IDs remain text values, not unresolved foreign keys.
+Readers treat a null value under an allowed key 2 through 7, 10, 11, or 13
+through 15 as an absent field. Writers omit absent fields instead of writing null.
 
 | Key | Field |
 | --- | --- |
