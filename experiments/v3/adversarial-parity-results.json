@@ -1,8 +1,14 @@
 {
- "description": "Python/TypeScript decoder agreement over the adversarial token corpus.",
+ "description": "Python/TypeScript/Rust decoder agreement over the adversarial token corpus.",
+ "implementations": [
+  "python",
+  "typescript",
+  "rust"
+ ],
  "generated_by": "scripts/check_adversarial_parity.py",
  "python": "3.13.7",
  "node": "v22.22.0",
+ "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
  "seeds": [
   31337,
   7,
