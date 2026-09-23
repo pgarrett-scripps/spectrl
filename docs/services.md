@@ -107,12 +107,21 @@ are checked across all validated descriptors before decompressing any array.
 A 32-bit array consumes four bytes per element, and a float64 or quantized
 array consumes eight. Existing per-blob decompression checks still apply.
 
-Omitting `limits` preserves the existing format ceilings. Passing
-`DecodeLimits()` in Python or `{}` in JavaScript additionally applies defaults
-of 64 arrays and 64 MiB of total decoded array data. Default token and peak
-limits match the existing format ceilings. JavaScript exports the immutable
-`DEFAULT_DECODE_LIMITS` object. Applications can tighten these defaults or
-raise their own budgets, but cannot bypass format ceilings.
+Budgets are applied by default. Omitting `limits`, passing `DecodeLimits()` in
+Python, or passing `{}` in JavaScript all give 4 MiB of token, 1,000,000 peaks,
+64 arrays, and 64 MiB of total decoded array data. Python exposes these as
+`DEFAULT_DECODE_LIMITS` and JavaScript as the immutable `DEFAULT_DECODE_LIMITS`
+object. Applications can tighten them, or raise their own budgets up to the
+format ceilings, which cannot be bypassed.
+
+The defaults are on because the ceilings alone still allow substantial
+expansion: four single-byte quantized arrays at the element ceiling reconstruct
+to 128 MB of float64 from a token of roughly 21 kB. They sit about an order of
+magnitude above the largest spectrum in the reference corpus (217,009 peaks in
+a 1.05 MB token), so ordinary data is unaffected. Reading from a producer you
+trust, raise them to the ceilings explicitly with `DecodeLimits.unlimited()` in
+Python or `UNLIMITED_DECODE_LIMITS` in JavaScript. Encoding is never subject to
+them, so a large spectrum remains writable.
 
 Decoded bytes measure retained array data. They exclude metadata, the token,
 CBOR objects, decompression buffers, and other temporary allocations. They

@@ -7,6 +7,17 @@ coverage:
 fuzz:
     uv run python scripts/fuzz_decode.py
 
+# Named adversarial cases only; the cross-implementation check is `adversarial-parity`
+adversarial:
+    uv run python scripts/adversarial_corpus.py --out /dev/null --mutations 0
+
+# Full corpus through both decoders; requires `cd js && npm ci`
+adversarial-parity:
+    uv run python scripts/check_adversarial_parity.py
+
+adversarial-vectors:
+    uv run python scripts/gen_adversarial_vectors.py
+
 lint:
     uv run ruff check src/ tests/
 
@@ -25,7 +36,8 @@ registry:
 check: lint format-check whitespace-check test
 
 build:
-    uv build --out-dir dist/python --clear
+    rm -rf dist/python
+    uv build --out-dir dist/python
     uvx twine check dist/python/*
 
 release-version:
@@ -37,8 +49,9 @@ mzml-smoke:
 clean-install-smoke:
     bash scripts/clean_install_smoke.sh
 
-release-check: check coverage fuzz build release-version mzml-smoke clean-install-smoke
+release-check: check coverage fuzz adversarial build release-version mzml-smoke clean-install-smoke
     cd js && npm ci && npm run typecheck && npm test && npm run fuzz && npm run build && npm pack --dry-run
+    uv run python scripts/check_adversarial_parity.py
     cd demo && npm ci && npm test
 
 # Build the JS library and launch the browser demo at http://127.0.0.1:8000

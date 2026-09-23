@@ -23,7 +23,7 @@ from .model import ArrayEncoding, InlineSpectrum
 
 # A dict key that looks like a CV accession (e.g. "MS:1000517") names a standard
 # array by its accession; any other key is a non-standard array (MS:1000786).
-_MS_ACCESSION_RE = re.compile(r"^MS:\d{7}$")
+_MS_ACCESSION_RE = re.compile(r"^MS:[0-9]{7}$")
 _ANY_ACCESSION_RE = re.compile(r"^[A-Za-z][A-Za-z0-9]*:[A-Za-z0-9]+$")
 _CORE_ARRAY_ALIASES = {
     "MS:1000514": "mz",
@@ -87,7 +87,7 @@ def _type_tail_for_dtype(dtype: np.dtype) -> int:
     than silently downcast to float64, which would lose precision above 2**53.
     """
     k = np.dtype(dtype)
-    if k == np.float32:
+    if k.kind == "f" and k.itemsize == 4:
         return TYPE_FLOAT32
     if (k.kind == "i" and k.itemsize <= 4) or (k.kind == "u" and k.itemsize <= 2):
         return TYPE_INT32
@@ -246,10 +246,10 @@ def build_array_blobs(
         default_enc = 2 if key == "mz" else 1 if key == "intensity" else 0
         default_params = None
         if not lossless and key in {"mz", "intensity"} and array.dtype.kind == "f" and not _has_negative(array):
-            from .codecs.quantized import parameters, ppm_parameters
+            from .codecs.quantized import intensity_parameters, ppm_parameters
 
             try:
-                default_params = ppm_parameters(array, mz_ppm) if key == "mz" else parameters(array, int_fp, log=True)
+                default_params = ppm_parameters(array, mz_ppm) if key == "mz" else intensity_parameters(array, int_fp)
                 default_enc = 3
             except ValueError:
                 pass
@@ -300,6 +300,7 @@ def top_n(spec: InlineSpectrum, n: int) -> InlineSpectrum:
     spectrum. This is explicit caller-driven trimming; encoding never trims
     silently.
     """
+    _validate_arrays(spec)
     if isinstance(n, bool) or not isinstance(n, (int, np.integer)) or n < 0:
         raise ValueError(f"top_n: n must be >= 0, got {n}")
     if spec.intensity is None or n >= len(spec.intensity):
@@ -323,7 +324,9 @@ def top_n(spec: InlineSpectrum, n: int) -> InlineSpectrum:
         # Full ordering makes ties deterministic: higher intensity first, then
         # lower m/z (or original position when m/z is absent), then index.
         secondary = spec.mz if spec.mz is not None else indices
-        ranked = np.lexsort((indices, secondary, -np.asarray(spec.intensity)))
+        # Every supported int32 value is exact in float64; negate after widening
+        # so INT32_MIN cannot overflow and rank ahead of positive intensities.
+        ranked = np.lexsort((indices, secondary, -np.asarray(spec.intensity, dtype=np.float64)))
         top_idx = ranked[:n]
         top_idx = top_idx[np.lexsort((top_idx, secondary[top_idx]))]
 

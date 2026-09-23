@@ -12,7 +12,7 @@ import type { ArrayEncodingOption, DecodedSpectrum, InlineSpectrum } from "./mod
 import type { DecodeLimits } from "./limits.js"
 import type { PayloadCompression } from "./payload.js"
 export type { PayloadCompression } from "./payload.js"
-export { DEFAULT_DECODE_LIMITS, type DecodeLimits } from "./limits.js"
+export { DEFAULT_DECODE_LIMITS, UNLIMITED_DECODE_LIMITS, type DecodeLimits } from "./limits.js"
 
 export * from "./model.js";
 export * from "./array_accession.js";
@@ -72,8 +72,9 @@ export function encodeSpectrum(spec: InlineSpectrum, opts: EncodeOptions = {}): 
   return token;
 }
 
-/** Decode a token with optional budgets checked before array decompression.
- * Omitting limits preserves the existing wire-format ceilings. */
+/** Decode a token with resource budgets checked before array decompression.
+ * DEFAULT_DECODE_LIMITS applies when none are given; pass
+ * UNLIMITED_DECODE_LIMITS to raise them to the wire-format ceilings. */
 export function decodeToken(token: string, limits?: DecodeLimits): DecodedSpectrum {
   return decodeCbor(token, limits)
 }
@@ -91,6 +92,12 @@ export function encodingPlan(
 
 export { encodingReport, fitToBudget, topN, type BudgetOptions } from "./workflows.js"
 export { parsePeakList, formatPeakList, type PeakDelimiter } from "./peaklist.js"
+export {
+  ConversionResult, FORMATS, formatForPath, listMzmlSpectra, listSpectra, readMgf, readMs2, readMzml,
+  readText, write, writeMgf, writeMs2, writeMzml,
+  type ConversionIssue, type ReadMzmlOptions, type ReadTextOptions, type Severity,
+  type SpectrumFormat, type SpectrumSummary, type WriteMzmlOptions,
+} from "./formats/index.js"
 
 export { registerEncoding, type Encoding, type Operation, type OperationOption } from "./pipeline.js"
 export { registerExtension } from "./context.js"

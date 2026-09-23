@@ -1,0 +1,137 @@
+<?xml version="1.0" ?>
+<mzML xmlns="http://psi.hupo.org/ms/mzml" version="1.1.0">
+  <cvList count="2">
+    <cv id="MS" fullName="PSI Mass Spectrometry Ontology" URI="https://purl.obolibrary.org/obo/ms.obo" />
+    <cv id="UO" fullName="Unit Ontology" URI="https://purl.obolibrary.org/obo/uo.obo" />
+  </cvList>
+  <fileDescription>
+    <fileContent />
+  </fileDescription>
+  <softwareList count="1">
+    <software id="spectrl_writer" version="3.0.0">
+      <userParam name="spectrl:synthesized" value="processing record carried no software context" />
+    </software>
+  </softwareList>
+  <instrumentConfigurationList count="1">
+    <instrumentConfiguration id="instrument0" />
+  </instrumentConfigurationList>
+  <dataProcessingList count="1">
+    <dataProcessing id="processing0">
+      <processingMethod order="0" softwareRef="spectrl_writer" />
+    </dataProcessing>
+  </dataProcessingList>
+  <run id="spectrl" defaultInstrumentConfigurationRef="instrument0">
+    <spectrumList count="3" defaultDataProcessingRef="processing0">
+      <spectrum id="scan=88" index="0" defaultArrayLength="12">
+        <cvParam cvRef="MS" accession="MS:1000511" name="ms level" value="1" />
+        <cvParam cvRef="MS" accession="MS:1000130" name="positive scan" />
+        <cvParam cvRef="MS" accession="MS:1000127" name="centroid spectrum" />
+        <scanList count="1">
+          <scan>
+            <cvParam cvRef="MS" accession="MS:1000016" name="scan start time" value="3.42" unitAccession="UO:0000031" unitName="minute" unitCvRef="UO" />
+          </scan>
+        </scanList>
+        <binaryDataArrayList count="2">
+          <binaryDataArray encodedLength="128">
+            <cvParam cvRef="MS" accession="MS:1000523" name="64-bit float" />
+            <cvParam cvRef="MS" accession="MS:1000576" name="no compression" />
+            <cvParam cvRef="MS" accession="MS:1000514" name="m/z array" />
+            <binary>c9cS8kHSckCEns2qT+JyQJVliGNd8nJAVp+rrdhSgEDeAgmK31qAQGdmZmbmYoBA78nDQu1qgEB4LSEf9HKAQJyiI7n8UIdAJAaBlQNZh0Ctad5xCmGHQDXNO04RaYdA</binary>
+          </binaryDataArray>
+          <binaryDataArray encodedLength="128">
+            <cvParam cvRef="MS" accession="MS:1000523" name="64-bit float" />
+            <cvParam cvRef="MS" accession="MS:1000576" name="no compression" />
+            <cvParam cvRef="MS" accession="MS:1000515" name="intensity array" />
+            <binary>AAAAAABk2UCw3Az4WEzNQEujb/dS58BAAAAAAABq+EDl56lk3yvsQKH1w3fjQOBAL8RIaj/B0kClWlJtKKTFQAAAAAAAguRAthQeF/mp10DvfSrySk7LQPPYE54Ygr9A</binary>
+          </binaryDataArray>
+        </binaryDataArrayList>
+      </spectrum>
+      <spectrum id="scan=1042 (PEPTIDER, 2+)" index="1" defaultArrayLength="14">
+        <cvParam cvRef="MS" accession="MS:1000511" name="ms level" value="2" />
+        <cvParam cvRef="MS" accession="MS:1000130" name="positive scan" />
+        <cvParam cvRef="MS" accession="MS:1000127" name="centroid spectrum" />
+        <scanList count="1">
+          <scan>
+            <cvParam cvRef="MS" accession="MS:1000016" name="scan start time" value="24.71" unitAccession="UO:0000031" unitName="minute" unitCvRef="UO" />
+          </scan>
+        </scanList>
+        <precursorList count="1">
+          <precursor>
+            <isolationWindow>
+              <cvParam cvRef="MS" accession="MS:1000827" name="MS:1000827" value="478.73780380964996" />
+              <cvParam cvRef="MS" accession="MS:1000828" name="MS:1000828" value="1" />
+              <cvParam cvRef="MS" accession="MS:1000829" name="MS:1000829" value="1" />
+            </isolationWindow>
+            <selectedIonList count="1">
+              <selectedIon>
+                <cvParam cvRef="MS" accession="MS:1000744" name="selected ion m/z" value="478.73780380964996" />
+                <cvParam cvRef="MS" accession="MS:1000041" name="charge state" value="2" />
+              </selectedIon>
+            </selectedIonList>
+            <activation>
+              <cvParam cvRef="MS" accession="MS:1000422" name="MS:1000422" />
+              <cvParam cvRef="MS" accession="MS:1000045" name="collision energy" value="28" unitAccession="UO:0000266" unitName="UO:0000266" unitCvRef="UO" />
+            </activation>
+          </precursor>
+        </precursorList>
+        <binaryDataArrayList count="2">
+          <binaryDataArray encodedLength="152">
+            <cvParam cvRef="MS" accession="MS:1000523" name="64-bit float" />
+            <cvParam cvRef="MS" accession="MS:1000576" name="no compression" />
+            <cvParam cvRef="MS" accession="MS:1000514" name="m/z array" />
+            <binary>1gsxo9eDWEAf46VyzuNlQEqqTLdIY2xAvgMtrJUCc0C8/YR2fEJ0QAIz0AQEM3pAgoifwj+TekC4UA4qLqKAQHj79QhM0oBAG5Yb0I/Kg0Aak0c1g2qEQGfqit370oZAMpy0btpyiEB/8/cWU9uKQA==</binary>
+          </binaryDataArray>
+          <binaryDataArray encodedLength="152">
+            <cvParam cvRef="MS" accession="MS:1000523" name="64-bit float" />
+            <cvParam cvRef="MS" accession="MS:1000576" name="no compression" />
+            <cvParam cvRef="MS" accession="MS:1000515" name="intensity array" />
+            <binary>oTV6LqpTqUDYaFCuzZXmQAl0iADHa/FAFOTaXSjPtEBSItRvy0DcQDO/KGpTALZAPPvI3DWn6EDIoFF1VzvBQJ/NnSW7cLhA8LodooAXwUDsn7YOzuyeQCVFrSt7ZelAT8zF/+EWu0BQbDGpBRXjQA==</binary>
+          </binaryDataArray>
+        </binaryDataArrayList>
+      </spectrum>
+      <spectrum id="scan=1043 (LVNELTEFAK, 2+)" index="2" defaultArrayLength="18">
+        <cvParam cvRef="MS" accession="MS:1000511" name="ms level" value="2" />
+        <cvParam cvRef="MS" accession="MS:1000130" name="positive scan" />
+        <cvParam cvRef="MS" accession="MS:1000127" name="centroid spectrum" />
+        <scanList count="1">
+          <scan>
+            <cvParam cvRef="MS" accession="MS:1000016" name="scan start time" value="25.08" unitAccession="UO:0000031" unitName="minute" unitCvRef="UO" />
+          </scan>
+        </scanList>
+        <precursorList count="1">
+          <precursor>
+            <isolationWindow>
+              <cvParam cvRef="MS" accession="MS:1000827" name="MS:1000827" value="582.31895880965" />
+              <cvParam cvRef="MS" accession="MS:1000828" name="MS:1000828" value="1" />
+              <cvParam cvRef="MS" accession="MS:1000829" name="MS:1000829" value="1" />
+            </isolationWindow>
+            <selectedIonList count="1">
+              <selectedIon>
+                <cvParam cvRef="MS" accession="MS:1000744" name="selected ion m/z" value="582.31895880965" />
+                <cvParam cvRef="MS" accession="MS:1000041" name="charge state" value="2" />
+              </selectedIon>
+            </selectedIonList>
+            <activation>
+              <cvParam cvRef="MS" accession="MS:1000422" name="MS:1000422" />
+              <cvParam cvRef="MS" accession="MS:1000045" name="collision energy" value="28" unitAccession="UO:0000266" unitName="UO:0000266" unitCvRef="UO" />
+            </activation>
+          </precursor>
+        </precursorList>
+        <binaryDataArrayList count="2">
+          <binaryDataArray encodedLength="192">
+            <cvParam cvRef="MS" accession="MS:1000523" name="64-bit float" />
+            <cvParam cvRef="MS" accession="MS:1000576" name="no compression" />
+            <cvParam cvRef="MS" accession="MS:1000514" name="m/z array" />
+            <binary>LiPodNiFXEBExykRnGNiQJwon6QcpWpAnVJ5EsxEa0CVtK0pPnN0QNA0Uj5+03ZAxMaHnOyDfEAARyyxLOR+QJka6nWiyoFA42ij/neagkD8X/cbBPOEQBqgSSYkI4ZAFGlkVVv7iEAyqbZfeyuKQNUu72/nk41AVbllS9O7jUCrEUNwM8yPQIs/+LIvapBA</binary>
+          </binaryDataArray>
+          <binaryDataArray encodedLength="192">
+            <cvParam cvRef="MS" accession="MS:1000523" name="64-bit float" />
+            <cvParam cvRef="MS" accession="MS:1000576" name="no compression" />
+            <cvParam cvRef="MS" accession="MS:1000515" name="intensity array" />
+            <binary>oTV6LqpTqUAzvyhqUwC2QAl0iADHa/FAyKBRdVc7wUBSItRvy0DcQPC6HaKAF8FAPPvI3DWn6EAlRa0re2XpQJ/NnSW7cLhAUGwxqQUV40Dsn7YOzuyeQK7pQzaPWeFAT8zF/+EWu0BmCQxY6QyzQNhoUK7NleZA96lrqzVa7kAU5NpdKM+0QPrpE9vtns1A</binary>
+          </binaryDataArray>
+        </binaryDataArrayList>
+      </spectrum>
+    </spectrumList>
+  </run>
+</mzML>

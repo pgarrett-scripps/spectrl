@@ -7,9 +7,14 @@ Node.
 
 This package is a separate implementation of the format specified in
 [`SPECIFICATION.md`](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md) and is validated against the shared
-conformance vectors in [`test-vectors/`](https://github.com/pgarrett-scripps/spectrl/tree/main/test-vectors). It decodes tokens
-produced by the Python reference implementation byte-for-byte (including the
-core numeric encodings and the CRC-32 transport checksum).
+conformance vectors in [`test-vectors/`](https://github.com/pgarrett-scripps/spectrl/tree/main/test-vectors).
+It also produces the same complete tokens as Python for the tested inputs and
+settings: all 1,788 comparisons matched, including both encoding profiles and
+raw, zlib, and Brotli payloads. Matching metadata, array dtypes, and exact core
+encoding settings provide portable equality with raw payloads. Compressed and
+lossy results matched in the tested runtimes, without guaranteeing equality
+across arbitrary compressor versions or mathematical libraries. See
+[token reproducibility](../docs/token-reproducibility.md) for results and scope.
 
 ## Install
 
@@ -60,7 +65,9 @@ Lossless encoding uses modular delta plus byte shuffle for m/z, byte shuffle
 for intensity, and raw typed words for auxiliary arrays. Default lossy encoding
 uses one quantized-word layout with a logarithmic m/z grid calibrated to a
 maximum error of 0.1 ppm per source value, and a log1p intensity grid with
-scale 3600. Zero m/z remains exact. Unsupported quantization falls back to
+scale 3600, refined when the smallest positive intensity is below 1 so none
+rounds to zero. Zero m/z
+remains exact. Unsupported quantization falls back to
 exact encoding.
 Integer and auxiliary arrays remain exact. Both profiles default to one zlib
 compression pass over the complete CBOR document.
@@ -103,8 +110,9 @@ callbacks registered explicitly. Unknown custom array semantics require
 - `encodeSpectrum(spec, options?) => string`, with lossless, size, warning,
   user-param omission, per-array codec, and unsafe-custom-codec options
 - `decodeToken(token, limits?) => DecodedSpectrum`, verifying the checksum and
-  optional token-byte, peak-count, array-count, and total decoded-byte budgets
-- `DecodeLimits` and `DEFAULT_DECODE_LIMITS` describe the optional service budgets
+  the token-byte, peak-count, array-count, and total decoded-byte budgets
+- `DecodeLimits`, `DEFAULT_DECODE_LIMITS` (applied when `limits` is omitted), and
+  `UNLIMITED_DECODE_LIMITS` (the format ceilings, for a trusted producer)
 - `SpectrlDecodeError` identifies malformed, unsupported, and over-budget tokens
 - `encodingPlan(spec, options?)` reports resolved codecs, fixed points, types, and units
 - `tokenBreakdown(token)` reports compressed array and header sizes
@@ -146,8 +154,14 @@ CI covers Node 22 and 24, matching the current Node 22 package minimum.
 
 ## Token format
 
-The `spectrl.v3` header uses keys 0 through 11. Spectrum-level free-text
-parameters use key 7. Identifications and fragment assignments belong in
+`formatForPath`, `readText`, `listSpectra` and `write` convert between tokens
+and mzML, MGF and MS2. The writers run anywhere; reading mzML uses `DOMParser`,
+so it needs a browser. Each writer returns a `ConversionResult` naming what the
+target format could not represent.
+
+The `spectrl.v3` header uses keys 0 through 12. Spectrum-level free-text
+parameters use key 7, and key 12 records the source-declared ontology version
+for each accession prefix. Identifications and fragment assignments belong in
 the surrounding application.
 
 ## V3 operations

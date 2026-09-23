@@ -46,7 +46,7 @@ def _params_json(params) -> list:
 
 
 def _user_params_json(us) -> list:
-    return [{"name": u.name, "value": u.value, "type": u.type, "unit_accession": u.unit_accession} for u in us]
+    return [{"name": u.name, "value": u.value, "unit_accession": u.unit_accession} for u in us]
 
 
 def _decoded_json(token: str) -> dict:
@@ -356,7 +356,8 @@ def _specs() -> list[tuple[str, str, InlineSpectrum]]:
                 intensity=np.array([5.0e4, 6.0e4]),
                 params=[SpectrlCvParam(accession="MS:1000511", value=2)],
                 user_params=[
-                    SpectrlUserParam(name="Mascot score", value=42.7, type="xsd:float"),
+                    SpectrlUserParam(name="Mascot score", value=42.7),
+                    SpectrlUserParam(name="large finite number", value=1e20),
                     SpectrlUserParam(name="reanalysis note", value="rerun with semitryptic"),
                 ],
                 scans=[
@@ -364,7 +365,7 @@ def _specs() -> list[tuple[str, str, InlineSpectrum]]:
                         params=[SpectrlCvParam(accession="MS:1000016", value=20.5, unit_accession="UO:0000031")],
                         user_params=[
                             SpectrlUserParam(
-                                name="[Thermo Trailer Extra]Monoisotopic M/Z:", value="445.1203", type="xsd:string"
+                                name="[Thermo Trailer Extra]Monoisotopic M/Z:", value="445.1203"
                             ),
                         ],
                     )

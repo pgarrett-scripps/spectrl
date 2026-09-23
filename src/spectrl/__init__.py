@@ -25,7 +25,7 @@ from .cbor_format import decode_cbor, encode_cbor
 from .context import register_extension
 from .errors import SpectrlDecodeError, SpectrlError
 from .introspection import encoding_plan, inspect_token
-from .limits import DecodeLimits
+from .limits import DEFAULT_DECODE_LIMITS, DecodeLimits
 from .model import ArrayEncoding, DecodedSpectrum, InlineSpectrum, SpectrlCvParam, SpectrlUserParam
 from .peaklist import format_peak_list, parse_peak_list
 from .peaks import top_n
@@ -46,6 +46,7 @@ __all__ = [
     "InlineSpectrum",
     "DecodedSpectrum",
     "DecodeLimits",
+    "DEFAULT_DECODE_LIMITS",
     "SpectrlCvParam",
     "SpectrlUserParam",
     "ArrayEncoding",
@@ -145,9 +146,10 @@ def encode_spectrum(
 def decode_token(token: str, *, limits: DecodeLimits | None = None) -> DecodedSpectrum:
     """Decode a spectrl.v3 token string into a DecodedSpectrum.
 
-    Verifies the mandatory trailing CRC-32 checksum. Optional limits reject
-    oversized input before array decompression. Without limits, only the
-    existing wire-format ceilings apply.
+    Verifies the mandatory trailing CRC-32 checksum. Resource budgets reject
+    oversized input before array decompression and are applied by default;
+    see DecodeLimits. Pass DecodeLimits.unlimited() to raise them to the
+    wire-format ceilings for a trusted producer.
 
     Raises:
         SpectrlDecodeError: On any malformed, corrupted, or unsupported input:

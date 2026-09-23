@@ -1,6 +1,6 @@
 # spectrl demo
 
-A single-page browser demo of [spectrl](../README.md): it **encodes** example
+A two-page browser demo of [spectrl](../README.md): it **encodes** example
 mass spectra into `spectrl.v3` tokens, shows the **shareable URL + QR code**, and
 **decodes** the token back into a plotted spectrum, entirely client-side, with
 no server or network call. It runs on the real
@@ -23,37 +23,44 @@ cd ../demo && npm install && npm run dev
 
 Then open **http://127.0.0.1:8000**.
 
-The default playground bundle stays small. Brotli support is loaded as a
-separate browser chunk only when a pasted token uses a Brotli payload.
+The demo bundle stays small. The Brotli payload backend is loaded as a
+separate browser chunk only when a token actually uses it.
+
+It also **converts files**: open an mzML, MGF or MS2 file, pick a spectrum,
+and get its token; or write the displayed spectrum back out as any of the
+three. Like everything else here, that happens in the page, with no upload.
 
 ## What it shows
 
-The page leads with the product idea, then puts the decoded spectrum and its
-share action at the center of an interactive playground. Everything is
-recomputed live on each example or encoding-mode change.
+Two pages share one stylesheet and a three-item header: **Demo**, **Convert**,
+and the GitHub repository.
 
-- **Pick a spectrum**: peptide MS², small-molecule MS¹, top-down MS², per-peak
+**Demo** (`index.html`) puts one spectrum on the page, top to bottom:
+
+- **Example spectrum**: peptide MS², small-molecule MS¹, top-down MS², per-peak
   ion mobility, auxiliary arrays, or synthetic scans of **100** and **500**
-  peaks. Toggle **lossless** to compare sizes.
-- **Spectrum plot**: an uncluttered SVG stick plot. Hover a peak for m/z / intensity.
-- **Spectrum summary**: readable chips surface the MS level,
-  precursor, charge, activation, ion mobility, auxiliary arrays, and peak count
-  before the raw CV metadata.
-- **Share bar** (under the plot): a compact status line plus:
-  - **Copy shareable link**: the URL (token in a `#fragment`, never sent to a
-    server). The raw URL isn't shown because it isn't human-readable.
-  - **QR code**: reveals a QR of the URL on demand. Oversized tokens (e.g. the
-    500-peak example) surface the token-too-large guidance.
-- **View token**: reveals the bare token and accepts any `spectrl.v3` token to decode.
-- **Technical details**: an expandable inspector containing token size (KB)
-  and B/peak, complete-token size relative to raw peak arrays, what
-  the *other* mode would cost, m/z range, base peak, round-trip precision
-  (max/mean Δm/z and Δintensity, or "bit-exact" in lossless), encode/decode
-  timing, and a segment-size breakdown bar chart.
-- **Decoded metadata**: the inspector also contains a table rendered from the decoded PSI-MS CV accessions
-  (ms level, polarity, precursor m/z, charge, activation, ProForma, …).
+  peaks. A **lossless** toggle re-encodes the current spectrum bit-exactly.
+- **Plot and summary**: an SVG stick plot (hover a peak for m/z and intensity)
+  with chips for MS level, precursor, charge, activation, extra arrays, and
+  peak count.
+- **Token**: the bare `spectrl.v3` string, editable, with **Copy link**
+  (token in a URL `#fragment`), **Copy token**, and an on-demand **QR code**.
+  Paste any token here to decode it.
+- **Metadata in the token**: every decoded PSI-MS parameter with its accession.
+- Two collapsed sections: **Encoding details** (size, bytes per peak,
+  round-trip error, timings, checksum, segment breakdown) and **Quality
+  report** (downloadable JSON).
 
-The page reads a token from its own URL fragment on load, so a link like
+**Convert** (`convert.html`) is a tool with both directions on screen: open an
+mzML, MGF or MS2 file and pick a spectrum from the list to get its token, or
+paste a token and save it as mzML, MGF, MS2, or a peak-list TSV. Anything a
+format cannot hold is listed when you save. Three small example files
+(`examples/example.mzML`, `.mgf`, `.ms2`) are offered for download so the
+converter can be tried without a run to hand. They are the demo's example
+spectra written by the library's own writers; `npm run examples` regenerates
+them, and `npm run build` does so too.
+
+The demo reads a token from its own URL fragment on load, so a link like
 `…/index.html#spectrl.v3.…` opens straight to that spectrum, which is handy for slides.
 
 ## Talking points for a live demo
@@ -68,14 +75,11 @@ The page reads a token from its own URL fragment on load, so a link like
 > Note: the example masses are illustrative (computed from monoisotopic residue
 > masses). They demonstrate the format, not a specific real acquisition.
 
-**User data and quality reports**
+**User data**
 
-Import your own peaks accepts pasted two-column data and CSV, TSV, or text
-files. Export writes only the displayed m/z and intensity arrays. Technical
-details includes a downloadable quality report when the original spectrum is
-available. Fit a share budget requires explicit permission to remove peaks or
-user parameters and previews the result before Apply candidate changes it.
-See the [workflow guide](../docs/workflows.md).
+The converter accepts pasted two-column peak lists as well as files. Peak-list
+TSV export writes only the m/z and intensity arrays. See the
+[workflow guide](../docs/workflows.md).
 
 **Browser regression checks**
 
@@ -90,4 +94,4 @@ npm test
 The same assertions can run in a regular browser. Run `npm run build-tests`,
 serve the demo directory, open `/tests/browser.html`, and select Run browser
 regressions. The suite checks literal metadata rendering, user-data import,
-encoding-mode changes, and the budget preview/apply boundary.
+encoding-mode changes, and the three downloadable example files.

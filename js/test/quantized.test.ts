@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import { encodeQuantized, decodeQuantized, validateQuantized, ppmParameters } from "../src/quantized.ts"
+import { encodeQuantized, decodeQuantized, validateQuantized, ppmParameters, intensityParameters } from "../src/quantized.ts"
 import { encodeSpectrum, decodeToken } from "../src/index.ts"
 
 test("hand-calculated quantized word layouts", () => {
@@ -65,4 +65,14 @@ test("explicit linear m/z grid remains available", () => {
 })
 test("ppm parameters reject invalid error bounds", () => {
   for (const ppm of [0, -1, NaN, Infinity]) assert.throws(() => ppmParameters(Float64Array.of(100), ppm))
+})
+test("default intensity scale refines below one and keeps small peaks", () => {
+  assert.equal(intensityParameters(Float64Array.of(1, 3, 1e5)).scale, 3600)
+  assert.equal(intensityParameters(Float64Array.of(0, 0, 0)).scale, 3600)
+  assert.equal(intensityParameters(Float64Array.of(0.5, 2)).scale, 5400)
+  assert.throws(() => intensityParameters(Float64Array.of(1e-300, 1)), /outside the supported range/)
+  const intensity = Float64Array.of(1e-5, 0.3, 1)
+  const decoded = decodeToken(encodeSpectrum({ defaultArrayLength: 3, mz: Float64Array.of(100, 200, 300), intensity }))
+  for (const [i, value] of intensity.entries())
+    assert.ok(Math.abs(decoded.intensity![i]! - value) <= value * 2 * Math.expm1(0.5 / 3600))
 })

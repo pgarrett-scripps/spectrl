@@ -1,13 +1,13 @@
 # V3 simplification and paper plan
 
 > Historical design notes. The final clean core supersedes the compatibility
-> proposals below. See [SPECIFICATION.md](../SPECIFICATION.md) and
-> [the current decision](../experiments/v3/clean-core-decision.md).
+> proposals below. See [SPECIFICATION.md](../SPECIFICATION.md) for the
+> format as shipped.
 
 
 Implementation plan from the September 18 discussion and supplied chat.
 The selected design is now implemented. See
-[the encoding decision](../experiments/v3/simplification-decision.md) for the
+the encoding decision for the
 measured tradeoffs and final validation record. The earlier implementation plan and validation record remain a
 record of the previous local milestone, not evidence for this proposed design.
 
@@ -164,7 +164,7 @@ inheritance, units, provenance, and extensions in the same iteration.
 
 **5. Implement and synchronize once**
 
-Develop in `/home/ty/Repos/spectrl`. Update Python and TypeScript together,
+Develop in `~/Repos/spectrl`. Update Python and TypeScript together,
 including the CLI, inspection, budget helpers, browser demo, schema generator,
 documentation, and shared vectors.
 
@@ -178,7 +178,7 @@ set. Verify browser use independently of Node support for optional compressors.
 
 Run the existing unit, type, build, decoder-fuzz, package, and browser checks.
 Only after the implementation is stable, synchronize a reviewed allowlist into
-`/home/ty/Repos/spectrl-paper`. Preserve independent paper changes. Rebuild
+`~/Repos/spectrl-paper`. Preserve independent paper changes. Rebuild
 `js/dist` and record source hashes for both language runtimes. The paper analysis
 imports this checkout's Python code and JavaScript build, not the main checkout.
 

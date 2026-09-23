@@ -41,7 +41,7 @@ from .header import (
     build_header_dict,
     parse_header_dict,
 )
-from .limits import DecodeLimits
+from .limits import DecodeLimits, resolve_limits
 from .model import ArrayEncoding, DecodedSpectrum, InlineSpectrum
 from .peaks import _validate_arrays, build_array_blobs, canonical_sort
 from .token import FORMAT_VERSION, MAGIC, b64url_decode, b64url_encode
@@ -49,7 +49,22 @@ from .token import FORMAT_VERSION, MAGIC, b64url_decode, b64url_encode
 
 def _canonical(doc: dict) -> bytes:
     """Deterministic (canonical) CBOR encoding of the header document."""
-    return cbor2.dumps(doc, canonical=True)
+    return cbor2.dumps(_canonical_numbers(doc), canonical=True)
+
+
+def _canonical_numbers(value):
+    """Use one wire representation for equal safe numeric metadata values.
+
+    JavaScript has one Number type. Normalize integral floats (including signed
+    zero) to integers, but leave numeric array byte strings and map keys alone.
+    """
+    if isinstance(value, float) and abs(value) <= MAX_SAFE_INTEGER and value.is_integer():
+        return int(value)
+    if isinstance(value, dict):
+        return {key: _canonical_numbers(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_canonical_numbers(item) for item in value]
+    return value
 
 
 def token_checksum(body: str) -> str:
@@ -132,7 +147,10 @@ def encode_cbor(
     raw = _canonical(doc)
     validate_cbor_document(raw)
     token = frame_payload(raw, compression)
-    read_token_document(token)
+    # Verify what we just produced against the wire ceilings only: a caller
+    # encoding a legitimately huge spectrum is not the untrusted-input case the
+    # default budgets exist for.
+    read_token_document(token, limits=DecodeLimits.unlimited())
     return token
 
 
@@ -212,8 +230,17 @@ def _validate_cbor_item(buf: bytes, pos: int, depth: int, budget: list[int]) -> 
     if mt == 7:
         if ai not in (20, 21, 22, 25, 26, 27):
             raise ValueError("unsupported CBOR simple value")
-        if ai in (25, 26, 27) and not math.isfinite(cbor2.loads(buf[start:pos])):
-            raise ValueError("CBOR numbers must be finite")
+        if ai in (25, 26, 27):
+            value = cbor2.loads(buf[start:pos])
+            if not math.isfinite(value):
+                raise ValueError("CBOR numbers must be finite")
+            # Section 1 requires writers to encode every mathematically integral
+            # safe value as a CBOR integer, both signs of zero included. Enforcing
+            # that on read keeps one wire form per value, so `3` and `3.0` cannot
+            # both spell the same document, and leaves JavaScript readers -- which
+            # cannot tell the two apart after parsing -- nothing to disagree about.
+            if value.is_integer() and abs(value) <= MAX_SAFE_INTEGER:
+                raise ValueError("integral values within the safe integer range must be CBOR integers")
         return pos
     raise ValueError(f"invalid CBOR major type {mt}")
 
@@ -232,7 +259,7 @@ def _is_wire_int(value: object) -> bool:
 
 def _validate_header_shape(doc: dict) -> None:
     for key in doc:
-        if not _is_wire_int(key) or key not in range(12):
+        if not _is_wire_int(key) or key not in range(13):
             raise SpectrlDecodeError(f"unsupported spectrl header key: {key!r}")
     if 0 not in doc:
         raise SpectrlDecodeError("spectrl header is missing defaultArrayLength (key 0)")
@@ -248,6 +275,7 @@ def _validate_header_shape(doc: dict) -> None:
         9: dict,
         10: list,
         11: dict,
+        12: dict,
     }
     for key, cls in expected.items():
         if key in doc and not isinstance(doc[key], cls):
@@ -259,7 +287,7 @@ def _validate_descriptor(desc: object, seen_arrays: set[tuple[int, str | None]])
         raise SpectrlDecodeError("array descriptor must be a map")
     from .context import decode_record, validate_extensions
     from .cv import TYPE_FLOAT32, TYPE_INT32
-    from .header import _decode_param_map, _decode_user_params
+    from .header import _decode_param_map, _decode_user_params, _require_list
     from .pipeline import ENCODINGS, descriptor, operation
 
     if any(type(key) is not int or key not in (0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11) for key in desc):
@@ -305,7 +333,7 @@ def _validate_descriptor(desc: object, seen_arrays: set[tuple[int, str | None]])
         if 9 in desc:
             _decode_user_params(desc[9])
         if 10 in desc:
-            for step in desc[10]:
+            for step in _require_list(desc[10], "array processing"):
                 decode_record(step, "processing")
         if 11 in desc:
             validate_extensions(desc[11], require_supported=False)
@@ -319,6 +347,8 @@ def _validate_descriptor(desc: object, seen_arrays: set[tuple[int, str | None]])
     if array_tail == ARRAY_NON_STANDARD:
         if not isinstance(name, str) or not name or name in {"mz", "intensity", "charge"}:
             raise SpectrlDecodeError("a non-standard array requires a non-empty name")
+        if re.fullmatch(r"[A-Za-z][A-Za-z0-9]*:[A-Za-z0-9]+", name):
+            raise SpectrlDecodeError("non-standard array name must not be a CV accession")
     if DESC_UNIT in desc:
         try:
             raw_unit = desc[DESC_UNIT]
@@ -351,11 +381,10 @@ def read_token_payload(token: str, *, limits: DecodeLimits | None = None) -> byt
     Raises SpectrlDecodeError (a ValueError subclass) on any malformed,
     corrupted, or unsupported input.
     """
-    if limits is not None and not isinstance(limits, DecodeLimits):
-        raise TypeError("limits must be a DecodeLimits instance")
+    limits = resolve_limits(limits)
     if not isinstance(token, str):
         raise SpectrlDecodeError("a spectrl token must be a string")
-    if limits is not None and len(token) > limits.max_token_bytes:
+    if len(token) > limits.max_token_bytes:
         raise SpectrlDecodeError("token exceeds max_token_bytes")
     if len(token) > (MAX_TOKEN_BYTES * 4 + 2) // 3 + len(MAGIC) + 12:
         raise SpectrlDecodeError("spectrl token exceeds the payload size limit")
@@ -395,6 +424,7 @@ def read_token_payload(token: str, *, limits: DecodeLimits | None = None) -> byt
 
 def read_token_document(token: str, *, limits: DecodeLimits | None = None) -> tuple[dict, DecodedSpectrum]:
     """Read the CBOR document after framing and bounded payload decompression."""
+    limits = resolve_limits(limits)
     raw = read_token_payload(token, limits=limits)
     try:
         validate_cbor_document(raw)
@@ -418,7 +448,7 @@ def read_token_document(token: str, *, limits: DecodeLimits | None = None) -> tu
 
     if not _is_wire_int(n) or n < 0 or n > MAX_ARRAY_LENGTH:
         raise SpectrlDecodeError(f"invalid declared array length (key 0): {n!r}")
-    if limits is not None and n > limits.max_peaks:
+    if n > limits.max_peaks:
         raise SpectrlDecodeError("declared peak count exceeds max_peaks")
 
     decoded.checksum = token.rsplit(".", 1)[1]
@@ -427,14 +457,14 @@ def read_token_document(token: str, *, limits: DecodeLimits | None = None) -> tu
     descriptors = doc.get(6, [])
     if not isinstance(descriptors, list):
         raise SpectrlDecodeError("binaryDataArrayList (key 6) must be an array")
-    if limits is not None and len(descriptors) > limits.max_arrays:
+    if len(descriptors) > limits.max_arrays:
         raise SpectrlDecodeError("array count exceeds max_arrays")
     seen_arrays: set[tuple[int, str | None]] = set()
     decoded_bytes = 0
     for desc in descriptors:
         _validate_descriptor(desc, seen_arrays)
         decoded_bytes += n * (8 if desc[DESC_TYPE] == TYPE_FLOAT64 else 4)
-        if limits is not None and decoded_bytes > limits.max_decoded_bytes:
+        if decoded_bytes > limits.max_decoded_bytes:
             raise SpectrlDecodeError("decoded array bytes exceed max_decoded_bytes")
 
     return doc, decoded

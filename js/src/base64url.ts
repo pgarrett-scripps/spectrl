@@ -29,15 +29,17 @@ export function b64urlEncode(data: Uint8Array): string {
   return out;
 }
 
-/** Decode a base64url string (padding optional). Strict: rejects characters
- * outside the base64url alphabet and impossible lengths, matching the Python
- * reference implementation. */
+/** Bits of the final character that fall outside the decoded bytes. A canonical
+ * encoding leaves them zero, so exactly one spelling exists per payload. */
+const TAIL_MASK: Record<number, number> = { 2: 0b001111, 3: 0b000011 };
+
+/** Decode a canonical unpadded base64url string. Strict: rejects characters
+ * outside the base64url alphabet, `=` padding, impossible lengths, and
+ * non-zero unused trailing bits, matching the Python reference
+ * implementation. Each payload therefore has exactly one valid spelling. */
 export function b64urlDecode(s: string): Uint8Array {
-  // trailing '=' padding is tolerated; everything else must be alphabet chars
-  let end = s.length;
-  while (end > 0 && s[end - 1] === "=") end--;
-  const clean = s.slice(0, end);
-  const len = clean.length;
+  if (s.includes("=")) throw new SpectrlDecodeError("invalid base64url payload: must be unpadded");
+  const len = s.length;
   if (len % 4 === 1) throw new SpectrlDecodeError("invalid base64url payload: impossible length");
   const outLen = Math.floor((len * 6) / 8);
   const out = new Uint8Array(outLen);
@@ -45,14 +47,18 @@ export function b64urlDecode(s: string): Uint8Array {
   let acc = 0;
   let oi = 0;
   for (let i = 0; i < len; i++) {
-    const v = LOOKUP[clean.charCodeAt(i)] ?? -1;
-    if (v < 0) throw new SpectrlDecodeError(`invalid base64url character: ${JSON.stringify(clean[i])}`);
+    const v = LOOKUP[s.charCodeAt(i)] ?? -1;
+    if (v < 0) throw new SpectrlDecodeError(`invalid base64url character: ${JSON.stringify(s[i])}`);
     acc = (acc << 6) | v;
     bits += 6;
     if (bits >= 8) {
       bits -= 8;
       out[oi++] = (acc >>> bits) & 0xff;
     }
+  }
+  const mask = TAIL_MASK[len % 4];
+  if (mask !== undefined && (LOOKUP[s.charCodeAt(len - 1)]! & mask) !== 0) {
+    throw new SpectrlDecodeError("invalid base64url payload: non-zero trailing bits");
   }
   return out;
 }

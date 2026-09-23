@@ -5,11 +5,12 @@
   "type": "module",
   "description": "Browser demo for spectrl: encodes example spectra to shareable URLs/QR and decodes + plots them, entirely client-side.",
   "scripts": {
-    "build": "npm run typecheck && esbuild src/app.ts --bundle --format=esm --splitting --outdir=dist --entry-names=app --chunk-names=chunks/[name]-[hash] --sourcemap && cp ../js/node_modules/brotli-wasm/pkg.web/brotli_wasm_bg.wasm dist/chunks/",
-    "dev": "esbuild src/app.ts --bundle --format=esm --splitting --outdir=dist --entry-names=app --chunk-names=chunks/[name]-[hash] --servedir=. --serve=127.0.0.1:8000",
+    "build": "npm run typecheck && npm run examples && esbuild src/app.ts src/convert.ts --bundle --format=esm --splitting --outdir=dist --entry-names=[name] --chunk-names=chunks/[name]-[hash] --sourcemap && cp ../js/node_modules/brotli-wasm/pkg.web/brotli_wasm_bg.wasm dist/chunks/",
+    "dev": "esbuild src/app.ts src/convert.ts --bundle --format=esm --splitting --outdir=dist --entry-names=[name] --chunk-names=chunks/[name]-[hash] --servedir=. --serve=127.0.0.1:8000",
     "build-tests": "esbuild tests/browser.ts --bundle --format=esm --outfile=dist/browser-tests.js && cp ../js/node_modules/brotli-wasm/pkg.web/brotli_wasm_bg.wasm dist/",
     "test": "npm run build && npm run build-tests && node tests/run-browser.mjs",
-    "typecheck": "node ../js/node_modules/typescript/bin/tsc -p tsconfig.json"
+    "typecheck": "node ../js/node_modules/typescript/bin/tsc -p tsconfig.json",
+    "examples": "esbuild scripts/make-examples.ts --bundle --platform=node --format=esm --outfile=dist/make-examples.mjs && node dist/make-examples.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.28.2",

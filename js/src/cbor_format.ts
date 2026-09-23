@@ -8,7 +8,7 @@ import { buildHeaderMap, parseHeaderMap, shape, type Descriptor, type MsgMap, DE
 import type { ArrayEncodingOption, DecodedSpectrum, InlineSpectrum } from "./model.js"
 import { MAGIC } from "./token.js"
 import { MAX_ARRAY_LENGTH, MAX_TOKEN_BYTES, TYPE_FLOAT64 } from "./format.js"
-import { resolveDecodeLimits, type DecodeLimits } from "./limits.js"
+import { resolveDecodeLimits, UNLIMITED_DECODE_LIMITS, type DecodeLimits } from "./limits.js"
 import { decodePipeline, descriptor, operation, operationKey, encodings } from "./pipeline.js"
 import { validateExtensions, withoutUserParams } from "./context.js"
 import { decodeTail } from "./cv.js"
@@ -24,7 +24,10 @@ export function encodeCbor(spec: InlineSpectrum, lossless = false, dropUserParam
   if (raw.length > MAX_TOKEN_BYTES) throw Error("CBOR payload exceeds the size limit")
   validateCborDocument(raw)
   const token = framePayload(raw, compression)
-  readTokenDocument(token)
+  // Verify what we just produced against the wire ceilings only: a caller
+  // encoding a legitimately huge spectrum is not the untrusted-input case the
+  // default budgets exist for.
+  readTokenDocument(token, UNLIMITED_DECODE_LIMITS)
   return token
 }
 export function framePayload(raw: Uint8Array, compression: PayloadCompression = "zlib"): string {
@@ -60,6 +63,7 @@ function validateDescriptor(d: unknown, seen: Set<string>): asserts d is MsgMap 
     const name = d.get(4)
     if (d.has(4) && (typeof name !== "string" || !name.length)) throw Error("array name must be a non-empty string")
     if (tail === 1000786 && (typeof name !== "string" || !name.length || ["mz", "intensity", "charge"].includes(name))) throw Error("invalid array name")
+    if (tail === 1000786 && /^[A-Za-z][A-Za-z0-9]*:[A-Za-z0-9]+(?![\s\S])/.test(name as string)) throw Error("non-standard array name must not be a CV accession")
     const identity = JSON.stringify([tail, tail === 1000786 ? name : ""])
     if (seen.has(identity)) throw Error("duplicate array descriptor")
     seen.add(identity)
@@ -70,7 +74,7 @@ function validateDescriptor(d: unknown, seen: Set<string>): asserts d is MsgMap 
   } catch (e) { asDecodeError(e, "invalid array descriptor") }
 }
 function validateHeaderShape(h: MsgMap) {
-  try { shape(h, Array.from({ length: 12 }, (_, i) => i)) } catch (e) { asDecodeError(e, "unsupported spectrl header key") }
+  try { shape(h, Array.from({ length: 13 }, (_, i) => i)) } catch (e) { asDecodeError(e, "unsupported spectrl header key") }
   for (const k of [2, 4, 5, 6, 7, 10]) if (h.has(k) && !Array.isArray(h.get(k))) throw new SpectrlDecodeError(`header key ${k} must be array`)
   if (!h.has(0)) throw new SpectrlDecodeError("missing defaultArrayLength")
   if (h.has(1) && typeof h.get(1) !== "string") throw new SpectrlDecodeError("id must be a string")
@@ -78,7 +82,7 @@ function validateHeaderShape(h: MsgMap) {
 export function readTokenPayload(token: string, limits?: DecodeLimits): Uint8Array {
   const budget = resolveDecodeLimits(limits)
   if (typeof token !== "string" || token.length > Math.ceil(MAX_TOKEN_BYTES * 4 / 3) + MAGIC.length + 12) throw new SpectrlDecodeError("invalid token type or size")
-  if (budget && token.length > budget.maxTokenBytes) throw new SpectrlDecodeError("token exceeds maxTokenBytes")
+  if (token.length > budget.maxTokenBytes) throw new SpectrlDecodeError("token exceeds maxTokenBytes")
   const prefix = `${MAGIC}.`
   if (!token.startsWith(prefix)) throw new SpectrlDecodeError(`Not a ${MAGIC} token`)
   const parts = token.slice(prefix.length).split(".")
@@ -121,19 +125,19 @@ export function readTokenDocument(token: string, limits?: DecodeLimits): { doc: 
   if (typeof n !== "number" || !Number.isInteger(n) || n < 0 || n > MAX_ARRAY_LENGTH) {
     throw new SpectrlDecodeError(`invalid declared array length (key 0): ${String(n)}`);
   }
-  if (budget && n > budget.maxPeaks) throw new SpectrlDecodeError("declared peak count exceeds maxPeaks")
+  if (n > budget.maxPeaks) throw new SpectrlDecodeError("declared peak count exceeds maxPeaks")
   decoded.checksum = token.slice(token.lastIndexOf(".") + 1)
   decoded.formatVersion = 3
 
   const descriptors = h.get(6) ?? []
   if (!Array.isArray(descriptors)) throw new SpectrlDecodeError("binaryDataArrayList must be an array")
-  if (budget && descriptors.length > budget.maxArrays) throw new SpectrlDecodeError("array count exceeds maxArrays")
+  if (descriptors.length > budget.maxArrays) throw new SpectrlDecodeError("array count exceeds maxArrays")
   const seen = new Set<string>()
   let decodedBytes = 0
   for (const descriptor of descriptors) {
     validateDescriptor(descriptor, seen)
     decodedBytes += n * (descriptor.get(DESC_TYPE) === TYPE_FLOAT64 ? 8 : 4)
-    if (budget && decodedBytes > budget.maxDecodedBytes) throw new SpectrlDecodeError("decoded array bytes exceed maxDecodedBytes")
+    if (decodedBytes > budget.maxDecodedBytes) throw new SpectrlDecodeError("decoded array bytes exceed maxDecodedBytes")
   }
   return { doc: h, decoded }
 }

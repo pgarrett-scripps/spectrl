@@ -1,13 +1,12 @@
 # V3 implementation and paper plan
 
 > Historical design notes. The final clean core supersedes the compatibility
-> proposals below. See [SPECIFICATION.md](../SPECIFICATION.md) and
-> [the current decision](../experiments/v3/clean-core-decision.md).
+> proposals below. See [SPECIFICATION.md](../SPECIFICATION.md) for the
+> format as shipped.
 
 
 Historical design record. The current defaults and supported core are defined in
-[SPECIFICATION.md](../SPECIFICATION.md) and the
-[final encoding decision](../experiments/v3/simplification-decision.md).
+[SPECIFICATION.md](../SPECIFICATION.md).
 
 Status: completed locally on 2026-09-17. All eight steps below are implemented
 and validated. The [validation record](../experiments/v3/validation.md) records
@@ -21,8 +20,8 @@ The paper presents spectrl using v3 as its initial described format.
 
 ## 1. Preserve the working state and establish the source of truth
 
-The implementation lives in `/home/ty/Repos/spectrl`. The paper lives in a separate
-checkout at `/home/ty/Repos/spectrl-paper/paper`, whose analysis currently imports
+The implementation lives in `~/Repos/spectrl`. The paper lives in a separate
+checkout at `~/Repos/spectrl-paper/paper`, whose analysis currently imports
 the library from its own repository root. Its JavaScript analysis also uses that
 checkout's `js` build. Existing manuscript and corpus work includes staged and
 unstaged changes and must survive this update.

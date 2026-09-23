@@ -30,7 +30,7 @@ function validateAccession(value: unknown): asserts value is string {
 }
 function scalar(value: unknown) {
   if (value == null || typeof value === "string") return
-  if (typeof value === "number" && Number.isFinite(value) && (!Number.isInteger(value) || Number.isSafeInteger(value))) return
+  if (typeof value === "number" && Number.isFinite(value)) return
   throw Error("invalid parameter scalar")
 }
 export function encodeParamMap(params: CvParam[]): unknown[][] {
@@ -47,7 +47,7 @@ export function decodeParamMap(raw: unknown = []): CvParam[] {
   return raw.map(pair => {
     if (!Array.isArray(pair) || pair.length !== 2) throw Error("CV parameter must have two items")
     const [key, val] = pair
-    if (typeof key !== "string" && !(typeof key === "number" && Number.isSafeInteger(key) && key >= 0)) throw Error("invalid CV parameter key")
+    if (typeof key !== "string" && !(typeof key === "number" && Number.isSafeInteger(key) && key >= 0 && key <= 9999999)) throw Error("invalid CV parameter key")
     const acc = decodeParamKey(key)
     validateAccession(acc)
     let value = val
@@ -66,13 +66,10 @@ export function encodeUserParams(params: UserParam[]): MsgMap[] {
   if (!Array.isArray(params)) throw Error("user parameters must be a list")
   return params.map(p => {
     if (typeof p.name !== "string" || !p.name.length) throw Error("user parameter name must be non-empty")
+    if (Object.prototype.hasOwnProperty.call(p, "type")) throw Error("user parameter type annotations are not supported; supply a native scalar value")
     scalar(p.value)
     const out: MsgMap = new Map([["n", p.name]])
     if (p.value != null) out.set("v", p.value)
-    if (p.type != null) {
-      if (typeof p.type !== "string") throw Error("user parameter type must be a string")
-      out.set("t", p.type)
-    }
     if (p.unitAccession != null) { validateAccession(p.unitAccession)
       out.set("u", encodeUnit(p.unitAccession))
     }
@@ -82,8 +79,8 @@ export function encodeUserParams(params: UserParam[]): MsgMap[] {
 export function decodeUserParams(raw: unknown = []): UserParam[] {
   if (!Array.isArray(raw)) throw Error("user parameters must be a list")
   return raw.map(m => {
-    shape(m, ["n", "v", "t", "u"])
-    const out = { name: m.get("n"), value: m.get("v") ?? null, type: m.get("t") ?? null, unitAccession: m.has("u") ? decodeUnitTail(m.get("u") as any) : null } as UserParam
+    shape(m, ["n", "v", "u"])
+    const out = { name: m.get("n"), value: m.get("v") ?? null, unitAccession: m.has("u") ? decodeUnitTail(m.get("u") as any) : null } as UserParam
     encodeUserParams([out])
     return out
   })
@@ -140,6 +137,40 @@ function precursorDecode(raw: unknown): Precursor {
   shape(raw, [0, 1, 2, 3, 4, 5])
   return { isolationWindow: raw.has(0) ? groupDecode(raw.get(0)) : null, selectedIons: list(raw.get(1), groupDecode), activation: raw.has(2) ? groupDecode(raw.get(2)) : null, ...getContext(raw, 3) }
 }
+/** An extension slot is absent or a CBOR map; `null` is not an empty map. */
+function wireExtensions(raw: unknown): Map<unknown, unknown> {
+  if (raw === undefined) return new Map()
+  if (!(raw instanceof Map)) throw Error("extensions must be a map")
+  return raw
+}
+const PREFIX_RE = /^[A-Za-z][A-Za-z0-9]*$/
+/** Check the ontology version map and return it as a wire map.
+ *
+ * Values stay opaque text. Real files declare versions as "4.1.142",
+ * "12:10:2011", and "releases/2020-03-10", so there is no syntax to parse. */
+export function encodeCvVersions(versions: Record<string, string>): MsgMap {
+  const out: MsgMap = new Map()
+  for (const prefix of Object.keys(versions)) {
+    const version = versions[prefix]
+    if (!PREFIX_RE.test(prefix)) throw Error(`invalid ontology prefix ${prefix}`)
+    if (typeof version !== "string" || !version) throw Error(`ontology version for ${prefix} must be nonempty text`)
+    out.set(prefix, version)
+  }
+  return out
+}
+/** Decode key 12. Provenance only, so a reader never rejects a token over the
+ * version it names; only a malformed map is an error. */
+export function decodeCvVersions(raw: unknown): Record<string, string> {
+  if (raw === undefined) return {}
+  if (!(raw instanceof Map)) throw Error("cv_versions must be a map")
+  const out: Record<string, string> = {}
+  for (const [prefix, version] of raw) {
+    if (typeof prefix !== "string" || !PREFIX_RE.test(prefix)) throw Error(`invalid ontology prefix ${String(prefix)}`)
+    if (typeof version !== "string" || !version) throw Error(`ontology version for ${prefix} must be nonempty text`)
+    out[prefix] = version
+  }
+  return out
+}
 export function buildHeaderMap(spec: InlineSpectrum, descriptors: Descriptor[]): MsgMap {
   const h: MsgMap = new Map([[0, spec.defaultArrayLength]])
   if (spec.id != null) h.set(1, spec.id)
@@ -169,6 +200,7 @@ export function buildHeaderMap(spec: InlineSpectrum, descriptors: Descriptor[]):
   if (spec.extensions && Object.keys(spec.extensions).length) { validateExtensions(spec.extensions, false)
     h.set(11, toWire(spec.extensions))
   }
+  if (spec.cvVersions && Object.keys(spec.cvVersions).length) h.set(12, encodeCvVersions(spec.cvVersions))
   return h
 }
 export function parseHeaderMap(h: MsgMap): { decoded: DecodedSpectrum, descriptors: Descriptor[] } {
@@ -184,7 +216,7 @@ export function parseHeaderMap(h: MsgMap): { decoded: DecodedSpectrum, descripto
       scanCombination = { accession: decodeTail(c) }
     }
   }
-  const extensions = fromWire(h.get(11) ?? new Map()) as Extensions
+  const extensions = fromWire(wireExtensions(h.get(11))) as Extensions
   validateExtensions(extensions, false)
   const decoded: DecodedSpectrum = {
     defaultArrayLength: h.get(0) as number, id: h.get(1) as string ?? null,
@@ -192,13 +224,14 @@ export function parseHeaderMap(h: MsgMap): { decoded: DecodedSpectrum, descripto
     precursors: list(h.get(4), precursorDecode), products: list(h.get(5), raw => { shape(raw, [0])
       return { isolationWindow: raw.has(0) ? groupDecode(raw.get(0)) : null }
     }), userParams: decodeUserParams(h.get(7)), ...getContext(h, 8), extensions,
+    cvVersions: decodeCvVersions(h.get(12)),
     extraArrays: {}, arrayUnits: {}, arrayNames: {}, arrayParams: {}, arrayUserParams: {}, arrayProcessing: {}, arrayExtensions: {}, checksum: "", formatVersion: 3,
   }
   const descriptors: Descriptor[] = list(h.get(6), d => {
     shape(d, Array.from({ length: 12 }, (_, i) => i))
     return { type: d.get(0) as number, array: d.get(1) as number, encoding: descriptor(d.get(2) as any), fidelity: d.get(7) as number,
       data: d.get(5) as Uint8Array, name: d.get(4) as string | undefined, unit: d.has(6) ? decodeUnitTail(d.get(6) as any) : undefined,
-      params: decodeParamMap(d.get(8)), userParams: decodeUserParams(d.get(9)), processing: list(d.get(10), x => decodeRecord(x, "processing")), extensions: fromWire(d.get(11) ?? new Map()),
+      params: decodeParamMap(d.get(8)), userParams: decodeUserParams(d.get(9)), processing: list(d.get(10), x => decodeRecord(x, "processing")), extensions: fromWire(wireExtensions(d.get(11))),
     }
   })
   return { decoded, descriptors }

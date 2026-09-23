@@ -55,7 +55,6 @@ def _cmp_user_params(actual: list, expected: list, label: str) -> None:
     for i, (a, e) in enumerate(zip(actual, expected, strict=True)):
         assert a.name == e["name"], f"{label}[{i}].name"
         assert a.value == e["value"], f"{label}[{i}].value {a.value!r} != {e['value']!r}"
-        assert (a.type or None) == (e["type"] or None), f"{label}[{i}].type"
         assert (a.unit_accession or None) == (e["unit_accession"] or None), f"{label}[{i}].unit"
 
 

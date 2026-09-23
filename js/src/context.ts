@@ -21,6 +21,15 @@ export function fromWire(value: unknown): any {
   if (Array.isArray(value)) return value.map(fromWire)
   return value
 }
+/** A plain object with string keys: not null, an array, a Map, a typed array,
+ * or any other exotic object that merely reports `typeof "object"`. */
+function isStringKeyedObject(value: unknown): value is Record<string, unknown> {
+  if (!value || typeof value !== "object" || Array.isArray(value) || value instanceof Map || ArrayBuffer.isView(value)) return false
+  const proto = Object.getPrototypeOf(value)
+  if (proto !== Object.prototype && proto !== null) return false
+  return Reflect.ownKeys(value).every(k => typeof k === "string")
+}
+
 export function encodeRecord(value: ContextRecord, kind: string): MsgMap {
   if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).some(k => !allowed[kind]!.includes(k))) throw Error(`invalid ${kind} record`)
   const out: MsgMap = new Map()
@@ -38,7 +47,10 @@ export function encodeRecord(value: ContextRecord, kind: string): MsgMap {
     } else if (key === "order" || key === "revision") {
       if (!Number.isSafeInteger(val) || val < (key === "order" ? 0 : 1)) throw Error("order must be nonnegative and revision positive")
     } else if (key === "parameters") {
-      if (!val || typeof val !== "object" || Array.isArray(val) || val instanceof Map) throw Error("parameters require a string-keyed object")
+      // A byte string is `typeof "object"` and is neither an Array nor a Map,
+      // so it slipped through an earlier shape check and was accepted as a
+      // parameter map. Require a plain object with string keys, as section 7 does.
+      if (!isStringKeyedObject(val)) throw Error("parameters require a string-keyed object")
       encoded = toWire(val)
     } else if (typeof val !== "string") throw Error(`${key} must be a string`)
     if (key === "kind" && !["source", "analyzer", "detector"].includes(val)) throw Error("invalid component kind")

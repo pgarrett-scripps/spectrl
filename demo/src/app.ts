@@ -8,229 +8,20 @@
 import {
   encodeSpectrum,
   encodingReport,
-  fitToBudget,
-  parsePeakList,
-  formatPeakList,
   topN,
   decodeToken,
   toFragment,
-  extractToken,
   tokenBreakdown,
   mobilityArrays,
-  ArrayAccession,
   type InlineSpectrum,
   type CvParam,
   type DecodedSpectrum,
 } from "../../js/dist/index.js";
+import { EXAMPLES } from "./examples.js";
 // qrcode-generator is CommonJS. esbuild provides the default-import interop.
 import qrcode from "qrcode-generator";
 
 
-// ---------------------------------------------------------------------------
-// Tiny mass calculator (monoisotopic) for chemically real fragment ions.
-// ---------------------------------------------------------------------------
-const PROTON = 1.0072764665;
-const WATER = 18.0105646863;
-const RESIDUE: Record<string, number> = {
-  G: 57.02146, A: 71.03711, S: 87.03203, P: 97.05276, V: 99.06841,
-  T: 101.04768, C: 103.00919, L: 113.08406, I: 113.08406, N: 114.04293,
-  D: 115.02694, Q: 128.05858, K: 128.09496, E: 129.04259, M: 131.04049,
-  H: 137.05891, F: 147.06841, R: 156.10111, Y: 163.06333, W: 186.07931,
-};
-
-interface Peak { mz: number; intensity: number }
-
-/** Singly-charged b and y ion series for a bare peptide sequence. */
-function fragmentIons(peptide: string): Peak[] {
-  const res = [...peptide].map((a) => RESIDUE[a] ?? 0);
-  const n = res.length;
-  const peaks: Peak[] = [];
-  let bSum = 0;
-  for (let i = 0; i < n - 1; i++) {
-    bSum += res[i]!;
-    peaks.push({ mz: bSum + PROTON, intensity: 0 });
-  }
-  let ySum = 0;
-  for (let i = n - 1; i > 0; i--) {
-    ySum += res[i]!;
-    peaks.push({ mz: ySum + WATER + PROTON, intensity: 0 });
-  }
-  // Deterministic pseudo-random intensities so the plot looks like real data.
-  let seed = 1337;
-  const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
-  for (const p of peaks) p.intensity = 1000 + rnd() * rnd() * 9e4;
-  peaks.sort((a, b) => a.mz - b.mz);
-  return peaks;
-}
-
-function precursorMz(peptide: string, charge: number): number {
-  const mass = [...peptide].reduce((s, a) => s + (RESIDUE[a] ?? 0), 0) + WATER;
-  return (mass + charge * PROTON) / charge;
-}
-
-/** A simple decaying isotope envelope around a base m/z (1 Da spacing / charge). */
-function isotopeEnvelope(baseMz: number, charge: number, n: number, base = 1e5): Peak[] {
-  const peaks: Peak[] = [];
-  for (let i = 0; i < n; i++) {
-    peaks.push({ mz: baseMz + (i * 1.00335) / charge, intensity: base * Math.exp(-0.55 * i) });
-  }
-  return peaks;
-}
-
-// ---------------------------------------------------------------------------
-// Example spectra → InlineSpectrum
-// ---------------------------------------------------------------------------
-const flag = (acc: string): CvParam => ({ accession: acc });
-const val = (acc: string, value: number | string, unit?: string): CvParam => ({
-  accession: acc,
-  value,
-  ...(unit ? { unitAccession: unit } : {}),
-});
-
-function fromPeaks(peaks: Peak[]): { mz: number[]; intensity: number[] } {
-  return { mz: peaks.map((p) => p.mz), intensity: peaks.map((p) => p.intensity) };
-}
-
-function peptideMs2(peptide: string): InlineSpectrum {
-  const peaks = fragmentIons(peptide);
-  const { mz, intensity } = fromPeaks(peaks);
-  const preMz = precursorMz(peptide, 2);
-  return {
-    defaultArrayLength: mz.length,
-    mz,
-    intensity,
-    id: `scan=1042 (${peptide}, 2+)`,
-    params: [
-      val("MS:1000511", 2), // ms level
-      flag("MS:1000130"), // positive scan
-      flag("MS:1000127"), // centroid spectrum
-    ],
-    scans: [{ params: [val("MS:1000016", 24.71, "UO:0000031")] }], // scan start time (min)
-    precursors: [
-      {
-        isolationWindow: { params: [val("MS:1000827", preMz), val("MS:1000828", 1.0), val("MS:1000829", 1.0)] },
-        selectedIons: [{ params: [val("MS:1000744", preMz), val("MS:1000041", 2)] }],
-        activation: { params: [flag("MS:1000422"), val("MS:1000045", 28, "UO:0000266")] }, // HCD, 28 eV
-      },
-    ],
-  };
-}
-
-function smallMoleculeMs1(): InlineSpectrum {
-  const peaks = [
-    ...isotopeEnvelope(522.3558, 1, 5, 1e5),
-    ...isotopeEnvelope(746.1234, 1, 4, 4.2e4),
-    ...isotopeEnvelope(301.1411, 1, 3, 2.6e4),
-  ].sort((a, b) => a.mz - b.mz);
-  const { mz, intensity } = fromPeaks(peaks);
-  return {
-    defaultArrayLength: mz.length,
-    mz,
-    intensity,
-    id: "scan=88",
-    params: [val("MS:1000511", 1), flag("MS:1000130"), flag("MS:1000127")],
-    scans: [{ params: [val("MS:1000016", 3.42, "UO:0000031")] }],
-  };
-}
-
-/** A synthetic profile-style MS¹ scan with `n` peaks (seeded → deterministic). */
-function randomSpectrum(n: number): InlineSpectrum {
-  let seed = (0x2545f491 ^ (n * 2654435761)) & 0x7fffffff;
-  const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
-  const peaks: Peak[] = [];
-  for (let i = 0; i < n; i++) {
-    const mz = 150 + rnd() * 1850;
-    const intensity = Math.pow(rnd(), 3) * 1e6 + 100; // skewed: many small, few tall
-    peaks.push({ mz, intensity });
-  }
-  peaks.sort((a, b) => a.mz - b.mz);
-  const { mz, intensity } = fromPeaks(peaks);
-  return {
-    defaultArrayLength: n,
-    mz,
-    intensity,
-    id: `scan=${n}`,
-    params: [val("MS:1000511", 1), flag("MS:1000130"), flag("MS:1000127")],
-    scans: [{ params: [val("MS:1000016", 12.5, "UO:0000031")] }],
-  };
-}
-
-/** A dense centroided top-down MS² scan with an intact, highly charged precursor. */
-function topDownMs2(): InlineSpectrum {
-  const base = randomSpectrum(320);
-  const mz = Array.from(base.mz as number[]);
-  const intensity = Array.from(base.intensity as number[]);
-  const precursor = 1029.5832;
-  const charge = mz.map((m, i) => 1 + ((Math.floor(m) + i * 3) % 8));
-  return {
-    ...base,
-    mz,
-    intensity,
-    charge,
-    id: "scan=2201 (intact protein, 12+)",
-    params: [val("MS:1000511", 2), flag("MS:1000130"), flag("MS:1000127")],
-    scans: [{ params: [val("MS:1000016", 45.18, "UO:0000031")] }],
-    precursors: [
-      {
-        isolationWindow: { params: [val("MS:1000827", precursor), val("MS:1000828", 2), val("MS:1000829", 2)] },
-        selectedIons: [{ params: [val("MS:1000744", precursor), val("MS:1000041", 12)] }],
-        activation: { params: [flag("MS:1000422"), val("MS:1000045", 35, "UO:0000266")] },
-      },
-    ],
-  };
-}
-
-/** Per-peak inverse reduced ion mobility alongside a centroided MS² scan. */
-function ionMobilityMs2(): InlineSpectrum {
-  const base = randomSpectrum(180);
-  const mz = Array.from(base.mz as number[]);
-  const intensity = Array.from(base.intensity as number[]);
-  const ionMobility = mz.map((m, i) => 0.68 + ((m - 150) / 1850) * 0.55 + Math.sin(i * 0.71) * 0.012);
-  const precursor = 687.8421;
-  return {
-    ...base,
-    mz,
-    intensity,
-    extraArrays: {
-      [ArrayAccession.RAW_INVERSE_REDUCED_ION_MOBILITY]: ionMobility,
-    },
-    id: "frame=412 scan=37",
-    params: [val("MS:1000511", 2), flag("MS:1000130"), flag("MS:1000127")],
-    scans: [{ params: [val("MS:1000016", 18.73, "UO:0000031")] }],
-    precursors: [
-      {
-        isolationWindow: { params: [val("MS:1000827", precursor), val("MS:1000828", 0.7), val("MS:1000829", 0.7)] },
-        selectedIons: [{ params: [val("MS:1000744", precursor), val("MS:1000041", 2)] }],
-        activation: { params: [flag("MS:1000422"), val("MS:1000045", 30, "UO:0000266")] },
-      },
-    ],
-  };
-}
-
-/** A spectrum carrying standard and free-text auxiliary arrays for every peak. */
-function auxiliaryArraySpectrum(): InlineSpectrum {
-  const base = randomSpectrum(120);
-  const intensity = Array.from(base.intensity as number[]);
-  return {
-    ...base,
-    id: "scan=731 (auxiliary arrays)",
-    extraArrays: {
-      "MS:1000517": new Float64Array(intensity.map((v, i) => v / (900 + (i % 11) * 85))),
-      local_baseline: new Float32Array(intensity.map((_, i) => 600 + 240 * Math.sin(i * 0.19) ** 2)),
-      peak_flags: new Int32Array(intensity.map((v, i) => (v > 500000 ? 2 : i % 9 === 0 ? 1 : 0))),
-    },
-  };
-}
-
-const EXAMPLES: Record<string, () => InlineSpectrum> = {
-  ms2: () => peptideMs2("PEPTIDER"),
-  ms1: smallMoleculeMs1,
-  topdown: topDownMs2,
-  mobility: ionMobilityMs2,
-  aux: auxiliaryArraySpectrum,
-  r100: () => randomSpectrum(100),
-  r500: () => randomSpectrum(500),
-};
 
 // ---------------------------------------------------------------------------
 // CV label map for the metadata table
@@ -278,11 +69,20 @@ let suppressHash = false;
 let lastSource: InlineSpectrum | null = null;
 let lastEncodeMs: number | null = null;
 let lastReport: ReturnType<typeof encodingReport> | null = null
-let budgetPreview: ReturnType<typeof fitToBudget> | null = null
 let currentShare = ""; // shareable URL for the current token. Copied on demand.
 
 function baseUrl(): string {
   return location.origin + location.pathname;
+}
+
+// Recognize a supplied spectrum before checking its version. Unsupported links
+// must never fall through to a different example or overwrite the original URL.
+function tokenFromLocation(): string | null {
+  const url = new URL(location.href)
+  let fragment = url.hash.slice(1)
+  try { fragment = decodeURIComponent(fragment) } catch { /* Keep malformed input visible. */ }
+  return [fragment, ...url.searchParams.values()]
+    .find(value => /^spectrl(?:\.|[0-9]+(?:\.|$))/.test(value)) ?? null
 }
 
 // ---------------------------------------------------------------------------
@@ -302,7 +102,6 @@ function encodeAndShow(spec: InlineSpectrum) {
   const t0 = performance.now();
   lastReport = encodingReport(spec, { lossless: losslessEl.checked })
   const token = lastReport.token
-  clearBudgetPreview()
   lastEncodeMs = performance.now() - t0;
   lastSource = spec;
   setToken(token);
@@ -319,6 +118,9 @@ async function renderFromToken(token: string) {
   let decoded: DecodedSpectrum;
   let decodeMs: number;
   try {
+    if (!token.startsWith("spectrl.v3.") && /^spectrl(?:\.|[0-9]+(?:\.|$))/.test(token)) {
+      throw new Error("Unsupported spectrum token version. This viewer supports spectrl.v3. The supplied token has been preserved.")
+    }
     const t0 = performance.now();
     decoded = decodeToken(token);
     decodeMs = performance.now() - t0;
@@ -330,7 +132,10 @@ async function renderFromToken(token: string) {
         if (tokenEl.value.trim() !== token) return
         await renderFromToken(token)
         return
-      } catch (loadError) { e = loadError }
+      } catch (loadError) {
+        if (tokenEl.value.trim() !== token) return
+        e = loadError
+      }
     }
     decodeErr.textContent = `Decode failed: ${(e as Error).message}`
     $("#qualityReport").textContent = "A valid token and its original spectrum are needed to measure encoding error."
@@ -339,6 +144,7 @@ async function renderFromToken(token: string) {
     metaTable.innerHTML = "";
     statsEl.innerHTML = "";
     spectrumSummaryEl.innerHTML = "";
+    $("#plotNote").textContent = "";
     tokenMeta.innerHTML = `token size: <b>${fmtBytes(token.length)}</b>`;
     return;
   }
@@ -558,7 +364,7 @@ function renderStats(token: string, d: DecodedSpectrum, decodeMs: number) {
     cards.push(statCard("max intensity error", `${metric(intensity?.maxRelativeError, 100)}%`, "Zero reference values are reported separately"))
     $("#qualityReport").textContent = JSON.stringify({ ...lastReport, token: undefined }, null, 2)
   } else {
-    $("#qualityReport").textContent = "The original spectrum is needed to measure encoding error. Import a peak list or select an example."
+    $("#qualityReport").textContent = "The original spectrum is needed to measure encoding error. Select an example here, or encode a spectrum from a file on the Convert page."
   }
 
   // --- performance + integrity ---
@@ -710,7 +516,6 @@ losslessEl.addEventListener("change", async () => {
 
 tokenEl.addEventListener("input", () => {
   lastReport = null
-  clearBudgetPreview()
   lastSource = null; // pasted token: no known source for precision/alt-mode stats
   lastEncodeMs = null;
   setToken(tokenEl.value, true);
@@ -735,84 +540,20 @@ qrToggle.addEventListener("click", () => {
   qrToggle.setAttribute("aria-expanded", String(show));
 });
 
-const pasteToggle = $<HTMLButtonElement>("#pasteToggle");
-pasteToggle.addEventListener("click", () => {
-  const show = tokenEl.hidden;
-  tokenEl.hidden = !show;
-  pasteToggle.textContent = show ? "Hide token" : "View token";
-  pasteToggle.setAttribute("aria-expanded", String(show));
-  if (show) tokenEl.focus();
-});
-
-$("#heroPaste").addEventListener("click", () => {
-  tokenEl.hidden = false;
-  pasteToggle.textContent = "Hide token";
-  pasteToggle.setAttribute("aria-expanded", "true");
-  document.querySelector("#playground")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  tokenEl.focus({ preventScroll: true });
-  tokenEl.select();
+$<HTMLButtonElement>("#copyToken").addEventListener("click", async event => {
+  await flashCopy(event.currentTarget as HTMLButtonElement, tokenEl.value);
 });
 
 window.addEventListener("hashchange", () => {
   if (suppressHash) return;
-  try {
-    const t = extractToken(location.href);
+  const t = tokenFromLocation()
+  if (t !== null) {
     lastReport = null
-    clearBudgetPreview()
     lastSource = null;
     lastEncodeMs = null;
     setToken(t, false);
-  } catch {
-    /* ignore non-token hashes */
   }
 });
-
-function clearBudgetPreview() {
-  budgetPreview = null
-  $("#budgetStatus").textContent = ""
-  $<HTMLButtonElement>("#applyBudget").disabled = true
-}
-
-$("#importPeaks").addEventListener("click", () => {
-  try {
-    const source = parsePeakList($<HTMLTextAreaElement>("#peakInput").value)
-    encodeAndShow(source)
-    $("#importStatus").textContent = `Imported ${source.defaultArrayLength} peaks. No metadata was inferred.`
-  } catch (error) { $("#importStatus").textContent = (error as Error).message }
-})
-
-$<HTMLInputElement>("#peakFile").addEventListener("change", async event => {
-  const file = (event.target as HTMLInputElement).files?.[0]
-  if (!file) return
-  if (file.size > 16 * 1024 * 1024) {
-    $("#importStatus").textContent = "Choose a peak-list file smaller than 16 MiB."
-    return
-  }
-  $<HTMLTextAreaElement>("#peakInput").value = await file.text()
-  $("#importStatus").textContent = "File loaded. Select Import peaks to validate and display it."
-})
-
-for (const id of ["#shareBudget", "#allowTrim", "#dropMetadata"]) {
-  $(id).addEventListener("input", clearBudgetPreview)
-}
-$("#previewBudget").addEventListener("click", () => {
-  clearBudgetPreview()
-  try {
-    budgetPreview = fitToBudget(lastSource ?? decodeToken(tokenEl.value), Number($<HTMLInputElement>("#shareBudget").value), {
-      baseUrl: baseUrl(), lossless: losslessEl.checked,
-      allowPeakTrimming: $<HTMLInputElement>("#allowTrim").checked,
-      dropUserParams: $<HTMLInputElement>("#dropMetadata").checked,
-    })
-    $("#budgetStatus").textContent = `${budgetPreview.carrierBytes} bytes including the URL. Keeps ${budgetPreview.keptPeaks} peaks, removes ${budgetPreview.droppedPeaks} peaks and ${budgetPreview.omittedUserParams} user parameters. Apply to replace the displayed spectrum.`
-    $<HTMLButtonElement>("#applyBudget").disabled = false
-  } catch (error) { $("#budgetStatus").textContent = (error as Error).message }
-})
-$("#applyBudget").addEventListener("click", () => {
-  if (!budgetPreview) return
-  const result = budgetPreview
-  encodeAndShow(result.spectrum)
-  $("#budgetStatus").textContent = `Applied: removed ${result.droppedPeaks} peaks and ${result.omittedUserParams} user parameters.`
-})
 
 function download(name: string, text: string, type: string) {
   const url = URL.createObjectURL(new Blob([text], { type }))
@@ -822,22 +563,16 @@ function download(name: string, text: string, type: string) {
   link.click()
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
-$("#exportPeaks").addEventListener("click", () => {
-  try { download("spectrum.tsv", formatPeakList(decodeToken(tokenEl.value)), "text/tab-separated-values") }
-  catch (error) { $("#importStatus").textContent = (error as Error).message }
-})
 $("#exportReport").addEventListener("click", () => {
   if (lastReport) download("encoding-report.json", JSON.stringify(lastReport, null, 2), "application/json")
 })
 
 // Boot: load a token from the URL fragment if present, else the default example.
 function boot() {
-  try {
-    const t = extractToken(location.href);
+  const t = tokenFromLocation()
+  if (t !== null) {
     setToken(t, false);
     return;
-  } catch {
-    /* no token in URL */
   }
   encodeAndShow(EXAMPLES[currentExample]!());
 }

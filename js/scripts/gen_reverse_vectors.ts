@@ -37,7 +37,7 @@ function paramsJson(ps: CvParam[]) {
   return ps.map(paramJson);
 }
 function userParamJson(u: UserParam) {
-  return { name: u.name, value: u.value ?? null, type: u.type ?? null, unit_accession: u.unitAccession ?? null };
+  return { name: u.name, value: u.value ?? null, unit_accession: u.unitAccession ?? null };
 }
 function userParamsJson(us: UserParam[]) {
   return us.map(userParamJson);
@@ -162,13 +162,14 @@ const specs: Array<[string, string, InlineSpectrum]> = [
       intensity: [5e4, 6e4],
       params: [{ accession: "MS:1000511", value: 2 }],
       userParams: [
-        { name: "Mascot score", value: 42.7, type: "xsd:float" },
+        { name: "Mascot score", value: 42.7 },
+        { name: "large finite number", value: 1e20 },
         { name: "reanalysis note", value: "rerun with semitryptic" },
       ],
       scans: [
         {
           params: [{ accession: "MS:1000016", value: 20.5, unitAccession: "UO:0000031" }],
-          userParams: [{ name: "[Thermo Trailer Extra]Monoisotopic M/Z:", value: "445.1203", type: "xsd:string" }],
+          userParams: [{ name: "[Thermo Trailer Extra]Monoisotopic M/Z:", value: "445.1203" }],
         },
       ],
     },

@@ -3,13 +3,33 @@
 from __future__ import annotations
 
 import gzip
+import re
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
 
-from .model import SpectrlCvParam, SpectrlUserParam
+from .model import SpectrlCvParam
+from .mzml_values import user_param
 
 NS = {"m": "http://psi.hupo.org/ms/mzml"}
+
+# mzML lets each file choose its own <cv> @id, and files disagree: the same
+# PSI-MS release is declared id="MS" in one and id="PSI-MS" in another, while
+# both write MS: accessions throughout. cv_versions is keyed by the accession
+# prefix, so fold the spellings seen in the wild back onto it. An @id that is
+# already a usable prefix passes through, which covers ontologies not listed.
+_CV_ID_ALIASES = {"PSI-MS": "MS", "UNIT-ONTOLOGY": "UO", "UNIT": "UO"}
+_PREFIX_RE = re.compile(r"^[A-Za-z][A-Za-z0-9]*$")
+
+
+def cv_prefix(cv_id):
+    """Map an mzML <cv> @id onto the accession prefix it describes, or None."""
+    if not cv_id:
+        return None
+    alias = _CV_ID_ALIASES.get(cv_id.upper())
+    if alias:
+        return alias
+    return cv_id if _PREFIX_RE.fullmatch(cv_id) else None
 
 
 def params(element, groups=None):
@@ -28,7 +48,7 @@ def params(element, groups=None):
         value = cv.get("value")
         cvs.append(SpectrlCvParam(cv.get("accession"), None if value in (None, "") else value, cv.get("unitAccession")))
     for user in element.findall("m:userParam", ns):
-        users.append(SpectrlUserParam(user.get("name"), user.get("value"), user.get("type"), user.get("unitAccession")))
+        users.append(user_param(user))
     return cvs, users
 
 
@@ -46,6 +66,7 @@ class MzMLContext:
     sources: dict
     run: dict
     spectrum_list: dict
+    cv_versions: dict
 
     @classmethod
     def from_file(cls, path):
@@ -68,6 +89,15 @@ class MzMLContext:
         def records(tag):
             return {x.get("id"): x for x in root.findall(f".//m:{tag}", NS)}
 
+        # Version strings stay exactly as declared. Real files write "4.1.142",
+        # "12:10:2011", and "releases/2020-03-10", so there is no shared syntax
+        # to normalize and nothing to gain by trying.
+        cv_versions = {}
+        for elem in root.findall(".//m:cvList/m:cv", NS):
+            prefix, version = cv_prefix(elem.get("id")), elem.get("version")
+            if prefix and version:
+                cv_versions.setdefault(prefix, version)
+
         return cls(
             records("referenceableParamGroup"),
             records("instrumentConfiguration"),
@@ -76,6 +106,7 @@ class MzMLContext:
             records("sourceFile"),
             run,
             spectrum_list,
+            cv_versions,
         )
 
     def source(self, key, spectrum_ref=None):

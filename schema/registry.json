@@ -23,10 +23,9 @@
       "z": "zlib stream",
       "b": "Brotli stream"
     },
-    "selection": "Default zlib-6. Explicit auto chooses the shortest available token, ties z/r/s/b",
+    "selection": "Default zlib-6. Explicit auto chooses the shortest available token, ties z/r/b",
     "presets": {
       "z": 6,
-      "s": 3,
       "b": 5
     },
     "required_payload_modes": [
@@ -223,7 +222,7 @@
       "name": "user_param_list",
       "type": "array of user_param objects",
       "required": false,
-      "description": "Spectrum-level free-text userParams (no CV accession). Each: {n: name, v?: value, t?: xsd-type, u?: unit-tail}. Scan-level userParams live under scan_fields key 2. Omitted entirely when empty."
+      "description": "Spectrum-level free-text userParams (no CV accession). Each: {n: name, v?: value, u?: unit-tail}. Scan-level userParams live under scan_fields key 2. Omitted entirely when empty."
     },
     "8": {
       "name": "source",
@@ -244,6 +243,12 @@
       "name": "extensions",
       "type": "namespaced map",
       "required": false
+    },
+    "12": {
+      "name": "cv_versions",
+      "type": "map of ontology prefix to version string",
+      "required": false,
+      "description": "Source-declared ontology version for each accession prefix used by the spectrum, keyed without the colon (MS, UO). Values are opaque nonempty text recorded verbatim; declared syntax varies across files and is never parsed. Informational provenance only: the accession is the identifier, and a reader must not reject a token over the version it names."
     }
   },
   "unit_accessions": {
@@ -768,7 +773,7 @@
       "Array descriptors emitted in fixed order: m/z, intensity, charge, then additional arrays sorted ascending by key (CV accession string, or name for non-standard arrays).",
       "CRC-32/ISO-HDLC checksum (required fifth token part) is computed over the ASCII text before the checksum, 'spectrl.version.mode.payload' (blobs are inline and therefore covered).",
       "Checksum encoding: eight lowercase hexadecimal characters, zero-padded.",
-      "Default lossy arrays use quantized words with a pointwise 0.1 ppm bound for m/z and log1p scale 3600 for intensity.",
+      "Default lossy arrays use quantized words with a pointwise 0.1 ppm bound for m/z and log1p scale 3600 for intensity, raised to ceil(3600 / 2 * (m + 1) / m) when the smallest positive intensity m is below 1.",
       "Default lossless m/z uses delta and shuffle, intensity uses shuffle, and other arrays use raw words.",
       "Integer and auxiliary arrays remain exact in both profiles. Invalid automatic quantization falls back to exact.",
       "Array blobs have no individual compression. Whole-document zlib level 6 is the default payload compression."
@@ -827,7 +832,8 @@
       "intensity": {
         "encoding": 3,
         "scale": 3600,
-        "log": true
+        "log": true,
+        "scale_rule": "max(3600, ceil(3600 / 2 * (m + 1) / m)) when the smallest positive intensity m < 1"
       },
       "other": 0
     },

@@ -9,11 +9,12 @@ Top-level key registry (mirrors mzML <spectrum>):
   5  productList: [product, ...]
   6  binaryDataArrayList: [descriptor, ...]
   7  userParamList: [user_param, ...] spectrum-level free-text params (optional)
+ 12  cv_versions: {ontology prefix: source-declared version} (optional)
 
 The format version lives only in the token magic, and the checksum only
 in the trailing token part; neither is a header key.
 
-A user_param is a map {"n": name, "v"?: value, "t"?: xsd-type, "u"?: unit}.
+A user_param is a map {"n": name, "v"?: value, "u"?: unit}.
 Scan maps gain key 2 for scan-level user_params (optional).
 
 Array descriptors (key 6) use integer keys for the same reason the header does:
@@ -55,6 +56,11 @@ from .model import (
 from .token import FORMAT_VERSION
 
 _ACCESSION_RE = re.compile(r"^[A-Za-z][A-Za-z0-9]*:[A-Za-z0-9]+$")
+# The ontology prefix alone, as it appears to the left of the colon in an
+# accession. cv_versions is keyed by this, never by mzML's <cv> @id, which
+# files spell inconsistently ("MS" in one, "PSI-MS" in another) while still
+# writing MS: accessions throughout.
+_PREFIX_RE = re.compile(r"^[A-Za-z][A-Za-z0-9]*$")
 
 
 def _require_map(value: object, label: str) -> dict:
@@ -72,6 +78,29 @@ def _require_list(value: object, label: str) -> list:
 def _validate_accession(accession: str) -> None:
     if not _ACCESSION_RE.fullmatch(accession):
         raise ValueError(f"invalid CV accession {accession!r}")
+
+
+def _encode_cv_versions(versions: dict) -> dict:
+    """Check the shape of the ontology version map and return it unchanged.
+
+    Values stay opaque text. Real files declare versions as "4.1.142",
+    "12:10:2011", and "releases/2020-03-10", so there is no syntax to parse and
+    nothing is gained by trying.
+    """
+    out = {}
+    for prefix, version in _require_map(versions, "cv_versions").items():
+        if not isinstance(prefix, str) or not _PREFIX_RE.fullmatch(prefix):
+            raise ValueError(f"invalid ontology prefix {prefix!r}")
+        if not isinstance(version, str) or not version:
+            raise ValueError(f"ontology version for {prefix} must be nonempty text")
+        out[prefix] = version
+    return out
+
+
+def _decode_cv_versions(raw: object) -> dict:
+    """Decode key 12. Provenance only, so a reader never rejects a token over
+    the version it names; only a malformed map is an error."""
+    return _encode_cv_versions(raw)
 
 
 # ─── CvParam encoding ───────────────────────────────────────────────────────
@@ -147,13 +176,12 @@ def _encode_user_param(u: SpectrlUserParam) -> dict:
     """Encode a SpectrlUserParam as a compact map; absent fields are omitted."""
     if not isinstance(u.name, str) or not u.name:
         raise ValueError("user parameter name must be a non-empty string")
+    _scalar(u.value)
     if u.unit_accession is not None:
         _validate_accession(u.unit_accession)
     m: dict = {"n": u.name}
     if u.value is not None:
         m["v"] = u.value
-    if u.type is not None:
-        m["t"] = u.type
     if u.unit_accession is not None:
         m["u"] = encode_unit(u.unit_accession)
     return m
@@ -167,17 +195,14 @@ def _decode_user_params(raw: list[dict]) -> list[SpectrlUserParam]:
     _require_list(raw, "user parameter list")
     out: list[SpectrlUserParam] = []
     for m in raw:
-        _shape(m, ["n", "v", "t", "u"], "user parameter")
+        _shape(m, ["n", "v", "u"], "user parameter")
         _scalar(m.get("v"))
-        if "t" in m and not isinstance(m["t"], str):
-            raise ValueError("user parameter type must be a string")
         if not isinstance(m.get("n"), str) or not m["n"]:
             raise ValueError("user parameter name must be a non-empty string")
         out.append(
             SpectrlUserParam(
                 name=m["n"],
                 value=m.get("v"),
-                type=m.get("t"),
                 unit_accession=decode_unit_tail(m["u"]) if "u" in m else None,
             )
         )
@@ -328,6 +353,8 @@ def build_header_dict(spec: InlineSpectrum, descriptors: list[dict]) -> dict:
     if spec.extensions:
         validate_extensions(spec.extensions, require_supported=False)
         h[11] = spec.extensions
+    if spec.cv_versions:
+        h[12] = _encode_cv_versions(spec.cv_versions)
     return h
 
 
@@ -371,6 +398,7 @@ def parse_header_dict(h: dict) -> DecodedSpectrum:
         acquisition=decode_record(h[9], "acquisition") if 9 in h else None,
         processing=[decode_record(x, "processing") for x in h.get(10, [])],
         extensions=h.get(11, {}),
+        cv_versions=_decode_cv_versions(h.get(12, {})),
         format_version=FORMAT_VERSION,
     )
 

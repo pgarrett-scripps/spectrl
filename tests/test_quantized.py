@@ -68,12 +68,13 @@ def test_default_uses_only_core_encodings_and_omits_inner_compression():
     doc = cbor2.loads(read_token_payload(token))
     assert [d[2][0] for d in doc[6]] == [3, 3, 0]
     assert all(3 not in d for d in doc[6])
-    assert doc[6][1][2][2]["scale"] == 3600
-    assert doc[6][1][2][2]["width"] == 4
+    # The smallest intensity is below 1, so the grid is refined to keep it.
+    assert doc[6][1][2][2]["scale"] == quantized.intensity_parameters(spec.intensity)["scale"] > 3600
+    assert doc[6][1][2][2]["width"] == 8
     decoded = decode_token(token)
     assert doc[6][0][2][2]["log"] is True
     assert np.all(np.abs(decoded.mz - spec.mz) <= spec.mz * 1e-7)
-    assert np.all(np.abs(decoded.intensity - spec.intensity) <= (spec.intensity + 1) * np.expm1(0.5 / 3600))
+    assert np.all(np.abs(decoded.intensity - spec.intensity) <= spec.intensity * 2 * np.expm1(0.5 / 3600))
     assert decoded.charge.dtype == np.int32
 
 
@@ -114,3 +115,28 @@ def test_explicit_linear_mz_grid_remains_available():
 def test_ppm_parameters_reject_invalid_error_bounds(ppm):
     with pytest.raises(ValueError, match="ppm"):
         quantized.ppm_parameters(np.array([100.0]), ppm)
+
+
+def test_default_intensity_scale_refines_below_one():
+    assert quantized.intensity_parameters(np.array([1.0, 3.0, 1.0e5]))["scale"] == 3600
+    assert quantized.intensity_parameters(np.zeros(3))["scale"] == 3600
+    assert quantized.intensity_parameters(np.array([0.5, 2.0]))["scale"] == 5400
+    normalized = np.array([0.0, 1.0e-6, 5.0e-5, 0.25, 1.0])
+    params = quantized.intensity_parameters(normalized)
+    recovered = quantized.decode(quantized.encode(normalized, 1000521, params), 1000521, 5, params)
+    assert recovered[0] == 0
+    assert np.all(np.abs(recovered - normalized) <= normalized * 2 * np.expm1(0.5 / 3600))
+
+
+def test_default_intensity_scale_falls_back_to_exact_when_unbounded():
+    with pytest.raises(ValueError, match="outside the supported range"):
+        quantized.intensity_parameters(np.array([1.0e-300, 1.0]))
+    spec = InlineSpectrum(2, mz=[100.0, 200.0], intensity=[1.0e-300, 1.0])
+    np.testing.assert_array_equal(decode_token(encode_spectrum(spec)).intensity, spec.intensity)
+
+
+def test_default_lossy_token_keeps_small_normalized_peaks():
+    intensity = np.array([1.0e-5, 0.3, 1.0])
+    spec = InlineSpectrum(3, mz=[100.0, 200.0, 300.0], intensity=intensity)
+    decoded = decode_token(encode_spectrum(spec)).intensity
+    assert np.all(np.abs(decoded - intensity) <= intensity * 2 * np.expm1(0.5 / 3600))

@@ -48,3 +48,29 @@ test("standard names do not use custom name restrictions", () => {
   const token = encodeSpectrum({ defaultArrayLength: 1, mz: [100], arrayNames: { mz: "mz" } })
   assert.deepEqual(decodeToken(token).arrayNames, { mz: "mz" })
 })
+
+for (const name of ["MS:1000517", "MS:1000514", "MS:1000786", "MS:1", "UO:0000001", "NCIT:C1"]) {
+  test(`reject accession-shaped custom name ${name} regardless of descriptor order`, () => {
+    for (const order of ["alone", "first", "last"]) {
+      const { doc } = readTokenDocument(encodeSpectrum({ defaultArrayLength: 1, mz: [11] }, { lossless: true }))
+      const standard = new Map((doc.get(6) as Map<number, unknown>[])[0]!)
+      standard.set(1, 1000517)
+      const custom = new Map(standard)
+      custom.set(1, 1000786)
+      custom.set(4, name)
+      doc.set(6, order === "alone" ? [custom] : order === "first" ? [custom, standard] : [standard, custom])
+      const token = framePayload(cborEncode(doc))
+      for (const reader of [readTokenDocument, decodeToken]) assert.throws(() => reader(token), /non-standard array name/)
+    }
+  })
+}
+
+for (const name of ["__proto__", "constructor", "toString", "0", "01", "score: mean", "é", "🧪", "MS:1000517\n", "MS:１０００５１７", "MS:١٠٠٠٥١٧"]) {
+  test(`custom name ${name} survives decoding and re-encoding`, () => {
+    const spec = { defaultArrayLength: 2, mz: [2, 1], extraArrays: { [name]: Float32Array.from([-0, 7]) } }
+    const decoded = decodeToken(encodeSpectrum(spec, { lossless: true }))
+    const again = decodeToken(encodeSpectrum(decoded, { lossless: true }))
+    assert.deepEqual(again.extraArrays[name], decoded.extraArrays[name])
+    assert.deepEqual(again.arrayNames, decoded.arrayNames)
+  })
+}

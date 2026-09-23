@@ -11,12 +11,10 @@ export interface CvParam {
   unitAccession?: string | null;
 }
 
-/** A free-text user parameter (mzML userParam) with no CV accession. */
+/** A named parameter with no CV accession; the native value type is authoritative. */
 export interface UserParam {
   name: string;
   value?: string | number | null;
-  /** XSD type annotation, e.g. "xsd:float". */
-  type?: string | null;
   unitAccession?: string | null;
 }
 
@@ -82,6 +80,10 @@ export interface InlineSpectrum extends ContextFields, ArrayMetadata {
   extraArrays?: Record<string, Float64Array | Float32Array | Int32Array | number[]>;
   /** Optional CV units keyed like core or extra arrays. */
   arrayUnits?: Record<string, string>;
+  /** Source-declared ontology version strings keyed by accession prefix, e.g.
+   * `{ MS: "4.1.142" }`. Informational provenance only: the accession is the
+   * identifier, and decoding never depends on this. */
+  cvVersions?: Record<string, string>;
 }
 
 /** Output from {@link decodeToken}. */
@@ -101,6 +103,9 @@ export interface DecodedSpectrum extends ContextFields, ArrayMetadata {
   /** Decoded additional per-peak arrays, keyed by CV accession or non-standard name. */
   extraArrays: Record<string, Float64Array | Float32Array | Int32Array>;
   arrayUnits: Record<string, string>;
+  /** Source-declared ontology versions keyed by accession prefix; empty when
+   * the token declares none. */
+  cvVersions: Record<string, string>;
   checksum: string;
   formatVersion: number;
 }

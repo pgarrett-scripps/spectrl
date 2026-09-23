@@ -195,3 +195,64 @@ def test_mzml_declared_width_matches_binary_bytes(dtype, accession):
     decoded = decode_token(encode_spectrum(source, lossless=True))
     assert decoded.mz.dtype == values.dtype
     assert decoded.mz.tobytes() == values.tobytes()
+
+
+def test_cv_versions_round_trip_and_stay_absent_when_unset():
+    spec = InlineSpectrum(default_array_length=0, cv_versions={"MS": "4.1.142", "UO": "releases/2020-03-10"})
+    token = encode_spectrum(spec)
+    assert read_token_document(token)[0][12] == {"MS": "4.1.142", "UO": "releases/2020-03-10"}
+    assert decode_token(token).cv_versions == spec.cv_versions
+    bare = encode_spectrum(InlineSpectrum(default_array_length=0))
+    assert 12 not in read_token_document(bare)[0]
+    assert decode_token(bare).cv_versions == {}
+
+
+def test_cv_versions_survive_json_round_trip():
+    spec = InlineSpectrum(default_array_length=0, cv_versions={"MS": "4.1.142"})
+    assert spectrum_from_dict(spectrum_to_dict(spec)).cv_versions == {"MS": "4.1.142"}
+
+
+@pytest.mark.parametrize(
+    "versions",
+    [
+        {"MS:": "4.1.142"},  # a prefix, never a whole accession
+        {"PSI-MS": "4.1.142"},  # mzML's <cv> @id spelling is not a prefix
+        {"": "4.1.142"},
+        {"1MS": "4.1.142"},
+        {"MS": ""},
+        {"MS": 4.1},
+    ],
+)
+def test_cv_versions_reject_malformed_entries(versions):
+    with pytest.raises(ValueError):
+        encode_spectrum(InlineSpectrum(default_array_length=0, cv_versions=versions))
+
+
+def test_cv_versions_are_provenance_not_a_decode_gate():
+    """An unrecognized release decodes normally; the accession is the identifier."""
+    spec = InlineSpectrum(default_array_length=0, cv_versions={"MS": "99.99.99-unreleased"})
+    assert decode_token(encode_spectrum(spec)).cv_versions == {"MS": "99.99.99-unreleased"}
+
+
+def test_cv_versions_come_from_the_mzml_cv_list():
+    from mzmlpy import Mzml
+
+    from spectrl import from_mzmlpy
+
+    with Mzml("tests/data/example.mzML") as run:
+        spec = from_mzmlpy(run.spectra[0], run=run)
+    # example.mzML declares <cv id="MS" version="2.26.0"> and a UO release.
+    assert spec.cv_versions["MS"] == "2.26.0"
+    assert set(spec.cv_versions) <= {"MS", "UO"}
+    assert decode_token(encode_spectrum(spec)).cv_versions == spec.cv_versions
+
+
+def test_cv_list_id_spellings_fold_onto_the_accession_prefix():
+    from spectrl.mzml_context import cv_prefix
+
+    assert cv_prefix("MS") == "MS"
+    assert cv_prefix("PSI-MS") == "MS"
+    assert cv_prefix("UNIT-ONTOLOGY") == "UO"
+    assert cv_prefix("NCIT") == "NCIT"
+    assert cv_prefix("not a prefix") is None
+    assert cv_prefix(None) is None

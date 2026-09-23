@@ -65,7 +65,6 @@ function cmpUserParams(actual: any[], expected: any[], label: string): void {
   for (let i = 0; i < expected.length; i++) {
     assert.equal(actual[i].name, expected[i].name, `${label}[${i}].name`);
     assert.deepEqual(actual[i].value ?? null, expected[i].value ?? null, `${label}[${i}].value`);
-    assert.equal(actual[i].type ?? null, expected[i].type ?? null, `${label}[${i}].type`);
     assert.equal(actual[i].unitAccession ?? null, expected[i].unit_accession ?? null, `${label}[${i}].unit`);
   }
 }

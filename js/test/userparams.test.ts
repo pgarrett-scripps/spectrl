@@ -18,7 +18,7 @@ test("spectrum-level userParams round-trip", () => {
     encodeSpectrum(
       base({
         userParams: [
-          { name: "Mascot score", value: 42.7, type: "xsd:float" },
+          { name: "Mascot score", value: 42.7 },
           { name: "note", value: "rerun" },
           { name: "elapsed", value: 3.5, unitAccession: "UO:0000010" },
         ],
@@ -28,8 +28,6 @@ test("spectrum-level userParams round-trip", () => {
   );
   assert.deepEqual(d.userParams.map((u) => u.name), ["Mascot score", "note", "elapsed"]);
   assert.equal(d.userParams[0]!.value, 42.7);
-  assert.equal(d.userParams[0]!.type, "xsd:float");
-  assert.equal(d.userParams[1]!.type, null);
   assert.equal(d.userParams[2]!.unitAccession, "UO:0000010");
 });
 
@@ -40,7 +38,7 @@ test("scan-level userParams round-trip", () => {
         scans: [
           {
             params: [{ accession: "MS:1000016", value: 10, unitAccession: "UO:0000031" }],
-            userParams: [{ name: "[Thermo Trailer Extra]Mono M/Z", value: "445.12", type: "xsd:string" }],
+            userParams: [{ name: "[Thermo Trailer Extra]Mono M/Z", value: "445.12" }],
           },
         ],
       }),
@@ -56,11 +54,11 @@ test("no userParams decodes to empty array", () => {
 });
 
 const VENDOR: Partial<InlineSpectrum> = {
-  userParams: [{ name: "filter string", value: "ITMS + c NSI", type: "xsd:string" }],
+  userParams: [{ name: "filter string", value: "ITMS + c NSI" }],
   scans: [
     {
       params: [{ accession: "MS:1000016", value: 10.0, unitAccession: "UO:0000031" }],
-      userParams: [{ name: "[Thermo]Mono M/Z", value: "445.12", type: "xsd:string" }],
+      userParams: [{ name: "[Thermo]Mono M/Z", value: "445.12" }],
     },
   ],
 };
@@ -92,3 +90,16 @@ test("dropUserParams does not mutate the input", () => {
   assert.equal(spec.userParams!.length, 1);
   assert.equal(spec.scans![0]!.userParams!.length, 1);
 });
+
+test("native parameter values preserve text versus numbers without type annotations", () => {
+  for (const value of [null, "", "2.5", 2, 2.5, 1e20, Number.MAX_SAFE_INTEGER]) {
+    const decoded = decodeToken(encodeSpectrum({ defaultArrayLength: 0, userParams: [{ name: "example", value }] }))
+    assert.deepEqual(decoded.userParams, [{ name: "example", value, unitAccession: null }])
+  }
+})
+
+test("removed type annotation is rejected even through the JavaScript API", () => {
+  assert.throws(() => encodeSpectrum({ defaultArrayLength: 0, userParams: [
+    { name: "example", value: "2.5", type: "xsd:float" } as any,
+  ] }), /type annotations are not supported/)
+})

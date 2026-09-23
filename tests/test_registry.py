@@ -65,7 +65,7 @@ def test_generated_format_modules_are_current():
 def test_all_header_keys_present():
     r = _load()
     keys = set(int(k) for k in r["header_keys"])
-    assert keys == set(range(12))
+    assert keys == set(range(13))
 
 
 def test_magic_matches_token_module():
@@ -74,3 +74,9 @@ def test_magic_matches_token_module():
     r = _load()
     assert r["token_format"]["magic"] == MAGIC
     assert r["spectrl_version"] == FORMAT_VERSION
+
+
+def test_payload_presets_only_name_supported_modes():
+    framing = json.loads(REGISTRY_PATH.read_text())["token_format"]
+    assert set(framing["presets"]) <= set(framing["payload_modes"])
+    assert set(framing["required_payload_modes"]) <= set(framing["payload_modes"])

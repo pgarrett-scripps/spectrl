@@ -1,8 +1,9 @@
 /** A shared quantized-word representation for linear and log1p mappings. */
+import { expm1 as deterministicExpm1, log1p as deterministicLog1p } from "./deterministic.js"
 import { byteShuffle, byteUnshuffle, type NumArray } from "./codecs.js"
 import type { Parameters } from "./pipeline.js"
 import { deltaShuffleWords, deltaUnshuffleWords } from "./delta.js"
-import { DEFAULT_MZ_PPM } from "./format.js"
+import { DEFAULT_INTENSITY_SCALE, DEFAULT_MZ_PPM } from "./format.js"
 
 export function validateQuantized(p: Parameters): void {
   if (Object.keys(p).some(k => !["scale", "width", "log", "delta"].includes(k)) || !("scale" in p) || !("width" in p)) throw Error("quantized encoding requires scale and width")
@@ -13,7 +14,7 @@ export function validateQuantized(p: Parameters): void {
 function indices(a: NumArray, p: Parameters): Float64Array {
   return Float64Array.from(a, value => {
     if (!Number.isFinite(value) || value < 0) throw Error("quantization requires finite nonnegative values")
-    const q = Math.round((p.log ? Math.log1p(value) : value) * (p.scale as number))
+    const q = Math.round((p.log ? deterministicLog1p(value) : value) * (p.scale as number))
     if (!Number.isSafeInteger(q)) throw Error("quantized index exceeds the safe integer range")
     return q
   })
@@ -25,6 +26,20 @@ export function quantizedParameters(a: NumArray, scale: number, log = false, del
   p.width = [1, 2, 4, 8].find(w => maximum < 2 ** (8 * w))!
   return p
 }
+// log1p is nearly linear below 1, so a fixed scale zeroes small peaks of
+// normalized spectra. When the smallest positive value m is below 1, the scale
+// grows to scale * (m + 1) / (2 * m), which bounds every positive value by the
+// relative error the fixed scale already allows at 1.
+export function intensityParameters(a: NumArray, scale = DEFAULT_INTENSITY_SCALE): Parameters {
+  let minimum = Infinity
+  for (const value of a) if (value > 0) minimum = Math.min(minimum, value)
+  if (minimum < 1) {
+    const refined = scale / 2 * (minimum + 1) / minimum
+    if (!Number.isFinite(refined) || refined > 2 ** 53 - 1) throw Error("intensity scale is outside the supported range")
+    scale = Math.max(scale, Math.ceil(refined))
+  }
+  return quantizedParameters(a, scale, true)
+}
 export function ppmParameters(a: NumArray, ppm = DEFAULT_MZ_PPM): Parameters {
   if (typeof ppm !== "number" || !Number.isFinite(ppm) || ppm <= 0) throw Error("ppm must be finite and positive")
   let minimum = Infinity
@@ -35,13 +50,13 @@ export function ppmParameters(a: NumArray, ppm = DEFAULT_MZ_PPM): Parameters {
   if (minimum === Infinity) minimum = 1
   const relative = ppm * 1e-6
   // Calibrate at the smallest positive value and reserve a numerical margin.
-  const logStep = Math.log1p(relative * (1 - 1e-7) * (minimum / (minimum + 1)))
+  const logStep = deterministicLog1p(relative * (1 - 1e-7) * (minimum / (minimum + 1)))
   const scale = Math.ceil(0.5 / logStep)
   if (!(logStep > 0) || !Number.isSafeInteger(scale) || scale <= 0) throw Error("ppm scale is outside the supported range")
   const p = quantizedParameters(a, scale, true, true)
   const q = indices(a, p)
   for (const [i, value] of a.entries()) {
-    const recovered = Math.expm1(q[i]! / scale)
+    const recovered = deterministicExpm1(q[i]! / scale)
     if (Math.abs(value - recovered) > value * relative) throw Error("quantized reconstruction exceeds the ppm bound")
   }
   return p
@@ -62,7 +77,7 @@ export function encodeQuantized(a: NumArray, _type: number, p: Parameters): Uint
   const recovered = decodeQuantized(blob, _type, q.length, p)
   const halfStep = 0.5 / (p.scale as number)
   for (const [i, value] of a.entries()) {
-    const bound = p.log ? (value + 1) * Math.expm1(halfStep) : halfStep
+    const bound = p.log ? (value + 1) * deterministicExpm1(halfStep) : halfStep
     if (Math.abs(value - recovered[i]!) > bound) throw Error("quantized reconstruction exceeds the rounding bound")
   }
   return blob
@@ -77,7 +92,9 @@ export function decodeQuantized(blob: Uint8Array, _type: number, count: number, 
       : width === 4 ? view.getUint32(i * 4, true) : Number(view.getBigUint64(i * 8, true))
     if (!Number.isSafeInteger(q)) throw Error("quantized index exceeds the safe integer range")
     const scaled = q / (p.scale as number)
-    const value = p.log ? Math.expm1(scaled) : scaled
+    // The shared expm1, not the platform's, so the same token decodes to the
+    // same bits everywhere. See src/deterministic.ts.
+    const value = p.log ? deterministicExpm1(scaled) : scaled
     if (!Number.isFinite(value)) throw Error("quantized reconstruction is not finite")
     return value
   })

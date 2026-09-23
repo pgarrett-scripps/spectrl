@@ -1,7 +1,7 @@
 import { readTokenPayload } from "../src/cbor_format.ts"
 import assert from "node:assert/strict"
 import test from "node:test"
-import { DEFAULT_DECODE_LIMITS, decodeToken, encodeSpectrum, SpectrlDecodeError } from "../src/index.ts"
+import { DEFAULT_DECODE_LIMITS, UNLIMITED_DECODE_LIMITS, decodeToken, encodeSpectrum, SpectrlDecodeError } from "../src/index.ts"
 import { b64urlDecode, b64urlEncode } from "../src/base64url.ts"
 import { cborDecode, cborEncode } from "../src/cbor.ts"
 import { tokenChecksum } from "../src/checksum.ts"
@@ -48,7 +48,9 @@ test("metadata only and empty arrays still obey peak and array limits", () => {
   const empty = encodeSpectrum({ defaultArrayLength: 0,
     extraArrays: Object.fromEntries(Array.from({ length: 65 }, (_, i) => [`a${i}`, []])),
   })
-  assert.equal(Object.keys(decodeToken(empty).extraArrays).length, 65)
+  assert.equal(Object.keys(decodeToken(empty, UNLIMITED_DECODE_LIMITS).extraArrays).length, 65)
+  // The budgets are on by default, so 65 arrays needs an explicit allowance.
+  assert.throws(() => decodeToken(empty), /maxArrays/)
   assert.throws(() => decodeToken(empty, {}), /maxArrays/)
   assert.equal(Object.keys(decodeToken(empty, { maxArrays: 65, maxDecodedBytes: 0 }).extraArrays).length, 65)
   assert.ok(decodeToken(encodeSpectrum({ defaultArrayLength: 0 }), { maxPeaks: 0, maxArrays: 0, maxDecodedBytes: 0 }))

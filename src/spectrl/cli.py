@@ -46,12 +46,33 @@ def _decode_cmd(args: argparse.Namespace) -> None:
         raise SystemExit(f"spectrl decode: {e}") from None
     from .serialization import spectrum_to_dict
 
+    if args.output:
+        _write_spectrum_file(decoded, args.output)
+        return
     if args.output_format == "json":
         print(json.dumps(spectrum_to_dict(decoded), indent=2, allow_nan=False))
     else:
         from .peaklist import format_peak_list
 
         print(format_peak_list(decoded, delimiter="," if args.output_format == "csv" else "\t"), end="")
+
+
+def _write_spectrum_file(decoded, path: str) -> None:
+    """Write the spectrum and say on stderr what the format could not carry."""
+    from pathlib import Path
+
+    from .formats import format_for_path, write
+
+    try:
+        format = format_for_path(path)
+    except ValueError as e:
+        raise SystemExit(f"spectrl decode: {e}") from None
+    result = write(decoded, format)
+    Path(path).write_text(result.text, encoding="utf-8")
+    print(f"Written {path}", file=sys.stderr)
+    if result.omitted:
+        print("", file=sys.stderr)
+        print(result.summary(), file=sys.stderr)
 
 
 def _inspect_cmd(args: argparse.Namespace) -> None:
@@ -96,11 +117,39 @@ def _input_spectrum(args):
     from .peaklist import parse_peak_list
     from .serialization import spectrum_from_dict
 
+    spectrum = _spectrum_file(args)
+    if spectrum is not None:
+        return spectrum
     text = _read_input(args.input)
     if args.input_format == "json":
         return spectrum_from_dict(json.loads(text))
     delimiter = {"csv": ",", "tsv": "\t", "text": None}[args.input_format]
     return parse_peak_list(text, delimiter=delimiter)
+
+
+def _spectrum_file(args):
+    """One spectrum from an mzML/MGF/MS2 file, or None if this is not one.
+
+    A run holds thousands of spectra, so a file with more than one and no
+    selector is an error naming how to choose rather than a silent first-match.
+    """
+    from .formats import format_for_path, read_file
+
+    if args.input == "-" or getattr(args, "input_format", None) not in (None, "json"):
+        return None
+    try:
+        format_for_path(args.input)
+    except ValueError:
+        return None
+    index = getattr(args, "index", None)
+    spectrum_id = getattr(args, "id", None)
+    try:
+        spectra = read_file(args.input, index=index, spectrum_id=spectrum_id)
+    except (IndexError, KeyError) as e:
+        raise SystemExit(f"spectrl: {e}") from None
+    if len(spectra) != 1:
+        raise SystemExit(f"spectrl: {args.input} holds {len(spectra)} spectra; select one with --index N or --id ID")
+    return spectra[0]
 
 
 def _report_cmd(args):
@@ -147,8 +196,15 @@ def _mzml_cmd(args):
 
 
 def _spectrum_input(parser):
-    parser.add_argument("input", nargs="?", default="-", help="Input spectrum file or '-' for stdin")
+    parser.add_argument(
+        "input",
+        nargs="?",
+        default="-",
+        help="Input spectrum file (.mzML, .mgf, .ms2, or a peak list) or '-' for stdin",
+    )
     parser.add_argument("--input-format", choices=["json", "text", "csv", "tsv"], default="json")
+    parser.add_argument("--index", type=int, default=None, help="Zero-based spectrum index within the input file")
+    parser.add_argument("--id", default=None, help="Native spectrum id within the input file")
     parser.add_argument("--lossless", action="store_true", help="Preserve exact array values")
     parser.add_argument("--drop-user-params", action="store_true", help="Explicitly omit free-text user parameters")
 
@@ -179,6 +235,12 @@ def main() -> None:
     dec.add_argument("input", nargs="?", default="-", help="Token file or '-' for stdin")
     dec.add_argument(
         "--output-format", choices=["json", "csv", "tsv"], default="json", help="CSV/TSV exports only m/z and intensity"
+    )
+    dec.add_argument(
+        "--output",
+        default=None,
+        metavar="PATH",
+        help="Write a spectrum file instead, choosing mzML, MGF or MS2 by suffix",
     )
     dec.set_defaults(func=_decode_cmd)
 

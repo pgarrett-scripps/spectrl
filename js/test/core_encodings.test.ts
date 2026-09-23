@@ -35,3 +35,22 @@ test("explicit quantization and custom array permission", () => {
   const d = decodeToken(encodeSpectrum(s, { arrayEncodings: { score: option }, allowUnsafeLossyCustom: true }))
   assert.deepEqual(Array.from(d.extraArrays.score!), [1, 2])
 })
+
+test("seeded finite bit patterns survive every exact encoding and stable sorting", () => {
+  let seed = 7301
+  const randomWord = () => seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0
+  for (const Ctor of [Float32Array, Float64Array, Int32Array]) {
+    const words = Uint32Array.from({ length: 256 }, randomWord)
+    const values = new Ctor(words.buffer).filter(Number.isFinite)
+    const mz = Array.from(values, () => randomWord() % 9)
+    const order = [...mz.keys()].sort((a, b) => mz[a]! - mz[b]! || a - b)
+    const expected = Ctor.from(order, i => values[i]!)
+    for (const compression of ["raw", "zlib"] as const) for (const encoding of [0, 1, 2]) {
+      const token = encodeSpectrum({ defaultArrayLength: values.length, mz, extraArrays: { custom: values } },
+        { lossless: true, compression, arrayEncodings: { custom: encoding }, quiet: true })
+      const actual = decodeToken(token).extraArrays.custom!
+      assert.ok(actual instanceof Ctor)
+      assert.deepEqual(new Uint8Array(actual.buffer), new Uint8Array(expected.buffer))
+    }
+  }
+})

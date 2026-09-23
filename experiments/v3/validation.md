@@ -1,9 +1,5 @@
 # V3 local completion record
 
-> Historical checkpoint. The final clean core is documented in
-> [clean-core-decision.md](clean-core-decision.md).
-
-
 Completed locally on 2026-09-17. Nothing was pushed, published, or submitted.
 Existing manuscript and corpus work was preserved. Initial checkout snapshots
 and diffs are retained in `/tmp/spectrl-v3-start/`.
@@ -73,8 +69,8 @@ figure and supplementary pipeline, subgroup, and metadata-overhead tables report
 the final v3 implementation. The matched mzML baseline includes selected context.
 The detailed spectral-similarity figure is in Supporting Information.
 
-Local outputs are `/home/ty/Repos/spectrl-paper/paper/paper.pdf` and
-`/home/ty/Repos/spectrl-paper/paper/paper.docx`. Both include the Supporting
+Local outputs are `~/Repos/spectrl-paper/paper/paper.pdf` and
+`~/Repos/spectrl-paper/paper/paper.docx`. Both include the Supporting
 Information. Figures and tables are generated from scripts. The Word export
 contains native editable equations. Rendered documents were visually checked.
 

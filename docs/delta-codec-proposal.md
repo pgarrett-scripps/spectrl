@@ -2,7 +2,7 @@
 
 Historical design record. The current defaults and supported core are defined in
 [SPECIFICATION.md](../SPECIFICATION.md) and the
-[final encoding decision](../experiments/v3/clean-core-decision.md).
+[SPECIFICATION.md](../SPECIFICATION.md).
 
 Status: draft byte-level contract with Python and JavaScript reference implementations. No PSI-MS accession is assigned or claimed. This codec is deliberately absent from the spectrl.v2 registry and public encoding options. No vocabulary proposal has been submitted.
 
@@ -43,9 +43,9 @@ Suggested definition: Data array compression by modular differences of consecuti
 
 Proposed parent: `MS:1000572`, binary data compression type.
 
-The eventual request should link this byte contract, the independent implementations, conformance vectors, and [corpus measurements](../experiments/encoding/FINDINGS.md). The accession remains pending PSI-MS review. A parallel Zstandard variant could be considered separately because the final compressor is part of the decoder contract.
+The eventual request should link this byte contract, the independent implementations, conformance vectors, and the corpus measurements reported in the manuscript. The accession remains pending PSI-MS review. A parallel Zstandard variant could be considered separately because the final compressor is part of the decoder contract.
 
-The expanded [PSI mode comparison](../experiments/encoding/PSI_SWEEP.md) includes
+The expanded PSI mode comparison includes
 dictionary-encoded Zstandard and separates m/z, intensity, and mobility results.
 It also distinguishes generally lossless codecs from normally lossy candidates
 that happen to pass an exact-byte check for a particular array.

@@ -10,6 +10,8 @@ The tail for "MS:1000511" is 1000511; for "UO:0000031" is 31.
 
 from __future__ import annotations
 
+import re
+
 from ._format import ARRAY_CHARGE as ARRAY_CHARGE
 from ._format import ARRAY_INTENSITY as ARRAY_INTENSITY
 from ._format import ARRAY_MZ as ARRAY_MZ
@@ -21,6 +23,10 @@ from ._format import TYPE_INT32 as TYPE_INT32
 
 _DEFAULT_PARAM_ONTOLOGY = "MS"
 _DEFAULT_UNIT_ONTOLOGY = "UO"
+# Largest tail that survives seven-digit zero-padded reconstruction (section 3).
+_MAX_NUMERIC_TAIL = 9999999
+_ACCESSION_RE = re.compile(r"[A-Za-z][A-Za-z0-9]*:[A-Za-z0-9]+")
+_PREFIX_RE = re.compile(r"[A-Za-z][A-Za-z0-9]*")
 
 
 def accession_tail(accession: str) -> int:
@@ -59,13 +65,35 @@ def decode_tail(tail: int, ontology: str = _DEFAULT_PARAM_ONTOLOGY) -> str:
     return f"{ontology}:{tail:07d}"
 
 
+def _is_numeric_tail(value: object) -> bool:
+    """True for a wire numeric tail: a CBOR integer (never a boolean) in 0..9999999."""
+    return type(value) is int and 0 <= value <= _MAX_NUMERIC_TAIL
+
+
 def decode_unit_tail(tail: int | list | str) -> str:
     """Reconstruct a unit accession string from its wire form (int = UO: default,
-    list = [ontology, tail], str = full accession)."""
+    list = [ontology, tail], str = full accession).
+
+    The wire form is checked, not the ontology: spectrl never resolves a release
+    or asserts that a term exists. What is rejected here is a value that is not
+    one of the three shapes section 3 defines -- a boolean read as a tail, a
+    pair with a trailing extra member, a tail outside 0..9999999 (which would
+    not survive seven-digit reconstruction), or a string that is not an
+    accession. Without this the decoder emits accessions its own encoder
+    refuses, and disagrees with the TypeScript reader about token validity.
+    """
     if isinstance(tail, str):
+        if not _ACCESSION_RE.fullmatch(tail):
+            raise ValueError(f"invalid CV unit accession {tail!r}")
         return tail
     if isinstance(tail, list):
+        if len(tail) != 2 or not isinstance(tail[0], str) or not _PREFIX_RE.fullmatch(tail[0]):
+            raise ValueError("a CV unit ontology pair must be [prefix, tail]")
+        if not _is_numeric_tail(tail[1]):
+            raise ValueError(f"CV unit tail must be an integer in 0..{_MAX_NUMERIC_TAIL}")
         return f"{tail[0]}:{tail[1]:07d}"
+    if not _is_numeric_tail(tail):
+        raise ValueError(f"CV unit tail must be an integer in 0..{_MAX_NUMERIC_TAIL}")
     return f"{_DEFAULT_UNIT_ONTOLOGY}:{tail:07d}"
 
 

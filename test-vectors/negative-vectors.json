@@ -39,12 +39,12 @@
     },
     {
       "name": "unsupported_header_key",
-      "cbor_hex": "a200000c81a2616e646e6f746561766576616c7565",
+      "cbor_hex": "a200000d81a2616e646e6f746561766576616c7565",
       "error": "unsupported spectrl header key"
     },
     {
       "name": "unsupported_header_key_with_parameters",
-      "cbor_hex": "a300000781a1616e646e6f74650c80",
+      "cbor_hex": "a300000781a1616e646e6f74650d80",
       "error": "unsupported spectrl header key"
     },
     {

@@ -151,18 +151,9 @@ def _collect_user_params(obj) -> list[SpectrlUserParam]:
     ns = getattr(obj, "ns", "") or ""
     if el is None:
         return []
-    out: list[SpectrlUserParam] = []
-    for u in el.findall(f"./{ns}userParam"):
-        value = u.get("value")
-        out.append(
-            SpectrlUserParam(
-                name=u.get("name"),
-                value=value if value not in (None, "") else None,
-                type=u.get("type") or None,
-                unit_accession=u.get("unitAccession") or None,
-            )
-        )
-    return out
+    from .mzml_values import user_param
+
+    return [user_param(u) for u in el.findall(f"./{ns}userParam")]
 
 
 def from_mzmlpy(spec, ref_groups=None, *, strict=False, run=None):
@@ -272,6 +263,16 @@ def from_mzmlpy(spec, ref_groups=None, *, strict=False, run=None):
         SpectrlProduct(isolation_window=group(x.find("m:isolationWindow", NS), SpectrlIsolationWindow))
         for x in root.findall("./m:productList/m:product", NS)
     ]
+    # Only the ontologies this spectrum actually cites, so a token does not
+    # carry a version for a vocabulary it never uses.
+    cited = set()
+    for node in root.iter():
+        for attr in ("accession", "unitAccession"):
+            value = node.get(attr)
+            if value and ":" in value:
+                cited.add(value.split(":", 1)[0])
+    cv_versions = {k: v for k, v in (context.cv_versions if context else {}).items() if k in cited}
+
     combo = None
     scan_list = root.find("m:scanList", NS)
     if scan_list is not None:
@@ -295,6 +296,7 @@ def from_mzmlpy(spec, ref_groups=None, *, strict=False, run=None):
         source=context.source(root.get("sourceFileRef", context.run.get("defaultSourceFileRef"))) if context else None,
         acquisition=context.acquisition(context.run.get("defaultInstrumentConfigurationRef")) if context else None,
         processing=context.processing_steps(processing_key) if context else [],
+        cv_versions=cv_versions,
     )
 
 

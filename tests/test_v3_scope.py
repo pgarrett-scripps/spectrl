@@ -16,7 +16,7 @@ def _token(document, version=3):
 
 @pytest.mark.parametrize("lossless", [False, True])
 def test_user_parameters_use_key_seven(lossless):
-    params = [SpectrlUserParam(name="elapsed", value=3.5, type="xsd:float", unit_accession="UO:0000010")]
+    params = [SpectrlUserParam(name="elapsed", value=3.5, unit_accession="UO:0000010")]
     source = InlineSpectrum(default_array_length=0, user_params=params, scans=[SpectrlScan(user_params=params)])
     token = encode_spectrum(source, lossless=lossless)
     document = cbor2.loads(read_token_payload(token))
@@ -35,7 +35,7 @@ def test_empty_parameters_are_omitted():
     assert decode_token(token).user_params == []
 
 
-@pytest.mark.parametrize("key", [12, 13, 99, -1, "7"])
+@pytest.mark.parametrize("key", [13, 14, 99, -1, "7"])
 @pytest.mark.parametrize("include_parameters", [False, True])
 def test_unsupported_header_keys_are_rejected(key, include_parameters):
     document = {0: 0, key: [{"n": "note", "v": "value"}]}

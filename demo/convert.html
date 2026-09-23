@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Convert an mzML, MGF or MS2 spectrum to a spectrl token, or write a token back out as a file. Runs in your browser." />
+    <title>Convert · spectrl</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap topbar">
+        <a class="brand" href="./index.html">spectrl</a>
+        <nav aria-label="Site">
+          <a href="./index.html">Demo</a>
+          <a href="./convert.html" aria-current="page">Convert</a>
+          <a href="https://github.com/pgarrett-scripps/spectrl">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <p class="intro">Turn a spectrum file into a token, or a token into a file. Files are read in this page and never uploaded.</p>
+
+      <div class="two-col">
+        <section class="card" aria-labelledby="fileTitle">
+          <h2 id="fileTitle">File to token</h2>
+          <div class="actions">
+            <label class="file-button">Open mzML, MGF or MS2<input id="convertFile" type="file" accept=".mzML,.mzml,.mgf,.MGF,.ms2,.MS2" /></label>
+            <label class="check"><input type="checkbox" id="lossless" /> Lossless encoding</label>
+          </div>
+          <p class="note" id="convertStatus" role="status">No file open.</p>
+          <p class="note">No file handy? Download an example:
+            <a href="./examples/example.mzML" download>example.mzML</a>,
+            <a href="./examples/example.mgf" download>example.mgf</a> or
+            <a href="./examples/example.ms2" download>example.ms2</a>.</p>
+          <div class="spectrum-list" id="spectrumList" hidden>
+            <input id="spectrumFilter" type="search" placeholder="Filter by id, MS level or precursor" aria-label="Filter spectra" />
+            <p class="note" id="idPrefix" hidden></p>
+            <div class="table-scroll tall"><table class="picker-table"><tbody id="spectrumRows"></tbody></table></div>
+          </div>
+          <details class="sub">
+            <summary>Or paste a peak list</summary>
+            <p class="note">Two columns, m/z and intensity. CSV, TSV or whitespace, with an optional header.</p>
+            <textarea id="peakInput" rows="4" aria-label="Peak list" placeholder="100.1234,10&#10;200.5678,20"></textarea>
+            <div class="actions"><button id="importPeaks" type="button">Encode peaks</button></div>
+          </details>
+        </section>
+
+        <section class="card" aria-labelledby="tokenTitle">
+          <h2 id="tokenTitle">Token to file</h2>
+          <textarea id="tokenInput" spellcheck="false" aria-label="spectrl token" placeholder="Paste a spectrl.v3 token"></textarea>
+          <p class="note" id="tokenStatus" role="status">No token loaded.</p>
+          <div class="actions">
+            <button class="primary" id="downloadMzml" type="button">Save mzML</button>
+            <button id="downloadMgf" type="button">Save MGF</button>
+            <button id="downloadMs2" type="button">Save MS2</button>
+            <button id="downloadTsv" type="button">Save peaks as TSV</button>
+          </div>
+          <div class="loss" id="conversionLoss"></div>
+          <a class="text-link" id="viewInDemo" href="./index.html">Open this token in the demo</a>
+        </section>
+      </div>
+
+      <p class="note wide-note">mzML holds everything a token holds, so a token written to mzML and read back is the same spectrum. MGF and MS2 carry only a precursor and peaks. Anything they cannot hold is listed when you save.</p>
+    </main>
+
+    <footer class="wrap site-footer">
+      <a href="https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md">Specification</a>
+      <a href="https://pypi.org/project/spectrl/">Python</a>
+      <a href="https://www.npmjs.com/package/@spectrl-ms/spectrl">JavaScript</a>
+    </footer>
+    <div class="tooltip" id="tip"></div>
+    <script type="module" src="./dist/convert.js"></script>
+  </body>
+</html>

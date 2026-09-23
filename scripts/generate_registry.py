@@ -157,8 +157,8 @@ registry = {
             "magic. The token string is the interchange unit."
         ),
         "payload_modes": {"r": "raw CBOR", "z": "zlib stream", "b": "Brotli stream"},
-        "selection": "Default zlib-6. Explicit auto chooses the shortest available token, ties z/r/s/b",
-        "presets": {"z": 6, "s": 3, "b": 5},
+        "selection": "Default zlib-6. Explicit auto chooses the shortest available token, ties z/r/b",
+        "presets": {"z": 6, "b": 5},
         "required_payload_modes": ["r", "z"],
         "expanded_payload_limit": 16 * 1024 * 1024,
         "base64url": "RFC 4648 §5: URL-safe alphabet, no padding ('=' stripped).",
@@ -309,7 +309,7 @@ registry = {
             "required": False,
             "description": (
                 "Spectrum-level free-text userParams (no CV accession). Each: "
-                "{n: name, v?: value, t?: xsd-type, u?: unit-tail}. Scan-level userParams "
+                "{n: name, v?: value, u?: unit-tail}. Scan-level userParams "
                 "live under scan_fields key 2. Omitted entirely when empty."
             ),
         },
@@ -483,7 +483,8 @@ registry = {
             "CRC-32/ISO-HDLC checksum (required fifth token part) is computed over the ASCII text before "
             "the checksum, 'spectrl.version.mode.payload' (blobs are inline and therefore covered).",
             "Checksum encoding: eight lowercase hexadecimal characters, zero-padded.",
-            "Default lossy arrays use quantized words with a pointwise 0.1 ppm bound for m/z and log1p scale 3600 for intensity.",
+            "Default lossy arrays use quantized words with a pointwise 0.1 ppm bound for m/z and log1p scale 3600 for intensity, "
+            "raised to ceil(3600 / 2 * (m + 1) / m) when the smallest positive intensity m is below 1.",
             "Default lossless m/z uses delta and shuffle, intensity uses shuffle, and other arrays use raw words.",
             "Integer and auxiliary arrays remain exact in both profiles. Invalid automatic quantization falls back to exact.",
             "Array blobs have no individual compression. Whole-document zlib level 6 is the default payload compression.",
@@ -500,7 +501,9 @@ registry["encodings"] = {str(v): {"name": k, "revision": 1, "lossless": v < 3,
 registry["core_encodings"] = [0, 1, 2, 3]
 registry["default_profiles"] = {"lossless": {"mz": 2, "intensity": 1, "other": 0},
     "lossy": {"mz": {"encoding": 3, "max_error_ppm": 0.1, "log": True, "delta": True},
-              "intensity": {"encoding": 3, "scale": 3600, "log": True}, "other": 0},
+              "intensity": {"encoding": 3, "scale": 3600, "log": True,
+                            "scale_rule": "max(3600, ceil(3600 / 2 * (m + 1) / m)) when the smallest positive intensity m < 1"},
+              "other": 0},
     "integer_arrays": "exact", "outer_compression": "zlib"}
 registry["operation_descriptor"] = {
     "form": "[identifier, revision, optional string-keyed parameters]",
@@ -514,6 +517,17 @@ registry["extension_record"] = {"revision": "positive safe integer", "required":
 for key, name, kind in [(8, "source", "source record"), (9, "acquisition", "acquisition record"),
                         (10, "processing", "ordered processing records"), (11, "extensions", "namespaced map")]:
     registry["header_keys"][str(key)] = {"name": name, "type": kind, "required": False}
+registry["header_keys"]["12"] = {
+    "name": "cv_versions",
+    "type": "map of ontology prefix to version string",
+    "required": False,
+    "description": (
+        "Source-declared ontology version for each accession prefix used by the spectrum, "
+        "keyed without the colon (MS, UO). Values are opaque nonempty text recorded verbatim; "
+        "declared syntax varies across files and is never parsed. Informational provenance only: "
+        "the accession is the identifier, and a reader must not reject a token over the version it names."
+    ),
+}
 registry["parameter_group"] = {"0": "ordered CV pairs", "1": "optional user parameters"}
 registry["header_keys"]["3"]["fields"]["s"]["scan_fields"] = {
     "0": "CV pairs", "1": "parameter groups for scan windows", "2": "user parameters",

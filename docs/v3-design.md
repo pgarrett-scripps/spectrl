@@ -1,13 +1,12 @@
 # spectrl v3: scope grounded in the project
 
 > Historical design notes. The final clean core supersedes the compatibility
-> proposals below. See [SPECIFICATION.md](../SPECIFICATION.md) and
-> [the current decision](../experiments/v3/clean-core-decision.md).
+> proposals below. See [SPECIFICATION.md](../SPECIFICATION.md) for the
+> format as shipped.
 
 
 Historical design record. The current defaults and supported core are defined in
-[SPECIFICATION.md](../SPECIFICATION.md) and the
-[final encoding decision](../experiments/v3/simplification-decision.md).
+[SPECIFICATION.md](../SPECIFICATION.md).
 
 This is the recommended v3 scope after reviewing the README, service integrations,
 browser workflow, conversion code, data model, paper, and existing benchmark inputs.
@@ -30,13 +29,13 @@ implementations. Optional does not mean unspecified or unimplemented.
 
 ## What the review found
 
-The [metadata audit](../experiments/v3/scope-audit.json) reuses the 127-spectrum,
+The metadata audit reused the 127-spectrum,
 40-dataset selection from the codec benchmark and verifies its input file hashes.
 It inventories metadata presence, not full mzML reconstruction fidelity.
 
 - All 127 selected spectra have resolvable instrument and processing references.
 - 113 have instrument component descriptions through their selected configurations.
-- 38 have precursor spectrum references that the current model does not carry.
+- 38 have precursor spectrum references that the v2 model does not carry.
 - 15 have user parameters in modeled nested locations that v2 omits.
 - 104 of 257 source arrays are declared float32. The current core-array model
   promotes numeric input to float64.
@@ -44,12 +43,12 @@ It inventories metadata presence, not full mzML reconstruction fidelity.
   record that selection explicitly inside the token. `top_n` retains source
   spectrum parameters, including any summaries that may describe the full input.
 
-A [synthetic v2 probe](../experiments/v3/scope-probes.json) confirmed both core
+A synthetic v2 probe confirmed both core
 float32 promotion and retention of a source TIC of 6 after keeping one peak whose
 intensity is 3. The latter needs a defined source-versus-current scope, not an
 assumption that every inherited summary describes the reduced arrays.
 
-Read the [audit script](../experiments/v3/scope_audit.py) for the exact counting
+The audit script defined the exact counting
 rules. Relevant implementation evidence is in [the mzML bridge](../src/spectrl/mzml.py),
 [models](../src/spectrl/model.py), [sharing workflows](../src/spectrl/workflows.py),
 and [parameter serialization](../src/spectrl/header.py).

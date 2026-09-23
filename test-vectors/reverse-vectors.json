@@ -419,7 +419,7 @@
       "name": "precursor_full",
       "description": "isolation window, selected ion, and HCD activation",
       "mode": "lossy",
-      "token": "spectrl.v3.z.eJxbwsDM1NgkxcDvYs_E0riYYSFDM4jnWv3bofri61a5HUFgbs1v-xcMYADm1sK5jI0LGZrAYhooOpwymZigMs7PvoFFcpskpCUZudialjKA7PNmBJFOTM3MjEuSc_LTv6ampOaUJH5NLU5OzEmVYvB51JVanplSksHC6vOgbJ_P77tlJnKMDAzsjMj6nUH6F0P0gzVK8glAtDGxuv147DphTjc7IwDnwkav.fc357b41",
+      "token": "spectrl.v3.z.eJxbwsDM1NgkxcDvYs_E0riYYSFDM4jnWv3bofri61a5HUFgbs1PKwYwoxbIYGxcyNAE5mmgqHLKZGKCyjg_-wYWyW2SkJZk5GJrWsoAssObEUQ6MTUzMy5JzslP_5qakppTkvg1tTg5MSdVisHnUVdqeWZKSQYLq8-Dsn0-v--WmcgxMjCwMyLrdwbpXwzRD9YoyScA0cbE6vbjseuEOd3sjADi6UTR.c7897ff1",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -504,7 +504,7 @@
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "fc357b41",
+        "checksum": "c7897ff1",
         "format_version": 3
       }
     },
@@ -512,7 +512,7 @@
       "name": "precursor_full__lossless",
       "description": "isolation window, selected ion, and HCD activation (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v3.z.eJxbwsDM1NgkxcDvYs_E0riYYSFDM4jnWv3bofri61a5HUFgbs1v-xcMYADm1sK5jI0LGZrAYhooOpwymZigMs7PvoFFcpskpCUZudialjKA7PNmBJFOTE1MjKwREqprVrHJfGyMujQ1xdfZOkn5P0MCP4cDAwM7A7JqZ6YmRpBqBlTgI95x9-NlBwcHdgYAxfU00g.a8562a1d",
+      "token": "spectrl.v3.z.eJxbwsDM1NgkxcDvYs_E0riYYSFDM4jnWv3bofri61a5HUFgbs1PKwYwoxbIYGxcyNAE5mmgqHLKZGKCyjg_-wYWyW2SkJZk5GJrWsoAssObEUQ6MTUxMbJGSKiuWcUm87Ex6tLUFF9n6yTl_wwJ_BwODAzsDMiqnZmaGEGqGVCBj3jH3Y-XHRwc2BkA6FIy9A.7ce22dae",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -597,7 +597,7 @@
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "a8562a1d",
+        "checksum": "7ce22dae",
         "format_version": 3
       }
     },
@@ -709,7 +709,7 @@
       "name": "non_ms_ontology_param_key",
       "description": "a UO-ontology parameter (string map key)",
       "mode": "lossy",
-      "token": "spectrl.v3.z.eJxbzMDE1NQkxcDvYs_YlBXqb2UAAoYGvx14GMCArWkpA0jamxFEOjE1MzMuSc7JT_-ampKaU5L4NbU4OTEnVYrB5-W_1PLMlJIMFlaPFSFHA4pSGBnYGZH1OoP0LoboBWuS5BOAaGFidcluW9DIzggAjVwoXQ.2accf38d",
+      "token": "spectrl.v3.z.eJxbzMDE1NQkxcDvYs_YlBXqb2UAAoYGP50Z2JqWMoAkvBlBpBNTMzPjkuSc_PSvqSmpOSWJX1OLkxNzUqUYfF7-Sy3PTCnJYGH1WBFyNKAohZGBnRFZrzNI72KIXrAmST4BiBYmVpfstgWN7IwAYD8oUg.c9944c47",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -745,7 +745,7 @@
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "2accf38d",
+        "checksum": "c9944c47",
         "format_version": 3
       }
     },
@@ -753,7 +753,7 @@
       "name": "non_ms_ontology_param_key__lossless",
       "description": "a UO-ontology parameter (string map key) (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v3.z.eJxbzMDE1NQkxcDvYs_YlBXqb2UAAoYGvx14GMCArWkpA0jamxFEOjE1MTGyBhw-9PWrhkZMTH__oX1xsg4M7AzIipyZmhiBihjg4GfH18MODuwMAFNFGKw.4d1b5e03",
+      "token": "spectrl.v3.z.eJxbzMDE1NQkxcDvYs_YlBXqb2UAAoYGP50Z2JqWMoAkvBlBpBNTExMja8DhQ1-_amjExPT3H9oXJ-vAwM6ArMiZqYkRqIgBDn52fD3s4MDOAAAnkxih.323e8c5a",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -789,7 +789,7 @@
         "user_params": [],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "4d1b5e03",
+        "checksum": "323e8c5a",
         "format_version": 3
       }
     },
@@ -797,7 +797,7 @@
       "name": "user_params",
       "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level trailer extra",
       "mode": "lossy",
-      "token": "spectrl.v3.z.eJxNjr9OAkEYxPcW8Tq1VBq3o_Pv2dBIEBITvcSCRo3Fl7uVW7Pskt3PAzrvfAejxEaQSh_AB7H1LaSi8RYap5hkMvllZkoozfIKWW8e09Ib2GxMFrFxkc_rwQNx2tym2QTUoHrdTrjpatY2ICQ3rDVAAzehVlpYjbonIhbuXtUA7wY2rlk0QnUgTYLgaGf_YO9wNZ8St3TmOW_Qx5L3HkndmfGYS4QZtxFIXiHnnz-8L2JMVsqnr98fv0-BR3zvP3vi2MmSXUBbaxtLhJab1a_nke_5eXFZhmAjjawwwwGFu3UrNSCk83rr8qXQaAzKlQrk0ArLlEYOaWq4uVesLzBhlncFmmEPRfQHxq5ofQ.85b7cd25",
+      "token": "spectrl.v3.z.eJxbysDE1NgkxcDvYs_EvDCxuHERA5jrFND001dBQp6pcVFiXoV6dEhGalFuvkJIUWJmTmqRgmtFSVFirG9-Xn5mcX5JfkFmsoKvfpRVYlmGiYmpnqGRgTFb01IGkLHejCDSiamZmXFJck5--tfUlNScksSvqcXJiTmpUgw-a-6mlmemlGSwsHrMubL6yzQTRgZ2RmS9ziC9iyF6wZok-QQgWphYXdR3zJjFzsjeDHRljm9icXJ-iQKQKEpNLPvt4Bo5EwhmAaWKcxKL0lMV0jLzMktSFfJKc5NSi4AqXETXy1Zs7XEAqgBpyUvMqSzOLFbIyy8B6i8rSi0qzVMozyzJUChOzc0sKaosKMlMBgA5eGve.e4e599cd",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -835,7 +835,6 @@
               {
                 "name": "[Thermo Trailer Extra]Monoisotopic M/Z:",
                 "value": "445.1203",
-                "type": "xsd:string",
                 "unit_accession": null
               }
             ]
@@ -848,19 +847,22 @@
           {
             "name": "Mascot score",
             "value": 42.7,
-            "type": "xsd:float",
+            "unit_accession": null
+          },
+          {
+            "name": "large finite number",
+            "value": 100000000000000000000,
             "unit_accession": null
           },
           {
             "name": "reanalysis note",
             "value": "rerun with semitryptic",
-            "type": null,
             "unit_accession": null
           }
         ],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "85b7cd25",
+        "checksum": "e4e599cd",
         "format_version": 3
       }
     },
@@ -868,7 +870,7 @@
       "name": "user_params__lossless",
       "description": "free-text userParams: spectrum-level (typed value + unit) and a scan-level trailer extra (lossless)",
       "mode": "lossless",
-      "token": "spectrl.v3.z.eJxNjr1Ow0AQhNcXgUsoEQ3X0fEX06ThFEgFllKkAUSxMgfeyLmL7hbjdPjeAjqC8m40PEEafEggvpFGWu1IMysQog27sHVxJnrv6Nsl_JzDcVir7AUiO3ui_UDT7N9OSu1mVk4cUqWdHDXs8C63xpK3bOdUyPzwZoA8bfz9wLMj84h1mWWnB8cnR_3NsILYdJlEH4ogko1xH37VA9pWkML_0LkISReCP6ZXn19KpZCGblGVoy8sy86cRqbY-lBZZKzXanT92vG2RBOfBquFJy-NZY117bR7MvKZuJRez4jdYs5UfAMCJ1F2.39358941",
+      "token": "spectrl.v3.z.eJxbysDE1NgkxcDvYs_EvDCxuHERA5jrFND001dBQp6pcVFiXoV6dEhGalFuvkJIUWJmTmqRgmtFSVFirG9-Xn5mcX5JfkFmsoKvfpRVYlmGiYmpnqGRgTFb01IGkLHejCDSiamJiZE1wJgBBpkZMgUcGNgZkBU5MzUxAhUxwEGWz4u3Dg7sDOzNQEfk-CYWJ-eXKACJotTEst8OrpEzgWAWUKo4J7EoPVUhLTMvsyRVIa80Nym1CKjCRXS9bMXWHgegCpCWvMScyuLMYoW8_BKg_rKi1KLSPIXyzJIMheLU3MySosqCksxkAD1CVNc.8cc2d461",
       "tolerance": {
         "abs": 1e-9,
         "rel": 0
@@ -906,7 +908,6 @@
               {
                 "name": "[Thermo Trailer Extra]Monoisotopic M/Z:",
                 "value": "445.1203",
-                "type": "xsd:string",
                 "unit_accession": null
               }
             ]
@@ -919,19 +920,22 @@
           {
             "name": "Mascot score",
             "value": 42.7,
-            "type": "xsd:float",
+            "unit_accession": null
+          },
+          {
+            "name": "large finite number",
+            "value": 100000000000000000000,
             "unit_accession": null
           },
           {
             "name": "reanalysis note",
             "value": "rerun with semitryptic",
-            "type": null,
             "unit_accession": null
           }
         ],
         "extra_arrays": {},
         "array_units": {},
-        "checksum": "39358941",
+        "checksum": "8cc2d461",
         "format_version": 3
       }
     },
@@ -1625,7 +1629,7 @@
       "name": "explicit_core_encodings",
       "description": "core numeric encodings with whole-document compression",
       "mode": "lossy",
-      "token": "spectrl.v3.z.eJy91H0003scB_Dvfs3ymNplZeQpcQkhKfK4rF0UtZk1KhFhpmeP5WFmFDm2hISW3CW3tEqiB7G7Wp5SQyKVTB7KjTRyu651Veeek9OuU91zep3P-Z7vX-_3H9_v-ZwCCxIQdA5AA2VnN9iHEwMlQjAZMhwAN1e3cs5pzmeTSCDg_3MyS0p--8b597aG6En8YgCHw_HGT8MrmUGd53crMpICTBWWTq_YOlNIgLSQryPMkgJMFXpNrzCbKcRCWsjXCXaVAkwVnp1esWCmkFxpIV_HkiMFmCokqk5zOHUGVOx3s9GVggxBEGw68CM5_tC2L80Gn6-F1VAi7NNaiMIFiKiXfQ63RYzCDxxzpujtq5ePu9Jpp4IKYAWkxz1svHnllazYjG3YxVUfpxRyLzVWds3x1g--zmjod7wQe0D4WuXmUGvVIrvzVsc1ftX8xeRwglOMMMqi3WdM9_3TjaigiedmR2Srx8hU-Q3JqHRokBzR0apZnFhvk8YgxgMQd8zwbnBymvf1ZF5r-8_MVPN7Z0h-r7NDbo94mpmjaQyz5HO-tPJILKpex7sxY8nc_hNgrOUR8bmHVmU-lrb_lmi49eCgegBbjh6vIZdDIxlTB6i9wmaBp_rc8ymbXpy-05y941I3N9IpWX8HKbs9dyTKw7ot4uXOyrRTqWF9AOA8B2gFw8uHOino7tuzGk4yFy7KwFvCWGzFbPq9IR0luTHb9IW9Vw-r0NYOdvKddq1h6baFqWubCWdh_94oUBvdIXGPe5OlkStoZCnso9Atcbn3caSKallmOYxpsDVCYiwMnV8oj8qJVDUkuTwTheQffTO8qToeWZbk-shaBMATEpaPaZBtE6LluIU8lM9x_xvvawk54sHjo8Nu-eT4BWLrISXJkUCtCOQSbaOXp64potU6TOnNoVkpd4Wx8g7pb0Yyx2C_i301g8eOaLNq0Hkr7vg0KhMmXLqXxbAyMaUUA34u20nbJx5NedOhlrzdQfMoqV9BlXBm0tzZHoBW_pI2-MrLzzMeWJe6_4W2caBSiCJqoYlq9cRc0eXwoTUII-aeCd45mQPL-yupZbmHNm3hdprtf6HYM6oks8-l-Q5eydA3yP3Q-B9sQ9UVNS6PoptWEFRb13JJNbG45TVNT8rYi3Xqq-dolx3ZgpRXWMuPu0V0N-nuG1y1dZVsWALofedYFWXz-HQ-T73UoS6GQGZOcgRbNGQ0Avs4-PFbN3ox7V49WbtjyhcLn0ZZ69mnzW0ORYqeyIZAYZOXmPkd6ybHM72c_S5av08yBRJjpgkD1cS9KYkwVC7dG5D0cBuqwEVTa30FucDsZdMzPbaXQS0zqViSbnIl0NYxvCtJb7GBkfFScwtLq5Wr7BydVmNxLm7u6_GeXhu9N_n6-QdsDw4N27V7b3hk9IG4hMSk5IOp6RmszKPZuXknThYWcYpLzp2_cOnylcprVdU8_m1BXUPT_eaWBw87Hnd1i573Dbx89XpEPDb-bkICoFkys-UVlechVVAL0Au1dRYtNjBcYur4ozhJNxuc_rgWXD6sBSz-w1qAB-0O96OG7IuWIUMAwOEIOAORAscyBAhcSi1cDxvI4Aj6EPq4oJTi2gG4ip4llhgYzsjilAva-t4iUPpWOFJQZEpOcUVt-8CfcEUVDT1jS1vsOuLmwLDwWEZ6VgGntLxK0NT2tG_orQQxB6Wpb2plj_Mg-QbtjIxPychhF3Mrqmvvtz8beP0nABBEhzB0PqSL8acX8XsgpK4FBu-_h55ZVMZv6RFD8ki0rpGFDcYV7-1P2RNDT8vMKzpbdp3f0NLZMyiegBDyc5AotKauvpGphZWNPWaNqzvey3uL_3bKjj0RMXH0lLSMzJw8dlHxWW5ZxfVq_p2Gey0PO7t6-geHxeMTAMBoPJiOkx-NVXiRJ-wegcnNU9MxNLd2ctlA9gvZHU1jHEpnZeUWFHJKSi-WX63i3a67K3zQ8aS798WrkbF3k7CpV5dTUFKe95PqfDX1hVqfnt1kqfmy5SusV9k5fPpx6zw2EIgkss9mX79tgUEhoWE7P365_bEJwNbW1u4z9t_I4X-aDf4Boz7bzw.d9b54907",
+      "token": "spectrl.v3.z.eJy91Hk01GsYB_B3fo2xRy5ThmxZLiGEIlkmYy6KGsY0VCLrGK22lGWMoSzHDCGhSe6QW6isLdLcyaRIDbIklV0USVLXpas695yc5jrVPafPec573r--3z_e9zxnwYpoBJUFUEDC2h728URDMRBMgAgHwN7OvoJVwPpiYpyccP85aUVFf3zn_HuzwTvjvxrAYrFccQuwixZxx_mH5WvxAeYLixdW7F4sxItfyLfhpfMB5gtdFlboLRZiwC_k2_jZ8QHmC88vrFixWEgWv5BvY8jiA8wX4mUWSEpYBBnzw0xV-CBCEARbCPxMlj-17WuC4Mu1sAmKgX1eC2FYr35yuVtSW8gbxNGT1iTVoLsikZVd5tJIL4ZXcmR7443KF0KTekzNZ6Vy06S8ksuNlU-Xuqr7XaM1DFlejDjKeyV9Y6y1ZtXGEuNT8r8r_aaTRLEK54UZdLhOqXx4sh3pM9OvlypUO0Uki2yLQyZDo8SQzlaFwpi7pok0fDQAkSc17_nFJbpei2O3dvxKT9C_f47g8SrDv27CWU8fRaHpxV1wp1SEYpB3lV0bU1ZLDp0GUy2P8P2OitU5GMqRW73jrcdG5byYwtQoeeFMCkGbPEwe4DVzneUkS-J3PC-43Zyx93JPaahVnPpeQkZH1kSYo0lbyMi-6sSzCYGDAGCdhym540ZjXSRUT92ShjP0latScIYwBlMsg3p_TFlceMoseeXAlSRpyubRLo7VfhuGSlugnJIebwnm7-1c2Td75xwiX6fLZ3EbGaJBJKohNusBllBVK0SvgNE1dofMafMClueJIDNDZTQJts96_XNOvB7fURslVRZr98ikF4BuAoaDbhBq46GES_PYSLdTntc_1DtlTo6eejNun0OMWjFpMiY-l-qtGCK1Wklr5OxVMZRspy61OSA9_h4vQsQi-fVE2hTsz0l3Bb-pVCXGTVT2uttujRJOM7Y9a8MZaehikgYni2ml5BaFIr3ulI3zsVA4QRgSlXE6N6tvbQ5AK2d1G3x9eX_KQ5Nih79QphZkEr6XnKcjUzsj2VsePGaD0KIfnGFfEDhqNFRNLss6vmNXaZfekedifW_EBYJsm2_jxDXdfR2OT79gasqsu2n76HDTOieZ1s2lhJsRWKObTd1lTDXlu7VLlcpSd0mJiG7mRN7CO-j0DI5u2L1BKDAaDLy3rAkzfVyQw5YrtrgT7kSkz7K4u-QF5L0HWbjpW9cH0B0ufekHwivUeE_CTFTNEyWbA6R6u4X8ocDZy_Sczi2z02ku1h6XTD7E6oI5bboODdlUemMuRFOi-JBXbPseZK6tguLWKmKu3kjTM1Wmi0Y9PbZwLlmn0tvMMvhprKqahpb2Gn0DQ-P1GzZaWm3CYG3tHbbinF22u-5w9_D08vELCNx_4FBw6OGjkdExsXHHEpJTGGknMrKyT5_Jy2cVFl0ouXi5vLL6ak0tm1PHvdPQ9KC55WF75-OnPb39g8MjL19NTE5Nv5-ZA9ASAUERMYllUtLIFaiVSsqr1DQ0V-ta_ixW_AmCgk9rwfbjWsDgPq4FuO-BYA-yf9BhASIEAByOgNMQ8XAMjYvAxtfDVTHeNBZ3EKGO9Y0vrB-GS6saYvDewbR0VgW3bfAtAqlujCX4hsZnFlbVdwy_g4tJy6tqG5phtuB3egcGR9CS03NZxRU13Ka2J4Njb-cQS5EK6rrG5lhHgrvvvtCo-JRMZmFpVW39g45nw6_eAQBBVAhN5UAqaE9qPqcPklIxQOM8D1LT8ss4LX2TkIgUSkXLwBRth3P1JB0MpyamZeefL7vGaWjp6hudnIEQIkulkCgFFXUtXQNjU3O0jZ0DzsV1l6cPae_BkPBIanxiSlpmNjO_8HxpWdW1Ws7thvst7V1P-4ZGxyenZwCAUdgwZSsPCiPvEpvXMwETXiarrKlvYmW7jejhf-AwhXY8mZGelZvHKiq-VHGlhl135x7vYWd3z8DzlxNT72dh868uLCousewXmeWycisVPz-7zhr9tUbrTDZstPj847Y4bnPCE4huO9099nj7-gcE7vv05Y5ERAMzM7ONXzD_Thb_kyD4B7tq29M.ba1a074f",
       "tolerance": {
         "abs": 0.000001,
         "rel": 0.000001
@@ -1768,7 +1772,7 @@
           10.948889651276872,
           11.987818459583776,
           13.125330147352265,
-          14.370779141993754,
+          14.370779141993758,
           15.734407502856094,
           17.227429147699425,
           18.862122071335175,
@@ -1776,7 +1780,7 @@
           22.611569515367442,
           24.757157946593416,
           27.10633904364836,
-          29.67843150390037,
+          29.678431503900377,
           32.494587155918424,
           35.57796490339496,
           38.95392117442728,
@@ -1788,7 +1792,7 @@
           67.10759170575145,
           73.47536163492154,
           80.44736266284183,
-          88.0809296531706,
+          88.08092965317061,
           96.4388379154446,
           105.58981944335787,
           115.60912813835745,
@@ -1800,22 +1804,22 @@
           199.16480638308565,
           218.06334875063288,
           238.75515424585836,
-          261.41038375114914,
+          261.4103837511491,
           286.2153445389272,
           313.37402238589056,
           343.1097590679883,
           375.6670890311597,
           411.3137503418571,
-          450.34288645458395,
+          450.342886454584,
           493.0754569028749,
           539.8628767382501,
           591.0899064227987,
           647.1778159406797,
           708.5878491488876,
-          775.8250168566791,
+          775.825016856679,
           849.4422498263796,
           930.0449458481394,
-          1018.2959482819051,
+          1018.2959482819049,
           1114.9209970080917,
           1220.7146966133182,
           1336.5470508911153,
@@ -1843,25 +1847,25 @@
           9820.327790631261,
           10752.168531898926,
           11772.430676769298,
-          12889.50444072537,
+          12889.504440725374,
           14112.576178114527,
           15451.703926941462,
           16917.900122028354,
-          18523.22215674119,
+          18523.222156741194,
           20280.871538024632,
           22205.302450155352,
           24312.34061999788,
           26619.313461261307,
           29145.1925680099,
           31910.74972923551,
-          34938.72774749129,
+          34938.727747491284,
           38254.027466328735,
           41883.912544574836,
           45858.23366142809,
           50209.67399614466,
           54974.01800103736,
           60190.44567806662,
-          65901.85477903263,
+          65901.85477903261,
           72155.21357901015,
           79001.94712408964,
           86498.36012976686,
@@ -1890,7 +1894,7 @@
           695856.4947100444,
           761885.5973704612,
           834180.1332506338,
-          913334.6228248625,
+          913334.6228248626,
           1000000
         ],
         "charge": null,
@@ -2036,7 +2040,7 @@
           }
         },
         "array_units": {},
-        "checksum": "d9b54907",
+        "checksum": "ba1a074f",
         "format_version": 3
       }
     }

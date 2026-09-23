@@ -49,6 +49,9 @@ jobs:
       - name: Decoder mutation smoke test
         run: uv run --locked --extra brotli python scripts/fuzz_decode.py
 
+      - name: Named adversarial cases reach their required verdict
+        run: uv run --locked --extra brotli python scripts/adversarial_corpus.py --out /dev/null --mutations 0
+
   lint:
     name: lint
     runs-on: ubuntu-latest
@@ -65,6 +68,10 @@ jobs:
 
       - name: ruff check
         run: uv run --locked ruff check src/ tests/
+
+      - name: Check paper analysis lockfile
+        if: ${{ hashFiles('paper/analysis/uv.lock') != '' }}
+        run: uv lock --check --project paper/analysis
 
       - name: ruff format --check
         run: uv run --locked ruff format --check src/ tests/
@@ -144,6 +151,37 @@ jobs:
           npm install --prefix "$smoke_root" "$smoke_root"/*.tgz
           cp scripts/package_smoke.mjs "$smoke_root/smoke.mjs"
           node "$smoke_root/smoke.mjs"
+
+  token-parity:
+    name: full token parity (${{ matrix.os }}, py${{ matrix.python }}, node${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, python: "3.12", node: "22" }
+          - { os: ubuntu-latest, python: "3.14", node: "24" }
+          - { os: macos-latest, python: "3.13", node: "22" }
+          - { os: windows-latest, python: "3.13", node: "24" }
+    env:
+      UV_PYTHON: ${{ matrix.python }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: js/package-lock.json
+      - run: uv python install ${{ matrix.python }}
+      - run: uv sync --locked --dev --extra brotli
+      - run: npm ci
+        working-directory: js
+      - name: Compare complete tokens from shared and generated source inputs
+        run: uv run --locked --extra brotli python scripts/check_token_parity.py
+
+      - name: Compare decoder verdicts on the adversarial corpus
+        run: uv run --locked --extra brotli python scripts/check_adversarial_parity.py
 
   demo:
     name: demo build

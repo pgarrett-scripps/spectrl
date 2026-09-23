@@ -230,7 +230,9 @@ This rounds to increments of 0.01, with a checked absolute error bound of 0.005.
 Choose a width that fits the indices. A tighter tolerance requires a larger
 scale. The default intensity mapping instead uses log1p with scale 3600, whose
 bound is `(x + 1) * expm1(0.5 / 3600)`. It is not a strict relative bound near
-zero. The m/z default uses a logarithmic grid calibrated to a maximum error
+zero. When the smallest positive intensity `m` is below 1, as in normalized spectra,
+the scale grows to `ceil(1800 * (m + 1) / m)`, so every positive intensity stays
+within about 0.028% of itself and none rounds to zero. The m/z default uses a logarithmic grid calibrated to a maximum error
 of 0.1 ppm relative to each source value. Its scale is derived from the smallest
 positive m/z, with a numerical margin and a check of the reconstructed values.
 Zero remains exactly zero. For example, the allowed error is 0.00001 at m/z 100
@@ -239,7 +241,7 @@ All peaks remain present. See the specification for domains and fallback rules.
 
 ### User params (free-text metadata)
 
-For values with no CV term, attach mzML `userParam`s at the spectrum or scan
+For values with no CV term, attach named user parameters at the spectrum or scan
 level. They're omitted entirely when empty, so a spectrum without any is
 byte-identical to one produced before the feature existed.
 
@@ -249,14 +251,17 @@ from spectrl.model import InlineSpectrum, SpectrlUserParam
 spec = InlineSpectrum(
     default_array_length=3, mz=mz, intensity=intensity,
     user_params=[
-        SpectrlUserParam(name="Mascot score", value=42.7, type="xsd:float"),
+        SpectrlUserParam(name="Mascot score", value=42.7),
         SpectrlUserParam(name="reanalysis note", value="rerun semitryptic"),
     ],
 )
 ```
 
 `from_mzmlpy` reads spectrum- and scan-level `userParam`s automatically. The JS
-implementation exposes the same via `userParams`. Prefer a CV term whenever one
+implementation exposes the same via `userParams`. Values use their native scalar
+types; there is no separate type annotation. The mzML importer converts declared
+numeric user parameters into numbers, rejects invalid or out-of-range numeric
+values, and retains other values as text. Prefer a CV term whenever one
 exists. UserParams are heavier (no accession to compress) and uncontrolled.
 
 ### Trim large spectra
@@ -362,15 +367,26 @@ See [`demo/`](https://github.com/pgarrett-scripps/spectrl/tree/main/demo) for de
   registry and validated against [mzmlpy](https://github.com/tacular-omics/mzmlpy)'s
   StrEnum enums during development. Core encoding and decoding do not import an
   mzML parser.
-- **Deterministic (within an implementation)**: canonical form (m/z-ascending, deterministic quantization policies, RFC 8949 §4.2 CBOR) yields a stable token from a given implementation. A required CRC-32 checksum covers the received token text and is verified before decoding. Token bytes are not guaranteed identical across implementations (DEFLATE output is not canonical). See [SPECIFICATION.md](https://github.com/pgarrett-scripps/spectrl/blob/main/SPECIFICATION.md#8-canonical-form-and-checksum).
+- **Reproducible across implementations**: Python and JavaScript produced identical
+  complete tokens in all 1,788 comparisons, including 237 benchmark spectra under
+  both encoding profiles with raw, zlib, and Brotli payloads. Matching metadata,
+  array dtypes, and exact core encoding settings give portable token equality in
+  raw payload mode. Compressed and lossy equality was verified for the tested
+  runtime versions. Different settings can still produce different tokens for
+  the same spectrum, and the CRC-32 is a corruption check rather than a spectrum
+  hash. See [reproducibility results](docs/token-reproducibility.md) and the
+  [specification](SPECIFICATION.md#reproducible-core-output).
 - **Scope**: represents measured spectra and acquisition context across mass spectrometry. Molecular identifications and fragment assignments are outside the format.
 
 ## Scope and security
 
-- Services accepting public tokens should set per-call decoding budgets.
-  The API provides `decode_token(token, limits=DecodeLimits(...))`
-  and `decodeToken(token, limits)`. See [service integration](docs/services.md)
-  for defaults, byte accounting, examples, and release availability.
+- Decoding applies resource budgets by default, because a token usually arrives
+  from somewhere untrusted. Tighten them per call with
+  `decode_token(token, limits=DecodeLimits(...))` or `decodeToken(token, limits)`,
+  or raise them to the format ceilings for a trusted producer with
+  `DecodeLimits.unlimited()` and `UNLIMITED_DECODE_LIMITS`. See
+  [service integration](docs/services.md) for the default values, byte
+  accounting, and examples.
 
 - URL lengths vary by browser and receiving system. Encoding warns above 8 KiB.
   Use `top_n()` or a repository identifier for spectra that are too large.
@@ -389,8 +405,19 @@ The normative token format is specified in [SPECIFICATION.md](https://github.com
 specification is the contract. A machine-readable CV/codec/key registry lives in
 [schema/registry.json](https://github.com/pgarrett-scripps/spectrl/blob/main/schema/registry.json).
 
+Spectra convert both ways. `spectrl.formats` writes a decoded spectrum as
+mzML, MGF or MS2 and reads spectra back from any of them, reporting what a
+target format cannot represent rather than dropping it. mzML is the interchange
+format: a token written to mzML and read back is the same spectrum.
+
+```bash
+spectrl encode run.mzML --index 42 > token.txt   # one spectrum out of a run
+spectrl decode token.txt --output spectrum.mzML  # and back again
+```
+
 `spectrl.v3` carries measured spectra and acquisition context. Its header
-uses keys 0 through 11, with spectrum-level free-text parameters at key 7.
+uses keys 0 through 12, with spectrum-level free-text parameters at key 7 and
+source-declared ontology versions at key 12.
 Molecular identifications belong in the surrounding application.
 
 ## Contributing

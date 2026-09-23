@@ -21,13 +21,15 @@ export function encodingReport(spec: InlineSpectrum, options: Options = {}) {
   const token = encode(spec, options)
   const decoded = decodeCbor(token)
   const source = canonicalSort(spec)
-  const sourceArrays = Object.fromEntries<ArrayLike<number>>([
+  // Keep the encoder's ordered entries: object enumeration moves integer-like
+  // custom names ahead of core arrays and mispairs their descriptor metadata.
+  const sourceArrays: [string, ArrayLike<number>][] = [
     ...(["mz", "intensity", "charge"] as const).filter(k => source[k] != null).map(k => [k, source[k]!] as [string, ArrayLike<number>]),
     ...Object.entries(source.extraArrays ?? {}).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0),
-  ])
+  ]
   const decodedArrays = { ...decoded.extraArrays, mz: decoded.mz, intensity: decoded.intensity, charge: decoded.charge }
   const parts = tokenBreakdown(token).filter(p => p.accession !== undefined)
-  const arrays = Object.entries(sourceArrays).map(([key, a], index) => {
+  const arrays = sourceArrays.map(([key, a], index) => {
     const b = decodedArrays[key as keyof typeof decodedArrays] as ArrayLike<number>
     let maxAbsolute = 0
     let maxRelative = 0

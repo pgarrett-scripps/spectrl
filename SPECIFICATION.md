@@ -17,6 +17,12 @@ one Brotli stream. All use unpadded RFC 4648 base64url. Readers must support `r`
 and `z`. Brotli is optional and fails explicitly when unavailable.
 Unknown identifiers are errors. Readers never infer compression from bytes.
 
+The base64url spelling is canonical. Readers reject `=` padding, and reject a
+final character whose unused low bits are not zero. One payload therefore has
+exactly one valid token string. Without this a single spectrum has several
+spellings, each with its own valid checksum, which defeats comparing or
+deduplicating tokens as text and buys nothing.
+
 Writers default to `z`. The fixed presets are zlib level 6 and Brotli quality 5. Levels affect writing, not inverse semantics. Explicit
 `auto` is a writer option that selects the smallest complete token among
 available encodings, with tie order `z`, `r`, `b`. The token always records
@@ -40,12 +46,25 @@ incrementally. Concatenated streams and trailing data are rejected for all
 compressors. Gzip and bare DEFLATE are not valid `z` payloads. Inspection applies
 the same checks and expands the outer payload without decoding numeric arrays.
 
-Writers emit definite-length CBOR with map keys sorted by encoded length then
-byte order. Readers reject duplicate map keys, trailing data, unsupported tags,
-non-finite numbers, and integers outside the JavaScript safe integer range.
-Byte strings carry blobs. Text strings use UTF-8. Readers need not require
-minimal floating-point widths. Equivalent spectra need not produce identical
-tokens across compressors or implementations.
+Writers emit definite-length CBOR with shortest integer and length encodings,
+and map keys sorted by encoded length then byte order. Numeric metadata values
+that are mathematically integral and within the JavaScript safe integer range
+are encoded as integers, including both signs of zero as integer zero. Other
+finite numbers use the shortest floating-point width that preserves the value
+exactly. These rules apply recursively, including operation parameters and
+extension values. Booleans remain booleans; text is never parsed as a number.
+Numeric array blobs retain their declared word types and bits, including signed
+zero for exact encodings.
+
+Readers reject duplicate map keys, trailing data, unsupported tags, non-finite
+numbers, and integers outside the JavaScript safe integer range. Byte strings
+carry blobs. Text strings use UTF-8. Readers also reject a floating-point item
+whose value is integral and within the safe integer range, in any position,
+since the integer spelling is the one this section requires; `3` and `3.0` must
+not both encode the same document. A reader whose language has one numeric type
+cannot make this distinction after parsing, so it belongs to the wire form.
+Readers need not require minimal numeric widths. Compression and
+lossy arithmetic are separate reproducibility considerations; see section 6.
 
 Map keys are integers or text, including inside extension data. Booleans, null,
 and finite floating-point values are supported as values, not as map keys.
@@ -73,12 +92,24 @@ An absent array list means the token contains metadata only.
 | 9 | Acquisition | Acquisition record |
 | 10 | Processing | Ordered processing records |
 | 11 | Extensions | Namespaced extension map |
+| 12 | Ontology versions | Map of accession prefix to version text |
+
+Key 12 records the source-declared version string associated with each accession
+prefix, when known. Keys are canonical accession prefixes written without the
+colon, such as `MS` and `UO`, not the arbitrary `id` an mzML file gives a `cv`
+element. Values are nonempty text carried verbatim; declared versions have no
+common syntax across files, so they are never parsed or compared. The entry is
+informational provenance. The accession remains the identifier, and a reader
+must not reject a token because it lacks the named ontology release. spectrl
+does not resolve or validate ontology releases.
 
 All present arrays have exactly the length in key 0. Each array identity appears
 at most once. Core arrays are m/z (`MS:1000514`), intensity (`MS:1000515`), and
 charge (`MS:1000516`). Other PSI-MS array types retain their accessions.
 Nonstandard arrays use `MS:1000786` and a nonempty name. Nonstandard array names
-must not be `mz`, `intensity`, or `charge`. A nonempty free-text
+must not be `mz`, `intensity`, or `charge`, or match the CV-accession syntax
+`[A-Za-z][A-Za-z0-9]*:[A-Za-z0-9]+`. This reserves accession-shaped keys for
+standard arrays and prevents collisions in decoded array maps. A nonempty free-text
 name is required for nonstandard arrays and optional for standard arrays.
 Standard array identity is its accession, regardless of its optional name.
 Nonstandard array identity is its accession together with its name.
@@ -101,17 +132,33 @@ A value with a unit is `[value, unit]`, including `[null, unit]` when appropriat
 
 A seven-digit UO unit uses its integer tail. Other seven-digit numeric units use
 `[ontology, tail]`. Other unit accessions use their complete string. Numeric tails
-are in 0..9999999. Conversion from mzML retains lexical values as strings.
-Applications may also supply numeric values directly.
+are in 0..9999999. Conversion from mzML retains CV values as strings.
+Applications may supply numeric values directly.
+
+A unit is one of those three wire forms and nothing else. Readers reject any
+other value, including a boolean, a pair with a missing or extra member, a
+non-text ontology prefix, a tail outside 0..9999999, and a string that is not
+accession-shaped. This checks the wire form, not the ontology: no release is
+resolved and no reader may reject a token because a term is unfamiliar to it.
+The same applies to an accession tail. Accepting anything else would produce
+accessions a conforming writer cannot write back.
 
 ```text
 [[1000511, 2], [1000016, [23.41, 31]], [1000511, "repeat"]]
 ```
 
-A user parameter is `{"n": name, "v": value?, "t": type?, "u": unit?}`.
-Name is nonempty text. Value has the same scalar domain as a CV value. Type is
-optional text, normally an XML Schema type. Units use the CV unit representation.
-Unknown user parameter fields are errors.
+A user parameter is `{"n": name, "v": value?, "u": unit?}`.
+Name is nonempty text. Value has the same scalar domain as a CV value. Numbers,
+text, and null remain distinct; whole-valued floats and integers share the
+canonical numeric representation from section 1. There is no separate type annotation. Units use the
+CV unit representation. Unknown user parameter fields, including `t`, are errors.
+
+Importers translate source conventions into these native types. The mzML importer
+consumes numeric XML type annotations on user parameters, storing integers within
+the safe range or finite floating-point values. Invalid numeric text, overflow,
+and nonzero underflow are import errors. Other values remain text without
+guessing from their spelling. XML annotations and numeric lexical formatting
+are not retained; an absent value becomes null.
 
 A parameter group is `{0: CV pairs, 1: user parameters?}`. Scan windows,
 isolation windows, selected ions, and activation each use a parameter group.
@@ -224,13 +271,41 @@ floating-point rounding. Empty and all-zero arrays use `m = 1`. Zero is exact.
 The writer checks reconstructed values against the requested 0.1 ppm bound.
 Unsupported scales or failed checks use exact encoding. This scale selection
 uses the existing logarithmic representation without changing decoding.
-Nonnegative intensity uses scale 3600
-and `log: true`. The writer chooses the smallest integer width that fits the
+Nonnegative intensity uses `log: true` and scale 3600 when its
+smallest positive value `m` is at least 1 or it has no positive value. When
+`m < 1` the writer chooses `scale = max(3600, ceil(3600 / 2 * (m + 1) / m))`,
+evaluated in that order in binary64. Every positive intensity then keeps a
+relative error of at most `2 * expm1(0.5 / 3600)`, about 0.028%, the bound the
+fixed scale gives at 1, instead of rounding to zero below about 1.4e-4 source
+units. A scale that is not finite or exceeds 2^53 - 1 uses exact encoding.
+The writer chooses the smallest integer width that fits the
 indices. Unsupported domains or failed measured bounds use the exact profile
 for that array. All auxiliary arrays remain exact by default. Explicit lossy
 settings fail on invalid domains. Unknown array semantics require explicit
 caller permission before applying a lossy encoding. Callers may select any core encoding explicitly, or register a namespaced custom
 encoding. Outer zlib applies once to the complete CBOR document by default.
+
+### Reproducible core output
+
+Writers order present arrays as m/z, intensity, charge, then additional arrays
+by their input keys in Unicode scalar-value order. Map insertion order does not
+affect output. Ordered metadata lists retain their order; stable peak sorting
+preserves the input order of equal m/z values. Array dtypes, metadata, operation
+parameters, and format version are part of the encoded content.
+
+With identical normalized metadata, array dtypes and values, and identical
+choices of exact core encodings 0..2, raw payload mode produces identical tokens
+across conforming writers. The existing `lossless` profile with `raw` compression
+provides this reproducible representation without an additional codec or framing
+mode. Different codec choices need not produce identical tokens.
+
+Fixed compression levels alone do not specify unique compressed bytes across
+compressor versions. Logarithmic quantization and its bound checks also depend
+on runtime mathematical functions near rounding boundaries. The reference
+implementations test full-token equality for both profiles and all fixed outer
+compression presets, but those comparisons do not establish universal identity
+across arbitrary compressors, custom codecs, or mathematical runtimes. A token
+is not a codec-independent spectrum hash, and its CRC remains a corruption check.
 
 ## 7. Source, acquisition, and processing context
 
@@ -291,9 +366,18 @@ Hard limits are 16 MiB decoded CBOR, 64 MiB intermediate bytes per array,
 The intermediate per-array cap is also at most `64 + 16*element_count` bytes.
 A custom decoder receives the element count and must respect the derived
 intermediate cap before allocating expanded data.
-The caller's optional limits can further restrict token bytes, peaks, array count,
-and aggregate reconstructed array bytes. Aggregate limits are checked before any
-array is decoded. These limits also apply during inspection.
+Beyond those ceilings a reader applies resource budgets restricting token bytes,
+peaks, array count, and aggregate reconstructed array bytes. Aggregate limits are
+checked before any array is decoded, and the budgets also apply during inspection.
+
+The budgets are on by default, because a token ordinarily arrives from a URL or
+a message. The hard ceilings alone permit substantial expansion: four width-1
+quantized arrays of 4,000,000 elements reconstruct to 128 MB of float64 from a
+token of roughly 21 kB. The reference implementations default to 4 MiB of token,
+1,000,000 peaks, 64 arrays, and 64 MiB of reconstructed arrays, about an order
+of magnitude above the largest spectrum in their evaluation corpus (217,009
+peaks in a 1.05 MB token). A caller reading from a trusted producer can raise
+the budgets to the hard ceilings explicitly. Encoding is not subject to them.
 
 The machine-readable registry is `schema/registry.json`. Shared positive,
 negative, and inverse vectors under `test-vectors/` define executable examples.

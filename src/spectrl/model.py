@@ -30,15 +30,14 @@ class SpectrlCvParam:
 
 @dataclass
 class SpectrlUserParam:
-    """A free-text user parameter (mzML userParam) with no CV accession.
+    """A named parameter with no CV accession.
 
-    Carries an arbitrary name plus an optional value, XSD type annotation, and
-    unit accession. Use a SpectrlCvParam instead whenever a CV term exists.
+    The value's native scalar type is authoritative. Carries an arbitrary name
+    plus an optional value and unit accession. Prefer a CV term when one exists.
     """
 
     name: str
     value: str | float | int | None = None
-    type: str | None = None  # XSD type annotation, e.g. "xsd:float"
     unit_accession: str | None = None
 
 
@@ -129,6 +128,9 @@ class InlineSpectrum:
             preserved.
         array_names: Optional nonempty array names keyed by mz, intensity,
             charge, or an extra-array key. A custom array name must match its key.
+        cv_versions: Source-declared ontology version strings keyed by accession
+            prefix, e.g. {'MS': '4.1.142'}. Informational provenance only: the
+            accession is the identifier, and decoding never depends on this.
     """
 
     default_array_length: int
@@ -151,6 +153,7 @@ class InlineSpectrum:
     acquisition: dict | None = None
     processing: list[dict] = field(default_factory=list)
     extensions: dict = field(default_factory=dict)
+    cv_versions: dict[str, str] = field(default_factory=dict)
 
     user_params: list[SpectrlUserParam] = field(default_factory=list)
 
@@ -168,7 +171,10 @@ class InlineSpectrum:
             self.intensity = _normalize_array(self.intensity)
         if self.charge is not None:
             self.charge = _normalize_array(self.charge)
-        self.extra_arrays = {str(key): np.asarray(values) for key, values in self.extra_arrays.items()}
+        self.extra_arrays = {
+            str(key): (array := np.asarray(values)).astype(array.dtype.newbyteorder("="), copy=False)
+            for key, values in self.extra_arrays.items()
+        }
         self.array_units = {str(key): str(unit) for key, unit in self.array_units.items()}
 
 
@@ -200,6 +206,7 @@ class DecodedSpectrum:
     acquisition: dict | None = None
     processing: list[dict] = field(default_factory=list)
     extensions: dict = field(default_factory=dict)
+    cv_versions: dict[str, str] = field(default_factory=dict)
 
     user_params: list[SpectrlUserParam] = field(default_factory=list)
     checksum: str = ""

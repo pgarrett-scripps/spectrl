@@ -9,12 +9,37 @@ implementations rather than just a single library.
 implementation and decoded by the Python reference implementation
 (`tests/test_vectors.py`), pinning interoperability in both directions.
 
+`token-parity-inputs.json` supplies identical source spectra to both writers.
+`token-parity.json` pins their complete raw tokens, including checksums, for both
+default profiles. These test writer equality in addition to decoder agreement.
+`scripts/check_token_parity.py` compares live Python and JavaScript output for
+these inputs and seeded generated spectra, with raw, zlib, and Brotli payloads.
+Run it with `uv run --extra brotli python scripts/check_token_parity.py` after
+installing the JavaScript dependencies. Its `--inputs` option accepts another
+JSON list of `{name, spec}` entries using `spectrum_to_dict` source models.
+
 `negative-vectors.json` is the shared rejection contract. Each entry contains
 a raw CBOR payload that every implementation must reject for the stated reason.
 
 `cbor-hardening.json` adds handcrafted malformed CBOR bytes, including ambiguous
 map keys, tags, invalid UTF-8, unsupported simple values, and invalid extension
 scalars. Both full decoding and metadata inspection must reject every entry.
+
+`adversarial-vectors.json` holds complete tokens rather than bare CBOR, so it
+covers framing, base64url canonicality, compression streams, and the decoder's
+resource budgets alongside CBOR and header validation. Each entry names the
+specification rule under test and records whether the token must be accepted or
+rejected; rejection must surface as the implementation's decode error and never
+as another exception. Both suites read this file
+(`tests/test_adversarial.py`, `js/test/adversarial.test.ts`). Regenerate it with
+`python scripts/gen_adversarial_vectors.py`.
+
+These named cases are the pinned half of a larger corpus. The other half is
+seeded mutation of a metadata-rich spectrum's decoded CBOR tree, generated on
+demand rather than committed. `scripts/check_adversarial_parity.py` builds
+around 120,000 tokens across six seeds, decodes them with both implementations,
+and fails on any difference in acceptance, in recovered values, or in the
+exception type raised.
 
 The files are generated with:
 
@@ -47,7 +72,7 @@ cd js && node --import tsx scripts/gen_reverse_vectors.ts  # reverse-vectors.jso
         "scan_combination": { ... } | null,
         "precursors": [ { "isolation_window": {...}|null, "selected_ions": [...], "activation": {...}|null } ],
         "products": [ { "isolation_window": {...}|null } ],
-        "user_params": [ { "name": "...", "value": ..., "type": "xsd:..."|null, "unit_accession": ...|null } ],
+        "user_params": [ { "name": "...", "value": ..., "unit_accession": ...|null } ],
         "extra_arrays": { "<accession or name>": { "dtype": "float64"|"float32"|"int32", "values": [..] } },
         "array_units": { "<array key>": "<unit accession>" },
         "checksum": "<8 lowercase hex characters>",

@@ -53,9 +53,11 @@ def test_peak_and_array_limits_apply_to_metadata_only_and_empty_arrays():
     with pytest.raises(SpectrlDecodeError, match="max_peaks"):
         decode_token(token, limits=DecodeLimits(max_peaks=99))
     empty = encode_spectrum(InlineSpectrum(0, extra_arrays={f"a{i}": np.array([]) for i in range(65)}))
-    assert len(decode_token(empty).extra_arrays) == 65
-    with pytest.raises(SpectrlDecodeError, match="max_arrays"):
-        decode_token(empty, limits=DecodeLimits())
+    assert len(decode_token(empty, limits=DecodeLimits.unlimited()).extra_arrays) == 65
+    # The budgets are on by default, so 65 arrays needs an explicit allowance.
+    for limits in (None, DecodeLimits()):
+        with pytest.raises(SpectrlDecodeError, match="max_arrays"):
+            decode_token(empty, limits=limits)
     assert len(decode_token(empty, limits=DecodeLimits(max_arrays=65, max_decoded_bytes=0)).extra_arrays) == 65
     no_arrays = encode_spectrum(InlineSpectrum(0))
     assert decode_token(no_arrays, limits=DecodeLimits(max_peaks=0, max_arrays=0, max_decoded_bytes=0))

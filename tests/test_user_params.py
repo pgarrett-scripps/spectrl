@@ -20,15 +20,15 @@ def test_empty_user_params_is_byte_identical():
 def test_spectrum_user_params_roundtrip():
     spec = _base(
         user_params=[
-            SpectrlUserParam(name="Mascot score", value=42.7, type="xsd:float"),
+            SpectrlUserParam(name="Mascot score", value=42.7),
             SpectrlUserParam(name="note", value="rerun"),
             SpectrlUserParam(name="elapsed", value=3.5, unit_accession="UO:0000010"),
         ]
     )
     u = decode_token(encode_spectrum(spec)).user_params
     assert [p.name for p in u] == ["Mascot score", "note", "elapsed"]
-    assert u[0].value == 42.7 and u[0].type == "xsd:float"
-    assert u[1].value == "rerun" and u[1].type is None
+    assert u[0].value == 42.7
+    assert u[1].value == "rerun"
     assert u[2].unit_accession == "UO:0000010"
 
 
@@ -37,7 +37,7 @@ def test_scan_user_params_roundtrip():
         scans=[
             SpectrlScan(
                 params=[SpectrlCvParam(accession="MS:1000016", value=10.0, unit_accession="UO:0000031")],
-                user_params=[SpectrlUserParam(name="[Thermo]Mono M/Z", value="445.12", type="xsd:string")],
+                user_params=[SpectrlUserParam(name="[Thermo]Mono M/Z", value="445.12")],
             )
         ]
     )
@@ -66,11 +66,11 @@ def test_no_user_params_is_empty():
 
 def _with_vendor_params():
     return _base(
-        user_params=[SpectrlUserParam(name="filter string", value="ITMS + c NSI", type="xsd:string")],
+        user_params=[SpectrlUserParam(name="filter string", value="ITMS + c NSI")],
         scans=[
             SpectrlScan(
                 params=[SpectrlCvParam(accession="MS:1000016", value=10.0, unit_accession="UO:0000031")],
-                user_params=[SpectrlUserParam(name="[Thermo]Mono M/Z", value="445.12", type="xsd:string")],
+                user_params=[SpectrlUserParam(name="[Thermo]Mono M/Z", value="445.12")],
             )
         ],
     )

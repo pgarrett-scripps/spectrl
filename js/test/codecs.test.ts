@@ -13,10 +13,14 @@ test("base64url round-trips every byte value and all lengths", () => {
   }
 });
 
-test("base64url decode tolerates padding but rejects non-alphabet input", () => {
+test("base64url decode accepts only the canonical unpadded spelling", () => {
   const data = Uint8Array.from([0xff, 0xee, 0xdd, 0xcc]);
-  const padded = b64urlEncode(data) + "="; // trailing padding tolerated
-  assert.deepEqual(Array.from(b64urlDecode(padded)), Array.from(data));
+  const canonical = b64urlEncode(data);
+  assert.deepEqual(Array.from(b64urlDecode(canonical)), Array.from(data));
+  // One spelling per payload: padding and non-zero unused trailing bits are errors.
+  assert.throws(() => b64urlDecode(canonical + "="), /unpadded/);
+  assert.throws(() => b64urlDecode("_-5"), /trailing bits/); // "_-4" is the canonical spelling of those bytes
+  assert.deepEqual(Array.from(b64urlDecode("_-4")), [0xff, 0xee]);
   // strict: standard-base64 chars, whitespace, and impossible lengths rejected
   assert.throws(() => b64urlDecode("+/=="));
   assert.throws(() => b64urlDecode("AA A"));

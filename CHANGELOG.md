@@ -10,8 +10,89 @@ Python and JavaScript packages share a version. The current 3.x series uses
 the token format. Runtime support changes are called out in the release notes.
 See [SPECIFICATION.md](SPECIFICATION.md).
 
-## [3.0.0]
+## [3.0.0] - 2026-09-21
 
+- Refine the default lossy intensity grid for values below 1. The fixed log1p
+  scale of 3600 is nearly linear there, so normalized spectra lost every peak
+  below about 1.4e-4 to zero. When the smallest positive intensity `m` is below
+  1, writers now choose `max(3600, ceil(1800 * (m + 1) / m))`, which keeps every
+  positive intensity within about 0.028% of itself. Spectra whose intensities
+  are all 0 or at least 1 encode exactly as before, and decoding is unchanged.
+
+- Convert between tokens and mzML, MGF and MS2 files in both packages. mzML is
+  the interchange format and round-trips a token unchanged; MGF and MS2 hold a
+  precursor and peaks, so every writer reports what the target could not carry
+  instead of dropping it silently. `spectrl encode run.mzML --index 42` selects
+  one spectrum from a run, and `spectrl decode TOKEN --output spectrum.mzML`
+  writes it back. The browser demo gains a converter that reads and writes
+  these files in the page, with no upload.
+
+- Make the base64url payload canonical. Readers reject `=` padding and a final
+  character whose unused bits are not zero, so a payload has exactly one valid
+  token string instead of several that each pass the checksum.
+
+- Reject a CBOR float whose value is integral and within the safe integer range,
+  in any position. Writers already emitted the integer form; accepting both left
+  `3` and `3.0` spelling the same document, which a reader in a language with one
+  numeric type cannot distinguish after parsing.
+
+- Validate the wire form of a unit accession wherever one appears, including CV
+  and free-text parameters at spectrum, scan, precursor, array, and processing
+  scope. A boolean, a pair with a missing or extra member, a non-text ontology
+  prefix, a tail outside 0..9999999, and a non-accession string are now errors
+  rather than being coerced into an accession the encoder could not write back.
+  This checks syntax only; no ontology is resolved.
+
+- Fix an `IndexError` escaping `decode_token` for a unit pair shorter than two
+  members in array-scoped parameters. Every malformed token now terminates in
+  `SpectrlDecodeError` as documented.
+
+- Require array descriptor key 10 to be a list. An empty string, map, or byte
+  string previously passed as an empty processing history.
+
+- Reject a byte string as a processing `parameters` map in the JavaScript
+  implementation, and range-check accession tails there to 0..9999999. Reject
+  `null` where an extension map is required. These matched the Python reader
+  already.
+
+- Apply decoder resource budgets by default in both implementations, with
+  `DecodeLimits.unlimited()` and `UNLIMITED_DECODE_LIMITS` for a trusted
+  producer. The wire ceilings alone allowed a 21 kB token to reconstruct 128 MB
+  of arrays. Defaults are 4 MiB of token, 1,000,000 peaks, 64 arrays, and 64 MiB
+  of reconstructed arrays, roughly an order of magnitude above the largest
+  spectrum in the benchmark corpus. Encoding is not subject to them.
+
+- Add an adversarial conformance corpus: `scripts/adversarial_corpus.py` with
+  158 named cases pinned in `test-vectors/adversarial-vectors.json`, plus seeded
+  document mutations. `scripts/check_adversarial_parity.py` compares 120,158
+  tokens across both decoders in CI and fails on any difference in acceptance,
+  recovered values, or exception type.
+
+- Record the source-declared ontology version for each accession prefix at header
+  key 12, keyed as `MS` or `UO` rather than by the arbitrary `id` an mzML file
+  gives a `cv` element. Versions are opaque text carried verbatim, populated on
+  mzML import for the ontologies a spectrum actually cites. The entry is
+  informational provenance: the accession remains the identifier, and a reader
+  must not reject a token over the release it names.
+
+- Align Python and JavaScript numeric metadata serialization, including exact
+  short floats, whole-valued floats, and all safe integers. Preserve numeric
+  array bits and sort additional array names by Unicode scalar values in both
+  writers. Add shared complete-token vectors and a cross-language CI comparison.
+
+- Remove separate user-parameter type annotations. Values carry their native CBOR
+  type; mzML import converts declared numeric user values and rejects invalid or
+  out-of-range numbers. Earlier draft v3 tokens with the `t` field are rejected.
+
+- Preserve unsupported shared links in the viewer and show a version error instead
+  of substituting the demo spectrum.
+- Reject accession-shaped custom array names before decoding to prevent array
+  identity collisions. Preserve unusual custom names, Unicode digits, and their
+  report metadata.
+- Preserve auxiliary float32 widths across byte orders, and rank int32 boundary
+  values correctly during peak selection.
+- Expand regression coverage for link loading, array names, endian conversion,
+  integer boundaries, deterministic selection, and finite numeric bit patterns.
 - Remove the pre-release Zstandard payload mode and its package dependencies.
   The supported payloads are raw CBOR, zlib, and optional Brotli.
 

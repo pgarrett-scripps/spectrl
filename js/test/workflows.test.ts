@@ -1,6 +1,35 @@
 import assert from "node:assert/strict"
 import test from "node:test"
-import { encodingReport, fitToBudget, parsePeakList, formatPeakList, decodeToken } from "../src/index.ts"
+import { encodingReport, fitToBudget, parsePeakList, formatPeakList, decodeToken, topN } from "../src/index.ts"
+
+test("numeric custom names keep quality metrics paired with their descriptors", () => {
+  const report = encodingReport({ defaultArrayLength: 2, mz: [200, 100], intensity: [2, 1],
+    extraArrays: { "10": Int32Array.from([10, 11]), "2": Float32Array.from([2, 3]) } }, { lossless: true })
+  assert.deepEqual(report.arrays.map(a => [a.key, a.accession, a.typeAccession]), [
+    ["mz", "MS:1000514", "MS:1000523"], ["intensity", "MS:1000515", "MS:1000523"],
+    ["10", "MS:1000786", "MS:1000519"], ["2", "MS:1000786", "MS:1000521"],
+  ])
+  assert.equal(report.allArraysExact, true)
+})
+
+test("peak selection preserves dtype and parallel-array alignment across numeric boundaries", () => {
+  for (const Ctor of [Int32Array, Float32Array, Float64Array]) {
+    const intensity = Ctor.from([-2147483648, 0, 2147483647, 2, 2, -1, -0])
+    const mz = [3, 1, 2, 2, 1, 4, 1]
+    const spec = { defaultArrayLength: mz.length, mz, intensity, extraArrays: { position: Int32Array.from(mz.keys()) } }
+    // Independent bucket selection avoids reusing the implementation's comparator.
+    const descending = [...new Set(intensity)].sort((a, b) => b - a)
+    const ranked = descending.flatMap(value => [...intensity.keys()].filter(i => intensity[i] === value)
+      .sort((a, b) => mz[a]! - mz[b]! || a - b))
+    for (let n = 0; n < mz.length; n++) {
+      const selected = topN(spec, n)
+      const expected = ranked.slice(0, n).sort((a, b) => mz[a]! - mz[b]! || a - b)
+      assert.deepEqual(Array.from(selected.extraArrays!.position!), expected)
+      assert.ok(selected.intensity instanceof Ctor)
+      assert.deepEqual(Array.from(selected.intensity!), expected.map(i => intensity[i]!))
+    }
+  }
+})
 
 test("quality measures sorted arrays and zero references", () => {
   const spec = { defaultArrayLength: 3, mz: [200.123456, 0, 100.123456], intensity: [-1, 0, 10],

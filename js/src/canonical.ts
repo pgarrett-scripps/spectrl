@@ -13,7 +13,7 @@ import {
   TYPE_INT32,
   accessionTail,
 } from "./cv.js";
-import { ppmParameters, quantizedParameters } from "./quantized.js"
+import { intensityParameters, ppmParameters } from "./quantized.js"
 import { DEFAULT_INTENSITY_SCALE, DEFAULT_MZ_PPM } from "./format.js"
 import type { Descriptor } from "./header.js";
 import type { ArrayEncoding, ArrayEncodingOption, InlineSpectrum } from "./model.js";
@@ -24,8 +24,9 @@ import {
 
 type ExtraArray = Float64Array | Float32Array | Int32Array | number[];
 
-const MS_ACCESSION_RE = /^MS:\d{7}$/;
-const ANY_ACCESSION_RE = /^[A-Za-z][A-Za-z0-9]*:[A-Za-z0-9]+$/;
+// Require the actual end of input; JS `$` also matches before a final newline.
+const MS_ACCESSION_RE = /^MS:\d{7}(?![\s\S])/;
+const ANY_ACCESSION_RE = /^[A-Za-z][A-Za-z0-9]*:[A-Za-z0-9]+(?![\s\S])/;
 const CORE_ARRAY_ALIASES = new Map([
   ["MS:1000514", "mz"],
   ["MS:1000515", "intensity"],
@@ -155,6 +156,22 @@ function hasNegative(arr: ArrayLike<number>): boolean {
   return false;
 }
 
+// Array names are user data, including names present on Object.prototype.
+function own<T>(map: Record<string, T> | undefined, key: string): T | undefined {
+  return map && Object.prototype.hasOwnProperty.call(map, key) ? map[key] : undefined
+}
+
+// Python sorts Unicode scalar values; JavaScript's default comparison sorts
+// UTF-16 code units, which disagrees for supplementary-plane array names.
+function compareArrayNames(a: string, b: string): number {
+  const left = Array.from(a), right = Array.from(b)
+  for (let i = 0; i < Math.min(left.length, right.length); i++) {
+    const difference = left[i]!.codePointAt(0)! - right[i]!.codePointAt(0)!
+    if (difference) return difference
+  }
+  return left.length - right.length
+}
+
 /** Encode all peak arrays. Returns blobs and matching descriptors (without `seg`). */
 export function buildArrayBlobs(
   spec: InlineSpectrum, lossless: boolean, mzPpm = DEFAULT_MZ_PPM, intFp = DEFAULT_INTENSITY_SCALE,
@@ -164,7 +181,7 @@ export function buildArrayBlobs(
   const settings = normalizeEncodingKeys(arrayEncodings ?? {})
   const arrays: [string, ExtraArray | null | undefined][] = [
     ["mz", spec.mz], ["intensity", spec.intensity], ["charge", spec.charge],
-    ...Object.entries(spec.extraArrays ?? {}).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0),
+    ...Object.entries(spec.extraArrays ?? {}).sort(([a], [b]) => compareArrayNames(a, b)),
   ]
   const present = new Set(arrays.filter(([, a]) => a != null).map(([k]) => k))
   if (Object.keys(settings).some(k => !present.has(k))) throw Error("arrayEncodings contains unknown array key")
@@ -194,7 +211,7 @@ export function buildArrayBlobs(
     let type = typeTailOf(array)
     let defaultEncoding: Operation = [key === "mz" ? 2 : key === "intensity" ? 1 : 0, 1]
     if (!lossless && ["mz", "intensity"].includes(key) && !(array instanceof Int32Array) && !hasNegative(array)) {
-      try { defaultEncoding = [3, 1, key === "mz" ? ppmParameters(array, mzPpm) : quantizedParameters(array, intFp, true)] }
+      try { defaultEncoding = [3, 1, key === "mz" ? ppmParameters(array, mzPpm) : intensityParameters(array, intFp)] }
       catch { /* Unsupported numeric domains use the exact default. */ }
     }
     let encoding = descriptor(setting.encoding ?? defaultEncoding, encodingNames)
@@ -215,8 +232,8 @@ export function buildArrayBlobs(
     blobs.push(result.blob)
     descriptors.push({ type, array: tail, encoding, fidelity: result.fidelity,
       name: Object.prototype.hasOwnProperty.call(spec.arrayNames ?? {}, key) ? spec.arrayNames![key] : identity.name,
-      unit: spec.arrayUnits?.[key] ?? spec.arrayUnits?.[`MS:${tail}`], params: spec.arrayParams?.[key],
-      userParams: spec.arrayUserParams?.[key], processing: spec.arrayProcessing?.[key], extensions: spec.arrayExtensions?.[key],
+      unit: own(spec.arrayUnits, key) ?? own(spec.arrayUnits, `MS:${tail}`), params: own(spec.arrayParams, key),
+      userParams: own(spec.arrayUserParams, key), processing: own(spec.arrayProcessing, key), extensions: own(spec.arrayExtensions, key),
     })
   }
   return { blobs, descriptors }

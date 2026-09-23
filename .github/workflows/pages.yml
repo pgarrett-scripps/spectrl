@@ -38,8 +38,9 @@ jobs:
       - name: Assemble static site
         run: |
           mkdir -p _site
-          cp demo/index.html _site/index.html
+          cp demo/index.html demo/convert.html demo/styles.css _site/
           cp -r demo/dist _site/dist
+          cp -r demo/examples _site/examples
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

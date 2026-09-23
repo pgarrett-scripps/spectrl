@@ -109,11 +109,11 @@ spectrl inspect token.txt
 
 **Browser workflow**
 
-Expand Import your own peaks to paste text or load a CSV, TSV, or text file. Select Import peaks to validate and display it. Changing the lossless checkbox re-encodes the current spectrum. Export displayed peaks as TSV exports the decoded values currently shown, not the unavailable original values of a pasted token.
+The demo page (`index.html`) puts one spectrum on the page. Select an example, toggle the lossless checkbox to re-encode it, and copy the token, the shareable link, or the QR code. The metadata carried in the token, the encoding details, and the quality report are shown below the plot, and the report can be downloaded for spectra encoded in the page. Pasted tokens have no known source for an error measurement.
 
-Expand Fit a share budget, set a byte limit, and explicitly select permitted omissions. Preview candidate reports the proposed removals without replacing the token. Apply candidate replaces the displayed spectrum. The quality report under Technical details can be downloaded for spectra encoded in the page. Pasted tokens have no known source for an error measurement.
+The Convert page (`convert.html`) reads an mzML, MGF, or MS2 file, or a pasted peak list, and encodes the selected spectrum into a token. The displayed spectrum can be written back out as mzML, MGF, MS2, or a TSV peak list. Files never leave the browser.
 
-The plot displays at most 5,000 peaks to keep rendering bounded. This visual limit does not trim tokens or exports. Optional compressor backends load when needed for decoding. Both default profiles use zlib payload compression.
+The plot displays at most 5,000 peaks to keep rendering bounded. This visual limit does not trim tokens or exports. The Brotli payload backend loads when a token needs it. Both default profiles use zlib payload compression.
 
 V3 records peak selection and user-parameter omission in processing history.
 Known prior lossy encoding history survives later exact recompression. Sorting

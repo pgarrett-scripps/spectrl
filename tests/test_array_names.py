@@ -64,3 +64,41 @@ def test_names_cannot_relabel_custom_identity_or_name_absent_arrays():
 def test_standard_names_do_not_use_custom_name_restrictions():
     spec = InlineSpectrum(1, mz=[100], array_names={"mz": "mz"})
     assert decode_token(encode_spectrum(spec)).array_names == {"mz": "mz"}
+
+
+@pytest.mark.parametrize("name", ["MS:1000517", "MS:1000514", "MS:1000786", "MS:1", "UO:0000001", "NCIT:C1"])
+@pytest.mark.parametrize("order", ["alone", "first", "last"])
+def test_accession_shaped_custom_names_are_rejected_before_array_decoding(name, order):
+    doc, _ = read_token_document(encode_spectrum(InlineSpectrum(1, mz=[11]), lossless=True))
+    standard = {**doc[6][0], 1: 1000517}
+    custom = {**doc[6][0], 1: 1000786, 4: name}
+    doc[6] = [custom] if order == "alone" else [custom, standard] if order == "first" else [standard, custom]
+    token = frame_payload(cbor2.dumps(doc, canonical=True))
+    for reader in (read_token_document, inspect_token, decode_token):
+        with pytest.raises(ValueError, match="non-standard array name"):
+            reader(token)
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "__proto__",
+        "constructor",
+        "toString",
+        "0",
+        "01",
+        "score: mean",
+        "é",
+        "🧪",
+        "MS:1000517\n",
+        "MS:１０００５１７",
+        "MS:١٠٠٠٥١٧",
+    ],
+)
+def test_custom_names_preserve_values_and_metadata_across_reencoding(name):
+    spec = InlineSpectrum(2, mz=[2, 1], extra_arrays={name: np.array([-0.0, 7], dtype=np.float32)})
+    decoded = decode_token(encode_spectrum(spec, lossless=True))
+    restored = spectrum_from_dict(spectrum_to_dict(decoded))
+    again = decode_token(encode_spectrum(restored, lossless=True))
+    assert again.extra_arrays[name].tobytes() == decoded.extra_arrays[name].tobytes()
+    assert again.array_names == decoded.array_names
