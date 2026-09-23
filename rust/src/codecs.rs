@@ -169,6 +169,7 @@ pub struct Rounded {
 
 /// A core numeric encoding, revision 1.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub enum Encoding {
     Raw,
     Shuffle,
@@ -445,7 +446,7 @@ fn encode_rounded(array: &Array, p: &Rounded) -> Result<Vec<u8>> {
 }
 
 fn decode_rounded(blob: &[u8], dtype: DType, p: &Rounded) -> Result<Array> {
-    let m = mantissa_bits(dtype).expect("checked by the caller");
+    let m = mantissa_bits(dtype).expect("checked by decode");
     let d = m - p.bits;
     let total = 8 * dtype.size() as u32;
     let words = read_words(&unshuffle(blob, p.width), p.width);
@@ -505,9 +506,26 @@ pub fn encode(array: &Array, encoding: &Encoding) -> Result<(Vec<u8>, DType)> {
     })
 }
 
-/// Decode a blob of `n` elements. The caller has validated that `dtype` is
-/// allowed for `encoding` and the parameters are in range.
+/// Decode a blob of `n` elements of declared type `dtype`. Parameters that are
+/// out of range for `dtype` are a decode error, never a panic.
 pub fn decode(blob: &[u8], n: usize, dtype: DType, encoding: &Encoding) -> Result<Array> {
+    match encoding {
+        Encoding::Quantized(p) if !valid_width(p.width as i64) => {
+            bail!("quantized width must be 1, 2, 4 or 8");
+        }
+        Encoding::Rounded(p) => {
+            let Some(m) = mantissa_bits(dtype) else {
+                bail!("rounded encoding needs a float32 or float64 array");
+            };
+            if !valid_width(p.width as i64) || p.width > dtype.size() {
+                bail!("rounded width must be 1, 2, 4 or 8 and at most the type size");
+            }
+            if p.bits > m {
+                bail!("rounded mantissa bits exceed 0..{m} for {}", dtype.name());
+            }
+        }
+        _ => {}
+    }
     let word = match encoding {
         Encoding::Quantized(p) => p.width,
         Encoding::Rounded(p) => p.width,
@@ -567,6 +585,31 @@ mod tests {
         assert_eq!(round_half_up(2.4999999999999996), 2.0);
         assert_eq!(round_half_up(0.49999999999999994), 0.0);
         assert_eq!(round_half_up(4503599627370497.0), 4503599627370497.0);
+    }
+
+    #[test]
+    fn out_of_range_parameters_are_errors_not_panics() {
+        let rounded = |bits, width| Encoding::Rounded(Rounded { bits, width });
+        let quantized = |width| {
+            Encoding::Quantized(Quantized {
+                scale: 1.0,
+                width,
+                log: false,
+                delta: false,
+            })
+        };
+        for (dtype, encoding) in [
+            (DType::I32, rounded(0, 4)),
+            (DType::F64, rounded(60, 8)),
+            (DType::F32, rounded(24, 4)),
+            (DType::F32, rounded(0, 8)),
+            (DType::F64, rounded(0, 0)),
+            (DType::F64, quantized(0)),
+            (DType::F64, quantized(3)),
+        ] {
+            let e = decode(&[], 0, dtype, &encoding).unwrap_err();
+            assert_eq!(e.kind(), crate::ErrorKind::Decode, "{dtype:?} {encoding:?}");
+        }
     }
 
     #[test]

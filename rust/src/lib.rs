@@ -21,18 +21,26 @@
 #![forbid(unsafe_code)]
 
 pub mod base64url;
+// Wire-level building blocks shared with the CLI and the conformance tests.
+// They are public for those callers, not part of the stable API.
+#[doc(hidden)]
 pub mod cbor;
 pub mod codecs;
 pub mod error;
 pub mod fdlibm;
+#[doc(hidden)]
 pub mod framing;
+#[doc(hidden)]
 pub mod header;
+#[doc(hidden)]
 pub mod json;
 pub mod model;
 pub mod writer;
 
-pub use codecs::{Array, DType, Encoding};
+pub use codecs::{Array, DType, Encoding, Quantized, Rounded};
 pub use error::{Error, ErrorKind, Result};
+pub use framing::Mode;
+pub use header::Operation;
 pub use model::*;
 pub use writer::{Compression, EncodeOptions, encode as encode_spectrum};
 
@@ -74,6 +82,7 @@ impl Budgets {
 
 /// A decoded token.
 #[derive(Debug, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct Decoded {
     pub spectrum: Spectrum,
     /// The eight-character checksum as received.
@@ -83,6 +92,7 @@ pub struct Decoded {
 
 /// One array as seen by [`inspect_token`], without decoding its values.
 #[derive(Debug, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct ArrayInfo {
     /// `mz`, `intensity`, `charge`, `MS:xxxxxxx` or the nonstandard name.
     pub key: String,

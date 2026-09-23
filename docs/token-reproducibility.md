@@ -9,9 +9,9 @@ Additional arrays use Unicode scalar-value ordering in both writers.
 
 The comparison checks complete tokens, including framing and CRC, from the same
 source model rather than decoding one language's output and re-encoding it.
-Thirteen targeted metadata/array cases plus 54 seeded generated spectra produced
-402 Python tokens across the two profiles and three fixed compression modes;
-JavaScript and Rust each wrote all 402 byte-identically (rerun 2026-09-23 on the
+Fifteen targeted metadata/array cases plus 54 seeded generated spectra produced
+414 Python tokens across the two profiles and three fixed compression modes;
+JavaScript and Rust each wrote all 414 byte-identically (rerun 2026-09-23 on the
 3.0.0 code). The paper's 237-spectrum selection produced another 1,422 identical
 Python/JavaScript tokens, rechecked by every paper asset build. Both runs had
 zero differences; their runtime versions are recorded in

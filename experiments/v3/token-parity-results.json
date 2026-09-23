@@ -1,18 +1,18 @@
 {
-  "compared": 402,
+  "compared": 414,
   "identical": {
-    "js/lossless/raw": 67,
-    "rust/lossless/raw": 67,
-    "js/lossless/zlib": 67,
-    "rust/lossless/zlib": 67,
-    "js/lossless/brotli": 67,
-    "rust/lossless/brotli": 67,
-    "js/lossy/raw": 67,
-    "rust/lossy/raw": 67,
-    "js/lossy/zlib": 67,
-    "rust/lossy/zlib": 67,
-    "js/lossy/brotli": 67,
-    "rust/lossy/brotli": 67
+    "js/lossless/raw": 69,
+    "rust/lossless/raw": 69,
+    "js/lossless/zlib": 69,
+    "rust/lossless/zlib": 69,
+    "js/lossless/brotli": 69,
+    "rust/lossless/brotli": 69,
+    "js/lossy/raw": 69,
+    "rust/lossy/raw": 69,
+    "js/lossy/zlib": 69,
+    "rust/lossy/zlib": 69,
+    "js/lossy/brotli": 69,
+    "rust/lossy/brotli": 69
   },
   "differences": [],
   "implementations": [

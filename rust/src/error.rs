@@ -4,6 +4,7 @@ use std::fmt;
 
 /// What went wrong, in terms a caller can act on.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
 pub enum ErrorKind {
     /// The token, payload, CBOR document or header violates the format.
     Decode,

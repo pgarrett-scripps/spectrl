@@ -301,10 +301,11 @@ The default lossy profile uses encoding 3 for floating m/z and intensity.
 m/z uses `log: true` and `delta: true` with a maximum pointwise error of
 0.1 ppm relative to each source value. Let `m` be the smallest positive m/z and
 `r = 0.1e-6 * (1 - 1e-7)`. The writer chooses
-`scale = ceil(0.5 / log1p(r * m / (m + 1)))`. The small margin accommodates
-floating-point rounding. Empty and all-zero arrays use `m = 1`. Zero is exact.
-The writer checks each reconstructed value in the declared type against the
-requested 0.1 ppm bound. For a float32 array that value is the rounded float32
+`scale = ceil(0.5 / log1p(r * (m / (m + 1))))`, evaluated in binary64 in that
+grouping: `m / (m + 1)` first, then the product with `r`. The small margin
+accommodates floating-point rounding. Empty and all-zero arrays use `m = 1`. Zero is exact.
+The writer checks each reconstructed value in the declared type against both
+the section 5 rounding bound and the requested 0.1 ppm bound. For a float32 array that value is the rounded float32
 value, so the check often fails and the exact encoding is used.
 Unsupported scales or failed checks use exact encoding. This scale selection
 uses the existing logarithmic representation without changing decoding.

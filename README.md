@@ -409,9 +409,9 @@ See [`demo/`](https://github.com/tacular-omics/spectrl/tree/main/demo) for detai
   StrEnum enums during development. Core encoding and decoding do not import an
   mzML parser.
 - **Reproducible across implementations**: Python and JavaScript produced identical
-  complete tokens in all 1,824 comparisons, including 237 benchmark spectra under
+  complete tokens in all 1,836 comparisons, including 237 benchmark spectra under
   both encoding profiles with raw, zlib, and Brotli payloads; Rust matched both on
-  all 402 targeted and seeded tokens. Matching metadata,
+  all 414 targeted and seeded tokens. Matching metadata,
   array dtypes, and exact core encoding settings give portable token equality in
   raw payload mode. Compressed and lossy equality was verified for the tested
   runtime versions. Different settings can still produce different tokens for

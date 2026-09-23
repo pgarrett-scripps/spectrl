@@ -11,6 +11,7 @@ use crate::model::*;
 
 /// Outer payload compression requested by a caller.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[non_exhaustive]
 pub enum Compression {
     Raw,
     #[default]
@@ -271,12 +272,25 @@ fn reconstructed(index: f64, scale: f64, log: bool, dtype: DType) -> f64 {
     codecs::in_declared(codecs::dequantize(index as u64, scale, log), dtype)
 }
 
+/// Whether `y`, the declared-type reconstruction of `x` on a log grid, is within
+/// the grid's rounding bound, grown for the final float32 rounding (section 5).
+fn within_grid(x: f64, y: f64, scale: f64, dtype: DType) -> bool {
+    let slack = if dtype == DType::F32 {
+        (y * 2f64.powi(-24)).max(2f64.powi(-150))
+    } else {
+        0.0
+    };
+    (y - x).abs() <= (x + 1.0) * fdlibm::expm1(0.5 / scale) + slack
+}
+
 /// The 0.1 ppm logarithmic m/z candidate, if every value in the declared type
-/// passes its bound check.
+/// passes both the grid bound (section 5) and the 0.1 ppm bound (section 6).
 fn mz_candidate(values: &[f64], dtype: DType) -> Option<Encoding> {
     let m = smallest_positive(values).unwrap_or(1.0);
     let r = 0.1e-6 * (1.0 - 1e-7);
-    let scale = (0.5 / fdlibm::log1p(r * m / (m + 1.0))).ceil();
+    // Grouped as the reference implementations evaluate it; (r * m) / (m + 1)
+    // rounds differently for about one m in 10^9 and moves the scale by one.
+    let scale = (0.5 / fdlibm::log1p(r * (m / (m + 1.0)))).ceil();
     let q = quantized(values, scale, true, true)?;
     let ok = values.iter().all(|&x| {
         let back = reconstructed(
@@ -285,7 +299,7 @@ fn mz_candidate(values: &[f64], dtype: DType) -> Option<Encoding> {
             true,
             dtype,
         );
-        (back - x).abs() <= 0.1e-6 * x
+        within_grid(x, back, scale, dtype) && (back - x).abs() <= 0.1e-6 * x
     });
     ok.then_some(Encoding::Quantized(q))
 }
@@ -313,7 +327,6 @@ fn intensity_candidates(array: &Array, values: &[f64]) -> Vec<Encoding> {
     };
     if let Some(q) = quantized(values, scale, true, false) {
         let dtype = array.dtype();
-        let grid = fdlibm::expm1(0.5 / scale);
         let relative = 2.0 * fdlibm::expm1(0.5 / 3600.0);
         let bound_ok = values.iter().all(|&x| {
             let y = reconstructed(
@@ -322,15 +335,9 @@ fn intensity_candidates(array: &Array, values: &[f64]) -> Vec<Encoding> {
                 true,
                 dtype,
             );
-            // The grid bound, grown for the final float32 rounding (section 5),
-            // and the profile's relative bound (section 6), both in the declared type.
-            let slack = if dtype == DType::F32 {
-                (y * 2f64.powi(-24)).max(2f64.powi(-150))
-            } else {
-                0.0
-            };
-            let err = (y - x).abs();
-            err <= (x + 1.0) * grid + slack && err <= x * relative
+            // The grid bound (section 5) and the profile's relative bound
+            // (section 6), both in the declared type.
+            within_grid(x, y, scale, dtype) && (y - x).abs() <= x * relative
         });
         if bound_ok {
             out.push(Encoding::Quantized(q));

@@ -16,6 +16,7 @@ pub const BROTLI_LGWIN: u32 = 22;
 
 /// Payload compression, as written in the third token part.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
 pub enum Mode {
     Raw,
     Zlib,
