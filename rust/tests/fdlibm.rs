@@ -13,8 +13,13 @@ fn strictmath_table() {
             .map(|h| u64::from_str_radix(h, 16).unwrap())
             .collect();
         let x = f64::from_bits(w[0]);
-        assert_eq!(log1p(x).to_bits(), w[1], "log1p({x:e}) [{line}]");
-        assert_eq!(expm1(x).to_bits(), w[2], "expm1({x:e}) [{line}]");
+        // A NaN result's sign and payload follow the CPU's default NaN
+        // (negative on x86-64, positive on aarch64), so NaNs match as NaNs.
+        let same = |got: f64, want: u64| {
+            got.to_bits() == want || (got.is_nan() && f64::from_bits(want).is_nan())
+        };
+        assert!(same(log1p(x), w[1]), "log1p({x:e}) [{line}]");
+        assert!(same(expm1(x), w[2]), "expm1({x:e}) [{line}]");
         n += 1;
     }
     assert!(n > 20_000);
