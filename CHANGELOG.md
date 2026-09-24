@@ -10,8 +10,15 @@ Python and JavaScript packages share a version. The current 3.x series uses
 the token format. Runtime support changes are called out in the release notes.
 See [SPECIFICATION.md](SPECIFICATION.md).
 
-## [3.0.0] - 2026-09-22
+## [3.0.0] - 2026-09-23
 
+- Converters: mzML attribute values escape line breaks and tabs; extra arrays
+  are classified by accession pattern; the TypeScript mzML reader rejects
+  numpress-compressed arrays; MGF and MS2 readers accept CR-only line endings;
+  an MS2 precursor that is not a number is an error. When only a scan names an
+  instrument, the written run falls back to it for its required default.
+- Encoding reports and token inspection read back self-written tokens without
+  the untrusted-input budgets.
 - Add `rust/`, an independent Rust implementation (crate `spectrl` 3.0.0,
   published to crates.io) written from the specification, registry and vectors.
   It decodes every shared vector, writes the pinned token-parity tokens
