@@ -19,7 +19,7 @@ spectrl.v3.<mode>.<base64url(payload)>.<checksum>
 [Read the format specification](https://github.com/tacular-omics/spectrl/blob/main/SPECIFICATION.md) ·
 [See the changelog](https://github.com/tacular-omics/spectrl/blob/main/CHANGELOG.md)
 
-[![A spectrl token embedded in a URL and decoded into a mass spectrum, with portable text, Python and JavaScript implementations, and local decoding.](https://raw.githubusercontent.com/tacular-omics/spectrl/main/docs/spectrl-overview.png)](https://tacular-omics.github.io/spectrl/)
+[![A spectrl token embedded in a URL and decoded into a mass spectrum, with portable text, a shared format across implementations, and local decoding.](https://raw.githubusercontent.com/tacular-omics/spectrl/main/docs/spectrl-overview.png)](https://tacular-omics.github.io/spectrl/)
 
 *A spectrum travels as ordinary URL-safe text and decodes entirely client-side.*
 
@@ -31,6 +31,8 @@ not depend on an external service or file. A Universal Spectrum Identifier
 (USI) points to a spectrum in a repository. Spectrl embeds the spectrum. Use a
 USI when long-term repository lookup is the goal, and spectrl when a compact,
 self-contained handoff is more useful.
+
+![A local spectrum is encoded into a spectrl token, placed after the # of a URL, and decoded in the browser. The token has three parts: identifier, encoded spectrum data, and checksum.](https://raw.githubusercontent.com/tacular-omics/spectrl/main/docs/spectrl-workflow.png)
 
 ## What's included
 
@@ -331,11 +333,22 @@ preservation, CLI commands, and the limits of each report.
 token = encode_spectrum(spec, lossless=True)
 ```
 
+### Token size
+
+Token length grows with the number of points in the spectrum. The plot shows
+the 237 benchmark spectra from the spectrl manuscript, in the default and
+bit-exact encodings, against a cautious query-string limit and Chromium's URL
+limit. Large profile spectra belong in the URL fragment, not a query string.
+
+![Token length in characters against points per spectrum on log axes, for MS1, MS2, and MS3 centroid and profile spectra, default and bit-exact.](https://raw.githubusercontent.com/tacular-omics/spectrl/main/docs/spectrl-token-size.png)
+
 ## Token format
 
 ```
 spectrl.v3.<mode>.<base64url(payload)>.<checksum>
 ```
+
+![The token text parts and the thirteen integer-keyed fields of the CBOR document: peak count, spectrum ID, CV parameters, scan list, precursors, products, peak arrays, free-text params, source, acquisition, processing, extensions, and ontology versions.](https://raw.githubusercontent.com/tacular-omics/spectrl/main/docs/spectrl-token-fields.png)
 
 - **`spectrl.v3`**: stable `spectrl` identifier + explicit `v3` format version. The prefix is the version's only carrier.
 - **Mode**: `z` is the default zlib-compressed CBOR. `r` is raw CBOR and `b` is Brotli. All use unpadded base64url. Readers require `r` and `z`, with an optional `b` capability.
